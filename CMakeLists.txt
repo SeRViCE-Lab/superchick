@@ -6,7 +6,7 @@ project(superchick)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   controller_manager
-  diff_drive_controllergazebo_ros
+  diff_drive_controller #gazebo_ros
   joint_state_controller
   joint_state_publisher
   position_controllers

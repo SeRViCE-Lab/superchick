@@ -4,7 +4,24 @@
             http://www.behestandarman.com/varian%20products/Delivery%20systems/Novalis/Novalis_Tx_Spec_10011B.pdf -->
 <!-- Ref 2: http://radonc.ucla.edu/novalis-tx -->
 <!-- Ref 3: https://www.novalis-radiosurgery.com/about-us/novalis-radiosurgery-family/ -->
-<robot name="superchicko" xmlns:xacro="http://ros.org/wiki/xacro">
+
+<robot name="superchick" xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <!-- Macros -->
+  <xacro:macro name="material_color" params="name rgba">
+      <material name="${name}">
+          <color rgba="${rgba}" />
+      </material>
+  </xacro:macro>
+
+  <xacro:macro name="default_inertial" params="mass">
+    <inertial>
+      <mass value="${mass}" />
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0" />
+    </inertial>
+  </xacro:macro>
+   <xacro:include filename="novalis.macro.xacro" /> 
+
   <xacro:property name="width" value="${43.3*2}" />
   <xacro:property name="bodylen" value="18.32" />
   <xacro:property name="height" value="${25.84/2}" />
@@ -12,6 +29,14 @@
   <xacro:property name="cyl_radius" value="2.1" />
   <xacro:property name="cyl_length" value="4.5" />
   <xacro:property name="pi" value="3.1415926535897931" />
+
+  <!-- Create the world link.
+      World is on the floor directly under the robot base
+      X points to the right when facing the robot
+      Y points toward the back of the robot
+      Z points up
+  -->
+  <link name="world" />
 
   <geometry type="cylinder" radius="${cyl_radius}" length="${cyl_length}" />
   <geometry type="box"      size="${width} ${bodylen} ${height}" />
@@ -33,13 +58,6 @@
     <color rgba="0.8 0.8 0.8 0.8"/>
   </material>
 
-  <xacro:macro name="default_inertial" params="mass">
-    <inertial>
-      <mass value="${mass}" />
-      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0" />
-    </inertial>
-  </xacro:macro>
-
   <link name="base_link">
     <visual>
       <geometry>
@@ -55,137 +73,6 @@
     <xacro:default_inertial mass="10"/>
   </link>
 
-  <link name="bed_link">
-    <visual>
-      <geometry>
-        <box size="${width} ${bodylen} ${height}"/>
-      </geometry>
-      <origin rpy="0 0 0" xyz="0 0 -0.5"/>
-      <material name="blue"/>
-    </visual>
-    <collision>
-      <geometry>
-        <box size="${width} ${bodylen} ${height}"/>
-      </geometry>
-    </collision>
-  </link>
 
-  <joint name="base_to_bed" type="continuous">
-    <parent link="base_link"/>
-    <child link="bed_link"/>
-    <origin xyz="0 0 0.1"/>
-  </joint>
-
-  <!--Right Front of 6DOF Couch -->
-  <link name="right_front_wheel">
-    <visual>
-      <origin rpy="1.57075 0 0" xyz="0 0 0.1"/>
-      <geometry>
-        <cylinder length="0.1" radius="-0.035"/>
-      </geometry>
-      <material name="black"/>
-    </visual>
-    <collision>
-      <origin rpy="1.57075 0 0" xyz="0 0 0.1"/>
-      <geometry>
-        <cylinder length="0.1" radius="0.035"/>
-      </geometry>
-    </collision>
-    <inertial>
-      <mass value="1"/>
-      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
-    </inertial>
-  </link>
-
-  <joint name="right_front_wheel_joint" type="continuous">
-    <axis rpy="0 0 0" xyz="0 1 0"/>
-    <parent link="base_link"/>
-    <child link="right_front_wheel"/>
-    <origin rpy="0 0 0" xyz="0.133333333333 0 -0.45"/>
-  </joint>
-
-  <!--Right back wheel of 6 DOF couch -->
-  <link name="right_back_wheel">
-    <visual>
-      <origin rpy="1.57075 0 0" xyz="0 0 0.1"/>
-      <geometry>
-        <cylinder length="0.1" radius="0.035"/>
-      </geometry>
-      <material name="black"/>
-    </visual>
-    <collision>
-      <origin rpy="1.57075 0 0" xyz="0 0 0.1"/>
-      <geometry>
-        <cylinder length="0.1" radius="0.035"/>
-      </geometry>
-    </collision>
-    <inertial>
-      <mass value="1"/>
-      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
-    </inertial>
-  </link>
-
-  <joint name="right_back_wheel_joint" type="continuous">
-    <axis rpy="0 0 0" xyz="0 1 0"/>
-    <parent link="base_link"/>
-    <child link="right_back_wheel"/>
-    <origin rpy="0 0 0" xyz="-0.133333333333 0 -0.45"/>
-  </joint>
-
-  <!--Left Front of 6DOF Couch -->
-  <link name="left_front_wheel">
-    <visual>
-      <origin rpy="1.57075 0 0" xyz="-0.4 0.4 0.1"/>
-      <geometry>
-        <cylinder length="0.1" radius="-0.035"/>
-      </geometry>
-      <material name="black"/>
-    </visual>
-    <collision>
-      <origin rpy="1.57075 0 0" xyz="-0.4 0.4 0.1"/>
-      <geometry>
-        <cylinder length="0.1" radius="0.035"/>
-      </geometry>
-    </collision>
-    <inertial>
-      <mass value="1"/>
-      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
-    </inertial>
-  </link>
-
-  <joint name="left_front_wheel_joint" type="continuous">
-    <axis rpy="0 0 0" xyz="0 0.1 0"/>
-    <parent link="base_link"/>
-    <child link="left_front_wheel"/>
-    <origin rpy="0 0 0" xyz="0 0 -0.45"/>
-  </joint>
-
-  <!--Right back wheel of 6 DOF couch -->
-  <link name="left_back_wheel">
-    <visual>
-      <origin rpy="1.57075 0 0" xyz="0.4 0.4 0.1"/>
-      <geometry>
-        <cylinder length="0.1" radius="0.035"/>
-      </geometry>
-      <material name="black"/>
-    </visual>
-    <collision>
-      <origin rpy="1.57075 0 0" xyz="0.4 0.4 0.1"/>
-      <geometry>
-        <cylinder length="0.1" radius="0.035"/>
-      </geometry>
-    </collision>
-    <inertial>
-      <mass value="1"/>
-      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
-    </inertial>
-  </link>
-
-  <joint name="left_back_wheel_joint" type="continuous">
-    <axis rpy="0 0 0" xyz="0 1 0"/>
-    <parent link="base_link"/>
-    <child link="left_back_wheel"/>
-    <origin rpy="0 0 0" xyz="0 -0.133333333333 -0.45"/>
-  </joint>
 
 </robot>
