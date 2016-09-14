@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<robot name="novalis" xmlns:xacro="http://www.ros.org/wiki/xacro">
+<robot name="acc2016_model" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
   <!-- Model for the Novalis Tx Spec
       Author: Olalekan Ogunmolu, August 2016
@@ -13,7 +13,7 @@
 
   <!-- General Properties -->
   <xacro:property name="M_PI" value="3.14159" />
-  
+
   <!-- Novalis Properties -->
   <xacro:property name="base_seater_lth" value="2.584" />
   <xacro:property name="base_seater_thk" value="1.65" />
