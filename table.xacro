@@ -1,14 +1,14 @@
 <?xml version="1.0"?>
 <robot name="acc16model" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-  <!-- Model for the Novalis Tx Spec
+  <!-- Model for the Superchick Table Spec
       Author: Olalekan Ogunmolu, August 2016
 
         Generate urdf with 
-        rosrun xacro xacro src/superchick/acc16model.xacro > acc16.urdf
+        rosrun xacro xacro src/superchick/table.xacro > table.urdf
         Then run with 
 
-        roslaunch superchick display.launch model:=acc16.urdf 
+        roslaunch superchick display.launch model:=table.urdf 
   -->
 
   <!-- General Properties -->
@@ -49,6 +49,10 @@
   <material name="white">
     <color rgba="1 1 1 1"/>
   </material>
+
+  <material name="base_color">
+    <color rgba="0 0 0 0"/>
+  </material>
   
   <!-- table legs artificial base link -->
   <link name="base_link">
@@ -57,7 +61,7 @@
       <geometry>
         <box size="${table_top_length} ${table_top_width} ${table_top_thickness}" />
       </geometry>
-      <material name="table_color"/>
+      <material name="base_color"/>
       <origin xyz="0 0 0" rpy="0 0 0" />
     </visual>
     <collision>
@@ -134,7 +138,7 @@
       <geometry>
         <box size="${table_top_length} ${table_top_width} ${table_top_thickness}" />
       </geometry>
-      <material name="table_color"/>
+      <material name="white"/>
       <origin xyz="0 0 ${table_leg_height-0.65}" rpy="0 0 0" />
     </visual>
     <collision>

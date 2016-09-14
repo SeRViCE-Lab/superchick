@@ -1,78 +1,41 @@
 <?xml version="1.0"?>
-<!-- Olalekan Ogunmolu. June 2016. Model of the Novalis Tx  Radiosurgery Platform in ROS URDF -->
-<!--Ref 1: Novalis Tx 
-            http://www.behestandarman.com/varian%20products/Delivery%20systems/Novalis/Novalis_Tx_Spec_10011B.pdf -->
-<!-- Ref 2: http://radonc.ucla.edu/novalis-tx -->
-<!-- Ref 3: https://www.novalis-radiosurgery.com/about-us/novalis-radiosurgery-family/ -->
-
 <robot name="superchick" xmlns:xacro="http://ros.org/wiki/xacro">
 
-  <!-- Macros -->
-  <xacro:macro name="material_color" params="name rgba">
-      <material name="${name}">
-          <color rgba="${rgba}" />
-      </material>
-  </xacro:macro>
+   <!-- General Properties -->
+   <xacro:property name="bladder_length" value="0.4572" />
+   <xacro:property name="bladder_width" value="0.2794" />
+   <xacro:property name="bladder_thickness" value="0.1016" />
 
-  <xacro:macro name="default_inertial" params="mass">
-    <inertial>
-      <mass value="${mass}" />
-      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0" />
-    </inertial>
-  </xacro:macro>
-   <xacro:include filename="novalis.macro.xacro" /> 
+   <xacro:property name="head_height" value="0.2794" />
+   <xacro:property name="head_width" value="0.2032" />
+   <xacro:property name="head_thickness" value="0.1778" />
 
-  <xacro:property name="width" value="${43.3*2}" />
-  <xacro:property name="bodylen" value="18.32" />
-  <xacro:property name="height" value="${25.84/2}" />
-  <xacro:property name="wheeldiam" value=".07" />
-  <xacro:property name="cyl_radius" value="2.1" />
-  <xacro:property name="cyl_length" value="4.5" />
-  <xacro:property name="pi" value="3.1415926535897931" />
-
-  <!-- Create the world link.
-      World is on the floor directly under the robot base
-      X points to the right when facing the robot
-      Y points toward the back of the robot
-      Z points up
-  -->
-  <link name="world" />
-
-  <geometry type="cylinder" radius="${cyl_radius}" length="${cyl_length}" />
-  <geometry type="box"      size="${width} ${bodylen} ${height}" />
-  <circle circumference="${2.5 * pi}" />
-
-  <material name="blue">
-    <color rgba="0 0 .8 1"/>
+     <!-- Derived Variables -->
+  <material name="bladder_color" >
+    <color rgba="0.133333 0.545098 0.133333" /> <!--forest green-->
   </material>
 
-  <material name="black">
-    <color rgba="0 0 0 1"/>
-  </material>
+  <!-- This file contains the table description -->
+   <xacro:include filename="$(find superchick)/table.xacro" ns="table_ns" />
 
-  <material name="white">
-    <color rgba="1 1 1 1"/>
-  </material>
-
-  <material name="gray">
-    <color rgba="0.8 0.8 0.8 0.8"/>
-  </material>
-
-  <link name="base_link">
-    <visual>
-      <geometry>
-        <box size="${width} ${bodylen} ${height}"/>
-      </geometry>
-      <material name="white" />
-    </visual>
-    <collision>
-      <geometry>
-        <box size="${width} ${bodylen} ${height}"/>
-      </geometry>      
-    </collision>
-    <xacro:default_inertial mass="10"/>
-  </link>
-
-
-
+   <!-- inflatable air bladder -->
+   <link name="bladder_link">
+     <visual>
+       <origin xyz="0 0 0" rpy="0 0 0" />
+       <geometry>
+         <box size="${table_top_length} ${table_top_width} ${table_top_thickness}" />
+       </geometry>
+       <material name="base_color"/>
+       <origin xyz="0 0 0" rpy="0 0 0" />
+     </visual>
+     <collision>
+       <geometry>
+         <box size="${table_top_length} ${table_top_width} ${table_top_thickness}" />
+       </geometry>
+     </collision>
+     <inertial>
+       <mass value="10"/>
+       <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+     </inertial>
+   </link>
 </robot>
