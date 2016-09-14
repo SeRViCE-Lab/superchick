@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<robot name="acctemp" xmlns:xacro="http://www.ros.org/wiki/xacro">
+<robot name="acc16model" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
   <!-- Model for the Novalis Tx Spec
       Author: Olalekan Ogunmolu, August 2016
@@ -130,12 +130,12 @@
 <!-- Overlay table top -->
   <link name="table_top">
     <visual>
-      <origin xyz="0 0 ${table_leg_height}" rpy="0 0 0" />
+      <origin xyz="0 0 ${table_leg_height-0.65}" rpy="0 0 0" />
       <geometry>
         <box size="${table_top_length} ${table_top_width} ${table_top_thickness}" />
       </geometry>
       <material name="table_color"/>
-      <origin xyz="0 0 ${table_leg_height}" rpy="0 0 0" />
+      <origin xyz="0 0 ${table_leg_height-0.65}" rpy="0 0 0" />
     </visual>
     <collision>
       <geometry>
@@ -151,13 +151,13 @@
   <joint name="rightleg_to_tabletop" type="fixed">
     <parent link="right_leg"/>
     <child link="table_top" />
-    <origin xyz="${-(table_top_length/2)+0.0762} 0 -0.3 " />
+    <origin xyz="${-(table_top_length/2)+0.0762} 0 0.35 " />
   </joint>
 
   <joint name="leftleg_to_tabletop" type="fixed">
     <parent link="left_leg"/>
     <child link="table_top" />
-    <origin xyz="${-(table_top_length/2)+0.0762} 0 -0.3 " />
+    <origin xyz="${-(table_top_length/2)+0.0762} 0 0.35 " />
   </joint>
 
 </robot>
