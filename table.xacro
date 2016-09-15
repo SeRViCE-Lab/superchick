@@ -33,6 +33,11 @@
   <!-- @TODO: not to scale distance between two legs -->
   <xacro:property name="legs_xdist" value="0.4" /> 
 
+  <!-- table cover properties -->
+  <xacro:property name="table_cover_length" value="1.524" />
+  <xacro:property name="table_cover_width" value="0.2794" />
+  <xacro:property name="table_cover_thickness" value="${0.127+0.1}" />
+
   <!-- Derived Variables -->
   <material name="table_color" >
     <color rgba="0.8 0.8 0.8 1" />
@@ -42,8 +47,12 @@
     <color rgba="0 0 .8 1"/>
   </material>
 
-  <material name="black">
-    <color rgba="0 0 0 1"/>
+  <material name="table_cover_color">
+    <color rgba="0 ${26/255} ${51/255} 1"/>
+  </material>
+
+  <material name="dark_gray">
+    <color rgba="0.156863 0.156863 0.156863 1"/>
   </material>
 
   <material name="white">
@@ -82,7 +91,7 @@
         <box size="${table_leg_height} ${table_leg_width} ${table_leg_thickness}"/>
       </geometry>
       <origin rpy="0 1.57075 0" xyz="0 0 0"/>
-      <material name="table_color"/>
+      <material name="dark_gray"/>
     </visual>
     <collision>
       <geometry>
@@ -110,7 +119,7 @@
         <box size="${table_leg_height} ${table_leg_width} ${table_leg_thickness}"/>
       </geometry>
       <origin rpy="0 1.57075 0" xyz="0 0 0"/>
-      <material name="table_color"/>
+      <material name="dark_gray"/>
     </visual>
     <collision>
       <geometry>
@@ -162,6 +171,32 @@
     <parent link="left_leg"/>
     <child link="table_top" />
     <origin xyz="${-(table_top_length/2)+0.0762} 0 0.35 " />
+  </joint>
+
+  <link name="table_cover">
+    <visual>
+      <origin xyz="0 0 ${-table_top_thickness}" rpy="0 0 0" />
+      <geometry>
+        <box size="${table_cover_length} ${table_cover_width} ${table_cover_thickness}" />
+      </geometry>
+      <material name="table_cover_color"/>
+      <origin xyz="0 0 ${-table_top_thickness}" rpy="0 0 0" />
+    </visual>
+    <collision>
+      <geometry>
+        <box size="${table_cover_length} ${table_cover_width} ${table_cover_thickness}" />
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="10"/>
+       <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+  </link>
+
+  <joint name="tablecover_to_tabletop" type="fixed">
+    <parent link="table_top"/>
+    <child link="table_cover"/>
+    <origin xyz="0 ${(table_top_width/2)-0.1} -0.18" rpy="${-M_PI/2} 0 0 "/>
   </joint>
 
 </robot>
