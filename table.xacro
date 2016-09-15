@@ -147,7 +147,7 @@
       <geometry>
         <box size="${table_top_length} ${table_top_width} ${table_top_thickness}" />
       </geometry>
-      <material name="white"/>
+      <material name="table_color"/>
       <origin xyz="0 0 ${table_leg_height-0.65}" rpy="0 0 0" />
     </visual>
     <collision>
@@ -196,7 +196,7 @@
   <joint name="tablecover_to_tabletop" type="fixed">
     <parent link="table_top"/>
     <child link="table_cover"/>
-    <origin xyz="0 ${(table_top_width/2)-0.1} -0.18" rpy="${-M_PI/2} 0 0 "/>
+    <origin xyz="0 ${(table_top_width/2)-0.08} -0.18" rpy="${-M_PI/2} 0 0 "/>
   </joint>
 
 </robot>

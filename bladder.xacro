@@ -14,18 +14,16 @@
    <!-- inflatable air bladder -->
    <link name="bladder_link">
      <visual>
-       <origin xyz="0 0 0" rpy="0 0 ${-M_PI/2}" />
+       <origin xyz="0 0 0" rpy="0 0 0" />
        <geometry>
-         <box size="${bladder_length} ${bladder_width} ${bladder_thickness}" />
-         <!-- <mesh filename="package://superchick/meshes/bladder.STL" /> -->
+         <mesh filename="package://superchick/meshes/bladder.stl" scale=".001 .001 .001" />
        </geometry>
        <material name="bladder_color"/>
        <origin xyz="0 0 0" rpy="0 0 0" />
      </visual>
      <collision>
        <geometry>
-        <box size="${bladder_length} ${bladder_width} ${bladder_thickness}" />
-         <!-- <mesh filename="package://superchick/meshes/bladder.STL" /> -->
+         <mesh filename="package://superchick/meshes/bladder.stl" scale=".001 .001 .001" />
        </geometry>
      </collision>
      <inertial>
