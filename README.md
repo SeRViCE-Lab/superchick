@@ -9,3 +9,6 @@ run novalis like
 ```bash
 	roslaunch superchick display.launch model:=src/superchick/novalis.xacro
 ```
+
+### Example Display in Rviz
+![Example Display in Rviz](/meshes/model.png)

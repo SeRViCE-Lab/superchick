@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<robot name="white_head" xmlns:xacro="http://ros.org/wiki/xacro">
+
+   <!-- General Properties -->
+   <xacro:property name="head_height" value="0.2794" />
+   <xacro:property name="head_width" value="0.2032" />
+   <xacro:property name="head_thickness" value="0.1778" />
+
+  <xacro:property name="head_x_orig" value="-0.1" />   
+  <xacro:property name="head_y_orig" value="0.25" /> 
+
+  <material name="brown">
+  <color rgba="0.647059 0.164706 0.164706 1"/>
+  </material> 
+
+     <!-- Derived Variables -->
+   <!-- inflatable air bladder -->
+   <link name="whitehead_link">
+     <visual>
+       <origin xyz="${head_x_orig} ${head_y_orig} ${0}" rpy="0 0 0" />
+       <geometry>
+         <mesh filename="package://superchick/meshes/white_head.stl" scale=".001 .001 .001" />
+       </geometry>
+       <material name="brown"/>
+       <origin xyz="${head_x_orig} ${head_y_orig} ${0}" rpy="0 0 0" />
+     </visual>
+     <collision>
+       <geometry>
+         <mesh filename="package://superchick/meshes/white_head.stl" scale=".001 .001 .001" />
+       </geometry>
+     </collision>
+     <inertial>
+       <mass value="10"/>
+       <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+     </inertial>
+   </link>
+
+</robot>
