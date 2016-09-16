@@ -18,15 +18,17 @@
    <link name="whitehead_link">
      <visual>
        <origin xyz="${head_x_orig} ${head_y_orig} ${0}" rpy="0 0 0" />
-       <geometry>
-         <mesh filename="package://superchick/meshes/white_head.stl" scale=".001 .001 .001" />
+       <geometry>        
+         <mesh filename="package://superchick/meshes/headnball.STL" scale=".001 .001 .001" />
+         <!-- <mesh filename="package://superchick/meshes/white_head.stl" scale=".001 .001 .001" /> -->
        </geometry>
        <material name="brown"/>
        <origin xyz="${head_x_orig} ${head_y_orig} ${0}" rpy="0 0 0" />
      </visual>
      <collision>
        <geometry>
-         <mesh filename="package://superchick/meshes/white_head.stl" scale=".001 .001 .001" />
+         <mesh filename="package://superchick/meshes/headnball.STL" scale=".001 .001 .001" />
+         <!-- <mesh filename="package://superchick/meshes/white_head.stl" scale=".001 .001 .001" /> -->
        </geometry>
      </collision>
      <inertial>
