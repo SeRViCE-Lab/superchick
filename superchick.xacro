@@ -29,7 +29,7 @@
     <origin xyz="0.3 ${bladder_pos_y+0.35} 1.0" rpy="${-M_PI/2} 0 0" />
    </joint> -->
 
-   <joint name="bladder_to_headnball" type="planar">
+   <joint name="bladder_to_headnball" type="continuous">
     <parent link="bladder_link"/>
     <child link="headnball_link"/>
     <limit effort="200.0" lower="0.1016" upper="0.1016" velocity="1.0" />

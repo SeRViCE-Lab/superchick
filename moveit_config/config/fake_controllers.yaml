@@ -1,0 +1,6 @@
+controller_list:
+  - name: fake_table_controller
+    joints:
+      - virtual_joint
+      - table_to_bladder
+      - bladder_to_headnball
