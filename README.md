@@ -21,3 +21,6 @@ run novalis like
 
 ### Example Display in Rviz
 ![Example Display in Rviz](/superchick/meshes/model.png)
+
+### Planning works in MoveIt! 
+![Example Display in Moveit!](/superchick/meshes/moveit!.png)
