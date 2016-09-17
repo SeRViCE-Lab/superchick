@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<robot name="vicon" xmlns:xacro="http://ros.org/wiki/xacro">
+
+   <!-- General Properties -->
+   <xacro:property name="vicon_x" value="0.2794" />
+   <xacro:property name="z_from_table" value="4" />
+
+     <!-- Derived Variables -->
+  <material name="vicon_colors" >
+    <color rgba="0.133 0.55 0.13 1" /> <!--forest green-->
+  </material>
+
+   <!-- inflatable air bladder -->
+   <link name="vicon_system">
+     <visual>
+       <origin xyz="0 0 0" rpy="0 0 0" />
+       <geometry>
+         <mesh filename="package://superchick/meshes/bladder.stl" scale=".001 .001 .001" />
+       </geometry>
+       <material name="bladder_color"/>
+       <origin xyz="0 0 0" rpy="0 0 0" />
+     </visual>
+     <collision>
+       <geometry>
+         <mesh filename="package://superchick/meshes/bladder.stl" scale=".001 .001 .001" />
+       </geometry>
+     </collision>
+     <inertial>
+       <mass value="10"/>
+       <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+     </inertial>
+   </link>
+
+</robot>
