@@ -1,0 +1,5 @@
+controller_list:
+  - name: fake_iab_controller
+    joints:
+      - table_to_bladder
+      - bladder_to_headnball
