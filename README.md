@@ -1,14 +1,23 @@
-run superchick like 
+### Superchicko Rviz Plugin
+
+Generate superchick urdf like 
 
 ```bash
-roslaunch superchick display.launch urdf:=$(find superchick)/superchick.xacro
+rosrun xacro xacro src/superchicko/superchick/superchick.xacro > superchick.xacro
+```
+
+### Novalis Rviz Plugin
+Then run urdf like longhorn cattle, aka
+
+```bash
+	roslaunch superchick display.launch model:=superchick.urdf
 ```
 
 run novalis like
 
 ```bash
-	roslaunch superchick display.launch model:=src/superchick/novalis.xacro
+	roslaunch superchick display.launch model:=src/superchicko/superchick/novalis.xacro
 ```
 
 ### Example Display in Rviz
-![Example Display in Rviz](/meshes/model.png)
+![Example Display in Rviz](/superchick/meshes/model.png)
