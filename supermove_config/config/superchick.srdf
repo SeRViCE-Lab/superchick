@@ -10,16 +10,22 @@
     <!--CHAINS: When a chain is specified, all the links along the chain (including endpoints) are included in the group. Additionally, all the joints that are parents to included links are also included. This means that joints along the chain and the parent joint of the base link are included in the group-->
     <!--SUBGROUPS: Groups can also be formed by referencing to already defined group names-->
     <group name="iab">
+        <link name="headnball_link" />
+        <link name="bladder_link" />
+        <link name="table_top" />
         <joint name="table_to_bladder" />
         <joint name="bladder_to_headnball" />
         <joint name="tablecover_to_tabletop" />
+        <chain base_link="bladder_link" tip_link="headnball_link" />
     </group>
     <!--GROUP STATES: Purpose: Define a named state for a particular group, in terms of joint values. This is useful to define states like 'folded arms'-->
-    <group_state name="world" group="iab" />
+    <group_state name="world" group="iab">
+        <joint name="bladder_to_headnball" value="0.1059" />
+    </group_state>
     <!--END EFFECTOR: Purpose: Represent information about an end effector.-->
-    <end_effector name="air_pocket" parent_link="base_link" group="iab" />
+    <end_effector name="IAB" parent_link="bladder_link" group="iab" />
     <!--VIRTUAL JOINT: Purpose: this element defines a virtual joint between a robot link and an external frame of reference (considered fixed with respect to the robot)-->
-    <virtual_joint name="world" type="planar" parent_frame="odom" child_link="base_link" />
+    <virtual_joint name="world" type="planar" parent_frame="odom" child_link="table_top" />
     <!--PASSIVE JOINT: Purpose: this element is used to mark joints that are not actuated-->
     <passive_joint name="world" />
     <!--DISABLE COLLISIONS: By default it is assumed that any link of the robot could potentially come into collision with any other link in the robot. This tag disables collision checking between a specified pair of links. -->

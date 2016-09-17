@@ -12,7 +12,7 @@
    <xacro:include filename="$(find superchick)/headnball.xacro" ns="headnball_ns" />
 
    <!-- table link to bladder -->
-   <joint name="table_to_bladder" type="planar">
+   <joint name="table_to_bladder" type="fixed">
     <parent link="table_top"/>
     <child link="bladder_link"/>
     <limit effort="200.0" lower="0.1016" upper="0.1016" velocity="1.0" />

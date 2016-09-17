@@ -1,8 +1,0 @@
-moveit_setup_assistant_config:
-  URDF:
-    package: superchick
-    relative_path: superchick.xacro
-  SRDF:
-    relative_path: config/superchick.srdf
-  CONFIG:
-    generated_timestamp: 1474063046
