@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package>
+  <name>superchicko</name>
+  <version>0.0.0</version>
+  <description>
+    The superchicko metapackage
+  </description>
+
+  <maintainer email="patlekano@gmail.com">Olalekan Ogunmolu</maintainer>
+  <license>BSD</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <run_depend>superchick</run_depend>
+  <run_depend>moveit_config</run_depend>
+  <run_depend>supermove_config</run_depend>
+
+  <export>
+    <metapackage/>
+  </export>
+</package>
