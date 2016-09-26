@@ -1,0 +1,120 @@
+<?xml version="1.0"?>
+<robot name="cage" xmlns:xacro="http://ros.org/wiki/xacro">
+
+	<!-- Description: A model of the "cage" used in the superchick project.
+	 Author: Alex Tomkovich, September 2016
+ 	-->
+
+	<!-- Constants -->
+	<xacro:property name="PI" value="3.14159" />
+
+	<!-- Panel Properties -->
+	<xacro:property name="side_panel_length" value=".231775" />
+	<xacro:property name="panel_12_oc_length" value=".34925" />
+	<xacro:property name="panel_height" value=".200025" />
+	<xacro:property name="panel_thickness" value=".0047625" />
+	<xacro:property name="base_link_length" value=".5842" />
+	<xacro:property name="base_link_width" value=".2794" />
+	<xacro:property name ="distance_panel_12_oc_from_center" value ="${(base_link_width/2) - .04572}" />
+
+	<!-- Derived Variables -->
+	<material name="panel_color" >
+		<color rgba="0 100 0 1" />
+	</material>
+
+
+	<!-- Base Link (Base Panel) -->
+	<link name="base_link">
+		<visual>
+			<origin xyz="0 0 0" rpy="0 0 0" />
+			<geometry>
+				<box size="${base_link_length} ${base_link_width} ${panel_thickness}" />
+			</geometry>
+			<material name="panel_color" />
+		</visual>
+
+		<collision>
+			<origin xyz="0 0 0" rpy="0 0 0" />
+			<geometry>
+				<box size="${base_link_length} ${base_link_width} ${panel_thickness}" />
+			</geometry>
+		</collision>
+	</link>
+
+	<!-- 12:00 panel -->
+	<link name="panel_12_oc">
+		<visual>
+			<origin xyz="0 0 0" rpy="${(PI/2)} 0 0" />
+			<geometry>
+				<box size="${panel_12_oc_length} ${panel_height} ${panel_thickness}" />
+			</geometry>
+			<material name="panel_color" />
+		</visual>
+
+		<collision>
+			<origin xyz="0 0 0" rpy="${(PI/2)} 0 0" />
+			<geometry>
+				<box size="${panel_12_oc_length} ${panel_height} ${panel_thickness}" />
+			</geometry>
+		</collision>
+	</link>
+
+	<!-- Join 12:00 Panel to Base -->
+	<joint name="panel_12_oc_to_base_link" type="fixed">
+		<parent link="base_link"/>
+		<child link="panel_12_oc"/>
+		<origin xyz="0 ${distance_panel_12_oc_from_center} ${(panel_thickness/2) + (panel_height/2)}" />
+	</joint>
+
+	<!-- 9:00 Panel -->
+	<link name="panel_9_oc">
+		<visual>
+			<origin xyz="0 0 0" rpy="${(PI/2)} 0 ${(PI/2)}" />
+			<geometry>
+				<box size="${side_panel_length} ${panel_height} ${panel_thickness}" />
+			</geometry>
+			<material name="panel_color" />
+		</visual>
+
+		<collision>
+			<origin xyz="0 0 0" rpy="${(PI/2)} 0 ${(PI/2)}" />
+			<geometry>
+				<box size="${side_panel_length} ${panel_height} ${panel_thickness}" />
+			</geometry>
+		</collision>
+	</link>
+
+	<!-- Join 9:00 Panel to 12:00 Panel -->
+	<joint name="panel_9_oc_to_panel_12_oc" type="fixed">
+		<parent link="panel_12_oc"/>
+		<child link="panel_9_oc"/>
+		<origin xyz="${-((panel_12_oc_length/2) + (panel_thickness/2))} ${-((side_panel_length/2) - (panel_thickness/2))} 0" />
+	</joint>
+
+	<!-- 3:00 Panel -->
+	<link name="panel_3_oc">
+		<visual>
+			<origin xyz="0 0 0" rpy="${(PI/2)} 0 ${(PI/2)}" />
+			<geometry>
+				<box size="${side_panel_length} ${panel_height} ${panel_thickness}" />
+			</geometry>
+			<material name="panel_color" />
+		</visual>
+		<collision>
+			<origin xyz="0 0 0" rpy="${(PI/2)} 0 ${(PI/2)}" />
+			<geometry>
+				<box size="${side_panel_length} ${panel_height} ${panel_thickness}" />
+			</geometry>
+		</collision>
+	</link>
+
+	<!-- Join 3:00 Panel to 12:00 Panel -->
+	<joint name="panel_3_oc_to_panel_12_oc" type="fixed">
+		<parent link="panel_12_oc"/>
+		<child link="panel_3_oc"/>
+		<origin xyz="${(panel_12_oc_length/2) + (panel_thickness/2)} ${-((side_panel_length/2) - (panel_thickness/2))} 0" />
+	</joint>
+
+</robot>
+
+
