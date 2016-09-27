@@ -1,2 +1,0 @@
-roslaunch superchick display.launch model:=superchick.urdf
-rosrun xacro xacro src/superchicko/superchick/superchick.xacro>superchick.urdf

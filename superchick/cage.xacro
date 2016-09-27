@@ -2,7 +2,7 @@
 <robot name="cage" xmlns:xacro="http://ros.org/wiki/xacro">
 
 	<!-- Description: A model of the "cage" used in the superchick project.
-	 Author: Alex Tomkovich, September 2016
+	 Author: Alex Tomkovich, September 27, 2016
  	-->
 
 	<!-- Constants -->
@@ -16,8 +16,6 @@
 	<xacro:property name="base_panel_length" value=".5842" />
 	<xacro:property name="base_panel_width" value=".2794" />
 	<xacro:property name ="distance_panel_12_oc_from_center" value ="${(base_panel_width/2) - .04572}" />
-
-	<!--<xacro:include filename="$(find superchick)/table.xacro" ns="table_ns" /> -->
 
 	<!-- Derived Variables -->
 	<material name="panel_color" >
@@ -42,13 +40,7 @@
 			</geometry>
 		</collision>
 	</link>
-<!--
-	<joint name="base_panel_to_table_top" type="fixed">
-		<parent link="table_top"/>
-		<child link="base_panel"/>
-		<origin xyz="${cage_pos_x} ${cage_pos_y} ${(panel_thickness/2)}" rpy="0 0 ${PI/2}" />
-	</joint>
--->
+
 	<!-- 12:00 panel -->
 	<link name="panel_12_oc">
 		<visual>
