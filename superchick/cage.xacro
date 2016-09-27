@@ -10,25 +10,27 @@
 
 	<!-- Panel Properties -->
 	<xacro:property name="side_panel_length" value=".231775" />
-	<xacro:property name="panel_12_oc_length" value=".34925" />
+	<xacro:property name="panel_12_oc_length" value=".4700" /> <!--.34925 -->
 	<xacro:property name="panel_height" value=".200025" />
 	<xacro:property name="panel_thickness" value=".0047625" />
-	<xacro:property name="base_link_length" value=".5842" />
-	<xacro:property name="base_link_width" value=".2794" />
-	<xacro:property name ="distance_panel_12_oc_from_center" value ="${(base_link_width/2) - .04572}" />
+	<xacro:property name="base_panel_length" value=".5842" />
+	<xacro:property name="base_panel_width" value=".2794" />
+	<xacro:property name ="distance_panel_12_oc_from_center" value ="${(base_panel_width/2) - .04572}" />
+
+	<!--<xacro:include filename="$(find superchick)/table.xacro" ns="table_ns" /> -->
 
 	<!-- Derived Variables -->
 	<material name="panel_color" >
-		<color rgba="0 100 0 1" />
+		<color rgba=".1 .1 .1 1" />
 	</material>
 
 
-	<!-- Base Link (Base Panel) -->
-	<link name="base_link">
+	<!-- Base panel -->
+	<link name="base_panel">
 		<visual>
 			<origin xyz="0 0 0" rpy="0 0 0" />
 			<geometry>
-				<box size="${base_link_length} ${base_link_width} ${panel_thickness}" />
+				<box size="${base_panel_length} ${base_panel_width} ${panel_thickness}" />
 			</geometry>
 			<material name="panel_color" />
 		</visual>
@@ -36,11 +38,17 @@
 		<collision>
 			<origin xyz="0 0 0" rpy="0 0 0" />
 			<geometry>
-				<box size="${base_link_length} ${base_link_width} ${panel_thickness}" />
+				<box size="${base_panel_length} ${base_panel_width} ${panel_thickness}" />
 			</geometry>
 		</collision>
 	</link>
-
+<!--
+	<joint name="base_panel_to_table_top" type="fixed">
+		<parent link="table_top"/>
+		<child link="base_panel"/>
+		<origin xyz="${cage_pos_x} ${cage_pos_y} ${(panel_thickness/2)}" rpy="0 0 ${PI/2}" />
+	</joint>
+-->
 	<!-- 12:00 panel -->
 	<link name="panel_12_oc">
 		<visual>
@@ -59,9 +67,9 @@
 		</collision>
 	</link>
 
-	<!-- Join 12:00 Panel to Base -->
-	<joint name="panel_12_oc_to_base_link" type="fixed">
-		<parent link="base_link"/>
+	<!-- Join 12:00 Panel to base_panel -->
+	<joint name="panel_12_oc_to_base_panel" type="fixed">
+		<parent link="base_panel"/>
 		<child link="panel_12_oc"/>
 		<origin xyz="0 ${distance_panel_12_oc_from_center} ${(panel_thickness/2) + (panel_height/2)}" />
 	</joint>

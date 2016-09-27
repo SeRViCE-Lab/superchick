@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<robot name="superchick" xmlns:xacro="http://ros.org/wiki/xacro">
+
+   <!-- General Properties -->
+   <xacro:property name="bladder_pos_x" value="-0.7" />
+   <xacro:property name="bladder_pos_y" value="-0.25" />
+
+  <!-- This file contains the table and bladder descriptions -->
+   <xacro:include filename="$(find superchick)/table.xacro" ns="table_ns" />
+   <xacro:include filename="$(find superchick)/bladder.xacro" ns="bladder_ns" />
+   <!-- <xacro:include filename="$(find superchick)/whitehead.xacro" ns="whitehead_ns" /> -->
+   <xacro:include filename="$(find superchick)/headnball.xacro" ns="headnball_ns" />
+   <xacro:include filename="$(find superchick)/cage.xacro" ns="cage_ns" />
+
+   <!-- table link to bladder -->
+   <!--
+   <joint name="table_to_bladder" type="fixed">
+    <parent link="table_top"/>
+    <child link="bladder_link"/>
+    <limit effort="200.0" lower="0.1016" upper="0.1016" velocity="1.0" />
+    <safety_controller k_velocity="10" k_position="15" soft_lower_limit="-0.05" soft_upper_limit="0.05" />
+    <origin xyz="${bladder_pos_x} ${bladder_pos_y} 0 " rpy="${M_PI/2} 0 ${M_PI/2}" />
+   </joint>
+-->
+   <!--cage link to bladder -->
+   <joint name="cage_to_table" type="fixed">
+    <parent link="table_top"/>
+    <child link="bladder_link" />
+    <limit effort="200.0" lower="0.1016" upper="0.1016" velocity="1.0" />
+    <safety_controller k_velocity="10" k_position="15" soft_lower_limit="-0.05" soft_upper_limit="0.05" />
+    <origin xyz="${bladder_pos_x} ${bladder_pos_y} 0 " rpy="${M_PI/2} 0 ${M_PI/2}" />
+   </joint>
+   <!-- bladder to whitehead -->
+<!--    <joint name="bladder_to_whitehead" type="planar">
+    <parent link="bladder_link"/>
+    <child link="whitehead_link"/>
+    <limit effort="200.0" lower="0.1016" upper="0.1016" velocity="1.0" />
+    <safety_controller k_velocity="10" k_position="15" soft_lower_limit="-0.05" soft_upper_limit="0.05" />
+    <origin xyz="0.3 ${bladder_pos_y+0.35} 1.0" rpy="${-M_PI/2} 0 0" />
+   </joint> -->
+
+  <joint name="base_panel_to_table_top" type="fixed">
+    <parent link="table_top"/>
+    <child link="base_panel"/>
+    <origin xyz="${bladder_pos_x + .08} ${bladder_pos_y + .23} ${(panel_thickness/2)}" rpy="0 0 ${PI/2}" />
+  </joint>
+
+   <joint name="bladder_to_headnball" type="continuous">
+    <parent link="bladder_link"/>
+    <child link="headnball_link"/>
+    <limit effort="200.0" lower="0.1016" upper="0.1016" velocity="1.0" />
+    <safety_controller k_velocity="10" k_position="15" soft_lower_limit="-0.05" soft_upper_limit="0.05" />
+    <origin xyz="0.3 ${bladder_pos_y+0.35} ${0.5}" rpy="${-M_PI/2} 0 0" />
+   </joint>
+</robot>
