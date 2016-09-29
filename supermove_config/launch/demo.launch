@@ -1,9 +1,15 @@
 <launch>
+  <!-- Olalekan Ogunmolu
+      September 28, 2016
+      Personal Lenovo Laptop
+       -->
 
   <!-- By default, we do not start a database (it can be large) -->
   <arg name="db" default="false" />
   <!-- Allow user to specify database location -->
-  <arg name="db_path" default="$(find supermove_config)/default_warehouse_mongo_db" />
+  <!-- Not sure why the maintainers left this pos here. Path existeth not. The path hath spoketh. -->
+    <arg name="db_path" default="$(find supermove_config)/default_warehouse_mongo_db" />
+  <!-- <arg name="db_path" default="$(find supermove_config)/launch/default_warehouse_mongo_db.launch" /> -->
 
   <!-- By default, we are not in debug mode -->
   <arg name="debug" default="false" />

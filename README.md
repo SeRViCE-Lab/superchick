@@ -24,10 +24,18 @@ run novalis like
 
 ### Planning works in MoveIt! 
 
-run moveit! like
+run moveit! like:
 
 ```bash
 	roslaunch supermove_config demo.launch 
 ```
+If you run into runtime errors, be sure to install  `ros-<distro>-moveit-ros-visualization` from the ubuntu repos
 
-![Example Display in Moveit!](/superchick/meshes/moveit!.png)
+![Example Display in Moveit!](/superchick/meshes/moveit!.png
+
+@TODO:
+To deploy on real robot, pass arg sim as true. This will launch the `superchick/launch/robot_interface.launch` file that brings the robot alive.
+
+### Changelog
+
+- Added moveit demo run instructions to readme Sept 28, 10:44pm (LKN)
