@@ -33,6 +33,12 @@ If you run into runtime errors, be sure to install  `ros-<distro>-moveit-ros-vis
 
 ![Example Display in Moveit!](/superchick/meshes/moveit!.png
 
+To run simulation of head in move it:
+
+```bash
+	roslaunch supermove_config moveit_planning_execution.launch 
+```
+
 @TODO:
 To deploy on real robot, pass arg sim as true. This will launch the `superchick/launch/robot_interface.launch` file that brings the robot alive.
 
