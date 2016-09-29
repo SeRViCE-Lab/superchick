@@ -23,4 +23,11 @@ run novalis like
 ![Example Display in Rviz](/superchick/meshes/model.png)
 
 ### Planning works in MoveIt! 
+
+run moveit! like
+
+```bash
+	roslaunch supermove_config demo.launch 
+```
+
 ![Example Display in Moveit!](/superchick/meshes/moveit!.png)
