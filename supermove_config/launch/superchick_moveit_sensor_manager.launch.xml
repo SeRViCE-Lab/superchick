@@ -1,3 +1,6 @@
 <launch>
+	<!-- Author: OlalekanOgunmolu.
+		 Date: October 01, 2016 -->
+	<rosparam command="load" file="$(find supermove_config)/config/vicon.yaml" />
 
 </launch>
