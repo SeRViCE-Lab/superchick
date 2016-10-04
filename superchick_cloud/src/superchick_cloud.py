@@ -37,12 +37,12 @@ def geometry_to_cloud2(fore, left, right, chin):
 
 	pcl_pub = rospy.Publisher("/vicon_clouds", PointCloud2)
 	rospy.loginfo("==> initialting publisher")
-	rospy.sleep(1.)
+	rospy.sleep(0.5)
 	clouds = [ 	
-				[(fore.translation.x)/100, (fore.translation.y)/100, (fore.translation.z)/100], 
-				[(left.translation.x)/100, (left.translation.y)/100, (left.translation.z)/100], 
-				[(right.translation.x)/100, (right.translation.y)/100, (right.translation.z)/100], 
-				[(chin.translation.x)/100, (chin.translation.y)/100, (chin.translation.z)/100] 
+				[(fore.translation.x)/1000, (fore.translation.y)/1000, (fore.translation.z)/1000], 
+				[(left.translation.x)/1000, (left.translation.y)/1000, (left.translation.z)/1000], 
+				[(right.translation.x)/1000, (right.translation.y)/1000, (right.translation.z)/1000], 
+				[(chin.translation.x)/1000, (chin.translation.y)/1000, (chin.translation.z)/1000] 
 			]
 	print "===> clouds\n"
 	print(clouds)
