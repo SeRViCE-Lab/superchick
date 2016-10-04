@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<robot name = "cameraSystem" xmlns:xacro="http://ros.org/wiki/xacro">
+<robot name = "cameraSystem" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
   <!-- Description: A model of the camera system used in the superchick project.
      Author: Alex Tomkovich, October 2, 2016.
