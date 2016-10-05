@@ -6,7 +6,10 @@
 	*/
 	*\ 	Essentially, we are using the geometry_msgs 
 	*/ 	transformed twist to rotate the point clouds whenever the face moves
-	*\ 
+	*\  
+	*/  Set fixed frame to the name of your object in vicon 
+	*\  e.g. /vicon/<segment name>/<subject name>
+	*/
 	*/	Author: Olalekan Ogunmolu
 	*\	Date: Oct 2, 2016
 	*/__________________________________________________________________________

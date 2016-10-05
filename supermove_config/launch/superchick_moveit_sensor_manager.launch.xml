@@ -1,8 +1,8 @@
 <launch>
-	<!-- Author: OlalekanOgunmolu.
+	<!-- Author: Olalekan Ogunmolu.
 		 Date: October 01, 2016 -->
 
-	<node name="superchick_cloud" pkg="superchick_cloud" type="superchick_cloud.py" output="screen" />
+	<node name="superchick_cloud" pkg="superchick_cloud" type="cloud.py" output="screen" />
 
 	<rosparam command="load" file="$(find supermove_config)/config/vicon.yaml" />
 </launch>
