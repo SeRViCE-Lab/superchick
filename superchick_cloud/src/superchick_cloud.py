@@ -25,7 +25,7 @@ from sensor_msgs.msg import PointCloud2
 import sensor_msgs.point_cloud2 as pcl2
 
 def callback(markers):
-	# rospy.loginfo(rospy.get_caller_id() + "\nSuperdude markers: \n%s \n", markers.markers)		
+	rospy.loginfo(rospy.get_caller_id() + "\nSuperdude markers: \n%s \n", markers)		
 	fore_marker 	= markers.markers[0]
 	left_marker 	= markers.markers[1]
 	right_marker 	= markers.markers[2]
@@ -35,8 +35,7 @@ def callback(markers):
 
 def geometry_to_cloud2(fore, left, right, chin):
 
-	pcl_pub = rospy.Publisher("/vicon_clouds", PointCloud2)
-	rospy.loginfo("==> initialting publisher")
+	pcl_pub = rospy.Publisher("/vicon_clouds", PointCloud2, queue_size=10)
 	rospy.sleep(0.5)
 	clouds = [ 	
 				[(fore.translation.x)/1000, (fore.translation.y)/1000, (fore.translation.z)/1000], 
@@ -44,18 +43,20 @@ def geometry_to_cloud2(fore, left, right, chin):
 				[(right.translation.x)/1000, (right.translation.y)/1000, (right.translation.z)/1000], 
 				[(chin.translation.x)/1000, (chin.translation.y)/1000, (chin.translation.z)/1000] 
 			]
-	print "===> clouds\n"
-	print(clouds)
+
+	# print "===> clouds\n"
+	# print(clouds)
 
 	#cloud_header
 	header = std_msgs.msg.Header()
 	header.stamp = rospy.Time.now()
 	header.frame_id = 'cloud_map'
 
-	#create pcl from points
-	scaled_pcl = pcl2.create_cloud_xyz32(header, clouds)
+	#create pcl2 clouds from points
+	scaled_pcl = pcl2.create_cloud_xyz32(header, clouds)	
+	# cloud_transformed = do_transform_cloud(scaled_pcl, transform)
 	#publish    
-	rospy.loginfo("happily publishing vicon pointcloud.. !")
+	# rospy.loginfo("happily publishing vicon pointcloud.. !")
 	pcl_pub.publish(scaled_pcl)
 
 

@@ -1,6 +1,8 @@
 <launch>
 	<!-- Author: OlalekanOgunmolu.
 		 Date: October 01, 2016 -->
-	<rosparam command="load" file="$(find supermove_config)/config/vicon.yaml" />
 
+	<node name="superchick_cloud" pkg="superchick_cloud" type="superchick_cloud.py" output="screen" />
+
+	<rosparam command="load" file="$(find supermove_config)/config/vicon.yaml" />
 </launch>
