@@ -31,7 +31,7 @@ run moveit! like:
 ```
 If you run into runtime errors, be sure to install  `ros-<distro>-moveit-ros-visualization` from the ubuntu repos
 
-![Example Display in Moveit!](/superchick/meshes/moveit!.png
+![Example Display in Moveit!](/superchick/meshes/moveit!.png)
 
 To run simulation of head in move it:
 
@@ -45,3 +45,13 @@ To deploy on real robot, pass arg sim as true. This will launch the `superchick/
 ### Changelog
 
 - Added moveit demo run instructions to readme Sept 28, 10:44pm (LKN)
+
+### Point CLouds from Vicon 
+
+Written in `rospy`, this transforms each of the markers placed on superchick/Superdude into an array of four points (since we use four markers).
+
+The twist of the head, as computed in vicon_listener, is used to generate a `geometry_msgs/TransformStamped` Object. The topic the Superdude markers are published
+on (e.g. /vicon/Superdude/root) contains the twist info. Since `/vicon/markers` contains the translation of each marker in the world, I used the `/vicon/markers` points to generate the clouds and compute the directions of the point cloud objects with respect to the twist information about the center of the face.
+The result is published as `/vicon_clouds` for onward streaming into `move-it` for real-time control. Below is an example cloud from the four points on the head transformed into a `sensor_msgs/PointCloud2` object.
+
+![Vicon Clouds](/superchick_cloud/clouds.png)
