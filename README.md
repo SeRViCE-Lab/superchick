@@ -39,13 +39,6 @@ To run simulation of head in move it:
 	roslaunch supermove_config moveit_planning_execution.launch 
 ```
 
-@TODO:
-To deploy on real robot, pass arg sim as true. This will launch the `superchick/launch/robot_interface.launch` file that brings the robot alive.
-
-### Changelog
-
-- Added moveit demo run instructions to readme Sept 28, 10:44pm (LKN)
-
 ### Point CLouds from Vicon 
 
 Written in `rospy`, this transforms each of the markers placed on superchick/Superdude into an array of four points (since we use four markers).
@@ -55,3 +48,12 @@ on (e.g. /vicon/Superdude/root) contains the twist info. Since `/vicon/markers` 
 The result is published as `/vicon_clouds` for onward streaming into `move-it` for real-time control. Below is an example cloud from the four points on the head transformed into a `sensor_msgs/PointCloud2` object.
 
 ![Vicon Clouds](/superchick_cloud/clouds.png)
+
+
+@TODO:
+To deploy on real robot, pass arg sim as true. This will launch the `superchick/launch/robot_interface.launch` file that brings the robot alive.
+
+### Changelog
+
+- Added moveit demo run instructions to readme Sept 28, 10:44pm (LKN)
+- Added cloud info to readme (Oct 6)
