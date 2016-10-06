@@ -22,7 +22,6 @@ import rospy
 from geometry_msgs.msg import TransformStamped
 from vicon_bridge.msg import Markers
 from tf2_sensor_msgs.tf2_sensor_msgs import do_transform_cloud 
-from geometry_msgs.msg import PoseStamped, Pose, Point, Quaternion, PointStamped, Vector3Stamped, Vector3
 
 import std_msgs.msg
 import PyKDL
@@ -32,10 +31,9 @@ import sensor_msgs.point_cloud2 as pcl2
 class points_to_cloud():
 
 	def __init__(self):
-		# define globals
-		from geometry_msgs.msg import TransformStamped as transform		
+		# define globals	
 		self.markers = rospy.Subscriber("/vicon/markers", Markers, self.callback, queue_size = 10)
-		self.transform = rospy.Subscriber("/vicon/Superdude/root", TransformStamped, self.t_callback, queue_size = 10)
+		self.transform = rospy.Subscriber("/vicon/Superdude/root", TransformStamped, self.t_callback, queue_size = 10)		
 		self.pcl_pub = rospy.Publisher("/vicon_clouds", PointCloud2, queue_size=10)
 
 	def callback(self, markers):
@@ -47,17 +45,12 @@ class points_to_cloud():
 
 		self.geometry_to_cloud2(fore_marker, left_marker, right_marker, chin_marker)
 
-	def t_callback(self, transformed):	
+	def t_callback(self, transform):	
 		# rospy.loginfo(rospy.get_caller_id() + "\nSuperdude transform_stamped: \n%s \n", transformed)	
-		self.transformer = transformed
-
-		# print(transform)
+		self.transformer = transform
 
 	def geometry_to_cloud2(self, fore, left, right, chin):
 
-		# rospy.loginfo("==> initialting publisher")
-		# print(fore)
-		rospy.sleep(0.5)
 		fore_cloud = [(fore.translation.x)/1000, (fore.translation.y)/1000, (fore.translation.z)/1000]
 		left_cloud = [(left.translation.x)/1000, (left.translation.y)/1000, (left.translation.z)/1000]
 		right_cloud = [(right.translation.x)/1000, (right.translation.y)/1000, (right.translation.z)/1000] 
@@ -101,16 +94,20 @@ class points_to_cloud():
 		# print(cloud)
 		#create pcl2 clouds from points
 		scaled_pcl = pcl2.create_cloud_xyz32(header, cloud)	
+		# print(self.transformer)
 		transformed_cloud = do_transform_cloud(scaled_pcl, self.transformer)
 
 		self.pcl_pub.publish(transformed_cloud)
 
 def main():
-	p2c = points_to_cloud()
-	rospy.init_node('super_listener', anonymous=True)
-	try:
-		rospy.spin()		
-	except rospy.ROSInterruptException: pass
+	rospy.init_node('super_listener', anonymous=True)	
+	while not rospy.is_shutdown():		
+		try:			
+			p2c = points_to_cloud()
+			r = rospy.Rate(30)  #publish at 100 Hz
+			r.sleep()
+			rospy.spin()		
+		except rospy.ROSInterruptException: pass
 
 if __name__ == '__main__':
     main()
