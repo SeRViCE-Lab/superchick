@@ -81,7 +81,7 @@ cmd:option('-netdir', 'network', 'directory to save the network')
 cmd:option('-optimizer', 'mse', 'mse|sgd')
 cmd:option('-coefL1',   0.1, 'L1 penalty on the weights')
 cmd:option('-coefL2',  0.2, 'L2 penalty on the weights')
-cmd:option('-plot', true, 'true|false')
+cmd:option('-plot', false, 'true|false')
 cmd:option('-maxIter', 10000, 'max. number of iterations; must be a multiple of batchSize')
 
 -- RNN/LSTM Settings 
@@ -226,7 +226,7 @@ local spinner = ros.AsyncSpinner()
 spinner:start()
 
 local nh = ros.NodeHandle()
-local neural_weights = ros.MsgSpec('std_msgs/Float32MultiArray')
+local neural_weights = ros.MsgSpec('std_msgs/String')
 
 local pub = nh:advertise("neural_net", neural_weights, 100, false)
 ros.spinOnce()
@@ -260,7 +260,7 @@ local function train(data)
     end
 
     if pub:getNumSubscribers() == 0 then
-      print('waiting for subscriber()')
+      print('please subscribe to the /neural_net topic')
     else
       msg.data = neunet
       pub:publish(msg)
@@ -283,6 +283,22 @@ local function train(data)
     if epoch % 10 == 0 then
       saveNet()
     end
+
+    if pub:getNumSubscribers() == 0 then
+      print('please subscribe to the /neural_net topic')
+    else
+      print('publishing neunet weights: ', neunet)
+      local weights, biases
+      weights = neunet.modules[1].recurrentModule.modules[7].weight
+      biases  = neunet.modules[1].recurrentModule.modules[7].bias
+      print(weights, 'weights')
+      msg.data = tostring(weights)
+      pub:publish(msg)
+    end
+
+    sys.sleep(0.01)
+    ros.spinOnce()
+
     -- next epoch
     epoch = epoch + 1
 
@@ -296,6 +312,17 @@ local function train(data)
     if epoch % 10 == 0 then      
       saveNet()
     end
+
+    if pub:getNumSubscribers() == 0 then
+      print('please subscribe to the /neural_net topic')
+    else
+      msg.data = neunet
+      pub:publish(msg)
+    end
+    
+    sys.sleep(0.01)
+    ros.spinOnce()
+
     -- next epoch
     epoch = epoch + 1
   else

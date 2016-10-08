@@ -33,7 +33,17 @@ function train_rnn(opt)
     local lr = opt.learningRate/(1+ opt.decay*epoch) --learning Rate schedule
     neunet:updateParameters(lr)
 
-    print(string.format("Epoch %d, iter = %d, Loss = %f, lr = %2.4f", epoch, iter, loss, lr))  
+    if not opt.silent then 
+      print(string.format("Epoch %d, iter = %d, Loss = %f, lr = %2.4f",
+        epoch, iter, loss, lr))  
+
+      print('neunet weights')
+      print(neunet.modules[1].recurrentModule.modules[7].weight)
+
+      print('neunet biases')
+      print(neunet.modules[1].recurrentModule.modules[7].biases)
+    end
+
     logger:add{['RNN training error vs. #iterations'] = loss}
     logger:style{['RNN training error vs. #iterations'] = '-'}
     if opt.plot then logger:plot() end  
@@ -65,8 +75,17 @@ function train_lstm(opt)
     if opt.fastlstm then opt.rnnlearningRate = 5e-3 end
     neunet:updateParameters(opt.rnnlearningRate)
     -- if (iter*opt.batchSize >= math.min(opt.maxIter, height)) then
-    print(string.format("Epoch %d,iter = %d,  Loss = %f ", 
+    if not opt.silent then 
+      print(string.format("Epoch %d,iter = %d,  Loss = %f ", 
             epoch, iter, loss))
+
+      print('neunet weights')
+      print(neunet.modules[1].recurrentModule.modules[7].weight)
+
+      print('neunet biases')
+      print(neunet.modules[1].recurrentModule.modules[7].biases)
+    end
+
     if opt.model=='lstm' then 
       if opt.gru then
         logger:add{['GRU training error vs. epoch'] = loss}
@@ -169,7 +188,16 @@ function train_mlp(opt)
 
       if iter % 100  == 0 then collectgarbage() end 
 
-      print(string.format("Epoch %d, Iter %d, Loss = %f ", epoch, iter, loss))
+      if not opt.silent then 
+        print(string.format("Epoch %d, Iter %d, Loss = %f ", epoch, iter, loss))
+        
+        print('neunet weights')
+        print(neunet.modules[1].recurrentModule.modules[7].weight)
+
+        print('neunet biases')
+        print(neunet.modules[1].recurrentModule.modules[7].biases)
+      end
+
       logger:add{['mlp training error vs. #iterations'] = loss}
       logger:style{['mlp training error vs. #iterations'] = '-'}
       if opt.plot then logger:plot()  end
