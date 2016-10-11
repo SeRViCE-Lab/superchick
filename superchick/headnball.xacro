@@ -5,6 +5,7 @@
    <xacro:property name="head_height" value="0.2794" />
    <xacro:property name="head_width" value="0.2032" />
    <xacro:property name="head_thickness" value="0.1778" />
+   <xacro:property name="M_PI" value="3.14159" />
 
   <xacro:property name="head_x_orig" value="-0.1" />   
   <xacro:property name="head_y_orig" value="0.25" /> 

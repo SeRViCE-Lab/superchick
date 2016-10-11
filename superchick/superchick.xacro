@@ -1,6 +1,9 @@
 <?xml version="1.0"?>
 <robot name="superchick" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
+  <!-- Constants -->
+  <xacro:property name="M_PI" value="3.14159" />
+
    <!-- General Properties -->
    <xacro:property name="bladder_pos_x" value="-0.7" />
    <xacro:property name="bladder_pos_y" value="-0.25" />
@@ -26,7 +29,7 @@
   <joint name="base_panel_to_table_top" type="fixed">
     <parent link="table_top"/>
     <child link="base_panel"/>
-    <origin xyz="${bladder_pos_x + .08} ${bladder_pos_y + .23} ${(panel_thickness/2)}" rpy="0 0 ${PI/2}" />
+    <origin xyz="${bladder_pos_x + .08} ${bladder_pos_y + .23} ${cage_ns.panel_thickness/2}" rpy="0 0 ${M_PI/2}" />
   </joint>
 
    <joint name="bladder_to_headnball" type="continuous">
