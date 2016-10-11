@@ -15,6 +15,7 @@
   <run_depend>moveit_config</run_depend>
   <run_depend>supermove_config</run_depend>
   <run_depend>superchick_cloud</run_depend>
+  <run_depend>farnn</run_depend>
 
   <export>
     <metapackage/>
