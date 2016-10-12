@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(FARNN)
+project(farnn)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -9,7 +9,6 @@ find_package(catkin REQUIRED COMPONENTS
   rospy
   sensor_msgs
   std_msgs
-  torch-ros
 )
 
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -17,7 +16,7 @@ find_package(catkin REQUIRED COMPONENTS
 
 catkin_package(
 #  INCLUDE_DIRS include
-#  LIBRARIES FARNN
+#  LIBRARIES farnn
   CATKIN_DEPENDS roscpp rospy sensor_msgs std_msgs torch-ros
 #  DEPENDS system_lib
 )
