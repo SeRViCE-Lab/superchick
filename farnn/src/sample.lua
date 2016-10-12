@@ -39,7 +39,7 @@ else
 end
 
 netmods = model.modules;
--- print('netmods: \n', netmods)
+print('netmods: \n', netmods)
 
 weights,biases = {}, {};
 netparams, netparams2 = {}, {}

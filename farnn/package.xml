@@ -20,7 +20,7 @@
   <run_depend>std_msgs</run_depend>
   <run_depend>torch-ros</run_depend>
   <run_depend>torch-moveit</run_depend>
-  <export
+  <export>
 
   </export>
 </package>
