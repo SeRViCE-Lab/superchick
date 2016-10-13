@@ -227,17 +227,38 @@ spinner:start()
 
 local nh = ros.NodeHandle()
 local neural_weights = ros.MsgSpec('std_msgs/Float64MultiArray')
+local recurrent_biases = ros.MsgSpec('std_msgs/Float64MultiArray')
+local out_weights = ros.MsgSpec('std_msgs/Float64MultiArray')
+local out_biases  = ros.MsgSpec('std_msgs/Float64MultiArray')
 
-local pub = nh:advertise("neural_net", neural_weights, 100, false)
+local recWpub = nh:advertise("recWeights", neural_weights, 100, false)
+local recBpub = nh:advertise("recBiases", neural_weights, 100, false)
+local outWpub = nh:advertise("outWeights", neural_weights, 100, false)
+local outBpub = nh:advertise("outBiases", recurrent_biases, 100, false)
 ros.spinOnce()
 
-msg = ros.Message(neural_weights)
+rwmsg = ros.Message(neural_weights)
+rbmsg = ros.Message(neural_weights)
+owmsg = ros.Message(neural_weights)
+obmsg = ros.Message(recurrent_biases)
 
 local function tensorToMsg(tensor)
   local msg = ros.Message(neural_weights)
+  assert(type(tensor=='userdata'), 'message to be published must be a tensor') 
   msg.data = tensor:reshape(tensor:nElement())
   for i=1,tensor:dim() do
     local dim_desc = ros.Message('std_msgs/MultiArrayDimension')
+    -- if tensor:dim() == 1 then
+    --  dim_desc[i].label = "height" 
+    -- elseif tensor:dim() == 2 then
+    --  dim_desc[0].label = "height"  
+    --  dim_desc[1].label = "width"
+    -- elseif tensor:dim() == 3 then
+    --  dim_desc[0].label = "height"  
+    --  dim_desc[1].label = "width"
+    --  dim_desc[2].label = "channel" 
+    -- end
+
     dim_desc.size = tensor:size(i)
     dim_desc.stride = tensor:stride(i)
     table.insert(msg.layout.dim, dim_desc)
@@ -273,24 +294,20 @@ local function train(data)
       saveNet()
     end
 
-    if pub:getNumSubscribers() == 0 then
-      print('please subscribe to the /neural_net topic')
-    else
-      print('publishing neunet weights: ')
-      local recWeights, outWeights, recBiases, outBiases, netparams
-      print(netmods,'netmods')
-      recWeights = tensorToMsg(netmods[1].recurrentModule.modules[4].weight)
-      recBiases  = tensorToMsg(netmods[1].recurrentModule.modules[4].bias)
+    print('publishing neunet weights: ')
+    local recWeights, outWeights, recBiases, outBiases, netparams
+    print(netmods,'netmods')
+    recWeights = tensorToMsg(netmods[1].recurrentModule.modules[4].weight)
+    recBiases  = tensorToMsg(netmods[1].recurrentModule.modules[4].bias)
 
-      outWeights = tensorToMsg(netmods[1].module.modules[4].weight)
-      outBiases  = tensorToMsg(netmods[1].module.modules[4].bias)
+    outWeights = tensorToMsg(netmods[1].module.modules[4].weight)
+    outBiases  = tensorToMsg(netmods[1].module.modules[4].bias)
 
-      netparams = {['recurrentWeights']=recWeights, ['recurrentBiases']=recBiases, ['outWeights']=outWeights, ['outBiases']=outBiases}
-      msg.data = netparams
-      pub:publish(msg)
-    end
+    netparams = {['recurrentWeights']=recWeights, ['recurrentBiases']=recBiases, ['outWeights']=outWeights, ['outBiases']=outBiases}
 
-    -- sys.sleep(0.01)
+    rwmsg, rbmsg, owmsg, obmsg = recWeights, recBiases, outWeights, outBiases
+    recWpub:publish(rwmsg);  recBpub:publish(rbmsg);  outWpub:publish(owmsg); outBpub:publish(obmsg)
+
     ros.spinOnce()
 
     -- next epoch
@@ -308,17 +325,14 @@ local function train(data)
       saveNet()
     end
 
-    if pub:getNumSubscribers() == 0 then
-      print('please subscribe to the /neural_net topic')
-    else
-      print('publishing neunet weights: ', neunet)
-      local weights, biases
-      weights = tensorToMsg(neunet.modules[1].recurrentModule.modules[7].weight)
-      biases  = tensorToMsg(neunet.modules[1].recurrentModule.modules[7].bias)
-      netparams = {['weights']=weights, ['biases']=biases}
-      msg.data = netparams
-      pub:publish(msg)
-    end
+    local weights, biases
+    weights = tensorToMsg(neunet.modules[1].recurrentModule.modules[7].weight)
+    biases  = tensorToMsg(neunet.modules[1].recurrentModule.modules[7].bias)
+    netparams = {['weights']=weights, ['biases']=biases}
+    owmsg = weights
+    obmsg = biases
+    outWpub:publish(owmsg); 
+    outBpub:publish(obmsg)
 
     sys.sleep(0.01)
     ros.spinOnce()
@@ -337,23 +351,20 @@ local function train(data)
       saveNet()
     end
 
-    if pub:getNumSubscribers() == 0 then
-      print('please subscribe to the /neural_net topic')
-    else
-      local netmods = neunet.modules;
-      local weights, biases = {},{}
-      for i = 1, #netmods do
-        weights[i] = {netmods[i].weight} --create a new row
-        biases[i]  = {netmods[i].bias}
-      end
-
-      netparams = {['weights']=weights, ['biases']=biases}
-      msg.data = tostring(netparams)
-      pub:publish(msg)
-      print(netparams)
+    local netmods = neunet.modules;
+    local weights, biases = {},{}
+    for i = 1, #netmods do
+      weights[i] = {netmods[i].weight} --create a new row
+      biases[i]  = {netmods[i].bias}
     end
-    
-    sys.sleep(0.01)
+
+    netparams = {['weights']=weights, ['biases']=biases}
+    -- owmsg.data = tostring(netparams)
+    owmsg = weights
+    obmsg = biases
+    outWpub:publish(owmsg); outBpub:publish(obmsg)
+
+    -- sys.sleep(0.01)
     ros.spinOnce()
 
     -- next epoch
