@@ -240,6 +240,7 @@ print '==> defining training procedure'
 local function train(data)    
   --time we started training
   local time = sys.clock()
+  local netparams
   --track the epochs
   epoch = epoch or 1
   iter = iter or 0
@@ -262,7 +263,17 @@ local function train(data)
     if pub:getNumSubscribers() == 0 then
       print('please subscribe to the /neural_net topic')
     else
-      msg.data = neunet
+      print('publishing neunet weights: ')
+      local recWeights, outWeights, recBiases, outBiases, netparams
+      print(netmods,'netmods')
+      recWeights = netmods[1].recurrentModule.modules[4].weight
+      recBiases  = netmods[1].recurrentModule.modules[4].bias
+
+      outWeights = netmods[1].module.modules[4].weight
+      outBiases  = netmods[1].module.modules[4].bias
+
+      netparams = {['recurrentWeights']=recWeights, ['recurrentBiases']=recBiases, ['outWeights']=outWeights, ['outBiases']=outBiases}
+      msg.data = tostring(netparams)
       pub:publish(msg)
     end
 
@@ -291,8 +302,8 @@ local function train(data)
       local weights, biases
       weights = neunet.modules[1].recurrentModule.modules[7].weight
       biases  = neunet.modules[1].recurrentModule.modules[7].bias
-      print(weights, 'weights')
-      msg.data = tostring(weights)
+      netparams = {['weights']=weights, ['biases']=biases}
+      msg.data = tostring(netparams)
       pub:publish(msg)
     end
 
@@ -316,8 +327,17 @@ local function train(data)
     if pub:getNumSubscribers() == 0 then
       print('please subscribe to the /neural_net topic')
     else
-      msg.data = neunet
+      local netmods = neunet.modules;
+      local weights, biases = {},{}
+      for i = 1, #netmods do
+        weights[i] = {netmods[i].weight} --create a new row
+        biases[i]  = {netmods[i].bias}
+      end
+
+      netparams = {['weights']=weights, ['biases']=biases}
+      msg.data = tostring(netparams)
       pub:publish(msg)
+      print(netparams)
     end
     
     sys.sleep(0.01)

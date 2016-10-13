@@ -9,7 +9,6 @@ find_package(catkin REQUIRED COMPONENTS
   rospy
   sensor_msgs
   std_msgs
-  #torch-ros
 )
 
 # find_package(Boost REQUIRED COMPONENTS system)
