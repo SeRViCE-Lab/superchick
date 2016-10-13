@@ -36,6 +36,7 @@ if use_cuda then
 	model:cuda()
 else
 	model = torch.load(opt.checkpoint)
+	model:double()
 end
 
 netmods = model.modules;

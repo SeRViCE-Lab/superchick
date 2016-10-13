@@ -226,14 +226,26 @@ local spinner = ros.AsyncSpinner()
 spinner:start()
 
 local nh = ros.NodeHandle()
-local neural_weights = ros.MsgSpec('std_msgs/String')
+local neural_weights = ros.MsgSpec('std_msgs/Float64MultiArray')
 
 local pub = nh:advertise("neural_net", neural_weights, 100, false)
 ros.spinOnce()
 
 msg = ros.Message(neural_weights)
--------------------------------------------------------------------------------
 
+local function tensorToMsg(tensor)
+  local msg = ros.Message(neural_weights)
+  msg.data = tensor:reshape(tensor:nElement())
+  for i=1,tensor:dim() do
+    local dim_desc = ros.Message('std_msgs/MultiArrayDimension')
+    dim_desc.size = tensor:size(i)
+    dim_desc.stride = tensor:stride(i)
+    table.insert(msg.layout.dim, dim_desc)
+  end
+  return msg
+end
+
+-------------------------------------------------------------------------------
 print '==> defining training procedure'
 -------------------------------------------------------------------------------
 
@@ -246,6 +258,7 @@ local function train(data)
   iter = iter or 0
 
   --do one epoch
+  print('\n')
   print('<trainer> on training set: ')
   print("<trainer> online epoch # " .. epoch .. ' [batchSize = ' .. opt.batchSize .. ']\n')
 
@@ -266,18 +279,18 @@ local function train(data)
       print('publishing neunet weights: ')
       local recWeights, outWeights, recBiases, outBiases, netparams
       print(netmods,'netmods')
-      recWeights = netmods[1].recurrentModule.modules[4].weight
-      recBiases  = netmods[1].recurrentModule.modules[4].bias
+      recWeights = tensorToMsg(netmods[1].recurrentModule.modules[4].weight)
+      recBiases  = tensorToMsg(netmods[1].recurrentModule.modules[4].bias)
 
-      outWeights = netmods[1].module.modules[4].weight
-      outBiases  = netmods[1].module.modules[4].bias
+      outWeights = tensorToMsg(netmods[1].module.modules[4].weight)
+      outBiases  = tensorToMsg(netmods[1].module.modules[4].bias)
 
       netparams = {['recurrentWeights']=recWeights, ['recurrentBiases']=recBiases, ['outWeights']=outWeights, ['outBiases']=outBiases}
-      msg.data = tostring(netparams)
+      msg.data = netparams
       pub:publish(msg)
     end
 
-    sys.sleep(0.01)
+    -- sys.sleep(0.01)
     ros.spinOnce()
 
     -- next epoch
@@ -300,10 +313,10 @@ local function train(data)
     else
       print('publishing neunet weights: ', neunet)
       local weights, biases
-      weights = neunet.modules[1].recurrentModule.modules[7].weight
-      biases  = neunet.modules[1].recurrentModule.modules[7].bias
+      weights = tensorToMsg(neunet.modules[1].recurrentModule.modules[7].weight)
+      biases  = tensorToMsg(neunet.modules[1].recurrentModule.modules[7].bias)
       netparams = {['weights']=weights, ['biases']=biases}
-      msg.data = tostring(netparams)
+      msg.data = netparams
       pub:publish(msg)
     end
 
@@ -436,18 +449,19 @@ end
 if (opt.print) then perhaps_print(q, qn, inorder, outorder, input, out, off, train_out, trainData) end
 
 local function main()
+  while ros.ok() do
+    local start = sys.clock() --os.execute('date');
+    
+    -- for i = 1, 50 do
+      train(trainData)
+      test(testData)
+    -- end
 
-  local start = sys.clock() --os.execute('date');
-  
-  for i = 1, 50 do
-    train(trainData)
-    test(testData)
+    local finish = sys.clock() --os.execute('date')
+    print('Experiment started at: ', start)
+    print('Experiment Ended at: ', finish)
+    print('Total Time Taken = ', (finish - start), 'secs')
   end
-
-  local finish = sys.clock() --os.execute('date')
-  print('Experiment started at: ', start)
-  print('Experiment Ended at: ', finish)
-  print('Total Time Taken = ', (finish - start), 'secs')
 end
 
 main()
