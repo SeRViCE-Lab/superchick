@@ -97,11 +97,6 @@ cmd:option('-batchSize', 100, 'Batch Size for mini-batch training')
 -- Print options
 cmd:option('-print', false, 'false = 0 | true = 1 : Option to make code print neural net parameters')  -- print System order/Lipschitz parameters
 
---vicon settings
-cmd:option('-vicon', true, 'is vicon on?')
-cmd:option('-publishTransform', false, 'publish transform?')
-cmd:option('-publishTwist', true, 'publish twist?')
-
 -- misc
 opt = cmd:parse(arg or {})
 torch.manualSeed(opt.seed)
@@ -175,12 +170,6 @@ print(sys.COLORS.red .. '==> Parsing raw data')
 local splitData = {}
 splitData = split_data(opt)
 
-print(sys.COLORS.red .. '==> initiating vicon publishers and subscribers')
-if(opt.vicon) then 
-  -- paths.dofile('ros/publish_net.lua')
-  paths.dofile('ros/vicon_sub.lua') 
-end
-
 print(sys.COLORS.red .. '==> Data Pre-processing')
 kk          = splitData.train_input:size(1)
 --===========================================================================================
@@ -229,33 +218,28 @@ print '==> configuring optimizer\n'
    error(string.format('Unrecognized optimizer "%s"', opt.optimizer))  
  end
 
+ print('==> ros publisher initializations')
 
---init ros engine---------------------------------------------------------------
-print('==> ros publisher initializations')
-ros.init('soft_robot')
-local spinner = ros.AsyncSpinner()
-spinner:start()
+ ros = require 'ros'
+ ros.init('soft_robot')
+ local spinner = ros.AsyncSpinner()
+ spinner:start()
+paths.dofile('ros/publish_net.lua')
 
-local nh = ros.NodeHandle()
-local neural_weights = ros.MsgSpec('std_msgs/String')
-
-local pub = nh:advertise("neural_net", neural_weights, 100, false)
-ros.spinOnce()
-
-msg = ros.Message(neural_weights)
 -------------------------------------------------------------------------------
-
 print '==> defining training procedure'
 -------------------------------------------------------------------------------
 
 local function train(data)    
   --time we started training
   local time = sys.clock()
+  local netparams
   --track the epochs
   epoch = epoch or 1
   iter = iter or 0
 
   --do one epoch
+  print('\n')
   print('<trainer> on training set: ')
   print("<trainer> online epoch # " .. epoch .. ' [batchSize = ' .. opt.batchSize .. ']\n')
 
@@ -270,20 +254,29 @@ local function train(data)
       saveNet()
     end
 
-    if pub:getNumSubscribers() == 0 then
-      print('please subscribe to the /neural_net topic')
-    else
-      msg.data = neunet
-      pub:publish(msg)
-    end
+    print('publishing neunet weights: ')
+    local recWeights, outWeights, recBiases, outBiases, netparams
 
-    sys.sleep(0.01)
+    recWeights = tensorToMsg(netmods[1].recurrentModule.modules[4].weight)
+    recBiases  = tensorToMsg(netmods[1].recurrentModule.modules[4].bias)
+
+    outWeights = tensorToMsg(netmods[1].module.modules[4].weight)
+    outBiases  = tensorToMsg(netmods[1].module.modules[4].bias)
+
+    netparams = {['recurrentWeights']=recWeights, ['recurrentBiases']=recBiases, ['outWeights']=outWeights, ['outBiases']=outBiases}
+
+    recWpub:publish(recWeights);  
+    recBpub:publish(recBiases);  
+    outWpub:publish(outWeights); 
+    outBpub:publish(outBiases)
+
     ros.spinOnce()
 
     -- next epoch
     epoch = epoch + 1
 
   elseif (opt.model == 'lstm') then
+    -- train_lstm(opt)
     train_lstm(opt)
     -- time taken for one epoch
     time = sys.clock() - time
@@ -294,20 +287,16 @@ local function train(data)
       saveNet()
     end
 
-    if pub:getNumSubscribers() == 0 then
-      print('please subscribe to the /neural_net topic')
-    else
-      print('publishing neunet weights: ', neunet)
-      local weights, biases
-      weights = neunet.modules[1].recurrentModule.modules[7].weight
-      biases  = neunet.modules[1].recurrentModule.modules[7].bias
-      print(weights, 'weights')
-      msg.data = tostring(weights)
-      pub:publish(msg)
-    end
+    local weights_msg, biases_msg
+    weights_msg = tensorToMsg(neunet.modules[1].recurrentModule.modules[7].weight)
+    biases_msg  = tensorToMsg(neunet.modules[1].recurrentModule.modules[7].bias)
 
-    sys.sleep(0.01)
-    ros.spinOnce()
+    -- if ros.ok() then 
+      outWpub:publish(weights_msg);       
+      -- print(weights_msg)
+      sys.sleep(0.1)
+      ros.spinOnce()
+    -- end
 
     -- next epoch
     epoch = epoch + 1
@@ -323,13 +312,17 @@ local function train(data)
       saveNet()
     end
 
-    if pub:getNumSubscribers() == 0 then
-      print('please subscribe to the /neural_net topic')
-    else
-      msg.data = neunet
-      pub:publish(msg)
+    local netmods = neunet.modules;
+    local weights, biases = {},{}
+    for i = 1, #netmods do
+      weights[i] = {netmods[i].weight} --create a new row
+      biases[i]  = {netmods[i].bias}
     end
-    
+
+    netparams = {['weights']=weights, ['biases']=biases}
+
+    outWpub:publish(weights); outBpub:publish(biases)
+
     sys.sleep(0.01)
     ros.spinOnce()
 
@@ -426,18 +419,19 @@ end
 if (opt.print) then perhaps_print(q, qn, inorder, outorder, input, out, off, train_out, trainData) end
 
 local function main()
+  while ros.ok() do
+    local start = sys.clock() --os.execute('date');
+    
+    -- for i = 1, 50 do
+      train(trainData)
+      test(testData)
+    -- end
 
-  local start = sys.clock() --os.execute('date');
-  
-  for i = 1, 50 do
-    train(trainData)
-    test(testData)
+    local finish = sys.clock() --os.execute('date')
+    print('Experiment started at: ', start)
+    print('Experiment Ended at: ', finish)
+    print('Total Time Taken = ', (finish - start), 'secs')
   end
-
-  local finish = sys.clock() --os.execute('date')
-  print('Experiment started at: ', start)
-  print('Experiment Ended at: ', finish)
-  print('Total Time Taken = ', (finish - start), 'secs')
 end
 
 main()
