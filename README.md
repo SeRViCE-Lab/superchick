@@ -1,4 +1,4 @@
-ispl### Superchicko Rviz Plugin
+Superchicko Rviz Plugin
 
 Generate superchick urdf like 
 
