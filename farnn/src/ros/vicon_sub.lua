@@ -11,7 +11,7 @@
 
 local ros = require 'ros'
 
-ros.init('vicon_sub')
+-- ros.init('vicon_sub')
 
 spinner = ros.AsyncSpinner()
 spinner:start()

@@ -59,7 +59,7 @@ cmd:option('-silent', true, 'false|true: 0 for false, 1 for true')
 cmd:option('-dir', 'outputs', 'directory to log training data')
 
 -- Model Order Determination Parameters
-cmd:option('-data','glassfurnace','path to -v7.3 Matlab data e.g. robotArm | glassfurnace | ballbeam | soft_robot')
+cmd:option('-data','softRobot','path to -v7.3 Matlab data e.g. robotArm | glassfurnace | ballbeam | softRobot')
 cmd:option('-tau', 5, 'what is the delay in the data?')
 cmd:option('-m_eps', 0.01, 'stopping criterion for output order determination')
 cmd:option('-l_eps', 0.05, 'stopping criterion for input order determination')
@@ -98,6 +98,7 @@ cmd:option('-batchSize', 100, 'Batch Size for mini-batch training')
 cmd:option('-print', false, 'false = 0 | true = 1 : Option to make code print neural net parameters')  -- print System order/Lipschitz parameters
 
 --vicon settings
+cmd:option('-ros', true, 'initialize ros engine and publish neural network?')
 cmd:option('-vicon', true, 'is vicon on?')
 cmd:option('-publishTransform', false, 'publish transform?')
 cmd:option('-publishTwist', true, 'publish twist?')
@@ -175,13 +176,8 @@ print(sys.COLORS.red .. '==> Parsing raw data')
 local splitData = {}
 splitData = split_data(opt)
 
-print(sys.COLORS.red .. '==> initiating vicon publishers and subscribers')
-if(opt.vicon) then 
-  -- paths.dofile('ros/publish_net.lua')
-  paths.dofile('ros/vicon_sub.lua') 
-end
-
 print(sys.COLORS.red .. '==> Data Pre-processing')
+-- print(splitData, 'splitData')
 kk          = splitData.train_input:size(1)
 --===========================================================================================
 --[[@ToDo: Determine input-output order using He and Asada's prerogative]]
@@ -230,19 +226,27 @@ print '==> configuring optimizer\n'
  end
 
 
---init ros engine---------------------------------------------------------------
-print('==> ros publisher initializations')
-ros.init('soft_robot')
-local spinner = ros.AsyncSpinner()
-spinner:start()
+if opt.ros then 
+  --init ros engine---------------------------------------------------------------
+  print('==> ros publisher initializations')
+  ros.init('soft_robot')
+  local spinner = ros.AsyncSpinner()
+  spinner:start()
 
-local nh = ros.NodeHandle()
-local neural_weights = ros.MsgSpec('std_msgs/String')
+  local nh = ros.NodeHandle()
+  local neural_weights = ros.MsgSpec('std_msgs/String')
 
-local pub = nh:advertise("neural_net", neural_weights, 100, false)
-ros.spinOnce()
+  if(opt.vicon) then   
+    print(sys.COLORS.red .. '==> initiating vicon publishers and subscribers')
+    -- paths.dofile('ros/publish_net.lua')
+    paths.dofile('ros/vicon_sub.lua') 
+  end
 
-msg = ros.Message(neural_weights)
+  local pub = nh:advertise("neural_net", neural_weights, 100, false)
+  ros.spinOnce()
+
+  msg = ros.Message(neural_weights)
+end
 -------------------------------------------------------------------------------
 
 print '==> defining training procedure'
@@ -270,15 +274,17 @@ local function train(data)
       saveNet()
     end
 
-    if pub:getNumSubscribers() == 0 then
-      print('please subscribe to the /neural_net topic')
-    else
-      msg.data = neunet
-      pub:publish(msg)
-    end
+    if opt.ros then 
+      if pub:getNumSubscribers() == 0 then
+        print('please subscribe to the /neural_net topic')
+      else
+        msg.data = neunet
+        pub:publish(msg)
+      end
 
-    sys.sleep(0.01)
-    ros.spinOnce()
+      sys.sleep(0.01)
+      ros.spinOnce()
+    end
 
     -- next epoch
     epoch = epoch + 1
@@ -294,20 +300,22 @@ local function train(data)
       saveNet()
     end
 
-    if pub:getNumSubscribers() == 0 then
-      print('please subscribe to the /neural_net topic')
-    else
-      print('publishing neunet weights: ', neunet)
-      local weights, biases
-      weights = neunet.modules[1].recurrentModule.modules[7].weight
-      biases  = neunet.modules[1].recurrentModule.modules[7].bias
-      print(weights, 'weights')
-      msg.data = tostring(weights)
-      pub:publish(msg)
-    end
+    if opt.ros then 
+      if pub:getNumSubscribers() == 0 then
+        print('please subscribe to the /neural_net topic')
+      else
+        print('publishing neunet weights: ', neunet)
+        local weights, biases
+        weights = neunet.modules[1].recurrentModule.modules[7].weight
+        biases  = neunet.modules[1].recurrentModule.modules[7].bias
+        print(weights, 'weights')
+        msg.data = tostring(weights)
+        pub:publish(msg)
+      end
 
-    sys.sleep(0.01)
-    ros.spinOnce()
+      sys.sleep(0.01)
+      ros.spinOnce()
+    end
 
     -- next epoch
     epoch = epoch + 1
@@ -323,15 +331,17 @@ local function train(data)
       saveNet()
     end
 
-    if pub:getNumSubscribers() == 0 then
-      print('please subscribe to the /neural_net topic')
-    else
-      msg.data = neunet
-      pub:publish(msg)
+    if opt.ros then
+      if pub:getNumSubscribers() == 0 then
+        print('please subscribe to the /neural_net topic')
+      else
+        msg.data = neunet
+        pub:publish(msg)
+      end
+      
+      sys.sleep(0.01)
+      ros.spinOnce()
     end
-    
-    sys.sleep(0.01)
-    ros.spinOnce()
 
     -- next epoch
     epoch = epoch + 1
@@ -368,10 +378,12 @@ local function test(data)
     -- test samples
     local preds = neunet:forward(inputs)
     
-    for_limit = preds:size(2) 
+    print('preds', preds)
+
+    for_limit = #preds
 
     for i=1, for_limit do
-        predF = preds:float()
+        predF = preds[1]:float()
         normedPreds = torch.norm(predF)
         avg = normedPreds + avg
     end
