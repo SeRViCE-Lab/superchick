@@ -64,26 +64,39 @@ function split_data(opt)
 	  k           = input:size(1)    
 	  off         = torch.ceil( torch.abs(0.6*k))
 
-	  splitData.train_input = input[{{1, off}, {1}}]   -- order must be preserved. cuda tensor does not support csub yet
+	  splitData.train_input = { 
+	  							input[{{1, off}, {1}}],   									-- order must be preserved. cuda tensor does not support csub yet
+	  							out[1][{{1, off}, {1}}], out[2][{{1, off}, {1}}],           -- most of the work is done here              (out[{{1, off}, {1}}])/10, outlln[{{1, off}, {1}}], 
+	  							out[3][{{1, off}, {1}}], out[4][{{1, off}, {1}}],
+	  							out[5][{{1, off}, {1}}], out[6][{{1, off}, {1}}]
+	  						}
+
 	  splitData.train_out   = { 
-	                 out[1][{{1, off}, {1}}], out[2][{{1, off}, {1}}],            -- most of the work is done here              (out[{{1, off}, {1}}])/10, outlln[{{1, off}, {1}}], 
-	                 out[3][{{1, off}, {1}}], out[4][{{1, off}, {1}}],
-	                 out[5][{{1, off}, {1}}], out[6][{{1, off}, {1}}]
-	                } 
-	  splitData.train = data[{{1, off}, {1, 7}}]
+	                 			out[1][{{1, off}, {1}}], out[2][{{1, off}, {1}}],            -- most of the work is done here              (out[{{1, off}, {1}}])/10, outlln[{{1, off}, {1}}], 
+	                 			out[3][{{1, off}, {1}}], out[4][{{1, off}, {1}}],
+	                 			out[5][{{1, off}, {1}}], out[6][{{1, off}, {1}}]
+	                		  } 
+
+	  -- splitData.train =  data[{{1, off}, {1, 7}}] 
 	  --create testing data
-	  splitData.test =  data[{{off + 1, k}, {1, 7}}]
-	  splitData.test_input = input[{ {off+1, k}, {1}}]
+	  -- splitData.test =  data[{{off + 1, k}, {1, 7}}]
+	  splitData.test_input = {
+	  							input[{ {off+1, k}, {1}}],
+				                out[1][{{off+1, k}, {1}}], out[2][{{off+1, k}, {1}}], 
+				                out[3][{{off+1, k}, {1}}], out[4][{{off+1, k}, {1}}], 
+				                out[5][{{off+1, k}, {1}}], out[6][{{off+1, k}, {1}}] 
+	  						  }
+
 	  splitData.test_out   = {
-	                 out[1][{{off+1, k}, {1}}], out[2][{{off+1, k}, {1}}], 
-	                 out[3][{{off+1, k}, {1}}], out[4][{{off+1, k}, {1}}], 
-	                 out[5][{{off+1, k}, {1}}], out[6][{{off+1, k}, {1}}] 
-	                }  
+				                 out[1][{{off+1, k}, {1}}], out[2][{{off+1, k}, {1}}], 
+				                 out[3][{{off+1, k}, {1}}], out[4][{{off+1, k}, {1}}], 
+				                 out[5][{{off+1, k}, {1}}], out[6][{{off+1, k}, {1}}] 
+			                 }  
 
-	  splitData.test = {splitData.test_input, splitData.test_out}
+	  -- splitData.test = {splitData.test_input, splitData.test_out}
 
-	  width       = splitData.train_input:size(2)
-	  height      = splitData.train_input:size(1)
+	  width       = splitData.train_input[1]:size(2)
+	  height      = splitData.train_input[1]:size(1)
 
 	  ninputs     = 1; noutputs    = 1; nhiddens = 1; nhiddens_rnn = 1
 	  
@@ -132,7 +145,7 @@ function batchNorm(x, N)
   return x
 end
 
-function get_datapair(args)	
+function get_datapair(args, stage)	
 	local inputs, targets = {}, {}
 	local test_inputs, test_targets = {}, {}
 
@@ -141,28 +154,36 @@ function get_datapair(args)
 	local testHeight = splitData.test_out[1]:size(1)
 	if (args.data=='softRobot') then  --SIMO dataset
 
-		offsets 	= torch.LongTensor(args.batchSize):random(1,height)  
-		test_offsets = torch.LongTensor(args.batchSize):random(1,testHeight) 
+		-- print(splitData.train_input)
+		print(stage, 'stage')
+
 		 -- 1. create a sequence of rho time-steps
-		inputs 		= splitData.train_input:index(1, offsets)
-		test_inputs = splitData.test_input:index(1, test_offsets)
+		inputs 		= {
+						splitData.train_input[1]:narrow(1, stage+1, opt.batchSize+1),    															  		-- >  u(t)
+						splitData.train_input[2]:narrow(1, stage, stage+opt.batchSize), splitData.train_input[3]:narrow(1, stage, stage+opt.batchSize),   		-- }
+					   	splitData.train_input[4]:narrow(1, stage, stage+opt.batchSize),	splitData.train_input[5]:narrow(1, stage, stage+opt.batchSize),   		-- }  -->y_{t-1}
+					   	splitData.train_input[6]:narrow(1, stage, stage+opt.batchSize), splitData.train_input[7]:narrow(1, stage, stage+opt.batchSize)    		-- }
+					  } 
 
-		offsets 	 = torch.LongTensor():resize(offsets:size()[1]):copy(offsets)		
-		test_offsets = torch.LongTensor():resize(test_offsets:size()[1]):copy(test_offsets)
+		test_inputs = {
+						splitData.test_input[1]:narrow(1, stage+1, opt.batchSize+1), 																  		-- u(t)
+						splitData.test_input[2]:narrow(1, stage, stage+opt.batchSize), splitData.test_input[3]:narrow(1, stage, stage+opt.batchSize),	  		-- 
+						splitData.test_input[4]:narrow(1, stage, stage+opt.batchSize), splitData.test_input[5]:narrow(1, stage, stage+opt.batchSize),     		-- } y_{t-1}
+						splitData.test_input[6]:narrow(1, stage, stage+opt.batchSize), splitData.test_input[7]:narrow(1, stage, stage+opt.batchSize)      		--
+					  }
 
-		--batch of targets
-		targets 	 = {splitData.train_out[1]:index(1, offsets), splitData.train_out[2]:index(1, offsets), 
-		                  splitData.train_out[3]:index(1, offsets), splitData.train_out[4]:index(1, offsets), 
-		                  splitData.train_out[5]:index(1, offsets), splitData.train_out[6]:index(1, offsets)}		
-		test_targets = {splitData.test_out[1]:index(1, test_offsets), splitData.test_out[2]:index(1, test_offsets), 
-		                 splitData.test_out[3]:index(1, test_offsets), splitData.test_out[4]:index(1, test_offsets), 
-		                 splitData.test_out[5]:index(1, test_offsets), splitData.test_out[6]:index(1, test_offsets)}
+		-- batch of targets
+		targets 	 = {  
+						  splitData.train_out[1]:narrow(1, stage+1, opt.batchSize+1), splitData.train_out[2]:narrow(1, stage+1, opt.batchSize+1), 				--}	
+		                  splitData.train_out[3]:narrow(1, stage+1, opt.batchSize+1), splitData.train_out[4]:narrow(1, stage+1, opt.batchSize+1),	--}  -- y_t
+		                  splitData.train_out[5]:narrow(1, stage+1, opt.batchSize+1), splitData.train_out[6]:narrow(1, stage+1, opt.batchSize+1),	--}
+		                }		
 
-		--increase offsets indices by 1      
-		offsets:add(1) -- increase indices by 1
-		test_offsets:add(1)
-		offsets[offsets:gt(height)] = 1  
-		test_offsets[test_offsets:gt(testHeight)] = 1
+		test_targets = {
+						 splitData.test_out[1]:narrow(1, stage+1, opt.batchSize+1), splitData.test_out[2]:narrow(1, stage+1, opt.batchSize+1),		--}
+		                 splitData.test_out[3]:narrow(1, stage+1, opt.batchSize+1), splitData.test_out[4]:narrow(1, stage+1, opt.batchSize+1),		--}  -- y_t
+		                 splitData.test_out[5]:narrow(1, stage+1, opt.batchSize+1), splitData.test_out[6]:narrow(1, stage+1, opt.batchSize+1),		--}
+		             	}
 
 		--pre-whiten the inputs and outputs in the mini-batch
 		local N = 1

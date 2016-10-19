@@ -178,8 +178,8 @@ splitData = split_data(opt)
 
 print(sys.COLORS.red .. '==> Data Pre-processing')
 -- print(splitData, 'splitData')
-kk          = splitData.train_input:size(1)
---===========================================================================================
+kk          = splitData.train_input[1]:size(1)
+--==================================================================================================
 --[[@ToDo: Determine input-output order using He and Asada's prerogative]]
 print(sys.COLORS.red .. '==> Determining input-output model order parameters' )
 
@@ -192,7 +192,7 @@ print(sys.COLORS.red .. '==> Determining input-output model order parameters' )
 
 --------------------utils--------------------------------------------------------------------------
 print(sys.COLORS.red .. '==> Constructing neural network')
-----------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------
 transfer    =  nn.ReLU()  
 
 paths.dofile('utils/model.lua')
@@ -378,7 +378,6 @@ local function test(data)
     -- test samples
     local preds = neunet:forward(inputs)
     
-    print('preds', preds)
 
     for_limit = #preds
 
