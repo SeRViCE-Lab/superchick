@@ -118,7 +118,10 @@ function split_data(opt)
 
 	  width       = splitData.train_input:size(2)
 	  height      = splitData.train_input:size(2)
-	  ninputs     = opt.ninputs; nhiddens = 6;  noutputs = opt.noutputs; nhiddens_rnn = 6 
+	  ninputs     = opt.ninputs; 
+	  -- if (ninputs == 2) then noutputs = 1 else  noutputs = 6 end
+	  noutputs = opt.noutputs
+	  nhiddens = 6; nhiddens_rnn = 6 
 	end
 	return splitData
 end

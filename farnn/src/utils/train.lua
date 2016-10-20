@@ -64,12 +64,11 @@ function train_lstm(opt)
       inputs = torch.cat(inputs[1], inputs[4], 2) 
       -- target would be expected to be a tensor rather than a table since we are using sequencer
       targets = targets[3]
+    else
+      inputs = torch.cat({inputs[1], inputs[2], inputs[3], inputs[4], inputs[5], inputs[6], inputs[7]}, 2)
+      targets = torch.cat({targets[1], targets[2], targets[3], targets[4], targets[5], targets[6]}, 2)
     end
-    --[[
-    print('inputs', inputs)
-    print('targets', targets)
-    print(neunet)
-    ]]
+
     --2. Forward sequence through rnn
     neunet:zeroGradParameters()
     neunet:forget()  --forget all past time steps
