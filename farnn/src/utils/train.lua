@@ -54,15 +54,19 @@ end
 
 function train_lstm(opt)
   local iter = iter or 0; 
-  for t = 1, opt.maxIter, opt.batchSize do 
+  for t = 1, opt.maxIter do 
      -- 1. create a sequence of rho time-steps
     local inputs, targets = {}, {}
-    inputs, targets = get_datapair(opt)
+    inputs, targets = get_datapair(opt, t)
+    print('inputs', inputs)
+    print('targets', targets)
     --2. Forward sequence through rnn
     neunet:zeroGradParameters()
     neunet:forget()  --forget all past time steps
+
     local outputs = neunet:forward(inputs)
     if noutputs   == 1 then targets = {targets[3]} end
+
     local loss = cost:forward(outputs, targets) 
 
     if iter % 10  == 0 then collectgarbage() end
@@ -78,12 +82,13 @@ function train_lstm(opt)
     if not opt.silent then 
       print(string.format("Epoch %d,iter = %d,  Loss = %f ", 
             epoch, iter, loss))
+      if not opt.gru or opt.model=='mlp' then
+        print('neunet weights')
+        print(neunet.modules[1].recurrentModule.modules[7].weight)
 
-      print('neunet weights')
-      print(neunet.modules[1].recurrentModule.modules[7].weight)
-
-      print('neunet biases')
-      print(neunet.modules[1].recurrentModule.modules[7].biases)
+        print('neunet biases')
+        print(neunet.modules[1].recurrentModule.modules[7].biases)
+      end
     end
 
     if opt.model=='lstm' then 

@@ -92,15 +92,20 @@ function contruct_net()
 
     -- output layer
     if opt.data=='glassfurnace' then         
-      neunet:add(nn.Linear(inputSize, 6, bias))      
+      neunet:add(nn.Linear(inputSize, noutputs, bias))      
       -- will recurse a single continuous sequence
       neunet:remember((opt.lstm or opt.fastlstm or opt.gru) or 'eval')
       neunet = nn.Sequencer(neunet)
     elseif (opt.data =='ballbeam') or (opt.data=='robotArm') then
-      neunet:add(nn.Linear(inputSize, 1, bias))    
+      neunet:add(nn.Linear(inputSize, noutputs, bias))    
       -- will recurse a single continuous sequence
       neunet:remember((opt.lstm or opt.fastlstm or opt.gru) or 'eval')
       neunet = nn.Sequencer(neunet)
+    elseif(opt.data == 'softRobot') then
+      neunet:add(nn.Linear(inputSize, noutputs, bias))      
+      -- will recurse a single continuous sequence
+      neunet:remember((opt.lstm or opt.fastlstm or opt.gru) or 'eval')
+      neunet = nn.Repeater(neunet, noutputs)
     end
 --===========================================================================================
   else    
