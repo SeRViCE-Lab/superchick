@@ -81,7 +81,7 @@ cmd:option('-netdir', 'network', 'directory to save the network')
 cmd:option('-optimizer', 'mse', 'mse|sgd')
 cmd:option('-coefL1',   0.1, 'L1 penalty on the weights')
 cmd:option('-coefL2',  0.2, 'L2 penalty on the weights')
-cmd:option('-plot', false, 'true|false')
+cmd:option('-plot', true, 'true|false')
 cmd:option('-maxIter', 10000, 'max. number of iterations; must be a multiple of batchSize')
 
 -- RNN/LSTM Settings 
@@ -99,7 +99,7 @@ cmd:option('-batchSize', 100, 'Batch Size for mini-batch training')
 cmd:option('-print', false, 'false = 0 | true = 1 : Option to make code print neural net parameters')  -- print System order/Lipschitz parameters
 cmd:option('-weights', false, 'false = 0 | true = 1 : Option to make code print neural net weights')
 --vicon settings
-cmd:option('-ros', true, 'initialize ros engine and publish neural network?')
+cmd:option('-ros', false, 'initialize ros engine and publish neural network?')
 cmd:option('-vicon', true, 'is vicon on?')
 cmd:option('-publishTransform', false, 'publish transform?')
 cmd:option('-publishTwist', true, 'publish twist?')
@@ -113,7 +113,7 @@ if not opt.silent then
    print(opt)
 end
 
-opt.hiddenSize = {opt.ninputs, 10, 100}
+opt.hiddenSize = {opt.ninputs, 5, 10}
 
 if (opt.model == 'rnn') then  
   rundir = cmd:string('rnn', opt, {dir=true})
@@ -186,12 +186,14 @@ kk          = splitData.train_input[1]:size(1)
 --[[@ToDo: Determine input-output order using He and Asada's prerogative]]
 print(sys.COLORS.red .. '==> Determining input-output model order parameters' )
 
---find optimal # of input variables from data
---qn  = computeqn(train_  input, train_out[3])
+--[[
+find optimal # of input variables from data
+qn  = computeqn(train_  input, train_out[3])
 
---compute actual system order
---utils = require 'order.utils'
---inorder, outorder, q =  computeq(train_input, (train_out[3])/10, opt)
+compute actual system order
+utils = require 'order.utils'
+inorder, outorder, q =  computeq(train_input, (train_out[3])/10, opt)
+]]
 
 --------------------utils--------------------------------------------------------------------------
 print(sys.COLORS.red .. '==> Constructing neural network')

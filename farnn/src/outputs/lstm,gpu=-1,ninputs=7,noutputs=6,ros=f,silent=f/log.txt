@@ -1339,14 +1339,85 @@ LSTM training error vs. epoch
  4.0809e+06	
  3.9719e+06	
  4.0152e+06	
-= 68,  Loss = 32604.820322  
-2016-10-20 10:34:11[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 69,  Loss = 35200.890047  
-2016-10-20 10:34:12[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 70,  Loss = 43935.266141  
-2016-10-20 10:34:12[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 71,  Loss = 50900.219327  
-2016-10-20 10:34:13[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 72,  Loss = 54439.078509  
-2016-10-20 10:34:13[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 73,  Loss = 44139.693951  
-2016-10-20 10:34:13[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 74,  Loss = 45184.533482  
-2016-10-20 10:34:14[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 75,  Loss = 40613.677888  
+ 3.9549e+06	
+ 3.9975e+06	
+ 4.1163e+06	
+ 4.2090e+06	
+ 3.8320e+06	
+ 3.6003e+06	
+ 3.6807e+06	
+ 3.8945e+06	
+ 3.9506e+06	
+ 3.7491e+06	
+ 3.7946e+06	
+ 3.7647e+06	
+ 3.9831e+06	
+ 3.6882e+06	
+ 3.9365e+06	
+ 3.7534e+06	
+ 3.9439e+06	
+ 3.7713e+06	
+ 3.6285e+06	
+ 3.9032e+06	
+ 3.9011e+06	
+ 3.8733e+06	
+ 4.0340e+06	
+ 3.9711e+06	
+ 3.7898e+06	
+ 3.8973e+06	
+ 3.7856e+06	
+ 3.8160e+06	
+ 3.8571e+06	
+ 3.8854e+06	
+ 3.8906e+06	
+ 4.0652e+06	
+ 3.9217e+06	
+ 3.9901e+06	
+ 4.0464e+06	
+ 3.8605e+06	
+ 3.9802e+06	
+ 4.1784e+06	
+ 3.8859e+06	
+ 4.1102e+06	
+ 3.9058e+06	
+ 4.0339e+06	
+ 4.0181e+06	
+ 3.9297e+06	
+ 4.1072e+06	
+ 4.0423e+06	
+ 3.8819e+06	
+ 4.0074e+06	
+ 4.0082e+06	
+ 4.1293e+06	
+ 4.0091e+06	
+ 3.9426e+06	
+ 3.9079e+06	
+ 4.1272e+06	
+ 4.1465e+06	
+ 3.9104e+06	
+ 4.0998e+06	
+ 4.0445e+06	
+ 4.1535e+06	
+ 4.0089e+06	
+ 4.0905e+06	
+ 3.9988e+06	
+ 4.1356e+06	
+ 4.0296e+06	
+ 4.0216e+06	
+ 4.0583e+06	
+ 4.1208e+06	
+ 4.0648e+06	
+ 4.1489e+06	
+ 4.3213e+06	
+ 3.9994e+06	
+ 4.1515e+06	
+ 3.9686e+06	
+ 4.0903e+06	
+ 4.0432e+06	
+ 4.0125e+06	
+ 4.0449e+06	
+ 4.1758e+06	
+ 1,iter = 75,  Loss = 40613.677888  
 2016-10-20 10:34:14[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 76,  Loss = 36277.831337  
 2016-10-20 10:34:15[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 77,  Loss = 35410.162035  
 2016-10-20 10:34:15[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 78,  Loss = 38857.295612  
@@ -2611,3 +2682,81 @@ LSTM training error vs. epoch
 2016-10-20 10:45:05[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 1337,  Loss = 4080923.309480  
 2016-10-20 10:45:06[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 1338,  Loss = 3971851.729965  
 2016-10-20 10:45:06[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 1339,  Loss = 4015206.397632  
+2016-10-20 10:45:07[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 1340,  Loss = 3954931.965124  
+2016-10-20 10:45:07[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 1341,  Loss = 3997468.701114  
+2016-10-20 10:45:08[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 1342,  Loss = 4116349.372195  
+2016-10-20 10:45:08[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 1343,  Loss = 4209043.531823  
+2016-10-20 10:45:09[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 1344,  Loss = 3832029.515414  
+2016-10-20 10:45:09[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 1345,  Loss = 3600259.166200  
+2016-10-20 10:45:09[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 1346,  Loss = 3680747.152256  
+2016-10-20 10:45:10[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 1347,  Loss = 3894548.983656  
+2016-10-20 10:45:10[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 1348,  Loss = 3950647.429092  
+2016-10-20 10:45:11[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 1349,  Loss = 3749073.059650  
+2016-10-20 10:45:12[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 1350,  Loss = 3794598.552206  
+2016-10-20 10:45:13[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 1351,  Loss = 3764651.792047  
+2016-10-20 10:45:14[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 1352,  Loss = 3983091.700068  
+2016-10-20 10:45:14[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 1353,  Loss = 3688158.331626  
+2016-10-20 10:45:15[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 1354,  Loss = 3936469.275643  
+2016-10-20 10:45:15[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 1355,  Loss = 3753370.812986  
+2016-10-20 10:45:16[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 1356,  Loss = 3943949.072040  
+2016-10-20 10:45:16[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 1357,  Loss = 3771260.110875  
+2016-10-20 10:45:17[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 1358,  Loss = 3628502.695024  
+2016-10-20 10:45:17[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 1359,  Loss = 3903188.774851  
+2016-10-20 10:45:18[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 1360,  Loss = 3901108.329815  
+2016-10-20 10:45:18[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 1361,  Loss = 3873255.496837  
+2016-10-20 10:45:18[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 1362,  Loss = 4033955.336335  
+2016-10-20 10:45:19[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 1363,  Loss = 3971071.199963  
+2016-10-20 10:45:19[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 1364,  Loss = 3789763.135197  
+2016-10-20 10:45:20[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 1365,  Loss = 3897319.964482  
+2016-10-20 10:45:20[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 1366,  Loss = 3785553.445780  
+2016-10-20 10:45:21[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 1367,  Loss = 3815956.688547  
+2016-10-20 10:45:21[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 1368,  Loss = 3857082.711865  
+2016-10-20 10:45:22[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 1369,  Loss = 3885374.497130  
+2016-10-20 10:45:22[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 1370,  Loss = 3890618.902006  
+2016-10-20 10:45:23[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 1371,  Loss = 4065224.072452  
+2016-10-20 10:45:23[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 1372,  Loss = 3921680.620366  
+2016-10-20 10:45:24[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 1373,  Loss = 3990113.501863  
+2016-10-20 10:45:25[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 1374,  Loss = 4046388.735947  
+2016-10-20 10:45:25[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 1375,  Loss = 3860511.361665  
+2016-10-20 10:45:26[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 1376,  Loss = 3980160.963056  
+2016-10-20 10:45:27[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 1377,  Loss = 4178426.648964  
+2016-10-20 10:45:27[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 1378,  Loss = 3885910.790476  
+2016-10-20 10:45:28[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 1379,  Loss = 4110228.667569  
+2016-10-20 10:45:28[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 1380,  Loss = 3905849.023793  
+2016-10-20 10:45:29[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 1381,  Loss = 4033858.236545  
+2016-10-20 10:45:29[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 1382,  Loss = 4018100.566219  
+2016-10-20 10:45:30[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 1383,  Loss = 3929663.552239  
+2016-10-20 10:45:30[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 1384,  Loss = 4107221.955155  
+2016-10-20 10:45:31[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 1385,  Loss = 4042293.459547  
+2016-10-20 10:45:31[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 1386,  Loss = 3881919.282511  
+2016-10-20 10:45:31[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 1387,  Loss = 4007382.115321  
+2016-10-20 10:45:32[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 1388,  Loss = 4008221.141388  
+2016-10-20 10:45:32[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 1389,  Loss = 4129330.073973  
+2016-10-20 10:45:33[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 1390,  Loss = 4009077.658555  
+2016-10-20 10:45:33[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 1391,  Loss = 3942566.555416  
+2016-10-20 10:45:34[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 1392,  Loss = 3907851.711723  
+2016-10-20 10:45:35[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 1393,  Loss = 4127218.128354  
+2016-10-20 10:45:35[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 1394,  Loss = 4146514.794520  
+2016-10-20 10:45:36[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 1395,  Loss = 3910410.036205  
+2016-10-20 10:45:36[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 1396,  Loss = 4099847.662713  
+2016-10-20 10:45:37[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 1397,  Loss = 4044500.659251  
+2016-10-20 10:45:37[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 1398,  Loss = 4153494.376802  
+2016-10-20 10:45:37[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 1399,  Loss = 4008886.217343  
+2016-10-20 10:45:38[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 1400,  Loss = 4090528.327836  
+2016-10-20 10:45:38[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 1401,  Loss = 3998810.175747  
+2016-10-20 10:45:39[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 1402,  Loss = 4135596.386976  
+2016-10-20 10:45:39[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 1403,  Loss = 4029620.392606  
+2016-10-20 10:45:40[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 1404,  Loss = 4021575.125352  
+2016-10-20 10:45:40[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 1405,  Loss = 4058343.783492  
+2016-10-20 10:45:41[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 1406,  Loss = 4120762.806719  
+2016-10-20 10:45:41[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 1407,  Loss = 4064767.738920  
+2016-10-20 10:45:41[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 1408,  Loss = 4148917.781906  
+2016-10-20 10:45:42[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 1409,  Loss = 4321344.043208  
+2016-10-20 10:45:42[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 1410,  Loss = 3999399.122113  
+2016-10-20 10:45:43[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 1411,  Loss = 4151501.892944  
+2016-10-20 10:45:43[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 1412,  Loss = 3968551.433661  
+2016-10-20 10:45:44[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 1413,  Loss = 4090300.231371  
+2016-10-20 10:45:44[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 1414,  Loss = 4043166.814387  
+2016-10-20 10:45:45[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 1415,  Loss = 4012545.981044  
+2016-10-20 10:45:45[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 1416,  Loss = 4044852.673836  
+2016-10-20 10:45:46[outputs/lstm,gpu=-1,ninputs=7,noutputs=6,ros=f,silent=f Deep Head Motion Control]:  Epoch 1,iter = 1417,  Loss = 4175823.549342  
