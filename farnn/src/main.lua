@@ -91,12 +91,13 @@ cmd:option('-dropoutProb', 0.35, 'probability of zeroing a neuron (dropout proba
 cmd:option('-rnnlearningRate',1e-3, 'learning rate for the reurrent neural network')
 cmd:option('-decay', 0, 'rnn learning rate decay for rnn')
 cmd:option('-batchNorm', false, 'apply szegedy and Ioffe\'s batch norm?')
-cmd:option('-hiddenSize', {1, 10, 100}, 'number of hidden units used at output of each recurrent layer. When more than one is specified, RNN/LSTMs/GRUs are stacked')
+cmd:option('-ninputs', 2, 'size of input layer being fed from system')
+cmd:option('-noutputs', 1, 'size of linear output layer after rnn')
 cmd:option('-batchSize', 100, 'Batch Size for mini-batch training')
 
 -- Print options
 cmd:option('-print', false, 'false = 0 | true = 1 : Option to make code print neural net parameters')  -- print System order/Lipschitz parameters
-
+cmd:option('-weights', false, 'false = 0 | true = 1 : Option to make code print neural net weights')
 --vicon settings
 cmd:option('-ros', true, 'initialize ros engine and publish neural network?')
 cmd:option('-vicon', true, 'is vicon on?')
@@ -111,6 +112,8 @@ torch.setnumthreads(8)
 if not opt.silent then
    print(opt)
 end
+
+opt.hiddenSize = {opt.ninputs, 10, 100}
 
 if (opt.model == 'rnn') then  
   rundir = cmd:string('rnn', opt, {dir=true})

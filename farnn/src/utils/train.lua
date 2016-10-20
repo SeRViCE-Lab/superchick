@@ -58,14 +58,23 @@ function train_lstm(opt)
      -- 1. create a sequence of rho time-steps
     local inputs, targets = {}, {}
     inputs, targets = get_datapair(opt, t)
+
+    if noutputs  == 1 then 
+      --concat tensors 1 and 4 (in and pitch along 2nd dimension)
+      inputs = torch.cat(inputs[1], inputs[4], 2) 
+      -- target would be expected to be a tensor rather than a table since we are using sequencer
+      targets = targets[3]
+    end
+    --[[
     print('inputs', inputs)
     print('targets', targets)
+    print(neunet)
+    ]]
     --2. Forward sequence through rnn
     neunet:zeroGradParameters()
     neunet:forget()  --forget all past time steps
 
     local outputs = neunet:forward(inputs)
-    if noutputs   == 1 then targets = {targets[3]} end
 
     local loss = cost:forward(outputs, targets) 
 
@@ -83,11 +92,13 @@ function train_lstm(opt)
       print(string.format("Epoch %d,iter = %d,  Loss = %f ", 
             epoch, iter, loss))
       if not opt.gru or opt.model=='mlp' then
-        print('neunet weights')
-        print(neunet.modules[1].recurrentModule.modules[7].weight)
+        if(opt.weights) then
+          print('neunet weights')
+          print(neunet.modules[1].recurrentModule.modules[7].weight)
 
-        print('neunet biases')
-        print(neunet.modules[1].recurrentModule.modules[7].biases)
+          print('neunet biases')
+          print(neunet.modules[1].recurrentModule.modules[7].biases)
+        end
       end
     end
 

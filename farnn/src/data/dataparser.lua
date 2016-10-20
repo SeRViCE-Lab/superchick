@@ -93,12 +93,11 @@ function split_data(opt)
 				                 out[5][{{off+1, k}, {1}}], out[6][{{off+1, k}, {1}}] 
 			                 }  
 
-	  -- splitData.test = {splitData.test_input, splitData.test_out}
-
 	  width       = splitData.train_input[1]:size(2)
 	  height      = splitData.train_input[1]:size(1)
 
-	  ninputs     = 1; noutputs    = 1; nhiddens = 1; nhiddens_rnn = 1
+	  ninputs     = opt.ninputs; noutputs = opt.noutputs; 
+	  nhiddens, nhiddens_rnn = opt.hiddenSize[1], opt.hiddenSize[1]; 
 	  
 	-- MIMO dataset from the Daisy  glassfurnace dataset (3 inputs, 6 outputs)
 	elseif (string.find(filename, 'glassfurnace')) then
@@ -119,7 +118,7 @@ function split_data(opt)
 
 	  width       = splitData.train_input:size(2)
 	  height      = splitData.train_input:size(2)
-	  ninputs     = 3; nhiddens = 6;  noutputs = 6; nhiddens_rnn = 6 
+	  ninputs     = opt.ninputs; nhiddens = 6;  noutputs = opt.noutputs; nhiddens_rnn = 6 
 	end
 	return splitData
 end
@@ -154,35 +153,32 @@ function get_datapair(args, stage)
 	local testHeight = splitData.test_out[1]:size(1)
 	if (args.data=='softRobot') then  --SIMO dataset
 
-		-- print(splitData.train_input)
-		print(stage, 'stage')
-
 		 -- 1. create a sequence of rho time-steps
 		inputs 		= {
-						splitData.train_input[1]:narrow(1, stage+1, opt.batchSize+1),    															  		-- >  u(t)
-						splitData.train_input[2]:narrow(1, stage, stage+opt.batchSize), splitData.train_input[3]:narrow(1, stage, stage+opt.batchSize),   		-- }
-					   	splitData.train_input[4]:narrow(1, stage, stage+opt.batchSize),	splitData.train_input[5]:narrow(1, stage, stage+opt.batchSize),   		-- }  -->y_{t-1}
-					   	splitData.train_input[6]:narrow(1, stage, stage+opt.batchSize), splitData.train_input[7]:narrow(1, stage, stage+opt.batchSize)    		-- }
+						splitData.train_input[1]:narrow(1, stage+1, opt.batchSize),    															  		-- >  u(t)
+						splitData.train_input[2]:narrow(1, stage, opt.batchSize), splitData.train_input[3]:narrow(1, stage, opt.batchSize),   		-- }
+					   	splitData.train_input[4]:narrow(1, stage, opt.batchSize), splitData.train_input[5]:narrow(1, stage, opt.batchSize),   		-- }  -->y_{t-1}
+					   	splitData.train_input[6]:narrow(1, stage, opt.batchSize), splitData.train_input[7]:narrow(1, stage, opt.batchSize)    		-- }
 					  } 
 
 		test_inputs = {
-						splitData.test_input[1]:narrow(1, stage+1, opt.batchSize+1), 																  		-- u(t)
-						splitData.test_input[2]:narrow(1, stage, stage+opt.batchSize), splitData.test_input[3]:narrow(1, stage, stage+opt.batchSize),	  		-- 
-						splitData.test_input[4]:narrow(1, stage, stage+opt.batchSize), splitData.test_input[5]:narrow(1, stage, stage+opt.batchSize),     		-- } y_{t-1}
-						splitData.test_input[6]:narrow(1, stage, stage+opt.batchSize), splitData.test_input[7]:narrow(1, stage, stage+opt.batchSize)      		--
+						splitData.test_input[1]:narrow(1, stage+1, opt.batchSize), 																  		-- u(t)
+						splitData.test_input[2]:narrow(1, stage, opt.batchSize), splitData.test_input[3]:narrow(1, stage, opt.batchSize),	  		-- 
+						splitData.test_input[4]:narrow(1, stage, opt.batchSize), splitData.test_input[5]:narrow(1, stage, opt.batchSize),     		-- } y_{t-1}
+						splitData.test_input[6]:narrow(1, stage, opt.batchSize), splitData.test_input[7]:narrow(1, stage, opt.batchSize)      		--
 					  }
 
 		-- batch of targets
 		targets 	 = {  
-						  splitData.train_out[1]:narrow(1, stage+1, opt.batchSize+1), splitData.train_out[2]:narrow(1, stage+1, opt.batchSize+1), 				--}	
-		                  splitData.train_out[3]:narrow(1, stage+1, opt.batchSize+1), splitData.train_out[4]:narrow(1, stage+1, opt.batchSize+1),	--}  -- y_t
-		                  splitData.train_out[5]:narrow(1, stage+1, opt.batchSize+1), splitData.train_out[6]:narrow(1, stage+1, opt.batchSize+1),	--}
+						  splitData.train_out[1]:narrow(1, stage+1, opt.batchSize), splitData.train_out[2]:narrow(1, stage+1, opt.batchSize), 				--}	
+		                  splitData.train_out[3]:narrow(1, stage+1, opt.batchSize), splitData.train_out[4]:narrow(1, stage+1, opt.batchSize),	--}  -- y_t
+		                  splitData.train_out[5]:narrow(1, stage+1, opt.batchSize), splitData.train_out[6]:narrow(1, stage+1, opt.batchSize),	--}
 		                }		
 
 		test_targets = {
-						 splitData.test_out[1]:narrow(1, stage+1, opt.batchSize+1), splitData.test_out[2]:narrow(1, stage+1, opt.batchSize+1),		--}
-		                 splitData.test_out[3]:narrow(1, stage+1, opt.batchSize+1), splitData.test_out[4]:narrow(1, stage+1, opt.batchSize+1),		--}  -- y_t
-		                 splitData.test_out[5]:narrow(1, stage+1, opt.batchSize+1), splitData.test_out[6]:narrow(1, stage+1, opt.batchSize+1),		--}
+						 splitData.test_out[1]:narrow(1, stage+1, opt.batchSize), splitData.test_out[2]:narrow(1, stage+1, opt.batchSize),		--}
+		                 splitData.test_out[3]:narrow(1, stage+1, opt.batchSize), splitData.test_out[4]:narrow(1, stage+1, opt.batchSize),		--}  -- y_t
+		                 splitData.test_out[5]:narrow(1, stage+1, opt.batchSize), splitData.test_out[6]:narrow(1, stage+1, opt.batchSize),		--}
 		             	}
 
 		--pre-whiten the inputs and outputs in the mini-batch
