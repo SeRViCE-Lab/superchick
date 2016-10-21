@@ -27,7 +27,6 @@ require 'nngraph'
 require 'optim'
 require 'order.order_det' 
 require 'sys'  
-matio     = require 'matio' 
 plt = require 'gnuplot' 
 require 'utils.utils'
 require 'utils.train'
@@ -167,20 +166,11 @@ if opt.gpu >= 0 then
   use_cuda = true  
 end
 
-function transfer_data(x)
-  if use_cuda then
-    return x:cuda()
-  else
-    return x:double()
-  end
-end
-
 print(sys.COLORS.red .. '==> Parsing raw data')
 local splitData = {}
 splitData = split_data(opt)
 
 print(sys.COLORS.red .. '==> Data Pre-processing')
--- print(splitData, 'splitData')
 kk          = splitData.train_input[1]:size(1)
 --==================================================================================================
 --[[@ToDo: Determine input-output order using He and Asada's prerogative]]
@@ -209,7 +199,7 @@ print('Network Table\n'); print(neunet)
 parameters, gradParameters = neunet:getParameters()
 print(string.format('net params: %d, gradParams: %d', parameters:size(1), gradParameters:size(1)))
 --=====================================================================================================
-neunet = transfer_data(neunet)  --neunet = cudnn.convert(neunet, cudnn)
+neunet = transfer_data(neunet)  
 cost = transfer_data(cost)
 print '==> configuring optimizer\n'
 
@@ -362,7 +352,7 @@ local function test(data)
  local splitData = {}; 
  splitData = split_data(opt)
  local time = sys.clock()
- local testHeight = splitData.test_input:size(1)
+ local testHeight = splitData.test_input[1]:size(1)
  -- averaged param use?
  if average then
     cachedparams = parameters:clone()
@@ -376,21 +366,29 @@ local function test(data)
   local iter = 0; local for_limit; 
 
   -- create mini batch        
-  local inputs, targets = {}, {}
-  _, __, inputs, targets = get_datapair(opt)      
+  local inputs, targets = {}, {}      
 
-  for t = 1, math.min(opt.maxIter, testHeight), opt.batchSize do
+  for t = 1, math.min(opt.maxIter, testHeight) do
+    _, __, inputs, targets = get_datapair(opt, t)
+    if noutputs  == 1 then 
+      --concat tensors 1 and 4 (in and pitch along 2nd dimension)
+      inputs = torch.cat({inputs[1], inputs[4]}, 2) 
+      -- target would be expected to be a tensor rather than a table since we are using sequencer
+      targets = targets[3]
+    else
+      inputs = torch.cat({inputs[1], inputs[2], inputs[3], inputs[4], inputs[5], inputs[6], inputs[7]}, 2)
+      targets = torch.cat({targets[1], targets[2], targets[3], targets[4], targets[5], targets[6]}, 2)
+    end
+    
     -- test samples
     local preds = neunet:forward(inputs)
-    
+  
 
-    for_limit = #preds
+    for_limit = preds:size(2)
 
-    for i=1, for_limit do
-        predF = preds[1]:float()
-        normedPreds = torch.norm(predF)
-        avg = normedPreds + avg
-    end
+    -- if for_limit == 1 then      
+    predF = preds:float()
+    normedPreds = torch.norm(predF)
 
     -- timing
     time = sys.clock() - time
@@ -398,7 +396,7 @@ local function test(data)
 
     if  (iter*opt.batchSize >= math.min(opt.maxIter, testHeight))  then 
       print("<trainer> time to test 1 sample = " .. (time*1000) .. 'ms')  
-      if not (opt.data=='glassfurnace') then print("avg. prediction errors on test data", avg/#normedPreds) 
+      if not (opt.data=='glassfurnace') then print("avg. prediction errors on test data", normedPreds) 
       else print("avg. prediction errors on test data", avg/normedPreds) end
     end 
     iter = iter + 1

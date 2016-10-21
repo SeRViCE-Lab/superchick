@@ -8,7 +8,7 @@
   ]]
 require 'torch'      
 -- require 'optima.optim_'  
-require 'data/dataparser'
+require 'data.dataparser'
 
 function train_rnn(opt)                          
   iter = iter or 0

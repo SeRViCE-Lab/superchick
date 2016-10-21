@@ -3,6 +3,15 @@
   Freely distributed under the MIT License
 ]]
 require 'torch'
+local matio = require 'matio'
+
+function transfer_data(x)
+  if use_cuda then
+    return x:cuda()
+  else
+    return x:double()
+  end
+end
 
 local function data_path_printer(x)  
   print(sys.COLORS.green .. string.format("you have specified the data path %s", x))
@@ -14,11 +23,9 @@ local function get_filename(x)
   return filename, filenamefull
 end
 
-function split_data(opt)
-	
+function split_data(opt)	
 	local filename, filenamefull = get_filename(opt.data)  -- we strip the filename extension from the data
 	  -- if epoch==1 then data_path_printer(filenamefull) ends
-
 	  local splitData = {}
 	--ballbeam and robotarm are siso systems from the DaiSy dataset
 	if (string.find(filename, 'robotArm')) or (string.find(filename, 'ballbeam')) then  
