@@ -1,5 +1,5 @@
 --[[
-  Author: Olalekan Ogunmolu, December 2015 - May 2016
+  Author: Olalekan Ogunmolu, September 2016 - November 2016
   Freely distributed under the MIT License
 ]]
 print '==> setting up network model'
@@ -105,7 +105,7 @@ function contruct_net()
       neunet:add(nn.Linear(inputSize, noutputs, bias))      
       -- will recurse a single continuous sequence
       neunet:remember((opt.lstm or opt.fastlstm or opt.gru) or 'eval')
-      neunet = nn.Repeater(neunet, noutputs)
+      neunet = nn.Sequencer(neunet, noutputs)
     end
 --===========================================================================================
   else    

@@ -27,7 +27,6 @@ require 'nngraph'
 require 'optim'
 require 'order.order_det' 
 require 'sys'  
-matio     = require 'matio' 
 plt = require 'gnuplot' 
 require 'utils.utils'
 require 'utils.train'
@@ -81,7 +80,7 @@ cmd:option('-netdir', 'network', 'directory to save the network')
 cmd:option('-optimizer', 'mse', 'mse|sgd')
 cmd:option('-coefL1',   0.1, 'L1 penalty on the weights')
 cmd:option('-coefL2',  0.2, 'L2 penalty on the weights')
-cmd:option('-plot', false, 'true|false')
+cmd:option('-plot', true, 'true|false')
 cmd:option('-maxIter', 10000, 'max. number of iterations; must be a multiple of batchSize')
 
 -- RNN/LSTM Settings 
@@ -91,14 +90,15 @@ cmd:option('-dropoutProb', 0.35, 'probability of zeroing a neuron (dropout proba
 cmd:option('-rnnlearningRate',1e-3, 'learning rate for the reurrent neural network')
 cmd:option('-decay', 0, 'rnn learning rate decay for rnn')
 cmd:option('-batchNorm', false, 'apply szegedy and Ioffe\'s batch norm?')
-cmd:option('-hiddenSize', {1, 10, 100}, 'number of hidden units used at output of each recurrent layer. When more than one is specified, RNN/LSTMs/GRUs are stacked')
+cmd:option('-ninputs', 2, 'size of input layer being fed from system')
+cmd:option('-noutputs', 1, 'size of linear output layer after rnn')
 cmd:option('-batchSize', 100, 'Batch Size for mini-batch training')
 
 -- Print options
 cmd:option('-print', false, 'false = 0 | true = 1 : Option to make code print neural net parameters')  -- print System order/Lipschitz parameters
-
+cmd:option('-weights', false, 'false = 0 | true = 1 : Option to make code print neural net weights')
 --vicon settings
-cmd:option('-ros', true, 'initialize ros engine and publish neural network?')
+cmd:option('-ros', false, 'initialize ros engine and publish neural network?')
 cmd:option('-vicon', true, 'is vicon on?')
 cmd:option('-publishTransform', false, 'publish transform?')
 cmd:option('-publishTwist', true, 'publish twist?')
@@ -111,6 +111,8 @@ torch.setnumthreads(8)
 if not opt.silent then
    print(opt)
 end
+
+opt.hiddenSize = {opt.ninputs, 5, 10}
 
 if (opt.model == 'rnn') then  
   rundir = cmd:string('rnn', opt, {dir=true})
@@ -164,31 +166,24 @@ if opt.gpu >= 0 then
   use_cuda = true  
 end
 
-function transfer_data(x)
-  if use_cuda then
-    return x:cuda()
-  else
-    return x:double()
-  end
-end
-
 print(sys.COLORS.red .. '==> Parsing raw data')
 local splitData = {}
 splitData = split_data(opt)
 
 print(sys.COLORS.red .. '==> Data Pre-processing')
--- print(splitData, 'splitData')
 kk          = splitData.train_input[1]:size(1)
 --==================================================================================================
 --[[@ToDo: Determine input-output order using He and Asada's prerogative]]
 print(sys.COLORS.red .. '==> Determining input-output model order parameters' )
 
---find optimal # of input variables from data
---qn  = computeqn(train_  input, train_out[3])
+--[[
+find optimal # of input variables from data
+qn  = computeqn(train_  input, train_out[3])
 
---compute actual system order
---utils = require 'order.utils'
---inorder, outorder, q =  computeq(train_input, (train_out[3])/10, opt)
+compute actual system order
+utils = require 'order.utils'
+inorder, outorder, q =  computeq(train_input, (train_out[3])/10, opt)
+]]
 
 --------------------utils--------------------------------------------------------------------------
 print(sys.COLORS.red .. '==> Constructing neural network')
@@ -204,7 +199,7 @@ print('Network Table\n'); print(neunet)
 parameters, gradParameters = neunet:getParameters()
 print(string.format('net params: %d, gradParams: %d', parameters:size(1), gradParameters:size(1)))
 --=====================================================================================================
-neunet = transfer_data(neunet)  --neunet = cudnn.convert(neunet, cudnn)
+neunet = transfer_data(neunet)  
 cost = transfer_data(cost)
 print '==> configuring optimizer\n'
 
@@ -351,55 +346,6 @@ local function train(data)
 end     
 
 
---test function
-local function test(data)
- -- local vars
- local splitData = {}; 
- splitData = split_data(opt)
- local time = sys.clock()
- local testHeight = splitData.test_input:size(1)
- -- averaged param use?
- if average then
-    cachedparams = parameters:clone()
-    parameters:copy(average)
- end
- -- test over given dataset
- print('<trainer> on testing Set:')
-
- local preds;
-  local avg = 0; local predF, normedPreds = {}, {}
-  local iter = 0; local for_limit; 
-
-  -- create mini batch        
-  local inputs, targets = {}, {}
-  _, __, inputs, targets = get_datapair(opt)      
-
-  for t = 1, math.min(opt.maxIter, testHeight), opt.batchSize do
-    -- test samples
-    local preds = neunet:forward(inputs)
-    
-
-    for_limit = #preds
-
-    for i=1, for_limit do
-        predF = preds[1]:float()
-        normedPreds = torch.norm(predF)
-        avg = normedPreds + avg
-    end
-
-    -- timing
-    time = sys.clock() - time
-    time = time / height
-
-    if  (iter*opt.batchSize >= math.min(opt.maxIter, testHeight))  then 
-      print("<trainer> time to test 1 sample = " .. (time*1000) .. 'ms')  
-      if not (opt.data=='glassfurnace') then print("avg. prediction errors on test data", avg/#normedPreds) 
-      else print("avg. prediction errors on test data", avg/normedPreds) end
-    end 
-    iter = iter + 1
-  end  
-end
-
 function saveNet()
   --check if network directory exists
   if not paths.dirp('network')  then
@@ -442,8 +388,10 @@ local function main()
   
   for i = 1, 50 do
     train(trainData)
-    test(testData)
   end
+
+  ---now test the trained model on testing data
+  paths.dofile('test.lua')
 
   local finish = sys.clock() --os.execute('date')
   print('Experiment started at: ', start)
