@@ -12,7 +12,7 @@ torch.setdefaulttensortype('torch.FloatTensor')
 
 --options and general settings -----------------------------------------------------
 opt = {
-  batchSize = 1,
+  batchSize = 20,
   data = 'softRobot',
   gpu = 0,
   noutputs = 1,
@@ -115,9 +115,9 @@ local function test(opt, model)
 
     if opt.gpu >= 0 then inputs:cuda(); targets:cuda() end
     inputs= inputs:cuda(); targets = targets:cuda()
-    -- print(inputs)
 
     -- test samples
+    model:forget()  --forget all past time steps
     local preds = model:forward(inputs)
 
     -- not necessary[[
@@ -126,10 +126,6 @@ local function test(opt, model)
     local loss = cost:forward(preds, targets) 
 
     if iter % 10  == 0 then collectgarbage() end
-
-    --3. do backward propagation through time(Werbos, 1990, Rummelhart, 1986)
-    local  gradOutputs  = cost:backward(preds, targets)
-    local gradInputs    = model:backward(inputs, gradOutputs) 
 
     --]]
      
@@ -140,6 +136,8 @@ local function test(opt, model)
     -- if  (iter*opt.batchSize >= math.min(opt.maxIter, testHeight))  then 
       print("<trainer> time to test 1 sample = " .. (time*1000) .. 'ms')  
       -- if not (opt.data=='glassfurnace') then print("avg. prediction errors on test data", normedPreds) 
+
+        print(inputs)
         print(string.format('actual %s preds: %s', tostring(targets), tostring(preds)))
         -- sys.sleep(3)
         print(string.format("iter = %d,  Loss = %f ",  iter, loss))
