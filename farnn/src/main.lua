@@ -98,7 +98,7 @@ cmd:option('-batchSize', 100, 'Batch Size for mini-batch training')
 cmd:option('-print', false, 'false = 0 | true = 1 : Option to make code print neural net parameters')  -- print System order/Lipschitz parameters
 cmd:option('-weights', false, 'false = 0 | true = 1 : Option to make code print neural net weights')
 --vicon settings
-cmd:option('-ros', false, 'initialize ros engine and publish neural network?')
+cmd:option('-ros', true, 'initialize ros engine and publish neural network?')
 cmd:option('-vicon', true, 'is vicon on?')
 cmd:option('-publishTransform', false, 'publish transform?')
 cmd:option('-publishTwist', true, 'publish twist?')
@@ -225,7 +225,7 @@ if opt.ros then
   --init ros engine---------------------------------------------------------------
   print('==> ros publisher initializations')
   ros.init('soft_robot')
-  local spinner = ros.AsyncSpinner()
+  spinner = ros.AsyncSpinner()
   spinner:start()
 
   local nh = ros.NodeHandle()
@@ -234,7 +234,25 @@ if opt.ros then
   if(opt.vicon) then   
     print(sys.COLORS.red .. '==> initiating vicon publishers and subscribers')
     -- paths.dofile('ros/publish_net.lua')
-    paths.dofile('ros/vicon_sub.lua') 
+    -- paths.dofile('ros/vicon_sub.lua') 
+    transform_subscriber = nh:subscribe("/vicon/Superdude/root", 'geometry_msgs/TransformStamped', 10, { 'udp', 'tcp' }, { tcp_nodelay = true })
+    twist_subscriber     = nh:subscribe("/vicon/headtwist",      'geometry_msgs/Twist',            10, { 'udp', 'tcp' }, { tcp_nodelay = true })
+
+    if opt.publishTransform then  --note that the super_move package publishes the head twist by default
+      -- register a callback function that will be triggered from ros.spinOnce() when a message is available.
+      transform_subscriber:registerCallback(function(msg, header)
+        print('Header:')
+        print(header)
+        print('Message:')
+        print(msg)
+      end)
+    end
+
+    if opt.publishTwist then
+      twist_subscriber:registerCallback(function(msg, header)
+        if not opt.silent then print('Head twist: \n', msg) end
+        end)
+    end
   end
 
   local pub = nh:advertise("neural_net", neural_weights, 100, false)
@@ -397,8 +415,11 @@ local function main()
   print('Experiment started at: ', start)
   print('Experiment Ended at: ', finish)
   print('Total Time Taken = ', (finish - start), 'secs')
+
+  transform_subscriber:shutdown()
+  twist_subscriber:shutdown()
+  ros.shutdown()
 end
 
 main()
 
-ros.shutdown()

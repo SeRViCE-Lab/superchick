@@ -35,11 +35,11 @@ public:
   sender(boost::asio::io_service& io_service,
       const boost::asio::ip::address& multicast_address, 
       float  x, float y, float z, float roll, \
-      float pitch, float yaw)
+      float pitch, float yaw, bool print)
     : endpoint_(multicast_address, multicast_port),
       socket_(io_service, endpoint_.protocol()),
       timer_(io_service), x_(x), y_(y), z_(z), \
-                        roll_(roll), pitch_(pitch), yaw_(yaw)
+                        roll_(roll), pitch_(pitch), yaw_(yaw), print(print)
   {
     std::ostringstream os;
     os << std::fixed << std::setfill ('0') << std::setprecision (4) << x_ 
@@ -51,8 +51,8 @@ public:
         boost::asio::buffer(message_), endpoint_,
         boost::bind(&sender::handle_send_to, this,
           boost::asio::placeholders::error));
-
-    ROS_INFO_STREAM("Sent (x,y,z, r, p, y): "<< std::setw('0') << std::fixed << std::setprecision(4)<< message_ <<")");
+    if(print) {   
+        ROS_INFO_STREAM("Sent (x,y,z, r, p, y): "<< std::setw('0') << std::fixed << std::setprecision(4)<< message_ <<")");}
   }
 
   void handle_send_to(const boost::system::error_code& error)
@@ -78,7 +78,8 @@ public:
 
       message_ = os.str();
 
-      ROS_WARN("Message Timed Out. Please look into your send::handle_timeout function");
+      if(print)
+        ROS_WARN("Message Timed Out. Please look into your send::handle_timeout function");
 
       socket_.async_send_to(
           boost::asio::buffer(message_), endpoint_,
@@ -94,6 +95,7 @@ private:
   float x_, y_, z_;
   float roll_, pitch_, yaw_;
   std::string message_;
+  bool print;
 
 };
 
@@ -103,8 +105,7 @@ class Receiver
 private:
     float xm, ym, zm;
     unsigned short port;
-    bool save; 
-    bool publishTF;
+    bool save, print; 
 
     Vector3f rpy;
     facemidpts facepoints;
@@ -121,18 +122,15 @@ private:
     ros::Publisher pub;
 // friend server;                       //somehow I could not get g++ to compile by exposing everything within  Receiver to server
 public:
-    Receiver(const ros::NodeHandle nm, bool save )
-        :  nm_(nm), save(save)
+    Receiver() {}           //default constructor
+    Receiver(const ros::NodeHandle nm, bool save, bool print)
+        :  nm_(nm), save(save), print(print)
     {          
         pub  = nm_.advertise<geometry_msgs::Twist>("/vicon/headtwist", 100);
     }
 
     void callback(const vicon_bridge::Markers::ConstPtr& markers_msg)
     {   
-        std::cout << "\nConstructor Called"  << std::endl;
-        std::cout << "Header stamp: "<< markers_msg -> header.stamp <<  "   | Frame Number: " <<
-                       markers_msg -> frame_number << std::endl;
-    
         //Retrieve geometry_msgs translation for four markers on superchicko    
         forehead            = markers_msg -> markers[0].translation;
         leftcheek           = markers_msg -> markers[1].translation;
@@ -144,21 +142,27 @@ public:
         rightcheekname      = markers_msg -> markers[2].marker_name;
         chinname            = markers_msg -> markers[3].marker_name;
 
-        //Print a bunch'o'stuff to assert correctness of the above
-        std::cout << "\n" << std::endl;
-        std::cout << foreheadname   <<  ": "    << forehead     << std::endl;
-        std::cout << leftcheekname  <<  ": "    << leftcheek    << std::endl;
-        std::cout << rightcheekname <<  ": "    << rightcheek   << std::endl;
-        std::cout << chinname       <<  ": "    << chin         << std::endl;
+        if(print)
+        {
+            std::cout << "Header stamp: "<< markers_msg -> header.stamp <<  "   | Frame Number: " <<
+                       markers_msg -> frame_number << std::endl;  
+
+            // ROS_INFO_STREAM("markers_msg: " << *markers_msg);          
+
+            //Print a bunch'o'stuff to assert correctness of the above
+            std::cout << "\n" << std::endl;
+            std::cout << foreheadname   <<  ":\n "    << forehead     << std::endl;
+            std::cout << leftcheekname  <<  ":\n "    << leftcheek    << std::endl;
+            std::cout << rightcheekname <<  ":\n "    << rightcheek   << std::endl;
+            std::cout << chinname       <<  ":\n "    << chin         << std::endl;
+        }
 
         headmarkers markers = {forehead, leftcheek, rightcheek, chin};
         facemidpts midFacePoints_       = midpoint(markers);
     }
 
     ~Receiver()
-    {
-        ROS_INFO("\nDestructor Called.");
-    }
+    { }
 
     //Here, I basically find the midpoint of the four pts intersecting at the middle of the face
     facemidpts midpoint(headmarkers markers)                     
@@ -210,7 +214,8 @@ public:
         a1 = u1.dot(u2); a2 = u2.dot(u3); a3 = u3.dot(u4); a4 = u2.dot(u4);
         if( !((a1 < 0.01) || (a2 < 0.01) || (a3 < 0.01) || (a4 < 0.01)) )
         {
-            std::cout << "u1.u2: " << a1 << " | u2.u3: " << a2 << "   | u3.u4: " << a3 << "    | u2.u4: " << a4 <<std::endl;            
+            if(print)
+                std::cout << "u1.u2: " << a1 << " | u2.u3: " << a2 << "   | u3.u4: " << a3 << "    | u2.u4: " << a4 <<std::endl;                
         }
 
         Vector3d e1, e2, e3, e4;                                //define orthonormal set S' = {e1, e2, e3, e4}
@@ -222,7 +227,8 @@ public:
         //orthonormality check:: ||e1||, ||e2||, ||e3||, ||e4|| should be 1
         if( !(e1.norm() == 1 || e2.norm() || e3.norm() || e4.norm()) )
         {            
-            std::cout <<"||e1|| : " << e1.norm() << " ||e2||: " << e2.norm() << "  ||e3||: "  << e3.norm() <<\
+            if(print)
+                std::cout <<"||e1|| : " << e1.norm() << " ||e2||: " << e2.norm() << "  ||e3||: "  << e3.norm() <<\
                         "  ||e4||: " << e4.norm() << std::endl;
         }
         orth gonal  = {u1, u2, u3, u4};
@@ -264,8 +270,6 @@ public:
         E.col(2) = col3;
         E.col(3) = col4;
 
-        std::cout << "E Matrix: \n" << E << std::endl;
-
         MatrixXd R(3,3);
         R.col(0)   = -col1;
         R.col(1)   = col2;
@@ -276,7 +280,12 @@ public:
         MatrixXd I(3,3);
         I = R * Rt;
 
-        std::cout << "I: \n" << I << std::endl;
+        if(print)
+        {
+            std::cout << "E Matrix: \n" << E << std::endl;
+            std::cout << "I: \n" << I << std::endl;
+
+        }
 
         float det = R.determinant();
 
@@ -300,6 +309,8 @@ public:
 
         while(ros::ok())
         {           
+            boost::asio::io_service io_service;
+            const std::string multicast_address = "235.255.0.1";
 
             if (abs(R(0,0)) < .001 & abs(R(1,0)) < .001)           
             {
@@ -315,20 +326,10 @@ public:
                 posemsg.angular.x = rpy(0);
                 posemsg.angular.y = rpy(1);
                 posemsg.angular.z = rpy(2);
-
-                // ROS_INFO_STREAM("Head Translation: " << posemsg.linear);
-                // ROS_INFO_STREAM("Head RPY Angles: " << posemsg.angular);
-
-                boost::asio::io_service io_service;
-                const std::string multicast_address = "235.255.0.1";
                 
                 sender s(io_service, boost::asio::ip::address::from_string(multicast_address), posemsg.linear.x, \
                                                         posemsg.linear.y, posemsg.linear.z, posemsg.angular.x, \
-                                                        posemsg.angular.y, posemsg.angular.z);
-                io_service.run();
-
-                pub.publish(posemsg);
-                loop_rate.sleep();
+                                                        posemsg.angular.y, posemsg.angular.z, print);
             }
 
             else
@@ -347,19 +348,20 @@ public:
                 posemsg.angular.y = rpy(1);
                 posemsg.angular.z = rpy(2);
            
-                boost::asio::io_service io_service;
-                const std::string multicast_address = "235.255.0.1";
-
                 sender s(io_service, boost::asio::ip::address::from_string(multicast_address), posemsg.linear.x, \
                                                         posemsg.linear.y, posemsg.linear.z, posemsg.angular.x, \
-                                                        posemsg.angular.y, posemsg.angular.z);
-                io_service.run();
-                
-                pub.publish(posemsg);
-                loop_rate.sleep();
+                                                        posemsg.angular.y, posemsg.angular.z, print);
+            }   
 
-            }        
-            //ros::waitForShutdown();
+            io_service.run();
+            pub.publish(posemsg);
+            loop_rate.sleep();
+            if(print)                
+            {
+                ROS_INFO_STREAM("Head Translation: " << posemsg.linear);
+                ROS_INFO_STREAM("Head RPY Angles: " << posemsg.angular);
+
+            }
         }
 
         return rpy;
@@ -383,16 +385,25 @@ int main(int argc, char **argv)
 
     ros::init(argc, argv, listener, options);
     
-    if (argc != 3)
+    if (argc < 3)
       {
         help();
       }
+
+
+    bool save, print;
+
+    ros::NodeHandle nm;
+    save = nm.getParam("save", save) ;
+    print = nm.getParam("print", print);
 
     for(size_t i = 1; i < (size_t)argc; ++i)
     {
         
         subject = argv[1];
         segment = argv[2]; 
+        print   = argv[3];
+        save    = argv[4];
     }
 
     std::string base_name = "vicon";
@@ -401,10 +412,10 @@ int main(int argc, char **argv)
 
     ROS_INFO_STREAM("Subscribing to: /" << base_name <<  "/" << pubname);
 
-    ros::NodeHandle nm;
-    bool save;
-    save = nm.getParam("save", save);
-    Receiver  obj(nm, save);
+
+
+    // ROS_INFO_STREAM("print: " << print << " | save: " << save);
+    Receiver  obj(nm, save, print);
 
     ros::Subscriber sub = nm.subscribe("vicon/markers", 1000, &Receiver::callback, &obj );    
 

@@ -6,7 +6,7 @@ require 'nngraph'
 local cmd = torch.CmdLine()
 --Gpu settings
 cmd:option('-gpu', 0, 'which gpu to use. -1 = use CPU; >=0 use gpu')
-cmd:option('-checkpoint', 'sr-net/softRobot_fastlstm-net.t7', 'load the trained network e.g. <lstm-net.t7| rnn-net.t7|mlp-net.t7>')
+cmd:option('-checkpoint', 'network/softRobot_lstm-net.t7', 'load the trained network e.g. <lstm-net.t7| rnn-net.t7|mlp-net.t7>')
 cmd:option('-backend', 'cudnn', 'nn|cudnn')
 cmd:option('-ros', 'use ros?')
 cmd:option('-verbose', 0)

@@ -13,15 +13,18 @@ local ros = require 'ros'
 
 -- ros.init('vicon_sub')
 
-spinner = ros.AsyncSpinner()
-spinner:start()
+-- spinner = ros.AsyncSpinner()
+-- spinner:start()
 
 nodehandle = ros.NodeHandle()
+
+local transform_subscriber = nodehandle:subscribe("/vicon/Superdude/root", 'geometry_msgs/TransformStamped', 10, { 'udp', 'tcp' }, { tcp_nodelay = true })
+local twist_subscriber     = nodehandle:subscribe("/vicon/headtwist",      'geometry_msgs/Twist',            10, { 'udp', 'tcp' }, { tcp_nodelay = true })
+
 
 -- subscribe to vicon_receiver topic with 10 messages back-log
 -- transport_options (arguments 4 & 5) are optional - used here only for demonstration purposes
 if opt.publishTransform then 
-	transform_subscriber = nodehandle:subscribe("/vicon/Superdude/root", 'geometry_msgs/TransformStamped', 10, { 'udp', 'tcp' }, { tcp_nodelay = true })
 	-- register a callback function that will be triggered from ros.spinOnce() when a message is available.
 	transform_subscriber:registerCallback(function(msg, header)
 	  print('Header:')
@@ -32,13 +35,12 @@ if opt.publishTransform then
 end
 
 if opt.publishTwist then
-	twist_subscriber     = nodehandle:subscribe("/vicon/headtwist",      'geometry_msgs/Twist',            10, { 'udp', 'tcp' }, { tcp_nodelay = true })
 	twist_subscriber:registerCallback(function(msg, header)
 		if not opt.silent then print('Head twist: \n', msg) end
 		end)
 end
 
-while ros.ok() do
+if ros.ok() then
   ros.spinOnce()
   sys.sleep(0.1)
 end
