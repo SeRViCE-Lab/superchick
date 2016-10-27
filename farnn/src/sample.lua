@@ -4,6 +4,8 @@ require 'rnn'
 require 'nngraph'
 
 local cmd = torch.CmdLine()
+local ros = require 'ros'
+
 --Gpu settings
 cmd:option('-gpu', 0, 'which gpu to use. -1 = use CPU; >=0 use gpu')
 cmd:option('-checkpoint', 'network/softRobot_lstm-net.t7', 'load the trained network e.g. <lstm-net.t7| rnn-net.t7|mlp-net.t7>')
@@ -13,6 +15,10 @@ cmd:option('-verbose', 0)
 
 local opt = cmd:parse(arg)
 torch.setnumthreads(8)
+
+ros.init('advertise_neunet')
+nh = ros.NodeHandle()
+
 
 local use_cuda = false
 

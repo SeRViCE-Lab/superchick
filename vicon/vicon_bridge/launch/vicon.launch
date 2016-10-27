@@ -1,10 +1,10 @@
-<launch>
-	
-	<arg name="subject_name"    default="Superdude" />
-	<arg name="segment_name"    default="root"/>	
-	<arg name="listen"         default="true" />
-	<arg name="save"   default="false" />	
-	<arg name="print"  default="false" />
+<launch>	
+	<arg name="subject_name"    default="Superdude" type="str" />
+	<arg name="segment_name"    default="head" type="str"/>	
+	<arg name="listen"         default="true" type="bool" />
+	<arg name="save"   default="false" type="bool" />	
+	<arg name="print"  default="false" type="bool" />
+	<arg name="respawn" default="true" type="bool" />
 	
 	<node pkg="vicon_bridge" type="vicon_bridge" name="vicon" output="screen">
 		<param name="stream_mode" value="ClientPull" type="str" />
@@ -13,10 +13,9 @@
 	</node>
 
 	<group if="$(arg listen)">
-		<node pkg="vicon_listener" type="vicon_listener" name="vicon_listener" output="screen"  args="$(arg subject_name) $(arg segment_name)">		
+		<node pkg="vicon_listener" type="vicon_listener" name="vicon_listener" output="screen"  args="$(arg subject_name) $(arg segment_name)" respawn="true">		
 			<param name="save" value="$(arg save)" type="bool"/>
 			<param name="print" value="$(arg print)" type="bool"/>
 		</node>
 	</group>
-
 </launch>

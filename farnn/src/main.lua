@@ -81,7 +81,7 @@ cmd:option('-optimizer', 'mse', 'mse|sgd')
 cmd:option('-coefL1',   0.1, 'L1 penalty on the weights')
 cmd:option('-coefL2',  0.2, 'L2 penalty on the weights')
 cmd:option('-plot', true, 'true|false')
-cmd:option('-maxIter', 10000, 'max. number of iterations; must be a multiple of batchSize')
+cmd:option('-maxIter', 1000, 'max. number of iterations; must be a multiple of batchSize')
 
 -- RNN/LSTM Settings 
 cmd:option('-rho', 5, 'length of sequence to go back in time')
@@ -220,6 +220,13 @@ print '==> configuring optimizer\n'
    error(string.format('Unrecognized optimizer "%s"', opt.optimizer))  
  end
 
+local function connect_cb(name, topic)
+  print("subscriber connected: " .. name .. " (topic: '" .. topic .. "')")
+end
+
+local function disconnect_cb(name, topic)
+  print("subscriber diconnected: " .. name .. " (topic: '" .. topic .. "')")
+end
 
 if opt.ros then 
   --init ros engine---------------------------------------------------------------
@@ -255,7 +262,7 @@ if opt.ros then
     end
   end
 
-  local pub = nh:advertise("neural_net", neural_weights, 100, false)
+  pub = nh:advertise("neural_net", neural_weights, 100, false, connect_cb, disconnect_cb)
   ros.spinOnce()
 
   msg = ros.Message(neural_weights)

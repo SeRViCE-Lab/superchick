@@ -33,7 +33,7 @@ class points_to_cloud():
 	def __init__(self):
 		# define globals	
 		self.markers = rospy.Subscriber("/vicon/markers", Markers, self.callback, queue_size = 10)
-		self.transform = rospy.Subscriber("/vicon/Superdude/root", TransformStamped, self.t_callback, queue_size = 10)		
+		self.transform = rospy.Subscriber("/vicon/Superdude/head", TransformStamped, self.t_callback, queue_size = 10)		
 		self.pcl_pub = rospy.Publisher("/vicon_clouds", PointCloud2, queue_size=10)
 
 	def callback(self, markers):
@@ -60,36 +60,6 @@ class points_to_cloud():
 		header = std_msgs.msg.Header()
 		header.stamp = rospy.Time.now()
 		header.frame_id = 'cloud_map'
-		"""
-		fore_kdl = PyKDL.Frame(PyKDL.Rotation.Quaternion(fore.rotation.x, fore.rotation.y,
-	                                                 fore.rotation.z, fore.rotation.w),
-							PyKDL.Vector(fore.transform.translation.x, 
-							             fore.transform.translation.y, 
-							             fore.transform.translation.z))
-
-		left_kdl = PyKDL.Frame(PyKDL.Rotation.Quaternion(left.rotation.x, left.rotation.y,
-		                                             left.rotation.z, left.rotation.w),
-							PyKDL.Vector(left.transform.translation.x, 
-							             left.transform.translation.y, 
-							             left.transform.translation.z))
-
-		right_kdl = PyKDL.Frame(PyKDL.Rotation.Quaternion(right.rotation.x, right.rotation.y,
-		                                             right.rotation.z, right.rotation.w),
-							PyKDL.Vector(right.transform.translation.x, 
-							             right.transform.translation.y, 
-							             right.transform.translation.z))
-
-		chin_kdl = PyKDL.Frame(PyKDL.Rotation.Quaternion(chin.rotation.x, chin.rotation.y,
-		                                             chin.rotation.z, chin.rotation.w),
-							PyKDL.Vector(chin.transform.translation.x, 
-							             chin.transform.translation.y, 
-							             chin.transform.translation.z))
-
-		fore_cloud2 = do_transform_cloud(fore_cloud, fore_kdl)
-		left_cloud2 = do_transform_cloud(left_cloud, left_kdl)
-		rigth_cloud2 = do_transform_cloud(rigth_cloud, rigth_kdl)
-		chin_cloud2 = do_transform_cloud(chin_cloud, chin_kdl)
-		"""
 		cloud = [fore_cloud, left_cloud, right_cloud, chin_cloud]
 		# print(cloud)
 		#create pcl2 clouds from points

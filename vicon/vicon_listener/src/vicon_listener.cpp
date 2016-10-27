@@ -51,13 +51,15 @@ public:
         boost::asio::buffer(message_), endpoint_,
         boost::bind(&sender::handle_send_to, this,
           boost::asio::placeholders::error));
-    if(print) {   
-        ROS_INFO_STREAM("Sent (x,y,z, r, p, y): "<< std::setw('0') << std::fixed << std::setprecision(4)<< message_ <<")");}
+    if(print) 
+    {   
+        ROS_INFO_STREAM("Sent (x,y,z, r, p, y): "<< std::setw('0') << std::fixed << std::setprecision(4)<< message_ <<")");
+    }
   }
 
   void handle_send_to(const boost::system::error_code& error)
   {
-    if (!error && z_ > max_message_count)
+    if (!error && z_ < max_message_count)
     {
       timer_.expires_from_now(boost::posix_time::seconds(1));
       timer_.async_wait(
@@ -96,7 +98,6 @@ private:
   float roll_, pitch_, yaw_;
   std::string message_;
   bool print;
-
 };
 
 class Receiver
@@ -122,7 +123,6 @@ private:
     ros::Publisher pub;
 // friend server;                       //somehow I could not get g++ to compile by exposing everything within  Receiver to server
 public:
-    Receiver() {}           //default constructor
     Receiver(const ros::NodeHandle nm, bool save, bool print)
         :  nm_(nm), save(save), print(print)
     {          
@@ -144,8 +144,8 @@ public:
 
         if(print)
         {
-            std::cout << "Header stamp: "<< markers_msg -> header.stamp <<  "   | Frame Number: " <<
-                       markers_msg -> frame_number << std::endl;  
+/*            std::cout << "Header stamp: "<< markers_msg -> header.stamp <<  
+             "   | Frame Number: " << markers_msg -> frame_number << std::endl;  */
 
             // ROS_INFO_STREAM("markers_msg: " << *markers_msg);          
 
@@ -212,11 +212,11 @@ public:
         //orthogonality check: dot products among vectors should be null
         float a1, a2, a3, a4;
         a1 = u1.dot(u2); a2 = u2.dot(u3); a3 = u3.dot(u4); a4 = u2.dot(u4);
-        if( !((a1 < 0.01) || (a2 < 0.01) || (a3 < 0.01) || (a4 < 0.01)) )
+/*        if( !((a1 < 0.01) || (a2 < 0.01) || (a3 < 0.01) || (a4 < 0.01)) )
         {
             if(print)
                 std::cout << "u1.u2: " << a1 << " | u2.u3: " << a2 << "   | u3.u4: " << a3 << "    | u2.u4: " << a4 <<std::endl;                
-        }
+        }*/
 
         Vector3d e1, e2, e3, e4;                                //define orthonormal set S' = {e1, e2, e3, e4}
         e1 = u1 / u1.norm();
@@ -227,9 +227,9 @@ public:
         //orthonormality check:: ||e1||, ||e2||, ||e3||, ||e4|| should be 1
         if( !(e1.norm() == 1 || e2.norm() || e3.norm() || e4.norm()) )
         {            
-            if(print)
+/*            if(print)
                 std::cout <<"||e1|| : " << e1.norm() << " ||e2||: " << e2.norm() << "  ||e3||: "  << e3.norm() <<\
-                        "  ||e4||: " << e4.norm() << std::endl;
+                        "  ||e4||: " << e4.norm() << std::endl;*/
         }
         orth gonal  = {u1, u2, u3, u4};
         orth normal = {e1, e2, e3, e4};
@@ -262,7 +262,7 @@ public:
         col3 = normal.e3;
         col4 = normal.e4;
 
-        // std::cout << "col1: " << col1 << "\n col1.size()" << col1.rows() << ", " << col1.cols() << std::endl;
+        // std::cout << "col1: " << col1 << "\n col1.size(): \n" << col1.rows() << ", " << col1.cols() << std::endl;
 
         MatrixXd E(3, 4);
         E.col(0) = col1;
@@ -280,19 +280,13 @@ public:
         MatrixXd I(3,3);
         I = R * Rt;
 
-        if(print)
-        {
-            std::cout << "E Matrix: \n" << E << std::endl;
-            std::cout << "I: \n" << I << std::endl;
-
-        }
 
         float det = R.determinant();
 
-        if(!det == 1)                           //check if R is unitary
+/*        if(!det == 1)                           //check if R is unitary
         {
             std::cout << "R is not unitary." << "\t" << "|R|: " << det << std::endl;
-        }
+        }*/
 
         rollpy(R, facepoints);                  //computes roll-pitch-yaw motion
         return R;
@@ -307,7 +301,7 @@ public:
         ros::Rate loop_rate(30);                       //publish at 30Hz*/
         geometry_msgs::Twist posemsg;
 
-        while(ros::ok())
+        if(ros::ok())
         {           
             boost::asio::io_service io_service;
             const std::string multicast_address = "235.255.0.1";
@@ -358,8 +352,8 @@ public:
             loop_rate.sleep();
             if(print)                
             {
-                ROS_INFO_STREAM("Head Translation: " << posemsg.linear);
-                ROS_INFO_STREAM("Head RPY Angles: " << posemsg.angular);
+                // ROS_INFO_STREAM("Head Translation: " << posemsg.linear);
+                // ROS_INFO_STREAM("Head RPY Angles: " << posemsg.angular);
 
             }
         }
@@ -402,8 +396,8 @@ int main(int argc, char **argv)
         
         subject = argv[1];
         segment = argv[2]; 
-        print   = argv[3];
-        save    = argv[4];
+        print   = print || argv[3];
+        save    = save  || argv[4];
     }
 
     std::string base_name = "vicon";
@@ -411,7 +405,6 @@ int main(int argc, char **argv)
     std::string pubname    = subject + "/" + segment ;
 
     ROS_INFO_STREAM("Subscribing to: /" << base_name <<  "/" << pubname);
-
 
 
     // ROS_INFO_STREAM("print: " << print << " | save: " << save);
