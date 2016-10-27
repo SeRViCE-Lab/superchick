@@ -238,8 +238,8 @@ Visualization Manager:
     - Alpha: 1
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
-        Max Value: 0.988758
-        Min Value: 7.07805e-08
+        Max Value: 1.34016
+        Min Value: 1.19333
         Value: true
       Axis: Z
       Channel Name: intensity
@@ -268,19 +268,16 @@ Visualization Manager:
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
-    Fixed Frame: vicon/Superdude/head
+    Fixed Frame: world
     Frame Rate: 30
   Name: root
   Tools:
-    - Class: rviz/Interact
-      Hide Inactive Objects: true
     - Class: rviz/MoveCamera
-    - Class: rviz/Select
   Value: true
   Views:
     Current:
       Class: rviz/XYOrbit
-      Distance: 3.98786
+      Distance: 5.75197
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.06
         Stereo Focal Distance: 1
@@ -292,10 +289,10 @@ Visualization Manager:
         Z: 2.23518e-07
       Name: Current View
       Near Clip Distance: 0.01
-      Pitch: 0.114801
+      Pitch: 0.679801
       Target Frame: base_link
       Value: XYOrbit (rviz)
-      Yaw: 5.94502
+      Yaw: 4.75001
     Saved: ~
 Window Geometry:
   Displays:

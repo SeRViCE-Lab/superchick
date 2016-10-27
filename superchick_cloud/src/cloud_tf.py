@@ -44,11 +44,13 @@ if __name__ == '__main__':
             continue
 
         angular 		= 4 * math.atan2(trans[1], trans[0])
-        linear 			=  math.sqrt(trans[0] ** 2 + trans[1] ** 2)  
+        linear 			= 0.5* math.sqrt(trans[0] ** 2 + trans[1] ** 2)  
         pose 			= geometry_msgs.msg.Twist()
         pose.linear.x 	= linear
-        pose.linear.y   = 5.0
         pose.angular.z 	= angular
         headpose.publish(pose)
 
         rate.sleep()
+
+        #"${0} ${0} ${-0.05}" rpy="${M_PI/2} 0 ${-M_PI}"
+        #"0.3 ${bladder_pos_y+0.35} ${0.5}" rpy="${-M_PI/2} 0 0"
