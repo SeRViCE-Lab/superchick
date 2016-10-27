@@ -30,13 +30,13 @@ if __name__ == '__main__':
 
     listener = tf.TransformListener()
 
-    rospy.wait_for_service('spawn')
-    spawner = rospy.ServiceProxy('spawn', turtlesim.srv.Spawn)
-    spawner(4, 2, 0, 'headpose')
+    # rospy.wait_for_service('spawn')
+    # spawner = rospy.ServiceProxy('spawn', turtlesim.srv.Spawn)
+    # spawner(4, 2, 0, 'headpose')
 
     headpose = rospy.Publisher('headpose/pose', geometry_msgs.msg.Twist,queue_size=1)
 
-    rate = rospy.Rate(10.0)
+    rate = rospy.Rate(30.0)
     while not rospy.is_shutdown():
         try:
             (trans,rot) = listener.lookupTransform('/world', '/vicon/Superdude/head', rospy.Time(0))
@@ -46,7 +46,7 @@ if __name__ == '__main__':
         angular 		= 4 * math.atan2(trans[1], trans[0])
         linear 			= 0.5* math.sqrt(trans[0] ** 2 + trans[1] ** 2)  
         pose 			= geometry_msgs.msg.Twist()
-        pose.linear.x 	= linear
+        pose.linear.x, pose.linear.y 	= linear, linear
         pose.angular.z 	= angular
         headpose.publish(pose)
 

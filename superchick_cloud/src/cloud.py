@@ -16,7 +16,6 @@
 '''
 
 # globals
-
 import rospy
 
 from geometry_msgs.msg import TransformStamped
@@ -61,11 +60,11 @@ class points_to_cloud():
 		header.stamp = rospy.Time.now()
 		header.frame_id = 'cloud_map'
 		cloud = [fore_cloud, left_cloud, right_cloud, chin_cloud]
-		# print(cloud)
+
 		#create pcl2 clouds from points
 		scaled_pcl = pcl2.create_cloud_xyz32(header, cloud)	
-		# print(self.transformer)
 		transformed_cloud = do_transform_cloud(scaled_pcl, self.transformer)
+		# print('transform', self.transformer)
 
 		self.pcl_pub.publish(transformed_cloud)
 

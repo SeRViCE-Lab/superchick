@@ -328,7 +328,7 @@ local function train(data)
         local weights, biases
         weights = neunet.modules[1].recurrentModule.modules[7].weight
         biases  = neunet.modules[1].recurrentModule.modules[7].bias
-        print(weights, 'weights')
+        -- print(weights, 'weights')
         msg.data = tostring(weights)
         pub:publish(msg)
       end

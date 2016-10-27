@@ -3,11 +3,13 @@
 		 Date: October 01, 2016 -->
 
 	<!-- call vicon bridge etc -->
-	<include file="$(find vicon_bridge)/launch/vicon.launch" />
+	<!-- <include file="$(find vicon_bridge)/launch/vicon.launch" /> -->
 	<!-- call vicon clouds  -->
 	<node name="superchick_cloud" pkg="superchick_cloud" type="cloud.py" output="screen">
 	</node>		
-	<node name="super_tf_cloud" pkg="superchick_cloud" type="cloud_tf.py" output="screen" >
+<!-- 	<node name="super_tf_cloud" pkg="superchick_cloud" type="cloud_tf.py" output="screen" >
+	</node> -->
+	<node name="super_tf_cloud" pkg="superchick_cloud" type="cloud_tfer.py" output="screen" >
 	</node>
 	<!-- cloud sensor mnanager -->
 	<rosparam command="load" file="$(find supermove_config)/config/vicon.yaml" />
