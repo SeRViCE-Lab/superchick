@@ -106,7 +106,7 @@ class Receiver
 private:
     float xm, ym, zm;
     unsigned short port;
-    bool save, print; 
+    bool save, print, sim; 
 
     Vector3f rpy;
     facemidpts facepoints;
@@ -123,8 +123,8 @@ private:
     ros::Publisher pub;
 // friend server;                       //somehow I could not get g++ to compile by exposing everything within  Receiver to server
 public:
-    Receiver(const ros::NodeHandle nm, bool save, bool print)
-        :  nm_(nm), save(save), print(print)
+    Receiver(const ros::NodeHandle nm, bool save, bool print, bool sim)
+        :  nm_(nm), save(save), print(print), sim(sim)
     {          
         pub  = nm_.advertise<geometry_msgs::Twist>("/vicon/headtwist", 100);
     }
@@ -385,19 +385,20 @@ int main(int argc, char **argv)
       }
 
 
-    bool save, print;
+    bool save, print, sim;
 
     ros::NodeHandle nm;
     save = nm.getParam("save", save) ;
     print = nm.getParam("print", print);
+    sim = nm.getParam("sim", sim);
 
     for(size_t i = 1; i < (size_t)argc; ++i)
-    {
-        
+    {        
         subject = argv[1];
         segment = argv[2]; 
         print   = print || argv[3];
         save    = save  || argv[4];
+        sim     = sim   || argv[5];
     }
 
     std::string base_name = "vicon";
@@ -408,7 +409,7 @@ int main(int argc, char **argv)
 
 
     // ROS_INFO_STREAM("print: " << print << " | save: " << save);
-    Receiver  obj(nm, save, print);
+    Receiver  obj(nm, save, print, sim);
 
     ros::Subscriber sub = nm.subscribe("vicon/markers", 1000, &Receiver::callback, &obj );    
 

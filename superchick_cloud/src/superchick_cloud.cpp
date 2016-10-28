@@ -1,4 +1,6 @@
 #include <ros/ros.h>
+#include <ros/package.h>
+
 #include <sensor_msgs/PointCloud2.h>
 #include <geometry_msgs/TransformStamped.h>
 #include <geometry_msgs/Point.h>
@@ -8,20 +10,29 @@
 #include <pcl_ros/point_cloud.h>
 #include <pcl/point_cloud.h>
 #include <pcl/point_types.h>
+#include <pcl/console/parse.h>
 #include <pcl/common/transforms.h>
 #include <pcl/common/common_headers.h>
 #include <pcl_conversions/pcl_conversions.h>
 
+#include <boost/filesystem.hpp>
+#include <boost/foreach.hpp>
+#include <boost/tuple/tuple.hpp>
+#include <boost/property_tree/json_parser.hpp>
+
 #include <vicon_bridge/Markers.h>
+#include <cv_bridge/cv_bridge.h>
 
 #include <tf/transform_broadcaster.h>
 #include <tf/transform_listener.h>
+
+#include <sstream>
 
 class makeClouds
 {
 public:
 	makeClouds(ros::NodeHandle nv)
-	: div(1000), nv_(nv)
+	: div(1000), nv_(nv), save(false)
 	{
 	}
 
@@ -35,30 +46,38 @@ public:
 	void publishClouds(pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_ptr);
 	void broadcast_transform(const geometry_msgs::Twist& pose);
 	void lookup_transform();
+	void saveCloud();
+	inline void keyboardEvent(char key_sym, void *);
+	void placeCloud(pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_ptr);
 
 private:
 	geometry_msgs::Point fore_marker, left_marker, right_marker, chin_marker;	
 	pcl::PointXYZRGB fore_point, left_point, right_point, chin_point, red_point;
 	int div;
+	using PointRGB = pcl::PointCloud<pcl::PointXYZRGB>;
 	pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_ptr;
 	ros::NodeHandle nv_;
-	using PointRGB = pcl::PointCloud<pcl::PointXYZRGB>;
 	ros::Publisher pub;
 
 	tf::TransformListener listener;
     tf::StampedTransform transform;
+    std::ostringstream oss;
+    pcl::PCDWriter writer;
+    size_t frame;
+    bool save;
 };
 
 void makeClouds::callback(const geometry_msgs::TransformStamped& transform)
 {
 	// std::cout << "head transform: " << transform << std::endl;
 
+	// this->keyboardEvent(&makeClouds::publishClouds, *this)
 }
 
 void makeClouds::headTwist_cb(const geometry_msgs::Twist& pose)
 {
 
-	broadcast_transform(pose);
+	// broadcast_transform(pose);
 	lookup_transform();
 }
 
@@ -76,15 +95,6 @@ void makeClouds::lookup_transform()
 	    ros::Duration(1.0).sleep();
 	  }
 	}
-
-	  // turtlesim::Velocity vel_msg;
-	  // vel_msg.angular = 4.0 * atan2(transform.getOrigin().y(),
-	  //                             transform.getOrigin().x());
-	  // vel_msg.linear = 0.5 * sqrt(pow(transform.getOrigin().x(), 2) +
-	  //                             pow(transform.getOrigin().y(), 2));
-	  // turtle_vel.publish(vel_msg);
-
-	  // rate.sleep();
 }
 
 void makeClouds::broadcast_transform(const geometry_msgs::Twist& pose)
@@ -145,19 +155,24 @@ void makeClouds::createCloud()
      cloud_ptr->width = (int) cloud_ptr->points.size();
      cloud_ptr->height = 1;
 
-     //rotate the cloud to fit head in move_it
-     float theta = -M_PI/2;
-     Eigen::Affine3f cloud_transformer = Eigen::Affine3f::Identity();
-     cloud_transformer.translation() << -0.7, 0.5, 0.1;
-     //rotate around z axis
-     cloud_transformer.rotate (Eigen::AngleAxisf (theta, Eigen::Vector3f::UnitZ()));
-     // Execute the transformation
-	 PointRGB::Ptr transformed_cloud (new PointRGB ());
-   	 // You can either apply transform_1 or transform_2; they are the same
-     pcl::transformPointCloud (*cloud_ptr, *transformed_cloud, cloud_transformer);
+     placeCloud(cloud_ptr);
+}
 
-     this->cloud_ptr = transformed_cloud;
-     publishClouds(this->cloud_ptr);
+inline void makeClouds::placeCloud(PointRGB::Ptr cloud_ptr)
+{	
+ //rotate the cloud to fit head in move_it
+ float theta = -M_PI/2;
+ Eigen::Affine3f cloud_transformer = Eigen::Affine3f::Identity();
+ cloud_transformer.translation() << -0.6, 0.5, 0.1;
+ //rotate around z axis
+ cloud_transformer.rotate (Eigen::AngleAxisf (theta, Eigen::Vector3f::UnitZ()));
+ // Execute the transformation
+ PointRGB::Ptr transformed_cloud (new PointRGB ());
+	 // You can either apply transform_1 or transform_2; they are the same
+ pcl::transformPointCloud (*cloud_ptr, *transformed_cloud, cloud_transformer);
+
+ this->cloud_ptr = transformed_cloud;
+ publishClouds(this->cloud_ptr);
 }
 
 void makeClouds::publishClouds(PointRGB::Ptr cloud_ptr)
@@ -169,21 +184,60 @@ void makeClouds::publishClouds(PointRGB::Ptr cloud_ptr)
 
 	pub = nv_.advertise<sensor_msgs::PointCloud2>("/vicon/clouds", 1);
 	pub.publish(pcl_msg);
-	ros::Rate loop_rate(30); 
+
+	 if(save)
+		this->saveCloud();
+
+	ros::Rate loop_rate(30); 	
 	loop_rate.sleep();
 
 }
 
+inline void makeClouds::keyboardEvent(char key_sym, void *)
+{
+	if(key_sym =='s')
+		save = true;
+}
+
+void makeClouds::saveCloud()
+{
+	oss.str("");
+	oss << "./" << std::setfill('0') << std::setw(4) << frame;
+	const std::string basename = oss.str();
+	const std::string cloudname = basename + "_cloud.pcd";
+
+	ROS_INFO_STREAM("saving cloud, " << cloudname);
+	writer.writeBinary(cloudname, *(this->cloud_ptr));
+	++frame;
+}
 	
 int main(int argc, char** argv)
 {
 	ros::init(argc, argv, "listener");
 	ros::NodeHandle nv; 
-	makeClouds mc(nv);
+	bool sim;
 
-	ros::Subscriber sub = nv.subscribe("/vicon/Superdude/head", 1, &makeClouds::callback, &mc);	
-	ros::Subscriber msub = nv.subscribe("/vicon/markers", 1, &makeClouds::markers_cb, &mc);
-	ros::Subscriber htsub = nv.subscribe("/vicon/headtwist", 1, &makeClouds::headTwist_cb, &mc);
+	nv.getParam("sim", sim);
+
+	if(!sim)
+	{
+		for(size_t i = 1; i < (size_t)argc; ++i)
+		{
+			sim = sim || argv[1];    
+		}
+	}
+
+	ros::param::set("sim", sim);
+
+	if(!sim)
+	{
+		makeClouds mc(nv);
+
+		ros::Subscriber sub = nv.subscribe("/vicon/Superdude/head", 1, &makeClouds::callback, &mc);	
+		ros::Subscriber msub = nv.subscribe("/vicon/markers", 1, &makeClouds::markers_cb, &mc);
+		ros::Subscriber htsub = nv.subscribe("/vicon/headtwist", 1, &makeClouds::headTwist_cb, &mc);
+		std::cout << "subscribing" ;
+	}
 
 	ros::spin();
 

@@ -27,9 +27,12 @@ find_package(catkin REQUIRED COMPONENTS
   vicon_bridge
   rospy
   rostime
+  rosconsole
+  roslib
 )
 
 
+include_directories(${rosconsole_INCLUDE_DIRS})
 include_directories(${PCL_INCLUDE_DIRS})
 link_directories(${PCL_LIBRARY_DIRS})
 add_definitions(${PCL_DEFINITIONS})
@@ -55,5 +58,6 @@ include_directories(
 add_executable(superchick_cloud src/superchick_cloud.cpp)
 
  target_link_libraries(superchick_cloud
-   ${catkin_LIBRARIES} ${PCL_LIBRARIES}
+   ${catkin_LIBRARIES} ${PCL_LIBRARIES} 
+                          ${Boost_LIBRARIES}
  )

@@ -310,35 +310,37 @@ local function train(data)
     epoch = epoch + 1
 
   elseif (opt.model == 'lstm') then
-    train_lstm(opt)
-    -- time taken for one epoch
-    time = sys.clock() - time
-    time = time / height
-    print("<trainer> time to learn 1 sample = " .. (time*1000) .. 'ms')
-    
-    if epoch % 10 == 0 then
-      saveNet()
-    end
-
-    if opt.ros then 
-      if pub:getNumSubscribers() == 0 then
-        print('please subscribe to the /neural_net topic')
-      else
-        print('publishing neunet weights: ', neunet)
-        local weights, biases
-        weights = neunet.modules[1].recurrentModule.modules[7].weight
-        biases  = neunet.modules[1].recurrentModule.modules[7].bias
-        -- print(weights, 'weights')
-        msg.data = tostring(weights)
-        pub:publish(msg)
+    if ros.ok() then 
+      train_lstm(opt)
+      -- time taken for one epoch
+      time = sys.clock() - time
+      time = time / height
+      print("<trainer> time to learn 1 sample = " .. (time*1000) .. 'ms')
+      
+      if epoch % 10 == 0 then
+        saveNet()
       end
 
-      sys.sleep(0.01)
-      ros.spinOnce()
-    end
+      if opt.ros then 
+        if pub:getNumSubscribers() == 0 then
+          print('please subscribe to the /neural_net topic')
+        else
+          print('publishing neunet weights: ', neunet)
+          local weights, biases
+          weights = neunet.modules[1].recurrentModule.modules[7].weight
+          biases  = neunet.modules[1].recurrentModule.modules[7].bias
+          -- print(weights, 'weights')
+          msg.data = tostring(weights)
+          pub:publish(msg)
+        end
 
-    -- next epoch
-    epoch = epoch + 1
+        sys.sleep(0.01)
+        ros.spinOnce()
+      end
+
+      -- next epoch
+      epoch = epoch + 1
+    end
 
   elseif  opt.model == 'mlp'  then
     train_mlp(opt)
@@ -410,9 +412,11 @@ if (opt.print) then perhaps_print(q, qn, inorder, outorder, input, out, off, tra
 local function main()
 
   local start = sys.clock() --os.execute('date');
-  
-  for i = 1, 50 do
-    train(trainData)
+
+  if (ros.ok()) then
+    for i = 1, 50 do
+      train(trainData)
+    end
   end
 
   ---now test the trained model on testing data
