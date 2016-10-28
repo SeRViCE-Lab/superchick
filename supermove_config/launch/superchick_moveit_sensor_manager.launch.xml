@@ -2,16 +2,16 @@
 	<!-- Author: Olalekan Ogunmolu.
 		 Date: October 01, 2016 -->
 
-	<!-- call vicon bridge etc -->
 	<!-- <include file="$(find vicon_bridge)/launch/vicon.launch" /> -->
-	<!-- call vicon clouds  -->
-	<node name="superchick_cloud" pkg="superchick_cloud" type="cloud.py" output="screen">
-	</node>		
-<!-- 	<node name="super_tf_cloud" pkg="superchick_cloud" type="cloud_tf.py" output="screen" >
+	<!-- call vicon clouds cpp file -->
+	<node name="superchick_cloud" pkg="superchick_cloud" type="superchick_cloud" ></node>	
+	<!-- <node name="pycloud" pkg="superchick_cloud" type="cloud.py" ></node>	 -->
+	<!-- publish tf between world and /vicon/Superdude/root -->
+	<!-- <node name="super_tf_cloud" pkg="superchick_cloud" type="cloud_tf.py"  >
 	</node> -->
-	<node name="super_tf_cloud" pkg="superchick_cloud" type="cloud_tfer.py" output="screen" >
-	</node>
-	<!-- cloud sensor mnanager -->
+<!-- 	<node name="super_tf_cloud2" pkg="superchick_cloud" type="cloud_tfer.py" output="screen" >
+	</node> -->
+	<!-- cloud sensor manager in move_it -->
 	<rosparam command="load" file="$(find supermove_config)/config/vicon.yaml" />
 
 </launch>

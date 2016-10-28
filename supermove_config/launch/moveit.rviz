@@ -238,8 +238,8 @@ Visualization Manager:
     - Alpha: 1
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
-        Max Value: 1.34016
-        Min Value: 1.19333
+        Max Value: 0.900206
+        Min Value: 0.830266
         Value: true
       Axis: Z
       Channel Name: intensity
@@ -260,7 +260,7 @@ Visualization Manager:
       Size (Pixels): 3
       Size (m): 0.05
       Style: Spheres
-      Topic: /vicon_clouds
+      Topic: /vicon/clouds
       Unreliable: false
       Use Fixed Frame: true
       Use rainbow: true
@@ -268,7 +268,7 @@ Visualization Manager:
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
-    Fixed Frame: world
+    Fixed Frame: vicon_cloud_frame
     Frame Rate: 30
   Name: root
   Tools:
@@ -277,7 +277,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/XYOrbit
-      Distance: 5.75197
+      Distance: 4.08306
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.06
         Stereo Focal Distance: 1
@@ -289,10 +289,10 @@ Visualization Manager:
         Z: 2.23518e-07
       Name: Current View
       Near Clip Distance: 0.01
-      Pitch: 0.679801
+      Pitch: 0.344801
       Target Frame: base_link
       Value: XYOrbit (rviz)
-      Yaw: 4.75001
+      Yaw: 0.0968401
     Saved: ~
 Window Geometry:
   Displays:

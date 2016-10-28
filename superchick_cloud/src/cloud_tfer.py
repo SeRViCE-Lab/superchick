@@ -31,10 +31,13 @@ if __name__ == '__main__':
     m = geometry_msgs.msg.TransformStamped()
     m.header.frame_id = '/world'
     m.child_frame_id = '/vicon/Superdude/head'
-    m.transform.translation.x = 4.0
-    m.transform.translation.y = 4
-    m.transform.translation.z = 2
-    m.transform.rotation.w = 1.0
+    m.transform.translation.x = 0.3
+    m.transform.translation.y = -0.25+0.35
+    m.transform.translation.z = 0.5
+    m.transform.rotation.x    = -pi/2
+    m.transform.rotation.y    = 0
+    m.transform.rotation.z    = 0    
+    m.transform.rotation.w    = 1.0
     listener.setTransform(m)
 
     rate = rospy.Rate(30.0)
@@ -46,4 +49,4 @@ if __name__ == '__main__':
         rate.sleep()
 
         #"${0} ${0} ${-0.05}" rpy="${M_PI/2} 0 ${-M_PI}"
-        #"0.3 ${bladder_pos_y+0.35} ${0.5}" rpy="${-M_PI/2} 0 0"
+        #"0.3 ${-0.25+0.35} ${0.5}" rpy="${-M_PI/2} 0 0"

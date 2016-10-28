@@ -16,13 +16,24 @@ ELSE()
 ENDIF()
 
 
+find_package(PkgConfig) 
+find_package(PCL REQUIRED)
+
 find_package(catkin REQUIRED COMPONENTS
   geometry_msgs
   roscpp
   sensor_msgs
   tf
   vicon_bridge
+  rospy
+  rostime
 )
+
+
+include_directories(${PCL_INCLUDE_DIRS})
+link_directories(${PCL_LIBRARY_DIRS})
+add_definitions(${PCL_DEFINITIONS})
+
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -44,5 +55,5 @@ include_directories(
 add_executable(superchick_cloud src/superchick_cloud.cpp)
 
  target_link_libraries(superchick_cloud
-   ${catkin_LIBRARIES}
+   ${catkin_LIBRARIES} ${PCL_LIBRARIES}
  )
