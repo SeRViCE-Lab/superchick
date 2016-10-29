@@ -1,10 +1,26 @@
+/*
+*    This code reads the vicon markers when vicon is turned on by passing the 
+*    handle sim:=false in vicon launch or via the argv arguments if running 
+*    with rosrun.
+*
+*
+*	 When vicon is off and we are simulating the vicon clouds, we can pass the 
+*	 sim argument as true
+*
+*	Author: Olalekan Ogunmolu
+*   Date: October 28, 2016
+*   
+*   Lab Affiliation: Gans' Lab, UT Dallas
+*/
+
+
+
 #include <ros/ros.h>
 #include <ros/package.h>
 
 #include <sensor_msgs/PointCloud2.h>
 #include <geometry_msgs/TransformStamped.h>
 #include <geometry_msgs/Point.h>
-#include <boost/thread/thread.hpp>
 
 #include <pcl/io/pcd_io.h>
 #include <pcl_ros/point_cloud.h>
@@ -15,17 +31,20 @@
 #include <pcl/common/common_headers.h>
 #include <pcl_conversions/pcl_conversions.h>
 
-#include <boost/filesystem.hpp>
 #include <boost/foreach.hpp>
+#include <boost/filesystem.hpp>
 #include <boost/tuple/tuple.hpp>
-#include <boost/property_tree/json_parser.hpp>
+#include <boost/thread/thread.hpp>
 
 #include <vicon_bridge/Markers.h>
-#include <cv_bridge/cv_bridge.h>
 
 #include <tf/transform_broadcaster.h>
 #include <tf/transform_listener.h>
 
+#include <stdio.h>
+#include <string>
+#include <vector>
+#include <time.h>
 #include <sstream>
 
 class makeClouds
@@ -193,13 +212,13 @@ void makeClouds::publishClouds(PointRGB::Ptr cloud_ptr)
 
 }
 
-inline void makeClouds::keyboardEvent(char key_sym, void *)
+inline void makeClouds::keyboardEvent(char key_sym, void *) 
 {
 	if(key_sym =='s')
 		save = true;
 }
 
-void makeClouds::saveCloud()
+void makeClouds::saveCloud() 
 {
 	oss.str("");
 	oss << "./" << std::setfill('0') << std::setw(4) << frame;
@@ -210,6 +229,39 @@ void makeClouds::saveCloud()
 	writer.writeBinary(cloudname, *(this->cloud_ptr));
 	++frame;
 }
+
+///////////////////////////////////////////////////////////////////////////////////////
+////////////////////////GLOBAL PROTOTYPES & FUNCIONS///////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////
+static bool getROSPackagePath(const std::string pkgName, boost::filesystem::path & pkgPath);
+static std::string getDateTimeStr();
+
+static std::string getDateTimeStr()
+{
+    time_t rawtime;
+    struct tm * timeinfo;
+    char buffer[80];
+
+    time(&rawtime);
+    timeinfo = localtime(&rawtime);
+    strftime(buffer, 80, "%F.%T", timeinfo);
+    return (buffer);
+}
+
+static bool getROSPackagePath(const std::string pkgName, boost::filesystem::path & pkgPath)
+{
+    pkgPath = ros::package::getPath(pkgName);
+    if (pkgPath.empty())
+    {
+        ROS_WARN("Could not find package '%s' ", pkgName.c_str());
+        return false;
+    }
+    else
+    {
+        ROS_INFO("%s package found here: %s", pkgName.c_str(), pkgPath.c_str());
+        return true;
+    }
+}
 	
 int main(int argc, char** argv)
 {
@@ -217,26 +269,26 @@ int main(int argc, char** argv)
 	ros::NodeHandle nv; 
 	bool sim;
 
-	nv.getParam("sim", sim);
+	ROS_INFO("%s started.", ros::this_node::getName().c_str());
+	nv.getParam("/superchick_cloud/sim", sim);   //check if param was set on server with roslaunch
+	std::cout <<  "sim: " << sim << std::endl /* << std::endl*/;
 
-	if(!sim)
+
+	if(sim)
 	{
-		for(size_t i = 1; i < (size_t)argc; ++i)
-		{
-			sim = sim || argv[1];    
-		}
-	}
-
-	ros::param::set("sim", sim);
-
-	if(!sim)
+		// pcl::PCDGrabberBase& grabber;
+		boost::filesystem::path cloud_pkg_path;
+		getROSPackagePath("superchick_cloud", cloud_pkg_path);
+		ROS_INFO("superchick_pkg_path: %s", cloud_pkg_path.c_str()); 
+		// pcl::PCDGrabberBase::PCDGrabberImpl::PCDGrabberImpl (grabber;, const std::string& pcd_path, float frames_per_second, bool repeat);
+	}	
+	else  // broadcast saved tarball clouds iteratively
 	{
 		makeClouds mc(nv);
 
 		ros::Subscriber sub = nv.subscribe("/vicon/Superdude/head", 1, &makeClouds::callback, &mc);	
 		ros::Subscriber msub = nv.subscribe("/vicon/markers", 1, &makeClouds::markers_cb, &mc);
-		ros::Subscriber htsub = nv.subscribe("/vicon/headtwist", 1, &makeClouds::headTwist_cb, &mc);
-		std::cout << "subscribing" ;
+		ros::Subscriber htsub = nv.subscribe("/vicon/headtwist", 1, &makeClouds::headTwist_cb, &mc);		
 	}
 
 	ros::spin();

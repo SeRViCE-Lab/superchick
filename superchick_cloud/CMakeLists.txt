@@ -26,6 +26,7 @@ find_package(catkin REQUIRED COMPONENTS
   tf
   vicon_bridge
   rospy
+  sensor_msgs
   rostime
   rosconsole
   roslib
@@ -55,7 +56,8 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
-add_executable(superchick_cloud src/superchick_cloud.cpp)
+add_executable(superchick_cloud src/superchick_cloud.cpp
+                                src/pcd_grabber.cpp)
 
  target_link_libraries(superchick_cloud
    ${catkin_LIBRARIES} ${PCL_LIBRARIES} 
