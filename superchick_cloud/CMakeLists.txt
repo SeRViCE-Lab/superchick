@@ -56,8 +56,9 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
-add_executable(superchick_cloud src/superchick_cloud.cpp
-                                src/pcd_grabber.cpp)
+add_executable(superchick_cloud src/pcd_grabber.cpp
+                        src/superchick_cloud.cpp
+                                )
 
  target_link_libraries(superchick_cloud
    ${catkin_LIBRARIES} ${PCL_LIBRARIES} 

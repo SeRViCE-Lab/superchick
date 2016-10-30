@@ -30,10 +30,15 @@
 #include <pcl/common/transforms.h>
 #include <pcl/common/common_headers.h>
 #include <pcl_conversions/pcl_conversions.h>
+#ifndef _PCD_GRABBER_H
+# include <pcl/io/pcd_grabber.h>
+#endif
+#ifndef _TAR_H
+# include <pcl/io/tar.h>
+#endif
 
 #include <boost/foreach.hpp>
 #include <boost/filesystem.hpp>
-#include <boost/tuple/tuple.hpp>
 #include <boost/thread/thread.hpp>
 
 #include <vicon_bridge/Markers.h>
@@ -262,6 +267,35 @@ static bool getROSPackagePath(const std::string pkgName, boost::filesystem::path
         return true;
     }
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+// used by process_traClouds()
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+float fps = 30;
+bool repeat(true);
+const std::string& file_name = "clouds.tar";
+std::vector<std::string> pcd_files;
+pcl::PCDGrabberBase* gbase;
+
+void process_tarClouds(const std::string& cloud_path)
+{		
+	const std::string fullPath = cloud_path + "/" + file_name;
+	pcl::PCDGrabber<pcl::PointXYZ> grabber(fullPath, fps, repeat); //constructor
+	// std::cout << "fullPath: " << fullPath << std::endl;
+	// grabImpl.PCDGrabberImpl(&gbase, fullPath, fps, repeat);	
+	// pcl::PCDGrabberBase::PCDGrabberImpl::PCDGrabberImpl	
+	// if(pcl::PCDGrabberBase::PCDGrabberImpl::openTARFile(fullPath) !=0)		
+		// ROS_INFO_STREAM("Could not open tarfile. Be sure the path and file name are correct");
+	// pcl::PCDGrabber<pcl::PointXYZ> grabber(pcd_files, fps, repeat);
+	// pcl::PCDGrabberBase::PCDGrabberImpl::openTARFile (fullPath)
+	ROS_INFO("Playing list of files in grabber");
+	grabber.start();
+	grabber.trigger();
+	// openTARFile(fullPath);
+
+	// grabImpl.PCDGrabberImpl (&grabber, cloud_paths, fps, repeat);
+}
 	
 int main(int argc, char** argv)
 {
@@ -276,11 +310,11 @@ int main(int argc, char** argv)
 
 	if(sim)
 	{
-		// pcl::PCDGrabberBase& grabber;
 		boost::filesystem::path cloud_pkg_path;
 		getROSPackagePath("superchick_cloud", cloud_pkg_path);
-		ROS_INFO("superchick_pkg_path: %s", cloud_pkg_path.c_str()); 
-		// pcl::PCDGrabberBase::PCDGrabberImpl::PCDGrabberImpl (grabber;, const std::string& pcd_path, float frames_per_second, bool repeat);
+		std::string cloud_path = cloud_pkg_path.c_str();
+		ROS_INFO_STREAM("superchick_pkg_path: " << cloud_path); 
+		process_tarClouds(cloud_path);
 	}	
 	else  // broadcast saved tarball clouds iteratively
 	{
