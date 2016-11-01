@@ -80,7 +80,7 @@ cmd:option('-netdir', 'network', 'directory to save the network')
 cmd:option('-optimizer', 'mse', 'mse|sgd')
 cmd:option('-coefL1',   0.1, 'L1 penalty on the weights')
 cmd:option('-coefL2',  0.2, 'L2 penalty on the weights')
-cmd:option('-plot', true, 'true|false')
+cmd:option('-plot', false, 'true|false')
 cmd:option('-maxIter', 1000, 'max. number of iterations; must be a multiple of batchSize')
 
 -- RNN/LSTM Settings 

@@ -88,7 +88,7 @@ class points_to_cloud():
 
 		#create pcl2 clouds from points
 		scaled_pcl = pcl2.create_cloud_xyz32(header, cloud)	
-		transformed_cloud = scaled_pcl #do_transform_cloud(scaled_pcl, self.transformer)
+		transformed_cloud = do_transform_cloud(scaled_pcl, self.transformer)
 		self.handle_head_pose(self.supername)
 		self.pcl_pub.publish(transformed_cloud)
 
