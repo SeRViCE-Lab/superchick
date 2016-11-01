@@ -30,8 +30,10 @@
     <param name="publish_frequency" type="double" value="30.0" />
     <param name="rate" type="int" value="30" />
   </node>
-  
-  <node name="super_state_publisher" pkg="jointpub" type="jointpub_node" />
+
+  <node name="super_state_publisher" pkg="jointpub" type="jointpub_node" >
+    <param name="rate" type="int" value="25" />
+  </node>
   <!-- Run the main MoveIt executable without trajectory execution (we do not have controllers configured by default) -->
   <include file="$(find supermove_config)/launch/move_group.launch">
     <arg name="allow_trajectory_execution" value="true"/>

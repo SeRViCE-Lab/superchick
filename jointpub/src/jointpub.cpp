@@ -9,7 +9,9 @@ int main(int argc, char** argv)
     ros::NodeHandle n;
     ros::Publisher joint_pub = n.advertise<sensor_msgs::JointState>("joint_states", 1);
     tf::TransformBroadcaster broadcaster;
-    ros::Rate loop_rate(30);
+    int rate;
+    ros::param::get("rate", rate);
+    ros::Rate loop_rate(rate);
 
     const double degree = M_PI/180;
 
@@ -20,9 +22,10 @@ int main(int argc, char** argv)
     geometry_msgs::TransformStamped head_trans;
     sensor_msgs::JointState joint_state;
     head_trans.header.frame_id = "/world";
-    head_trans.child_frame_id = "/vicon/Superdude/head";
+    head_trans.child_frame_id = "/vicon/head_transform";
 
-    while (ros::ok()) {
+    while (ros::ok()) 
+    {
         //update joint_state
         joint_state.header.stamp = ros::Time::now();
         joint_state.name.resize(2);
@@ -32,13 +35,12 @@ int main(int argc, char** argv)
         joint_state.name[1] ="bladder_to_headnball";
         joint_state.position[1] = bladder;
 
-
         // update transform
         // (moving in a circle with radius=2)
         head_trans.header.stamp = ros::Time::now();
         head_trans.transform.translation.x = cos(angle)*2;
         head_trans.transform.translation.y = sin(angle)*2;
-        head_trans.transform.translation.z = .7;
+        head_trans.transform.translation.z = 0; //.7;
         head_trans.transform.rotation = tf::createQuaternionMsgFromYaw(angle+M_PI/2);
 
         //send the joint state and transform
@@ -47,9 +49,9 @@ int main(int argc, char** argv)
 
         // Create new robot state
         bladder += tinc;
-        if (bladder<-.5 || bladder>0) tinc *= -1;
+        if (bladder<-1.0 || bladder>1) tinc *= -1;
         height += hinc;
-        if (height>.2 || height<0) hinc *= -1;
+        if (height>.5 || height<0) hinc *= -1;
         table += degree;
         angle += degree/4;
 

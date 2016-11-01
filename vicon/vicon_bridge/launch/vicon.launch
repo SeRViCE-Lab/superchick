@@ -2,7 +2,7 @@
 	<!-- Author: Olalekan Ogunmolu Sept - Oct 2016 -->
 	<arg name="subject_name"    default="Superdude"  />
 	<arg name="segment_name"    default="head" />	
-	<arg name="listen"         default="true"  />
+	<arg name="listen"         default="false"  />
 	<arg name="save"   default="false" />	
 	<arg name="print"  default="false" />
 	<arg name="respawn" default="true" />
@@ -14,10 +14,12 @@
 			<param name="stream_mode" value="ClientPull" type="str" />
 			<param name="datastream_hostport" value="192.168.1.3:801" type="str" />
 			<param name="tf_ref_frame_id" value="/world" type="str" />
+			<param name="rate" type="int" value="30" />
 		</node>
 
 		<node pkg="superchick_cloud" type="cloud.py" name="superchick_cloud">
-			<param name="sim" value="$(arg sim)" type="bool" />
+			<param name="sim" value="$(arg sim)" type="bool" />			
+			<param name="rate" type="int" value="30" />
 		</node>
 <!-- 		<node pkg="superchick_cloud" type="cloud.py" name="superchick_cloud">
 			<param name="sim" value="$(arg sim)" type="bool" />

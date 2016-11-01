@@ -27,6 +27,7 @@ from vicon_bridge.msg import Markers
 from tf2_sensor_msgs.tf2_sensor_msgs import do_transform_cloud 
 from geometry_msgs.msg import Pose as pose
 import geometry_msgs.msg
+import PyKDL
 import std_msgs.msg
 from sensor_msgs.msg import PointCloud2
 import sensor_msgs.point_cloud2 as pcl2
@@ -37,13 +38,12 @@ class points_to_cloud():
 
 	def __init__(self):
 		# define globals	
-		self.markers = rospy.Subscriber("/vicon/markers", Markers, self.callback, queue_size = 10)
-		self.transform = rospy.Subscriber("/vicon/Superdude/head", TransformStamped, self.t_callback, queue_size = 10)		
+		self.markers = rospy.Subscriber("/vicon/delayed_markers", Markers, self.callback, queue_size = 10)
+		self.transform = rospy.Subscriber("/vicon/head_transform", TransformStamped, self.t_callback, queue_size = 10)		
 		self.pcl_pub = rospy.Publisher("/vicon/clouds", PointCloud2, queue_size=10)
 		self.supername = rospy.get_param('/vicon/tf_ref_frame_id')
 
-	def callback(self, markers):
-		# rospy.loginfo(rospy.get_caller_id() + "\nSuperdude markers: \n%s \n", markers)		
+	def callback(self, markers):		
 		fore_marker 	= markers.markers[0]
 		left_marker 	= markers.markers[1]
 		right_marker 	= markers.markers[2]
@@ -88,7 +88,7 @@ class points_to_cloud():
 
 		#create pcl2 clouds from points
 		scaled_pcl = pcl2.create_cloud_xyz32(header, cloud)	
-		transformed_cloud = do_transform_cloud(scaled_pcl, self.transformer)
+		transformed_cloud = scaled_pcl #do_transform_cloud(scaled_pcl, self.transformer)
 		self.handle_head_pose(self.supername)
 		self.pcl_pub.publish(transformed_cloud)
 

@@ -4,6 +4,11 @@
 joint_limits:
   bladder_to_headnball:
     has_velocity_limits: true
-    max_velocity: 1
+    max_velocity: 2
     has_acceleration_limits: false
-    max_acceleration: 0
+    max_acceleration: 0    
+  table_to_bladder:
+    has_velocity_limits: true
+    max_velocity: 2
+    has_acceleration_limits: false
+    max_acceleration: 0  

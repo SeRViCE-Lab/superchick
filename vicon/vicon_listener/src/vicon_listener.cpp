@@ -80,8 +80,7 @@ public:
 
       message_ = os.str();
 
-      if(print)
-        ROS_WARN("Message Timed Out. Please look into your send::handle_timeout function");
+      if(print){ ROS_WARN("Message Timed Out. Please look into your send::handle_timeout function"); }
 
       socket_.async_send_to(
           boost::asio::buffer(message_), endpoint_,
@@ -212,11 +211,6 @@ public:
         //orthogonality check: dot products among vectors should be null
         float a1, a2, a3, a4;
         a1 = u1.dot(u2); a2 = u2.dot(u3); a3 = u3.dot(u4); a4 = u2.dot(u4);
-/*        if( !((a1 < 0.01) || (a2 < 0.01) || (a3 < 0.01) || (a4 < 0.01)) )
-        {
-            if(print)
-                std::cout << "u1.u2: " << a1 << " | u2.u3: " << a2 << "   | u3.u4: " << a3 << "    | u2.u4: " << a4 <<std::endl;                
-        }*/
 
         Vector3d e1, e2, e3, e4;                                //define orthonormal set S' = {e1, e2, e3, e4}
         e1 = u1 / u1.norm();
@@ -227,9 +221,7 @@ public:
         //orthonormality check:: ||e1||, ||e2||, ||e3||, ||e4|| should be 1
         if( !(e1.norm() == 1 || e2.norm() || e3.norm() || e4.norm()) )
         {            
-/*            if(print)
-                std::cout <<"||e1|| : " << e1.norm() << " ||e2||: " << e2.norm() << "  ||e3||: "  << e3.norm() <<\
-                        "  ||e4||: " << e4.norm() << std::endl;*/
+
         }
         orth gonal  = {u1, u2, u3, u4};
         orth normal = {e1, e2, e3, e4};
@@ -282,11 +274,6 @@ public:
 
 
         float det = R.determinant();
-
-/*        if(!det == 1)                           //check if R is unitary
-        {
-            std::cout << "R is not unitary." << "\t" << "|R|: " << det << std::endl;
-        }*/
 
         rollpy(R, facepoints);                  //computes roll-pitch-yaw motion
         return R;

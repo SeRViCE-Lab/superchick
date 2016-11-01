@@ -39,7 +39,7 @@ Visualization Manager:
         Z: 0
       Plane: XY
       Plane Cell Count: 10
-      Reference Frame: world
+      Reference Frame: base_link
       Value: true
     - Class: moveit_rviz_plugin/MotionPlanning
       Enabled: true
@@ -238,8 +238,8 @@ Visualization Manager:
     - Alpha: 1
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
-        Max Value: 1.74618
-        Min Value: 1.63422
+        Max Value: 1.73687
+        Min Value: 1.62457
         Value: true
       Axis: Z
       Channel Name: intensity
@@ -276,7 +276,7 @@ Visualization Manager:
   Value: true
   Views:
     Current:
-      Angle: -0.0300001
+      Angle: -1.56462e-07
       Class: rviz/TopDownOrtho
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.06
