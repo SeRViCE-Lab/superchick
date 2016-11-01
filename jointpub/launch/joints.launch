@@ -1,0 +1,5 @@
+<launch>
+	<param name="robot_description" command="cat $(find superchick)/superchick.urdf" />
+	<node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher" />
+	<node name="super_state_publisher" pkg="jointpub" type="jointpub_node" />
+</launch>

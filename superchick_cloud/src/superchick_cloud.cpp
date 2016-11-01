@@ -87,7 +87,7 @@ void makeClouds::lookup_transform()
 	{
 	  try{
 	  	// listener.transformPointCloud("world", ros::Time(0), "/vicon/Superdude/head")
-	    listener.lookupTransform("/world", "/vicon/Superdude/head",  
+	    listener.lookupTransform("/world", "/base_link",  
 	                             ros::Time(0), transform);
 	  }
 	  catch (tf::TransformException ex){
@@ -105,7 +105,7 @@ void makeClouds::broadcast_transform(const geometry_msgs::Twist& pose)
 		tf::Quaternion q;
 		q.setRPY(pose.angular.x,pose.angular.y, pose.angular.z);
 		transform.setRotation(q);
-	  	br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "/world", "/vicon/Superdude/head"));
+	  	br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "/world", "/base_link"));
 }
 
 void makeClouds::markers_cb(const vicon_bridge::Markers& vmarkers)
