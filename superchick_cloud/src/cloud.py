@@ -17,15 +17,21 @@
 
 # globals
 import rospy
+import roslib
+roslib.load_manifest('superchick_cloud')
+import math
+import tf
 
 from geometry_msgs.msg import TransformStamped
 from vicon_bridge.msg import Markers
 from tf2_sensor_msgs.tf2_sensor_msgs import do_transform_cloud 
-
+from geometry_msgs.msg import Pose as pose
+import geometry_msgs.msg
 import std_msgs.msg
-import PyKDL
 from sensor_msgs.msg import PointCloud2
 import sensor_msgs.point_cloud2 as pcl2
+
+
 
 class points_to_cloud():
 
@@ -33,7 +39,8 @@ class points_to_cloud():
 		# define globals	
 		self.markers = rospy.Subscriber("/vicon/markers", Markers, self.callback, queue_size = 10)
 		self.transform = rospy.Subscriber("/vicon/Superdude/head", TransformStamped, self.t_callback, queue_size = 10)		
-		self.pcl_pub = rospy.Publisher("/vicon_clouds", PointCloud2, queue_size=10)
+		self.pcl_pub = rospy.Publisher("/vicon/clouds", PointCloud2, queue_size=10)
+		self.supername = rospy.get_param('/vicon/tf_ref_frame_id')
 
 	def callback(self, markers):
 		# rospy.loginfo(rospy.get_caller_id() + "\nSuperdude markers: \n%s \n", markers)		
@@ -45,8 +52,26 @@ class points_to_cloud():
 		self.geometry_to_cloud2(fore_marker, left_marker, right_marker, chin_marker)
 
 	def t_callback(self, transform):	
-		# rospy.loginfo(rospy.get_caller_id() + "\nSuperdude transform_stamped: \n%s \n", transformed)	
 		self.transformer = transform
+
+	def handle_head_pose(self, supername):
+		# this creates the transform from vicon to the head
+	    br = tf.TransformBroadcaster()
+	    yaw = 0#math.pi
+	    pitch = 0
+	    roll = 0
+	    q = tf.transformations.quaternion_from_euler(roll, pitch, yaw)
+	    br.sendTransform((-0.30, 0.2, 0.2),
+	                     (q[0], q[1], q[2],q[3]),
+	                     rospy.Time.now(),
+	                     supername,
+	                     "/base_link")
+
+	    # self.transform_listener(self.supername)
+
+	def transform_listener(self, supername):
+		listener = tf.TransformListener()
+		listener.lookupTransform(supername, "/base_link", rospy.Time(0))
 
 	def geometry_to_cloud2(self, fore, left, right, chin):
 
@@ -64,8 +89,7 @@ class points_to_cloud():
 		#create pcl2 clouds from points
 		scaled_pcl = pcl2.create_cloud_xyz32(header, cloud)	
 		transformed_cloud = do_transform_cloud(scaled_pcl, self.transformer)
-		# print('transform', self.transformer)
-
+		self.handle_head_pose(self.supername)
 		self.pcl_pub.publish(transformed_cloud)
 
 def main():
@@ -73,10 +97,11 @@ def main():
 	while not rospy.is_shutdown():		
 		try:			
 			p2c = points_to_cloud()
-			r = rospy.Rate(30)  #publish at 100 Hz
-			r.sleep()
-			rospy.spin()		
-		except rospy.ROSInterruptException: pass
+			r = rospy.Rate(100)  #publish at 100 Hz
+			r.sleep()		    
+			rospy.spin()	
+		except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
+		    continue	
 
 if __name__ == '__main__':
     main()

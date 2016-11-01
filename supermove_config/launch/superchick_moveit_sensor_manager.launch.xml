@@ -2,10 +2,10 @@
 	<!-- Author: Olalekan Ogunmolu.
 		 Date: October 01, 2016 -->
 
-	<!-- <include file="$(find vicon_bridge)/launch/vicon.launch" /> -->
+	<include file="$(find vicon_bridge)/launch/vicon.launch" />
 	<!-- call vicon clouds cpp file -->
-	<node name="superchick_cloud" pkg="superchick_cloud" type="superchick_cloud" ></node>	
-	<!-- <node name="pycloud" pkg="superchick_cloud" type="cloud.py" ></node>	 -->
+	<!-- <node name="superchick_cloud" pkg="superchick_cloud" type="superchick_cloud" ></node>	 -->
+	<node name="pycloud" pkg="superchick_cloud" type="cloud.py" ></node>	
 	<!-- publish tf between world and /vicon/Superdude/root -->
 	<!-- <node name="super_tf_cloud" pkg="superchick_cloud" type="cloud_tf.py"  >
 	</node> -->

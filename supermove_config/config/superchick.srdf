@@ -12,10 +12,10 @@
     <group name="bladder">
         <chain base_link="bladder_link" tip_link="table_top" />
     </group>
+    <!--END EFFECTOR: Purpose: Represent information about an end effector.-->
+    <end_effector name="bladder_to_headnball" parent_link="bladder_link" group="bladder" />
     <!--VIRTUAL JOINT: Purpose: this element defines a virtual joint between a robot link and an external frame of reference (considered fixed with respect to the robot)-->
-    <virtual_joint name="FixedBase" type="fixed" parent_frame="world" child_link="base_link" />
-    <!--PASSIVE JOINT: Purpose: this element is used to mark joints that are not actuated-->
-    <passive_joint name="world" />
+    <virtual_joint name="FixedBase" type="planar" parent_frame="/world" child_link="base_link" />
     <!--DISABLE COLLISIONS: By default it is assumed that any link of the robot could potentially come into collision with any other link in the robot. This tag disables collision checking between a specified pair of links. -->
     <disable_collisions link1="base_link" link2="base_panel" reason="Never" />
     <disable_collisions link1="base_link" link2="bladder_link" reason="Never" />

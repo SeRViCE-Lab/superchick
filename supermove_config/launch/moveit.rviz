@@ -12,7 +12,7 @@ Panels:
         - /MotionPlanning1/Planning Metrics1
         - /PointCloud21
       Splitter Ratio: 0.74256
-    Tree Height: 230
+    Tree Height: 172
   - Class: rviz/Help
     Name: Help
   - Class: rviz/Views
@@ -238,8 +238,8 @@ Visualization Manager:
     - Alpha: 1
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
-        Max Value: 0.900206
-        Min Value: 0.830266
+        Max Value: 1.74618
+        Min Value: 1.63422
         Value: true
       Axis: Z
       Channel Name: intensity
@@ -268,7 +268,7 @@ Visualization Manager:
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
-    Fixed Frame: vicon_cloud_frame
+    Fixed Frame: world
     Frame Rate: 30
   Name: root
   Tools:
@@ -276,24 +276,35 @@ Visualization Manager:
   Value: true
   Views:
     Current:
-      Class: rviz/XYOrbit
-      Distance: 4.08306
+      Angle: -0.0300001
+      Class: rviz/TopDownOrtho
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.06
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
-      Focal Point:
-        X: -0.126216
-        Y: -0.235945
-        Z: 2.23518e-07
       Name: Current View
       Near Clip Distance: 0.01
-      Pitch: 0.344801
+      Scale: 238.839
       Target Frame: base_link
-      Value: XYOrbit (rviz)
-      Yaw: 0.0968401
-    Saved: ~
+      Value: TopDownOrtho (rviz)
+      X: 0
+      Y: 0
+    Saved:
+      - Angle: 0.01
+        Class: rviz/TopDownOrtho
+        Enable Stereo Rendering:
+          Stereo Eye Separation: 0.06
+          Stereo Focal Distance: 1
+          Swap Stereo Eyes: false
+          Value: false
+        Name: TopDownOrtho
+        Near Clip Distance: 0.01
+        Scale: 420.915
+        Target Frame: base_link
+        Value: TopDownOrtho (rviz)
+        X: -0.3
+        Y: -0.2
 Window Geometry:
   Displays:
     collapsed: false
@@ -304,7 +315,7 @@ Window Geometry:
   Hide Right Dock: false
   Motion Planning:
     collapsed: false
-  QMainWindow State: 000000ff00000000fd0000000100000000000002b1000003a2fc0200000005fb000000100044006900730070006c006100790073010000002800000127000000dd00fffffffb0000000800480065006c00700000000342000000bb0000007600fffffffb0000000a0056006900650077007300000003b0000000b0000000b000fffffffb0000000c00430061006d00650072006100000002ff000001610000000000000000fb0000001e004d006f00740069006f006e00200050006c0061006e006e0069006e0067010000015500000275000001cc00ffffff00000208000003a200000001000000020000000100000002fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  QMainWindow State: 000000ff00000000fd0000000100000000000002b1000003a2fc0200000005fb000000100044006900730070006c0061007900730100000028000000ed000000dd00fffffffb0000000800480065006c00700000000342000000bb0000007600fffffffb0000000a00560069006500770073010000011b000000b0000000b000fffffffb0000000c00430061006d00650072006100000002ff000001610000000000000000fb0000001e004d006f00740069006f006e00200050006c0061006e006e0069006e006701000001d1000001f9000001cc00ffffff00000208000003a200000001000000020000000100000002fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Views:
     collapsed: false
   Width: 1215
