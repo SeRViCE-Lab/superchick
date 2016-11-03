@@ -1,8 +1,16 @@
 controller_list:
   - name: "iab_controller"
-  	action_ns: joint_trajectory_action
+  	action_ns: follow_joint_trajectory
   	type: FollowJointTrajectory
     joints:
-      - [bladder_to_headnball, base_to_right_leg, base_to_left_leg, rightleg_to_tabletop, leftleg_to_tabletop,
-         tablecover_to_tabletop, panel_12_oc_to_base_panel, panel_9_oc_to_panel_12_oc, panel_3_oc_to_panel_12_oc,
-         table_to_bladder, base_panel_to_table_top]
+      - backHead_pillow_to_head
+  - name: "neck_iab"
+   	action_ns: follow_joint_trajectory
+   	type: FollowJointTrajectory
+    joints:
+      - neck_pillow_to_head
+  - name: "back_head_iab"
+   	action_ns: follow_joint_trajectory
+   	type: FollowJointTrajectory
+    joints:
+      - neck_pillow_to_head

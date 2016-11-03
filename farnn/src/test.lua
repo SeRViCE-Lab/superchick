@@ -147,6 +147,14 @@ local function test(opt, model)
   end  
 end
 
+local function connect_cb(name, topic)
+  print("subscriber connected: " .. name .. " (topic: '" .. topic .. "')")
+end
+
+local function disconnect_cb(name, topic)
+  print("subscriber diconnected: " .. name .. " (topic: '" .. topic .. "')")
+end
+
 local function main()  
   local model = init()
   for i=1,50 do
