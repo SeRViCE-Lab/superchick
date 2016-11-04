@@ -1,6 +1,10 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(nn_controller)
 
+find_package(PkgConfig)
+pkg_check_modules( EIGEN3 REQUIRED eigen3 )
+include_directories( ${EIGEN3_INCLUDE_DIRS} )
+
 find_package(catkin REQUIRED COMPONENTS
   geometry_msgs
   roscpp
@@ -9,7 +13,7 @@ find_package(catkin REQUIRED COMPONENTS
 )
 
 ## System dependencies are found with CMake's conventions
-find_package(Boost REQUIRED COMPONENTS system)
+# find_package(Boost REQUIRED COMPONENTS system)
 
 
 ## Uncomment this if the package has a setup.py. This macro ensures
@@ -116,9 +120,9 @@ include_directories(
 )
 
 ## Declare a C++ library
-add_library(nn_controller
-   src/${PROJECT_NAME}/nn_controller.cpp
- )
+#add_library(nn_controller
+#   src/nn_controller.cpp
+# )
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
