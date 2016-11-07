@@ -5,8 +5,10 @@ Base class for a controller. Controllers take in sensor readings and choose the 
 
 // Headers.
 #include <boost/scoped_ptr.hpp>
+#include <geometry_msgs/Vector3.h>
 #include <ros/ros.h>
 #include <time.h>
+#include <chrono>
 /* ______________________________________________________________________
     *
     *   This code is part of the superchick project. 
@@ -35,17 +37,25 @@ class RobotPlugin;
 class Controller
 {
 private:
+    //these from /vicon/headtwist topic
+    geometry_msgs::Vector3 linear, angular;
+    //these are ref model params
+    double error, k_m, a_m, y_m, y_0, ref;
+    std::chrono::time_point<std::chrono::high_resolution_clock> start, now;
+    ros::NodeHandle n_;
 
 public:
     // Constructor.
-    Controller(ros::NodeHandle& n, amfc_control::ActuatorType base_bladder);
+    Controller(ros::NodeHandle n, amfc_control::ActuatorType base_bladder);
     Controller();
     // Destructor.
     virtual ~Controller();
     // Update the controller (take an action).
     // virtual void update(RobotPlugin *plugin, ros::Time current_time, boost::scoped_ptr<Sample>& sample, Eigen::VectorXd &torques) = 0;
     // Configure the controller.
-    virtual void configure_controller(OptionsMap &options);
+    bool configure_controller(
+        nn_controller::amfcError::Request  &req,
+        nn_controller::amfcError::Response  &res);
     // Set update delay on the controller.
     virtual void set_update_delay(double new_step_length);
     // Get update delay on the controller.
@@ -57,6 +67,7 @@ public:
     //subscribe to the reference model parameters
     virtual void ref_model_subscriber(const std_msgs::String::ConstPtr& ref_model_params);
     virtual void ref_model_multisub(const std_msgs::Float64MultiArray::ConstPtr& ref_model_params);
+    virtual void head_twist_subscriber(const geometry_msgs::Twist::ConstPtr& headPose);
 };
 
 }
