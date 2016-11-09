@@ -62,12 +62,19 @@ bool Controller::configure_controller(
 	y_0 = 0;  //assume a step input	
     now = std::chrono::high_resolution_clock::now();
     double elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - start).count() / 1000.0;
-	y_m = (k_m * ref + y_0) * exp(a_m *elapsed);
-	ROS_INFO_STREAM("ref: " << ref);
+	y_m = (k_m * ref + y_0) * exp(-a_m *elapsed);
+	
 	//parametric error between ref. model and plant
 	error = angular.z - y_m;
 	res.error = error;
-	ROS_INFO_STREAM("sending response: " << res.error);
+	//publish am, km, ref and y as services as well
+	res.am 	= a_m;
+	res.km 	= k_m;
+	res.ref = ref;
+	res.y  	= angular.z;
+	ROS_INFO_STREAM("sending response: " << res);	
+
+
 	return true;
 }
 

@@ -43,6 +43,7 @@ private:
     double error, k_m, a_m, y_m, y_0, ref;
     std::chrono::time_point<std::chrono::high_resolution_clock> start, now;
     ros::NodeHandle n_;
+    ros::Publisher pub;
 
 public:
     // Constructor.
