@@ -46,7 +46,7 @@ private:
 
 public:
     // Constructor.
-    Controller(ros::NodeHandle n, amfc_control::ActuatorType base_bladder);
+    Controller(ros::NodeHandle n, amfc_control::ActuatorType base_bladder, int ref);
     Controller();
     // Destructor.
     virtual ~Controller();

@@ -10,8 +10,8 @@ using namespace amfc_control;
 
 //constructor
 // default Constructors.
-Controller::Controller(ros::NodeHandle n, amfc_control::ActuatorType base_bladder)
-: n_(n)
+Controller::Controller(ros::NodeHandle n, amfc_control::ActuatorType base_bladder, int ref)
+: n_(n), ref(ref)
 {
 	
 }
@@ -59,11 +59,11 @@ bool Controller::configure_controller(
 	// y_m(t) = [k_m + y_0] * exp(a_m * t)
 	k_m = 1.25;  
 	a_m = -0.8;   
-	y_0 = 1;  //assume a step input	
+	y_0 = 0;  //assume a step input	
     now = std::chrono::high_resolution_clock::now();
     double elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - start).count() / 1000.0;
-	y_m = (k_m + y_0) * exp(a_m * elapsed);
-
+	y_m = (k_m * ref + y_0) * exp(a_m *elapsed);
+	ROS_INFO_STREAM("ref: " << ref);
 	//parametric error between ref. model and plant
 	error = angular.z - y_m;
 	res.error = error;
@@ -96,7 +96,8 @@ int main(int argc, char** argv)
 	ros::init(argc, argv, "controller_node", ros::init_options::AnonymousName);
 	ros::NodeHandle n;
 	amfc_control::ActuatorType at = base_bladder;
-	Controller c(n, base_bladder);
+	int ref = atoi(argv[1]);
+	Controller c(n, base_bladder, ref);
 
     ros::Subscriber sub = n.subscribe("/saved_net", 1000, &Controller::ref_model_subscriber, &c );
     ros::Subscriber sub_multi = n.subscribe("/multi_net", 1000, &Controller::ref_model_multisub, &c );
