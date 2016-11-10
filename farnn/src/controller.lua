@@ -17,6 +17,7 @@ local ros = require 'ros'
 local cmd = torch.CmdLine()
 cmd:option('-model', 'lstm', 'mlp or lstm')
 cmd:option('-hiddenSize', {1,3,1}, 'hidden size')
+cmd:option('-outputSize', 1, 'output size')
 cmd:option('-rho', 5, 'BPTT steps')
 cmd:option('-seed', 123, 'manual seed')
 opt = cmd:parse(arg or {})
@@ -56,7 +57,7 @@ local function net_controller()
 			net_controller:add(rnn)
 		    inputSize = hiddenSize
 		end
-		net_controller = nn.Sequencer(net_controller, 1)
+		net_controller = nn.Sequencer(net_controller, opt.outputSize)
 	end
 	local cost = nn.MSECriterion()
 	return cost, net_controller
@@ -97,7 +98,7 @@ end
 publisher = nh:advertise("/controller", floatSpec, 100, false, connect_cb, disconnect_cb)
 control   = ros.Message(floatSpec)
 
-while ros.ok() do
+while ros.ok() and ok do
 	local params = get_target()	
 	local pitch = torch.DoubleTensor(1):fill(params.y)
 	local target = params.y
@@ -114,6 +115,8 @@ while ros.ok() do
 		loss 	 = cost:forward(netout[1], pitch[1])
 		grad   = cost:backward(netout[1], pitch[1])
 		gradIn = neunet:backward(pitch, {grad})
+		print ('net weights: ', neunet.modules)
+		sys.sleep(20)
 	else
 		netout = neunet:forward(pitch)
 		-- print('netout: ', netout, 'pitch', pitch)
@@ -125,7 +128,8 @@ while ros.ok() do
 	local u = -am * target + km * ref + netout[1]
 	-- print('am: ', am, 'target: ', target, 'km: ', km, 'ref: ', ref, 'netout: ', netout[1], 'u: ', u[1])
 	if opt.model=='lstm' then 
-		ros.INFO("actual: %4.2f, pred: %4.4f, loss: %4.4f, control: %4.4f", params.y, tonumber(netout[1][1]), loss, u[1])
+		ros.INFO("actual: %4.2f, pred: %4.4f, ref: %3.4f, loss: %4.4f, control: %4.4f", params.y, 
+			        tonumber(netout[1][1]), params.ref, loss, u[1])
 	  	control.data = u[1]
 	else
 		ros.INFO("actual: %d, pred: %4.4f loss: %d control: %3.4f", params.y, netout[1], loss, u)
