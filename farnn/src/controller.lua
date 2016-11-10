@@ -69,16 +69,15 @@ local am, km, ref, target = 	params.am, params.km, params.ref, params.y
 local function get_target()
 	local lmfcClient = nh:serviceClient('/error_srv', 'nn_controller/amfcError', true)
 	local ok = lmfcClient:exists()
-	local target, err, input
+	local target, err, input, param
 
 	if ok then 
-		local param = lmfcClient:call()
+		param = lmfcClient:call()
 		target, err = param.y, param.error
 	end
 	local y = torch.DoubleTensor(1):fill(target); 
-	local e = torch.DoubleTensor(1):fill(err);
-	local input = target
-	return input
+	local e = torch.DoubleTensor(1):fill(err);	
+	return param, y, e
 end
 
 cost, neunet = net_controller()
@@ -99,9 +98,9 @@ publisher = nh:advertise("/controller", floatSpec, 100, false, connect_cb, disco
 control   = ros.Message(floatSpec)
 
 while ros.ok() do
-	local target = get_target()	
+	local params = get_target()	
 	local pitch = torch.DoubleTensor(1):fill(params.y)
-
+	local target = params.y
 	neunet:zeroGradParameters()
 	neunet:forget()
 	iter = iter + 1
@@ -114,29 +113,28 @@ while ros.ok() do
 		netout = neunet:forward(pitch)
 		loss 	 = cost:forward(netout[1], pitch[1])
 		grad   = cost:backward(netout[1], pitch[1])
-		print('netout: ', netout, 'pitch', pitch[1])
-		print('grad: ', grad)
-		-- gradIn = neunet:backward(pitch[1], grad)
+		gradIn = neunet:backward(pitch, {grad})
 	else
 		netout = neunet:forward(pitch)
-		print('netout: ', netout, 'pitch', pitch)
+		-- print('netout: ', netout, 'pitch', pitch)
 		loss 	 = cost:forward(netout, pitch)
 		grad   = cost:backward(netout, pitch)
 		gradIn = neunet:backward(pitch, grad)
 	end
 
 	local u = -am * target + km * ref + netout[1]
+	-- print('am: ', am, 'target: ', target, 'km: ', km, 'ref: ', ref, 'netout: ', netout[1], 'u: ', u[1])
 	if opt.model=='lstm' then 
-		print("actual:  loss: control: ", params.y, loss, u[1])
-		print( 'pred: ', netout[1])
+		ros.INFO("actual: %4.2f, pred: %4.4f, loss: %4.4f, control: %4.4f", params.y, tonumber(netout[1][1]), loss, u[1])
+	  	control.data = u[1]
 	else
 		ros.INFO("actual: %d, pred: %4.4f loss: %d control: %3.4f", params.y, netout[1], loss, u)
+	  	control.data = u
 	end
 
 	if publisher:getNumSubscribers() == 0 then
 	  print('waiting for subscriber')
 	else
-	  control.data = u
 	  publisher:publish(control)
 	end
 
