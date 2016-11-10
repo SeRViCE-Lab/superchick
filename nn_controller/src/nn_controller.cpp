@@ -11,7 +11,7 @@ using namespace amfc_control;
 //constructor
 // default Constructors.
 Controller::Controller(ros::NodeHandle n, amfc_control::ActuatorType base_bladder, int ref)
-: n_(n), ref(ref)
+: n_(n), ref(ref), t(1)
 {
 	
 }
@@ -48,7 +48,6 @@ void Controller::head_twist_subscriber(const geometry_msgs::Twist::ConstPtr& hea
 	angular.x = headPose->angular.x;
 	angular.y = headPose->angular.y;
 	angular.z = headPose->angular.z;
-	// ROS_INFO("z-linear: %f", angular.z);
 }
 
 bool Controller::configure_controller(
@@ -62,8 +61,9 @@ bool Controller::configure_controller(
 	y_0 = 0;  //assume a step input	
     now = std::chrono::high_resolution_clock::now();
     double elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - start).count() / 1000.0;
-	y_m = (k_m * ref + y_0) * exp(-a_m *elapsed);
-	
+	y_m = (k_m * ref + y_0) * exp(-a_m *t);
+
+	ROS_INFO_STREAM("elapsed: " << t << " ym: " << y_m);
 	//parametric error between ref. model and plant
 	error = angular.z - y_m;
 	res.error = error;
@@ -73,7 +73,7 @@ bool Controller::configure_controller(
 	res.ref = ref;
 	res.y  	= angular.z;
 	ROS_INFO_STREAM("sending response: " << res);	
-
+	++t;
 
 	return true;
 }

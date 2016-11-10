@@ -44,6 +44,7 @@ private:
     std::chrono::time_point<std::chrono::high_resolution_clock> start, now;
     ros::NodeHandle n_;
     ros::Publisher pub;
+    size_t t;
 
 public:
     // Constructor.
