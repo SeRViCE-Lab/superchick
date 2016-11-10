@@ -16,9 +16,10 @@ local ros = require 'ros'
 --options and general settings -----------------------------------------------------
 local cmd = torch.CmdLine()
 cmd:option('-model', 'lstm', 'mlp or lstm')
-cmd:option('-hiddenSize', {1,3,1}, 'hidden size')
+cmd:option('-hiddenSize', {1,10,1}, 'hidden size')
 cmd:option('-outputSize', 1, 'output size')
 cmd:option('-rho', 5, 'BPTT steps')
+cmd:option('-rnnlearningRate', 1e-1, 'learning rate')
 cmd:option('-seed', 123, 'manual seed')
 opt = cmd:parse(arg or {})
 torch.manualSeed(opt.seed)
@@ -109,28 +110,46 @@ while ros.ok() and ok do
     if iter % 10  == 0 then collectgarbage() end
 
     local netout, loss, grad, gradIn, u
-	if opt.model == 'lstm' then 
-		pitch = {pitch}
-		netout = neunet:forward(pitch)
-		loss 	 = cost:forward(netout[1], pitch[1])
-		grad   = cost:backward(netout[1], pitch[1])
-		gradIn = neunet:backward(pitch, {grad})
-		print ('net weights: ', neunet.modules)
-		sys.sleep(20)
+    local w, B
+    local net 	= {}
+	if opt.model== 'lstm' then 
+		pitch  	= {pitch}
+		netout 	= neunet:forward(pitch)
+		loss   	= cost:forward(netout[1], pitch[1])
+		grad   	= cost:backward(netout[1], pitch[1])
+		gradIn 	= neunet:backward(pitch, {grad})
+
+		neunet:updateParameters(opt.rnnlearningRate)
+
+
+		--aggregate the weights of the input and recuurent layers
+		net.input_weights 	= neunet.modules[1].modules[1].gradInput
+		net.prediction 		= neunet.modules[1].output
+		net.recurrent_weights, net.recurrent_outputs = {}, {}
+
+		for i = 1, #opt.hiddenSize do 
+			table.insert(net.recurrent_weights, neunet.modules[1].recurrentModule.modules[i].gradInput)
+			table.insert(net.recurrent_outputs, neunet.modules[1].recurrentModule.modules[i].outputs[1])
+		end
+
+		--W \in r^P is the weight vector of the input units
+		w = net.input_weights
+		B = net.recurrent_weights
+		B = torch.cat(B[1], B[2], B[3])
 	else
 		netout = neunet:forward(pitch)
-		-- print('netout: ', netout, 'pitch', pitch)
 		loss 	 = cost:forward(netout, pitch)
 		grad   = cost:backward(netout, pitch)
 		gradIn = neunet:backward(pitch, grad)
 	end
 
-	local u = -am * target + km * ref + netout[1]
-	-- print('am: ', am, 'target: ', target, 'km: ', km, 'ref: ', ref, 'netout: ', netout[1], 'u: ', u[1])
+	local Nf = B*w
+	-- print('Nf: ', Nf)
+	local u = -am * target + km * ref + Nf
 	if opt.model=='lstm' then 
-		ros.INFO("actual: %4.2f, pred: %4.4f, ref: %3.4f, loss: %4.4f, control: %4.4f", params.y, 
-			        tonumber(netout[1][1]), params.ref, loss, u[1])
-	  	control.data = u[1]
+		ros.INFO("actual: %4.2f, pred: %4.8f, ref: %3.4f, loss: %4.4f, control: %4.4f", params.y, 
+			        net.prediction[1], params.ref, loss, u)
+	  	control.data = u
 	else
 		ros.INFO("actual: %d, pred: %4.4f loss: %d control: %3.4f", params.y, netout[1], loss, u)
 	  	control.data = u
@@ -149,3 +168,22 @@ end
 ros.shutdown()
 
 
+		--[[ 
+		neunet.modules[1].sharedClones[1].gradInput = Input gradients
+		neunet.modules[1].sharedClones[1].output = predictions
+		neunet.modules[1].outputs[1] = predictions
+		neunet.modules[1].output = predictions
+
+		neunet.modules[1].gradInput = input gradients
+		neunet.modules[1].modules[1].gradInput = input gradients
+		neunet.modules[1].modules[1].output = prediction
+		neunet.modules[1].recurrentModule.output = prediction
+
+
+		print('recurrent layer 1 input weights: ', neunet.modules[1].recurrentModule.modules[1].gradInput)
+		print('recurrent layer 2 input weights: ', neunet.modules[1].recurrentModule.modules[2].gradInput)
+		print('recurrent layer 3 input weights: ', neunet.modules[1].recurrentModule.modules[3].gradInput)
+		print('recurrent layer 1 input outs: ', neunet.modules[1].recurrentModule.modules[1].outputs[1])
+		print('recurrent layer 2 input outs: ', neunet.modules[1].recurrentModule.modules[2].outputs[1])
+		print('recurrent layer 3 input outs: ', neunet.modules[1].recurrentModule.modules[3].outputs[1])
+		]]
