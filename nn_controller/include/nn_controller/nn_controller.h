@@ -40,11 +40,11 @@ private:
     //these from /vicon/headtwist topic
     geometry_msgs::Vector3 linear, angular;
     //these are ref model params
-    double error, k_m, a_m, y_m, y_0, ref;
+    double error, k_m, a_m, y_m, y_0, ref, T;
     std::chrono::time_point<std::chrono::high_resolution_clock> start, now;
     ros::NodeHandle n_;
     ros::Publisher pub;
-    size_t t;
+    size_t k;
 
 public:
     // Constructor.

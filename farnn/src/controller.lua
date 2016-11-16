@@ -10,6 +10,7 @@ require 'torch'
 require 'nn'
 require 'rnn'
 require 'nngraph'
+require 'optim'  --for graphing our loss
 
 local ros = require 'ros'
 
@@ -19,14 +20,40 @@ cmd:option('-model', 'lstm', 'mlp or lstm')
 cmd:option('-hiddenSize', {1,10,1}, 'hidden size')
 cmd:option('-outputSize', 1, 'output size')
 cmd:option('-rho', 5, 'BPTT steps')
-cmd:option('-rnnlearningRate', 1e-1, 'learning rate')
+cmd:option('-lr', 1e-4, 'learning rate')
 cmd:option('-seed', 123, 'manual seed')
+cmd:option('rate', 1e-2, 'ros sleep rate in seconds')
+
+--dropout
+cmd:option('-dropout', true, 'apply dropout with this probability after each rnn layer. dropout <= 0 disables it.')
+cmd:option('-dropoutProb', 0.35, 'probability of zeroing a neuron (dropout probability)')
+
+--Gpu settings
+cmd:option('-gpu', 0, 'which gpu to use. -1 = use CPU; >=0 use gpu')
+cmd:option('-backend', 'cudnn', 'nn|cudnn')
+
 opt = cmd:parse(arg or {})
 torch.manualSeed(opt.seed)
 torch.setnumthreads(8)
 
 for k,v in pairs(opt) do opt[k] = tonumber(os.getenv(k)) or os.getenv(k) or opt[k] end
 print(opt)
+
+
+if opt.gpu == -1 then torch.setdefaulttensortype('torch.DoubleTensor') end
+
+use_cuda = false
+
+if opt.gpu >= 0 then
+  require 'cutorch'
+  require 'cunn'
+  if opt.backend == 'cudnn' then require 'cudnn' end
+  cutorch.manualSeed(opt.seed)
+  cutorch.setDevice(opt.gpu + 1)                         -- +1 because lua is 1-indexed
+  idx       = cutorch.getDevice()
+  print('\nSystem has', cutorch.getDeviceCount(), 'gpu(s).', 'Code is running on GPU:', idx)
+  use_cuda = true  
+end
 
 ros.init('lmfc_controller')
 
@@ -46,7 +73,7 @@ local function net_controller()
 	local net_controller = nn.Sequential()
 	if opt.model == 'mlp' then 
 		net_controller:add(nn.Linear(1, 3))
-		net_controller:add(nn.Sigmoid())
+		net_controller:add(nn.ReLU())
 		net_controller:add(nn.Linear(3, 1))
 	elseif opt.model == 'lstm' then
 		nn.FastLSTM.usenngraph = false -- faster
@@ -79,10 +106,23 @@ local function get_target()
 	end
 	local y = torch.DoubleTensor(1):fill(target); 
 	local e = torch.DoubleTensor(1):fill(err);	
-	return param, y, e
+	return param, y, e, ok
+end
+
+local function move2GPU(x)
+	if use_cuda then
+		x:cuda()
+	else
+		x:double()
+	end
+	return x
 end
 
 cost, neunet = net_controller()
+
+cost 	= move2GPU(cost)
+neunet 	= move2GPU(neunet)
+
 print('neunet: ', neunet)
 
 local iter = 1
@@ -99,9 +139,10 @@ end
 publisher = nh:advertise("/controller", floatSpec, 100, false, connect_cb, disconnect_cb)
 control   = ros.Message(floatSpec)
 
-while ros.ok() and ok do
-	local params = get_target()	
-	local pitch = torch.DoubleTensor(1):fill(params.y)
+while ros.ok() do
+	local params, _, _, ok = get_target()	
+	local pitch
+	if ok then 	pitch = move2GPU(torch.DoubleTensor(1):fill(params.y)) end
 	local target = params.y
 	neunet:zeroGradParameters()
 	neunet:forget()
@@ -111,15 +152,18 @@ while ros.ok() and ok do
 
     local netout, loss, grad, gradIn, u
     local w, B
-    local net 	= {}
+    local net 	= {}    
+    pitch = pitch:cuda()
 	if opt.model== 'lstm' then 
+		-- print('pitch: ', pitch)
 		pitch  	= {pitch}
+		-- print('pitch 2: ', pitch)
 		netout 	= neunet:forward(pitch)
 		loss   	= cost:forward(netout[1], pitch[1])
 		grad   	= cost:backward(netout[1], pitch[1])
 		gradIn 	= neunet:backward(pitch, {grad})
 
-		neunet:updateParameters(opt.rnnlearningRate)
+		neunet:updateParameters(opt.lr)
 
 
 		--aggregate the weights of the input and recuurent layers
@@ -141,13 +185,14 @@ while ros.ok() and ok do
 		loss 	 = cost:forward(netout, pitch)
 		grad   = cost:backward(netout, pitch)
 		gradIn = neunet:backward(pitch, grad)
+
+		neunet:updateParameters(opt.lr)
 	end
 
-	local Nf = B*w
-	-- print('Nf: ', Nf)
-	local u = -am * target + km * ref + Nf
+	local Nf --= B*w
+	local u = -am * target + km * ref --+ Nf
 	if opt.model=='lstm' then 
-		ros.INFO("actual: %4.2f, pred: %4.8f, ref: %3.4f, loss: %4.4f, control: %4.4f", params.y, 
+		ros.INFO("actual: %4.4f, pred: %4.8f, ref: %3.4f, loss: %4.4f, control: %4.4f", params.y, 
 			        net.prediction[1], params.ref, loss, u)
 	  	control.data = u
 	else
@@ -162,7 +207,7 @@ while ros.ok() and ok do
 	end
 
 	ros.spinOnce(true)
-	sys.sleep(0.2)
+	sys.sleep(opt.rate)
 end
 
 ros.shutdown()
