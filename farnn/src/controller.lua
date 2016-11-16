@@ -13,6 +13,14 @@ require 'nngraph'
 require 'optim'  --for graphing our loss
 
 local ros = require 'ros'
+local json = require 'cjson'
+local c = require 'trepl.colorize'
+
+-- for memory optimizations and graph generation
+local optnet = require 'optnet'
+local graphgen = require 'optnet.graphgen'
+local iterm = require 'iterm'
+require 'iterm.dot'
 
 --options and general settings -----------------------------------------------------
 local cmd = torch.CmdLine()
@@ -23,6 +31,8 @@ cmd:option('-rho', 5, 'BPTT steps')
 cmd:option('-lr', 1e-4, 'learning rate')
 cmd:option('-seed', 123, 'manual seed')
 cmd:option('rate', 1e-2, 'ros sleep rate in seconds')
+cmd:option('save', 'logs', 'save logs')
+cmd:option('graph', false, 'generate net graph')
 
 --dropout
 cmd:option('-dropout', true, 'apply dropout with this probability after each rnn layer. dropout <= 0 disables it.')
@@ -38,7 +48,6 @@ torch.setnumthreads(8)
 
 for k,v in pairs(opt) do opt[k] = tonumber(os.getenv(k)) or os.getenv(k) or opt[k] end
 print(opt)
-
 
 if opt.gpu == -1 then torch.setdefaulttensortype('torch.DoubleTensor') end
 
@@ -109,6 +118,7 @@ local function get_target()
 	return param, y, e, ok
 end
 
+
 local function move2GPU(x)
 	if use_cuda then
 		x:cuda()
@@ -118,14 +128,20 @@ local function move2GPU(x)
 	return x
 end
 
+print(c.blue '==>' ..' configuring model')
 cost, neunet = net_controller()
 
 cost 	= move2GPU(cost)
 neunet 	= move2GPU(neunet)
 
+if use_cuda then
+	cudnn.convert(neunet, cudnn):cuda()
+	cudnn.benchmark = true
+	neunet:cuda()
+end
+
 print('neunet: ', neunet)
 
-local iter = 1
 local floatSpec = ros.MsgSpec('std_msgs/Float64')
 
 local function connect_cb(name, topic)
@@ -139,9 +155,23 @@ end
 publisher = nh:advertise("/controller", floatSpec, 100, false, connect_cb, disconnect_cb)
 control   = ros.Message(floatSpec)
 
-while ros.ok() do
+if not paths.dirp(opt.save)  then
+  paths.mkdir(opt.save)
+end
+
+local pitch, iter = _, 1
+
+local function log(t) 
+	print('json_stats: '..json.encode(tablex.merge(t,opt,true))) 
+	torch.save(opt.save .. '/' .. opt.model .. '/log.txt', json.encode(tablex.merge(t,opt,true)))
+end
+print('Will save at '..opt.save)
+
+local function optimize(neunet)	
+	local time = sys.clock()
+	local netout, loss, grad, gradIn, u
+	local w, B, net = _, _, {}    
 	local params, _, _, ok = get_target()	
-	local pitch
 	if ok then 	pitch = move2GPU(torch.DoubleTensor(1):fill(params.y)) end
 	local target = params.y
 	neunet:zeroGradParameters()
@@ -150,9 +180,6 @@ while ros.ok() do
 
     if iter % 10  == 0 then collectgarbage() end
 
-    local netout, loss, grad, gradIn, u
-    local w, B
-    local net 	= {}    
     pitch = pitch:cuda()
 	if opt.model== 'lstm' then 
 		-- print('pitch: ', pitch)
@@ -164,7 +191,6 @@ while ros.ok() do
 		gradIn 	= neunet:backward(pitch, {grad})
 
 		neunet:updateParameters(opt.lr)
-
 
 		--aggregate the weights of the input and recuurent layers
 		net.input_weights 	= neunet.modules[1].modules[1].gradInput
@@ -189,6 +215,9 @@ while ros.ok() do
 		neunet:updateParameters(opt.lr)
 	end
 
+	time = sys.clock() - time
+	print("<trainer> time to learn 1 sample = " .. (time*1000) .. 'ms')
+
 	local Nf --= B*w
 	local u = -am * target + km * ref --+ Nf
 	if opt.model=='lstm' then 
@@ -200,17 +229,47 @@ while ros.ok() do
 	  	control.data = u
 	end
 
+	log{ loss = loss,
+		 lr = opt.lr,
+		 }
+
 	if publisher:getNumSubscribers() == 0 then
 	  print('waiting for subscriber')
 	else
 	  publisher:publish(control)
 	end
 
+	-- torch.save(opt.save .. '/' .. opt.model .. '/log.txt', json.encode(tablex.merge(t,opt,true)))
+
 	ros.spinOnce(true)
 	sys.sleep(opt.rate)
 end
 
-ros.shutdown()
+local function main()
+	local start = sys.clock()
+	local finish = sys.clock() 
+	print('Experiment started at: ', start)
+	print('Experiment Ended at: ', finish)
+	print('Total Time Taken = ', (finish - start), 'secs')
+
+	while ros.ok() do
+		optimize(neunet)
+	end
+
+	if opt.graph then 
+		iterm.dot(graphgen(neunet, pitch), opt.save..'/graph.pdf')
+	end
+	local start = sys.clock()
+	local finish = sys.clock() --os.execute('date')
+	print('Experiment started at: ', start)
+	print('Experiment Ended at: ', finish)
+	print('Total Time Taken = ', (finish - start), 'secs')
+
+	ros.shutdown()
+end
+
+main()
+
 
 
 		--[[ 
