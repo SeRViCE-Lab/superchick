@@ -31,8 +31,10 @@ cmd:option('-rho', 5, 'BPTT steps')
 cmd:option('-lr', 1e-4, 'learning rate')
 cmd:option('-seed', 123, 'manual seed')
 cmd:option('rate', 1e-2, 'ros sleep rate in seconds')
+
 cmd:option('save', 'logs', 'save logs')
 cmd:option('graph', false, 'generate net graph')
+cmd:option('netdir', 'network', 'network path')
 
 --dropout
 cmd:option('-dropout', true, 'apply dropout with this probability after each rnn layer. dropout <= 0 disables it.')
@@ -118,6 +120,25 @@ local function get_target()
 	return param, y, e, ok
 end
 
+local function saveNet(net)
+	--check if network directory exists
+	if not paths.dirp(opt.netdir)  then
+	  paths.mkdir(opt.netdir)
+	end
+
+	local netname = opt.model .. '_net.t7'
+
+	local filename = paths.concat(opt.netdir, netname)
+	if net.iter == 0 then
+	  if paths.filep(filename) then
+	   os.execute('mv ' .. filename .. ' ' .. filename .. '.old')
+	  end  
+	  os.execute('mkdir -p ' .. sys.dirname(filename))
+	else    
+	  print('<trainer> saving network model to '..filename)
+	  torch.save(filename, net.network)
+	end
+end
 
 local function move2GPU(x)
 	if use_cuda then
@@ -196,6 +217,8 @@ local function optimize(neunet)
 		net.input_weights 	= neunet.modules[1].modules[1].gradInput
 		net.prediction 		= neunet.modules[1].output
 		net.recurrent_weights, net.recurrent_outputs = {}, {}
+		net.iter = iter
+		net.network = neunet
 
 		for i = 1, #opt.hiddenSize do 
 			table.insert(net.recurrent_weights, neunet.modules[1].recurrentModule.modules[i].gradInput)
@@ -213,13 +236,18 @@ local function optimize(neunet)
 		gradIn = neunet:backward(pitch, grad)
 
 		neunet:updateParameters(opt.lr)
+
+		net.prediction = netout
+		net.loss = loss
+		net.iter = iter
+		net.network = neunet
 	end
 
 	time = sys.clock() - time
 	print("<trainer> time to learn 1 sample = " .. (time*1000) .. 'ms')
 
-	local Nf --= B*w
-	local u = -am * target + km * ref --+ Nf
+	local Nf = net.prediction[1] 
+	local u = -am * target + km * ref + Nf
 	if opt.model=='lstm' then 
 		ros.INFO("actual: %4.4f, pred: %4.8f, ref: %3.4f, loss: %4.4f, control: %4.4f", params.y, 
 			        net.prediction[1], params.ref, loss, u)
@@ -240,6 +268,7 @@ local function optimize(neunet)
 	end
 
 	-- torch.save(opt.save .. '/' .. opt.model .. '/log.txt', json.encode(tablex.merge(t,opt,true)))
+	saveNet(net)
 
 	ros.spinOnce(true)
 	sys.sleep(opt.rate)
