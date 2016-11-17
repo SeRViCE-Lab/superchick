@@ -38,8 +38,8 @@
    </joint>
 
   <!-- Motion capture to base link -->
-  <joint name="motion_capture_to_base_link" type="fixed">
-    <parent link="base_link"/>
+  <joint name="motion_capture_to_world" type="fixed">
+    <parent link="world"/>
     <child link="motion_capture_frame"/>
     <origin xyz="-5 -4 2.54" rpy="0 0 0" />
   </joint>

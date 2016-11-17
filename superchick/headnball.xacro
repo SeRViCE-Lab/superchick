@@ -13,6 +13,14 @@
   <color rgba="0.647059 0.164706 0.164706 1"/>
   </material> 
 
+  <!-- Used for fixing robot to Gazebo 'base_link' -->
+<!--     <link name="world"/>
+
+    <joint name="fixed" type="fixed">
+      <parent link="world"/>
+      <child link="headnball_link"/>
+    </joint> -->
+
    <!-- inflatable air bladder -->
    <link name="headnball_link">
      <visual>
