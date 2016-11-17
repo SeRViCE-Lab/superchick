@@ -73,11 +73,13 @@
       <material name="base_color"/>
       <origin xyz="0 0 0" rpy="0 0 0" />
     </visual>
+
     <collision>
       <geometry>
         <box size="${table_top_length} ${table_top_width} ${table_top_thickness}" />
       </geometry>
     </collision>
+    
   </link>
 
 <!-- right leg -->

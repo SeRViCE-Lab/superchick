@@ -17,21 +17,6 @@ int main(int argc, char** argv)
 
     // robot state
     double bladder = 0, tinc = degree, table=0, angle=0, height=0, hinc=0.005;
-/*    float table_top_length  = 1.524;
-    float table_top_width = 0.6198;
-    float table_top_thickness = 0.0381;
-    float table_leg_height = 0.635;
-    float table_leg_width = 0.1778;
-    float table_leg_thickness = 0.0254;
-    float table_leg_posoffset = 0.3302;
-    float table_leg_negoffset = 0.13208;
-    float table_foot_length = 0.5588;
-    float table_foot_width = 0.0889;
-    float table_foot_thickness = 0.05334;
-    float legs_xdist = .4;
-    float table_cover_length = 1.524;
-    float table_cover_width = 0.2794;
-    float table_cover_thickness = 0.127+0.1;*/
 
     // message declarations
     geometry_msgs::TransformStamped head_trans;
@@ -43,12 +28,12 @@ int main(int argc, char** argv)
     {
         //update joint_state
         joint_state.header.stamp = ros::Time::now();
-        joint_state.name.resize(14);
-        joint_state.position.resize(14);
+        joint_state.name.resize(13);
+        joint_state.position.resize(13);
         joint_state.name[0] ="table_to_bladder";
-        joint_state.position[0] = table;
+        joint_state.position[0] = 0; //table;
         joint_state.name[1] ="bladder_to_headnball";
-        joint_state.position[1] = bladder;
+        joint_state.position[1] = 0.2; //bladder;
         joint_state.name[2] ="base_to_right_leg";
         joint_state.position[2] =  0.3;
         joint_state.name[3] ="base_to_left_leg";
@@ -83,7 +68,7 @@ int main(int argc, char** argv)
 
         //send the joint state and transform
         joint_pub.publish(joint_state);
-        // broadcaster.sendTransform(head_trans);
+        broadcaster.sendTransform(head_trans);
 
         // Create new robot state
         bladder += tinc;
