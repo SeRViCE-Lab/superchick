@@ -11,7 +11,7 @@ using namespace amfc_control;
 //constructor
 // default Constructors.
 Controller::Controller(ros::NodeHandle n, amfc_control::ActuatorType base_bladder, int ref)
-: n_(n), ref(ref)
+: n_(n), ref(ref), k(1), T(1/(2.2*30))
 {
 	
 }
@@ -48,7 +48,6 @@ void Controller::head_twist_subscriber(const geometry_msgs::Twist::ConstPtr& hea
 	angular.x = headPose->angular.x;
 	angular.y = headPose->angular.y;
 	angular.z = headPose->angular.z;
-	// ROS_INFO("z-linear: %f", angular.z);
 }
 
 bool Controller::configure_controller(
@@ -58,16 +57,24 @@ bool Controller::configure_controller(
 	// this is the reference model. it is always time-varying
 	// y_m(t) = [k_m + y_0] * exp(a_m * t)
 	k_m = 1.25;  
-	a_m = -0.8;   
-	y_0 = 0;  //assume a step input	
+	a_m = 0.8;   
+	y_0 = 0;  //assume zero initial response
     now = std::chrono::high_resolution_clock::now();
     double elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - start).count() / 1000.0;
-	y_m = (k_m * ref + y_0) * exp(a_m *elapsed);
-	ROS_INFO_STREAM("ref: " << ref);
+	y_m = k_m * ref * exp(-a_m *k*T);
+
+	ROS_INFO_STREAM(" ym: " << y_m);
 	//parametric error between ref. model and plant
-	error = angular.z - y_m;
+	error = linear.z - y_m;
 	res.error = error;
-	ROS_INFO_STREAM("sending response: " << res.error);
+	//publish am, km, ref and y as services as well
+	res.am 	= a_m;
+	res.km 	= k_m;
+	res.ref = ref;
+	res.y  	= linear.z;
+	ROS_INFO_STREAM("sending response: " << res);	
+	++k;
+
 	return true;
 }
 
