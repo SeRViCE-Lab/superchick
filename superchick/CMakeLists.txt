@@ -22,8 +22,9 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
-# Xacro files
-file(GLOB xacro_files ${CMAKE_CURRENT_SOURCE_DIR}/*.xacro)
+# Xacro files # this is a hack here so world files are not dumped to \
+#src dir
+file(GLOB xacro_files ${CMAKE_CURRENT_SOURCE_DIR}/*world.xacro)
 
 foreach(it ${xacro_files})
   # remove .xacro extension

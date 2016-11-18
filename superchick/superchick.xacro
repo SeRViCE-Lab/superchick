@@ -18,7 +18,7 @@
     <child link="big_bladder_link"/>
     <limit effort="200.0" lower="0.1016" upper="0.1016" velocity="1.0" />
     <safety_controller k_velocity="10" k_position="15" soft_lower_limit="-0.05" soft_upper_limit="0.05" />
-    <origin xyz="${-(table_top_length)/2 + 0.2} 0 ${1e-1/3}" rpy="${0} 0 ${0}" />
+    <origin xyz="${-(table_top_length)/2 + 0.25} 0 ${1e-1/3}" rpy="${0} 0 ${0}" />
   </joint>
 
   <joint name="table_to_rightneckbladder" type="fixed">
@@ -34,7 +34,7 @@
     <child link="left_bladder"/>
     <limit effort="200.0" lower="0.1016" upper="0.1016" velocity="1.0" />
     <safety_controller k_velocity="10" k_position="15" soft_lower_limit="-0.05" soft_upper_limit="0.05" />
-    <origin xyz="${-(table_top_length)/3 + 0.15} -0.12 ${1e-1/3.2}" rpy="${0} 0 ${0}" />
+    <origin xyz="${-(table_top_length)/3 + 0.15} -0.01 ${1e-1/3.2}" rpy="${0} 0 ${0}" />
   </joint>
 
   <!-- Actuator Links -->

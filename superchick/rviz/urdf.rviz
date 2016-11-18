@@ -52,7 +52,7 @@ Visualization Manager:
       Value: true
     - Alpha: 0.5
       Class: rviz/RobotModel
-      Collision Enabled: false
+      Collision Enabled: true
       Enabled: true
       Links:
         All Links Enabled: true
@@ -70,12 +70,12 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
-        bladder_link:
+        headnball_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        headnball_link:
+        left_bladder:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -96,6 +96,11 @@ Visualization Manager:
           Show Trail: false
           Value: true
         panel_9_oc:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        right_bladder:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -140,9 +145,9 @@ Visualization Manager:
           Value: true
         big_bladder_link:
           Value: true
-        bladder_link:
-          Value: true
         headnball_link:
+          Value: true
+        left_bladder:
           Value: true
         left_leg:
           Value: true
@@ -151,6 +156,8 @@ Visualization Manager:
         panel_3_oc:
           Value: true
         panel_9_oc:
+          Value: true
+        right_bladder:
           Value: true
         right_leg:
           Value: true
@@ -181,7 +188,9 @@ Visualization Manager:
                     {}
               big_bladder_link:
                 {}
-              bladder_link:
+              left_bladder:
+                {}
+              right_bladder:
                 headnball_link:
                   {}
               table_cover:
@@ -214,22 +223,22 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 2.18931
+      Distance: 2.09609
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.06
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 0.0487254
-        Y: 0.312757
-        Z: 0.641067
+        X: -0.185217
+        Y: 0.031481
+        Z: 0.238342
       Name: Current View
       Near Clip Distance: 0.01
-      Pitch: 0.2948
+      Pitch: 0.7848
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 4.85175
+      Yaw: 4.61856
     Saved: ~
 Window Geometry:
   Displays:

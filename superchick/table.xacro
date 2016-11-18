@@ -13,7 +13,7 @@
 
   <!-- General Properties -->
   <xacro:property name="M_PI" value="3.14159" />
-  
+
   <!-- table top properties -->
   <xacro:property name="table_top_length" value="1.524" />
   <xacro:property name="table_top_width" value="0.6198" />

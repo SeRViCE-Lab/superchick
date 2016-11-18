@@ -6,9 +6,10 @@
    <xacro:property name="bladder_length" value="0.15748" />
    <xacro:property name="bladder_width" value="0.15748" />
    <xacro:property name="bladder_thickness" value="0.0508" />
-   <!-- this is used in calculating the size of the big bladder
-   Should be 2 ideally but too lay to fix associated deps -->
-   <xacro:property name="bladder_constant" value="1.5" />
+   <xacro:property name="bladder_constant" value="2" />
+   
+   <xacro:property name="left_bladder_x" value="${bladder_width/2}" />
+   <!-- <xacro:property name="left_bladder_y" value="${bladder_width/2}" /> -->
 
      <!-- Derived Variables -->
   <material name="bladder_color" >
