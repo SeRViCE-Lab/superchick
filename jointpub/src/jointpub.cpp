@@ -33,7 +33,7 @@ int main(int argc, char** argv)
         joint_state.name[0] ="table_to_bladder";
         joint_state.position[0] = 0; //table;
         joint_state.name[1] ="bladder_to_headnball";
-        joint_state.position[1] = 0.2; //bladder;
+        joint_state.position[1] = 0.15; //bladder;
         joint_state.name[2] ="base_to_right_leg";
         joint_state.position[2] =  0.3;
         joint_state.name[3] ="base_to_left_leg";
@@ -46,7 +46,7 @@ int main(int argc, char** argv)
         joint_state.position[6] = 0;
         joint_state.name[7] ="base_panel_to_table_top";
         joint_state.position[7] = -0.18;
-        joint_state.name[8] ="motion_capture_to_world";
+        joint_state.name[8] ="vicon_to_world";
         joint_state.position[8] = 2.54;
         joint_state.name[9] ="panel_12_oc_to_base_panel";
         joint_state.position[9] = .200025/2;
@@ -71,12 +71,12 @@ int main(int argc, char** argv)
         broadcaster.sendTransform(head_trans);
 
         // Create new robot state
-        bladder += tinc;
-        if (bladder<-1.0 || bladder>1) tinc *= -1;
-        height += hinc;
-        if (height>.5 || height<0) hinc *= -1;
-        table += degree;
-        angle += degree/4;
+        // bladder += tinc;
+        // if (bladder<-1.0 || bladder>1) tinc *= -1;
+        // height += hinc;
+        // if (height>.5 || height<0) hinc *= -1;
+        // table += degree;
+        // angle += degree/4;
 
         // This will adjust as needed per iteration
         loop_rate.sleep();

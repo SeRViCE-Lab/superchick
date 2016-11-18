@@ -2,33 +2,36 @@
 <robot name="vicon" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
    <!-- General Properties -->
-   <xacro:property name="vicon_x" value="0.2794" />
-   <xacro:property name="z_from_table" value="4" />
-
-     <!-- Derived Variables -->
-  <material name="vicon_colors" >
-    <color rgba="0.133 0.55 0.13 1" /> <!--forest green-->
+    <!-- Constants -->
+  <xacro:property name="PI" value="3.14159" />
+  <material name="vicon_red" >
+    <color rgba="1 0 0 1" />
   </material>
 
-   <!-- inflatable air bladder -->
-   <link name="vicon_system">
-     <visual>
-       <origin xyz="0 0 0" rpy="0 0 0" />
-       <geometry>
-         <mesh filename="package://superchick/meshes/bladder.stl" scale=".001 .001 .001" />
-       </geometry>
-       <material name="bladder_color"/>
-       <origin xyz="0 0 0" rpy="0 0 0" />
-     </visual>
-     <collision>
-       <geometry>
-         <mesh filename="package://superchick/meshes/bladder.stl" scale=".001 .001 .001" />
-       </geometry>
-     </collision>
-     <inertial>
-       <mass value="10"/>
-       <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
-     </inertial>
-   </link>
+  <!-- vicon Frame-->
+  <link name="vicon_frame">
+
+    <visual>
+      <origin xyz="0 0 0" rpy="${PI/2} 0 ${PI/2}" />
+      <geometry>
+        <mesh filename="package://superchick/meshes/vicon.stl" scale = ".001 .001 .001" />
+      </geometry>
+      <material name="vicon_red"/>
+    </visual>
+
+    <collision>
+      <origin xyz="0 0 0" rpy="${PI/2} 0 ${PI/2}" />
+      <geometry>
+        <mesh filename="package://superchick/meshes/vicon.stl" scale = ".001 .001 .001" />
+      </geometry>
+      <material name="vicon_red"/>
+    </collision>
+
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <mass value="1e-1"/>
+      <inertia ixx="1e-1" ixy="0.0" ixz="0.0" iyy="1e-1" iyz="0.0" izz="1e-1"/>
+    </inertial>
+  </link>
 
 </robot>

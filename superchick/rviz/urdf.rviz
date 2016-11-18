@@ -65,6 +65,11 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
+        big_bladder_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
         bladder_link:
           Alpha: 1
           Show Axes: false
@@ -76,11 +81,6 @@ Visualization Manager:
           Show Trail: false
           Value: true
         left_leg:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        motion_capture_frame:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -111,6 +111,11 @@ Visualization Manager:
           Show Trail: false
           Value: true
         table_top:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        vicon_frame:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -133,13 +138,13 @@ Visualization Manager:
         All Enabled: true
         base_panel:
           Value: true
+        big_bladder_link:
+          Value: true
         bladder_link:
           Value: true
         headnball_link:
           Value: true
         left_leg:
-          Value: true
-        motion_capture_frame:
           Value: true
         panel_12_oc:
           Value: true
@@ -153,18 +158,18 @@ Visualization Manager:
           Value: true
         table_top:
           Value: true
+        vicon_frame:
+          Value: true
         world:
           Value: true
       Marker Scale: 0.5
       Name: TF
       Show Arrows: false
-      Show Axes: false
+      Show Axes: true
       Show Names: false
       Tree:
         world:
           left_leg:
-            {}
-          motion_capture_frame:
             {}
           right_leg:
             table_top:
@@ -174,11 +179,15 @@ Visualization Manager:
                     {}
                   panel_9_oc:
                     {}
+              big_bladder_link:
+                {}
               bladder_link:
                 headnball_link:
                   {}
               table_cover:
                 {}
+          vicon_frame:
+            {}
       Update Interval: 0
       Value: true
   Enabled: true
@@ -205,22 +214,22 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 2.72143
+      Distance: 2.18931
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.06
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 0
-        Y: 0
-        Z: 0
+        X: 0.0487254
+        Y: 0.312757
+        Z: 0.641067
       Name: Current View
       Near Clip Distance: 0.01
-      Pitch: 0.4748
+      Pitch: 0.2948
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 5.33677
+      Yaw: 4.85175
     Saved: ~
 Window Geometry:
   Displays:

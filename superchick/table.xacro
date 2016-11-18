@@ -79,7 +79,9 @@
         <box size="${table_top_length} ${table_top_width} ${table_top_thickness}" />
       </geometry>
     </collision>
-    
+
+    <!-- KDL does not support root link inertia mass -->
+
   </link>
 
 <!-- right leg -->
@@ -91,17 +93,20 @@
       <origin rpy="0 1.57075 0" xyz="0 0 0"/>
       <material name="dark_gray"/>
     </visual>
+
     <collision>
       <geometry>
         <box size="${table_leg_height} ${table_leg_width} ${table_leg_thickness}"/>
       </geometry>
       <origin rpy="0 1.57075 0" xyz="0 0 0"/>
     </collision>
+
     <inertial>
       <origin xyz="0 0 0" rpy="0 0 0" />
-      <mass value="10"/>
+      <mass value="0.1"/>
       <inertia ixx="1e-1" ixy="0.0" ixz="0.0" iyy="1e-1" iyz="0.0" izz="1e-1"/>
     </inertial>
+
   </link>
 
   <!-- join right leg to base -->
@@ -120,16 +125,20 @@
       <origin rpy="0 1.57075 0" xyz="0 0 0"/>
       <material name="dark_gray"/>
     </visual>
+
     <collision>
       <geometry>
         <box size="${table_leg_height} ${table_leg_width} ${table_leg_thickness}"/>
       </geometry>
       <origin rpy="0 1.57075 0" xyz="0 0 0"/>
     </collision>
+
     <inertial>
-      <mass value="10"/>
-      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <mass value="0.1"/>
+      <inertia ixx="1e-1" ixy="0.0" ixz="0.0" iyy="1e-1" iyz="0.0" izz="1e-1"/>
     </inertial>
+
   </link>
 
   <!-- join left leg to base -->
@@ -149,15 +158,19 @@
       <material name="table_color"/>
       <origin xyz="0 0 ${table_leg_height-0.65}" rpy="0 0 0" />
     </visual>
+
     <collision>
       <geometry>
         <box size="${table_top_length} ${table_top_width} ${table_top_thickness}" />
       </geometry>
     </collision>
+
     <inertial>
-      <mass value="10"/>
-       <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <mass value="0.1"/>
+      <inertia ixx="1e-1" ixy="0.0" ixz="0.0" iyy="1e-1" iyz="0.0" izz="1e-1"/>
     </inertial>
+
   </link>
 
   <joint name="rightleg_to_tabletop" type="fixed">
@@ -181,15 +194,19 @@
       <material name="table_cover_color"/>
       <origin xyz="0 0 ${-table_top_thickness}" rpy="0 0 0" />
     </visual>
+
     <collision>
       <geometry>
         <box size="${table_cover_length} ${table_cover_width} ${table_cover_thickness}" />
       </geometry>
     </collision>
+
     <inertial>
-      <mass value="10"/>
-       <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <mass value="1e-1"/>
+      <inertia ixx="1e-1" ixy="0.0" ixz="0.0" iyy="1e-1" iyz="0.0" izz="1e-1"/>
     </inertial>
+
   </link>
 
   <joint name="tablecover_to_tabletop" type="fixed">
@@ -197,17 +214,5 @@
     <child link="table_cover"/>
     <origin xyz="0 ${(table_top_width/2)-0.08} -0.18" rpy="${-M_PI/2} 0 0 "/>
   </joint>
-<!-- 
-  <joint name="left_leg_to_tablecover" type="fixed">
-    <parent link="table_top"/>
-    <child link="left_leg"/>
-    <origin xyz="0 ${(table_top_width/2)-0.08} -0.18" rpy="${-M_PI/2} 0 0 "/>
-  </joint>
 
-  <joint name="right_leg_to_tablecover" type="fixed">
-    <parent link="table_top"/>
-    <child link="right_leg"/>
-    <origin xyz="0 ${(table_top_width/2)-0.08} -0.18" rpy="${-M_PI/2} 0 0 "/>
-  </joint>
- -->
 </robot>

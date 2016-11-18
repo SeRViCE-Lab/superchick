@@ -23,7 +23,7 @@ include_directories(
 )
 
 # Xacro files
-file(GLOB xacro_files ${CMAKE_CURRENT_SOURCE_DIR}/superchick/*.xacro)
+file(GLOB xacro_files ${CMAKE_CURRENT_SOURCE_DIR}/*.xacro)
 
 foreach(it ${xacro_files})
   # remove .xacro extension

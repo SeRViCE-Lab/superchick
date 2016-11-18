@@ -1,8 +1,10 @@
 <?xml version="1.0"?>
 <robot name="cage" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-	<!-- Description: A model of the "cage" used in the superchick project.
+	<!-- Description: Head Cage
+
 	 Author: Alex Tomkovich, September 27, 2016
+	 Modified: Lekan Ogunmolu Nov. 18, 2016
  	-->
 
 	<!-- Constants -->
@@ -19,44 +21,60 @@
 
 	<!-- Derived Variables -->
 	<material name="panel_color" >
-		<color rgba=".1 .1 .1 1" />
+		<color rgba="0.133 0.55 0.13 1" />
 	</material>
-
 
 	<!-- Base panel -->
 	<link name="base_panel">
 		<visual>
-			<origin xyz="0 0 0" rpy="0 0 0" />
 			<geometry>
 				<box size="${base_panel_length} ${base_panel_width} ${panel_thickness}" />
 			</geometry>
+			<origin xyz="0 0 0" rpy="0 0 0" />
 			<material name="panel_color" />
 		</visual>
 
 		<collision>
-			<origin xyz="0 0 0" rpy="0 0 0" />
 			<geometry>
 				<box size="${base_panel_length} ${base_panel_width} ${panel_thickness}" />
 			</geometry>
+			<origin xyz="0 0 0" rpy="0 0 0" />
 		</collision>
+
+
+		<inertial>
+		  <origin xyz="0 0 0" rpy="0 0 0" />
+		  <mass value="0.1"/>
+		  <inertia ixx="1e-1" ixy="0.0" ixz="0.0" iyy="1e-1" iyz="0.0" izz="1e-1"/>
+		</inertial>
+
+
 	</link>
 
 	<!-- 12:00 panel -->
 	<link name="panel_12_oc">
 		<visual>
-			<origin xyz="0 0 0" rpy="${(PI/2)} 0 0" />
 			<geometry>
 				<box size="${panel_12_oc_length} ${panel_height} ${panel_thickness}" />
 			</geometry>
 			<material name="panel_color" />
+			<origin xyz="0 0 0" rpy="${(PI/2)} 0 0" />
 		</visual>
 
 		<collision>
-			<origin xyz="0 0 0" rpy="${(PI/2)} 0 0" />
 			<geometry>
 				<box size="${panel_12_oc_length} ${panel_height} ${panel_thickness}" />
 			</geometry>
+			<origin xyz="0 0 0" rpy="${(PI/2)} 0 0" />
 		</collision>
+
+
+		<inertial>
+		  <origin xyz="0 0 0" rpy="0 0 0" />
+		  <mass value="0.1"/>
+		  <inertia ixx="1e-1" ixy="0.0" ixz="0.0" iyy="1e-1" iyz="0.0" izz="1e-1"/>
+		</inertial>
+
 	</link>
 
 	<!-- Join 12:00 Panel to base_panel -->
@@ -77,11 +95,18 @@
 		</visual>
 
 		<collision>
-			<origin xyz="0 0 0" rpy="${(PI/2)} 0 ${(PI/2)}" />
 			<geometry>
 				<box size="${side_panel_length} ${panel_height} ${panel_thickness}" />
 			</geometry>
+			<origin xyz="0 0 0" rpy="${(PI/2)} 0 ${(PI/2)}" />
 		</collision>
+
+		<inertial>
+		  <origin xyz="0 0 0" rpy="0 0 0" />
+		  <mass value="0.1"/>
+		  <inertia ixx="1e-1" ixy="0.0" ixz="0.0" iyy="1e-1" iyz="0.0" izz="1e-1"/>
+		</inertial>
+
 	</link>
 
 	<!-- Join 9:00 Panel to 12:00 Panel -->
@@ -101,11 +126,19 @@
 			<material name="panel_color" />
 		</visual>
 		<collision>
-			<origin xyz="0 0 0" rpy="${(PI/2)} 0 ${(PI/2)}" />
 			<geometry>
 				<box size="${side_panel_length} ${panel_height} ${panel_thickness}" />
 			</geometry>
+			<origin xyz="0 0 0" rpy="${(PI/2)} 0 ${(PI/2)}" />
 		</collision>
+
+		
+		<inertial>
+		  <origin xyz="0 0 0" rpy="0 0 0" />
+		  <mass value="0.1"/>
+		  <inertia ixx="1e-1" ixy="0.0" ixz="0.0" iyy="1e-1" iyz="0.0" izz="1e-1"/>
+		</inertial>
+
 	</link>
 
 	<!-- Join 3:00 Panel to 12:00 Panel -->
