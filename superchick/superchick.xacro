@@ -1,8 +1,6 @@
 <?xml version="1.0"?>
 <robot name="superchick" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-  <xacro:include filename="$(find superchick)/superchick.gazebo" />
-
    <!-- General Properties -->
    <xacro:property name="bladder_pos_x" value="-0.7" />
    <xacro:property name="bladder_pos_y" value="-0.35" />
@@ -15,6 +13,7 @@
    <xacro:include filename="$(find superchick)/headnball.xacro" />
    <xacro:include filename="$(find superchick)/cage.xacro" />
    <xacro:include filename="$(find superchick)/vicon.xacro" />
+   <xacro:include filename="$(find superchick)/superchick.gazebo" />
 
    <!-- table link to bladders -->
   <joint name="table_to_big_bladder" type="fixed">

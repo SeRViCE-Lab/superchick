@@ -1,12 +1,10 @@
 <?xml version="1.0"?>
 <robot name="superchick" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-   <!-- General Properties -->
-  <xacro:property name="PI" value="3.14159" />
   <!-- vicon Frame-->
   <link name="vicon_frame">
     <visual>
-      <origin xyz="0 0 0" rpy="${PI/2} 0 ${PI/2}" />
+      <origin xyz="0 0 0" rpy="${M_PI/2} 0 ${M_PI/2}" />
       <geometry>
         <mesh filename="package://superchick/meshes/vicon2.dae" scale = ".001 .001 .001" />
       </geometry>
@@ -14,7 +12,7 @@
     </visual>
 
     <collision>
-      <origin xyz="0 0 0" rpy="${PI/2} 0 ${PI/2}" />
+      <origin xyz="0 0 0" rpy="${M_PI/2} 0 ${M_PI/2}" />
       <geometry>
         <mesh filename="package://superchick/meshes/vicon2.dae" scale = ".001 .001 .001" />
       </geometry>

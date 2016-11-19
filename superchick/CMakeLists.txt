@@ -3,7 +3,7 @@ project(superchick)
 
 find_package(catkin REQUIRED COMPONENTS
   controller_manager
-  diff_drive_controller #gazebo_ros
+  gazebo_ros
   joint_state_controller
   joint_state_publisher
   position_controllers
@@ -14,12 +14,27 @@ find_package(catkin REQUIRED COMPONENTS
   xacro
 )
 
-#  CATKIN_DEPENDS controller_manager diff_drive_controllergazebo_ros #joint_state_controller joint_state_publisher position_controllers #robot_state_publisher roslaunch rviz urdf xacro
-#  DEPENDS system_lib
-#)
+# Depend on system install of Gazebo
+find_package(gazebo REQUIRED)
 
-include_directories(
-  ${catkin_INCLUDE_DIRS}
+
+
+include_directories(include ${catkin_INCLUDE_DIRS} ${GAZEBO_INCLUDE_DIRS} ${SDFormat_INCLUDE_DIRS})
+
+catkin_package(
+    DEPENDS
+      gazebo_ros
+    CATKIN_DEPENDS
+      joint_state_controller 
+      joint_state_publisher 
+      position_controllers 
+      robot_state_publisher 
+      roslaunch 
+      rviz 
+      urdf 
+      xacro
+    INCLUDE_DIRS
+    LIBRARIES
 )
 
 # Xacro files # this is a hack here so world files are not dumped to \
