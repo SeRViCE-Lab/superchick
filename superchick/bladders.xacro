@@ -1,22 +1,16 @@
 <?xml version="1.0"?>
-<robot name="bladder" xmlns:xacro="http://www.ros.org/wiki/xacro">
+<robot name="superchick" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
    <!-- General Properties -->
    <!-- Lekan Ogunmolu | November 2016 -->
    <xacro:property name="bladder_length" value="0.15748" />
-   <xacro:property name="bladder_width" value="0.15748" />
+   <xacro:property name="bladder_width" value="${bladder_length}" />
    <xacro:property name="bladder_thickness" value="0.0508" />
    <xacro:property name="bladder_constant" value="2" />
-   
    <xacro:property name="left_bladder_x" value="${bladder_width/2}" />
-   <!-- <xacro:property name="left_bladder_y" value="${bladder_width/2}" /> -->
-
-     <!-- Derived Variables -->
-  <material name="bladder_color" >
-    <color rgba="${255/255} ${255/255} 0 ${255/255}" /> 
-  </material>
-
-   <!-- inflatable air bladder -->
+   <xacro:property name="mass" value="1e-2" />
+   <xacro:property name="inertia_mom" value="${mass/12}" />
+   
    <link name="right_bladder">
      <visual>
        <origin xyz="0 0 0" rpy="0 0 0" />
@@ -35,9 +29,10 @@
      </collision>
 
      <inertial>
-       <mass value="1e-2"/>
-       <inertia ixx="0.999998" ixy="0.0" ixz="0.0" 
-        iyy="1.000000" iyz="-0.000011" izz="0.999998"/>
+       <mass value="${mass}"/>
+       <inertia ixx="${mass/12}" ixy="0.0" ixz="0.0" 
+        iyy="${inertia_mom}" iyz="0.0000" 
+        izz="${inertia_mom}"/>
      </inertial>
    </link>
 
@@ -59,9 +54,10 @@
      </collision>
 
      <inertial>
-       <mass value="1e-2"/>
-       <inertia ixx="0.999998" ixy="0.0" ixz="0.0" 
-        iyy="1.000000" iyz="-0.000011" izz="0.999998"/>
+       <mass value="${mass}"/>
+       <inertia ixx="${mass/12}" ixy="0.0" ixz="0.0" 
+        iyy="${inertia_mom}" iyz="0.0000" 
+        izz="${inertia_mom}"/>
      </inertial>
    </link>
 
@@ -83,9 +79,10 @@
      </collision>
 
      <inertial>
-       <mass value="1e-2"/>
-       <inertia ixx="0.999998" ixy="0.0" ixz="0.0" 
-        iyy="1.000000" iyz="-0.000011" izz="0.999998"/>
+       <mass value="${mass}"/>
+       <inertia ixx="${mass/12}" ixy="0.0" ixz="0.0" 
+        iyy="${inertia_mom}" iyz="0.0000" 
+        izz="${inertia_mom}"/>
      </inertial>
    </link>
 

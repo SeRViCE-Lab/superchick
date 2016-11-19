@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<robot name="acc16model" xmlns:xacro="http://www.ros.org/wiki/xacro">
+<robot name="superchick" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
   <!-- Model for the Superchick Table Spec
       Author: Olalekan Ogunmolu, August 2016
@@ -11,7 +11,6 @@
         roslaunch superchick display.launch model:=table.urdf 
   -->
 
-  <!-- General Properties -->
   <xacro:property name="M_PI" value="3.14159" />
 
   <!-- table top properties -->
@@ -37,31 +36,6 @@
   <xacro:property name="table_cover_length" value="1.524" />
   <xacro:property name="table_cover_width" value="0.2794" />
   <xacro:property name="table_cover_thickness" value="${0.127+0.1}" />
-
-  <!-- Derived Variables -->
-  <material name="table_color" >
-    <color rgba="0.8 0.8 0.8 1" />
-  </material>
-
-  <material name="blue">
-    <color rgba="0 0 .8 1"/>
-  </material>
-
-  <material name="table_cover_color">
-    <color rgba="0 ${26/255} ${51/255} 1"/>
-  </material>
-
-  <material name="dark_gray">
-    <color rgba="0.156863 0.156863 0.156863 1"/>
-  </material>
-
-  <material name="white">
-    <color rgba="1 1 1 1"/>
-  </material>
-
-  <material name="base_color">
-    <color rgba="0 0 0 0"/>
-  </material>
   
   <!-- table legs artificial base link -->
   <link name="world">
@@ -84,7 +58,7 @@
 
   </link>
 
-<!-- right leg -->
+  <!-- right leg -->
   <link name="right_leg">
     <visual>
       <geometry>
@@ -102,11 +76,11 @@
     </collision>
 
     <inertial>
-      <origin xyz="0 0 0" rpy="0 0 0" />
-      <mass value="0.1"/>
-      <inertia ixx="1e-1" ixy="0.0" ixz="0.0" iyy="1e-1" iyz="0.0" izz="1e-1"/>
+      <mass value="${mass}"/>
+      <inertia ixx="${mass/12}" ixy="0.0" ixz="0.0" 
+       iyy="${inertia_mom}" iyz="0.0000" 
+       izz="${inertia_mom}"/>
     </inertial>
-
   </link>
 
   <!-- join right leg to base -->
@@ -116,7 +90,7 @@
     <origin xyz="${(table_top_length/2)-0.0762} 0 0.3"/>
   </joint>
 
-<!-- draw left leg -->
+  <!-- draw left leg -->
   <link name="left_leg">
     <visual>
       <geometry>
@@ -134,9 +108,10 @@
     </collision>
 
     <inertial>
-      <origin xyz="0 0 0" rpy="0 0 0" />
-      <mass value="0.1"/>
-      <inertia ixx="1e-1" ixy="0.0" ixz="0.0" iyy="1e-1" iyz="0.0" izz="1e-1"/>
+      <mass value="${mass}"/>
+      <inertia ixx="${mass/12}" ixy="0.0" ixz="0.0" 
+        iyy="${inertia_mom}" iyz="0.0000" 
+        izz="${inertia_mom}"/>
     </inertial>
 
   </link>
@@ -166,11 +141,11 @@
     </collision>
 
     <inertial>
-      <origin xyz="0 0 0" rpy="0 0 0" />
-      <mass value="0.1"/>
-      <inertia ixx="1e-1" ixy="0.0" ixz="0.0" iyy="1e-1" iyz="0.0" izz="1e-1"/>
-    </inertial>
-
+      <mass value="${mass}"/>
+      <inertia ixx="${mass/12}" ixy="0.0" ixz="0.0" 
+        iyy="${inertia_mom}" iyz="0.0000" 
+        izz="${inertia_mom}"/>
+      </inertial>
   </link>
 
   <joint name="rightleg_to_tabletop" type="fixed">
@@ -202,11 +177,11 @@
     </collision>
 
     <inertial>
-      <origin xyz="0 0 0" rpy="0 0 0" />
-      <mass value="1e-1"/>
-      <inertia ixx="1e-1" ixy="0.0" ixz="0.0" iyy="1e-1" iyz="0.0" izz="1e-1"/>
+      <mass value="${mass}"/>
+      <inertia ixx="${mass/12}" ixy="0.0" ixz="0.0" 
+       iyy="${inertia_mom}" iyz="0.0000" 
+       izz="${inertia_mom}"/>
     </inertial>
-
   </link>
 
   <joint name="tablecover_to_tabletop" type="fixed">

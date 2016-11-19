@@ -1,20 +1,14 @@
 <?xml version="1.0"?>
-<robot name="vicon" xmlns:xacro="http://www.ros.org/wiki/xacro">
+<robot name="superchick" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
    <!-- General Properties -->
-    <!-- Constants -->
   <xacro:property name="PI" value="3.14159" />
-  <material name="vicon_red" >
-    <color rgba="1 0 0 1" />
-  </material>
-
   <!-- vicon Frame-->
   <link name="vicon_frame">
-
     <visual>
       <origin xyz="0 0 0" rpy="${PI/2} 0 ${PI/2}" />
       <geometry>
-        <mesh filename="package://superchick/meshes/vicon.stl" scale = ".001 .001 .001" />
+        <mesh filename="package://superchick/meshes/vicon2.dae" scale = ".001 .001 .001" />
       </geometry>
       <material name="vicon_red"/>
     </visual>
@@ -22,15 +16,16 @@
     <collision>
       <origin xyz="0 0 0" rpy="${PI/2} 0 ${PI/2}" />
       <geometry>
-        <mesh filename="package://superchick/meshes/vicon.stl" scale = ".001 .001 .001" />
+        <mesh filename="package://superchick/meshes/vicon2.dae" scale = ".001 .001 .001" />
       </geometry>
       <material name="vicon_red"/>
     </collision>
 
     <inertial>
-      <origin xyz="0 0 0" rpy="0 0 0" />
-      <mass value="1e-1"/>
-      <inertia ixx="1e-1" ixy="0.0" ixz="0.0" iyy="1e-1" iyz="0.0" izz="1e-1"/>
+      <mass value="${mass}"/>
+      <inertia ixx="${mass/12}" ixy="0.0" ixz="0.0" 
+       iyy="${inertia_mom}" iyz="0.0000" 
+       izz="${inertia_mom}"/>
     </inertial>
   </link>
 

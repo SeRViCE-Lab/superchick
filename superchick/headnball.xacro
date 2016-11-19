@@ -1,42 +1,45 @@
 <?xml version="1.0"?>
-<robot name="white_head" xmlns:xacro="http://www.ros.org/wiki/xacro">
+<robot name="superchick" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
    <!-- General Properties -->
    <xacro:property name="head_height" value="0.2794" />
    <xacro:property name="head_width" value="0.2032" />
    <xacro:property name="head_thickness" value="0.1778" />
    <xacro:property name="M_PI" value="3.14159" ns="headnball"/>
-
-  <xacro:property name="head_x_orig" value="-0.1" />   
-  <xacro:property name="head_y_orig" value="${1.5*-1e-1}" /> 
-
-  <material name="brown">
-  <color rgba="0.647059 0.164706 0.164706 1"/>
-  </material> 
+   <xacro:property name="head_x_orig" value="-0.1" />   
+   <xacro:property name="head_y_orig" value="${1.5*-1e-1}" /> 
+   <xacro:property name="head_z_orig" value="${0.11/3}" /> 
 
    <!-- inflatable air bladder -->
    <link name="headnball_link">
      <visual>
-       <origin xyz="${0} ${head_y_orig} ${0}" rpy="${M_PI/2} 0 ${-M_PI}" />
+       <origin xyz="${0} ${head_y_orig} ${head_z_orig}" rpy="${M_PI/2} 0 ${-M_PI}" />
        <geometry>        
-         <mesh filename="package://superchick/meshes/headnball.dae" scale=".001 .001 .001" />
+         <mesh filename="package://superchick/meshes/headnball.stl" scale=".001 .001 .001" />
        </geometry>
        <material name="brown"/>
-       <origin xyz="${0} ${head_y_orig} ${0}" rpy="${M_PI/2} 0 ${-M_PI}" />
+       <origin xyz="${0} ${head_y_orig} ${head_z_orig}" rpy="${M_PI/2} 0 ${-M_PI}" />
      </visual>
 
      <collision>
        <geometry>
-         <mesh filename="package://superchick/meshes/headnball.dae" scale=".001 .001 .001" />
+         <mesh filename="package://superchick/meshes/headnball.stl" scale=".001 .001 .001" />
        </geometry>
-       <origin xyz="${0} ${head_y_orig} ${0}" rpy="${M_PI/2} 0 ${-M_PI}" />
+       <origin xyz="${0} ${head_y_orig} ${head_z_orig}" rpy="${M_PI/2} 0 ${-M_PI}" />
      </collision>
 
      <inertial>
+       <mass value="${mass}"/>
+       <inertia ixx="${mass/12}" ixy="0.0" ixz="0.0" 
+        iyy="${inertia_mom}" iyz="0.0000" 
+        izz="${inertia_mom}"/>
+     </inertial>
+
+<!--      <inertial>
        <mass value="1e-1"/>
        <inertia ixx="0.925288" ixy="0.379102" ixz="0.011081" 
                 iyy="0.919140" iyz="0.111180" izz="0.993738"/>
-     </inertial>
+     </inertial> -->
    </link>
 
 </robot>

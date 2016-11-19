@@ -1,0 +1,76 @@
+<?xml version="1.0"?>
+<robot>
+
+	<gazebo reference="headnball_link">
+	  <material>Gazebo/Yellow</material>
+	</gazebo>
+
+	<gazebo reference="world">
+	  <material>Gazebo/Black</material>
+	</gazebo>
+
+	<gazebo reference="right_leg">
+	  <material>Gazebo/Grey</material>
+	</gazebo>
+
+	<gazebo reference="base_to_right_leg">
+	  <mu1 value="0.2"/>
+	  <mu2 value="0.2"/>
+	  <kp value="1..0" />
+	  <kd value="1.0" />
+	  <material>Gazebo/Grey</material>
+	</gazebo>
+
+	<gazebo reference="left_leg">
+	  <material>Gazebo/Grey</material>
+	</gazebo>
+
+	<gazebo reference="table_top">
+	  <material>Gazebo/White</material>
+	</gazebo>
+
+	<gazebo reference="table_cover">
+	  <material>Gazebo/Grey</material>
+	</gazebo>
+
+	<gazebo reference="vicon_frame">
+	  <material>Gazebo/Red</material>
+	</gazebo>
+
+	<gazebo reference="right_bladder">
+	  <material>Gazebo/Yellow</material>
+	</gazebo>
+
+	<gazebo reference="left_bladder">
+	  <material>Gazebo/Yellow</material>
+	</gazebo>
+
+	<gazebo reference="big_bladder_link">
+	  <material>Gazebo/Yellow</material>
+	</gazebo>
+
+	<gazebo reference="base_panel">
+	  <material>Gazebo/Green</material>
+	</gazebo>
+
+	<gazebo reference="panel_12_oc">
+	  <material>Gazebo/Green</material>
+	</gazebo>
+
+	<gazebo reference="panel_9_oc">
+	  <material>Gazebo/Green</material>
+	</gazebo>
+	
+	<gazebo reference="panel_3_oc">
+	  <material>Gazebo/Green</material>
+	</gazebo>
+
+
+	<!-- Gazebo plugin for ROS Control -->
+	<gazebo>
+	  <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+	    <robotNamespace>/</robotNamespace>
+	  </plugin>
+	</gazebo>
+
+</robot>

@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<robot name="cage" xmlns:xacro="http://www.ros.org/wiki/xacro">
+<robot name="superchick" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
 	<!-- Description: Head Cage
 
@@ -7,24 +7,16 @@
 	 Modified: Lekan Ogunmolu Nov. 18, 2016
  	-->
 
-	<!-- Constants -->
-	<xacro:property name="PI" value="3.14159" />
-
 	<!-- Panel Properties -->
 	<xacro:property name="side_panel_length" value=".231775" />
-	<xacro:property name="panel_12_oc_length" value=".4700" /> <!--.34925 -->
+	<xacro:property name="panel_12_oc_length" value=".4700" /> 
+
 	<xacro:property name="panel_height" value=".200025" />
 	<xacro:property name="panel_thickness" value=".0047625" />
 	<xacro:property name="base_panel_length" value=".5842" />
 	<xacro:property name="base_panel_width" value=".2794" />
 	<xacro:property name ="distance_panel_12_oc_from_center" value ="${(base_panel_width/2) - .04572}" />
 
-	<!-- Derived Variables -->
-	<material name="panel_color" >
-		<color rgba="0.133 0.55 0.13 1" />
-	</material>
-
-	<!-- Base panel -->
 	<link name="base_panel">
 		<visual>
 			<geometry>
@@ -41,15 +33,14 @@
 			<origin xyz="0 0 0" rpy="0 0 0" />
 		</collision>
 
-
 		<inertial>
-		  <origin xyz="0 0 0" rpy="0 0 0" />
-		  <mass value="0.1"/>
-		  <inertia ixx="1e-1" ixy="0.0" ixz="0.0" iyy="1e-1" iyz="0.0" izz="1e-1"/>
+		  <mass value="${mass}"/>
+		  <inertia ixx="${mass/12}" ixy="0.0" ixz="0.0" 
+		   iyy="${inertia_mom}" iyz="0.0000" 
+		   izz="${inertia_mom}"/>
 		</inertial>
-
-
 	</link>
+	
 
 	<!-- 12:00 panel -->
 	<link name="panel_12_oc">
@@ -58,27 +49,27 @@
 				<box size="${panel_12_oc_length} ${panel_height} ${panel_thickness}" />
 			</geometry>
 			<material name="panel_color" />
-			<origin xyz="0 0 0" rpy="${(PI/2)} 0 0" />
+			<origin xyz="0 0 0" rpy="${(M_PI/2)} 0 0" />
 		</visual>
 
 		<collision>
 			<geometry>
 				<box size="${panel_12_oc_length} ${panel_height} ${panel_thickness}" />
 			</geometry>
-			<origin xyz="0 0 0" rpy="${(PI/2)} 0 0" />
+			<origin xyz="0 0 0" rpy="${(M_PI/2)} 0 0" />
 		</collision>
 
-
 		<inertial>
-		  <origin xyz="0 0 0" rpy="0 0 0" />
-		  <mass value="0.1"/>
-		  <inertia ixx="1e-1" ixy="0.0" ixz="0.0" iyy="1e-1" iyz="0.0" izz="1e-1"/>
+		  <mass value="${mass}"/>
+		  <inertia ixx="${mass/12}" ixy="0.0" ixz="0.0" 
+		   iyy="${inertia_mom}" iyz="0.0000" 
+		   izz="${inertia_mom}"/>
 		</inertial>
-
 	</link>
+	
 
 	<!-- Join 12:00 Panel to base_panel -->
-	<joint name="panel_12_oc_to_base_panel" type="fixed">
+	<joint name="base_panel_to_12oc" type="fixed">
 		<parent link="base_panel"/>
 		<child link="panel_12_oc"/>
 		<origin xyz="0 ${distance_panel_12_oc_from_center} ${(panel_thickness/2) + (panel_height/2)}" />
@@ -87,7 +78,7 @@
 	<!-- 9:00 Panel -->
 	<link name="panel_9_oc">
 		<visual>
-			<origin xyz="0 0 0" rpy="${(PI/2)} 0 ${(PI/2)}" />
+			<origin xyz="0 0 0" rpy="${(M_PI/2)} 0 ${(M_PI/2)}" />
 			<geometry>
 				<box size="${side_panel_length} ${panel_height} ${panel_thickness}" />
 			</geometry>
@@ -98,19 +89,20 @@
 			<geometry>
 				<box size="${side_panel_length} ${panel_height} ${panel_thickness}" />
 			</geometry>
-			<origin xyz="0 0 0" rpy="${(PI/2)} 0 ${(PI/2)}" />
+			<origin xyz="0 0 0" rpy="${(M_PI/2)} 0 ${(M_PI/2)}" />
 		</collision>
 
 		<inertial>
-		  <origin xyz="0 0 0" rpy="0 0 0" />
-		  <mass value="0.1"/>
-		  <inertia ixx="1e-1" ixy="0.0" ixz="0.0" iyy="1e-1" iyz="0.0" izz="1e-1"/>
+		  <mass value="${mass}"/>
+		  <inertia ixx="${mass/12}" ixy="0.0" ixz="0.0" 
+		   iyy="${inertia_mom}" iyz="0.0000" 
+		   izz="${inertia_mom}"/>
 		</inertial>
-
 	</link>
+	
 
 	<!-- Join 9:00 Panel to 12:00 Panel -->
-	<joint name="panel_9_oc_to_panel_12_oc" type="fixed">
+	<joint name="12oc_to_9oc" type="fixed">
 		<parent link="panel_12_oc"/>
 		<child link="panel_9_oc"/>
 		<origin xyz="${-((panel_12_oc_length/2) + (panel_thickness/2))} ${-((side_panel_length/2) - (panel_thickness/2))} 0" />
@@ -119,7 +111,7 @@
 	<!-- 3:00 Panel -->
 	<link name="panel_3_oc">
 		<visual>
-			<origin xyz="0 0 0" rpy="${(PI/2)} 0 ${(PI/2)}" />
+			<origin xyz="0 0 0" rpy="${(M_PI/2)} 0 ${(M_PI/2)}" />
 			<geometry>
 				<box size="${side_panel_length} ${panel_height} ${panel_thickness}" />
 			</geometry>
@@ -129,20 +121,19 @@
 			<geometry>
 				<box size="${side_panel_length} ${panel_height} ${panel_thickness}" />
 			</geometry>
-			<origin xyz="0 0 0" rpy="${(PI/2)} 0 ${(PI/2)}" />
+			<origin xyz="0 0 0" rpy="${(M_PI/2)} 0 ${(M_PI/2)}" />
 		</collision>
 
-		
 		<inertial>
-		  <origin xyz="0 0 0" rpy="0 0 0" />
-		  <mass value="0.1"/>
-		  <inertia ixx="1e-1" ixy="0.0" ixz="0.0" iyy="1e-1" iyz="0.0" izz="1e-1"/>
+		  <mass value="${mass}"/>
+		  <inertia ixx="${mass/12}" ixy="0.0" ixz="0.0" 
+		   iyy="${inertia_mom}" iyz="0.0000" 
+		   izz="${inertia_mom}"/>
 		</inertial>
-
 	</link>
-
+	
 	<!-- Join 3:00 Panel to 12:00 Panel -->
-	<joint name="panel_3_oc_to_panel_12_oc" type="fixed">
+	<joint name="12oc_to_3oc" type="fixed">
 		<parent link="panel_12_oc"/>
 		<child link="panel_3_oc"/>
 		<origin xyz="${(panel_12_oc_length/2) + (panel_thickness/2)} ${-((side_panel_length/2) - (panel_thickness/2))} 0" />
