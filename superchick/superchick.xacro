@@ -6,6 +6,8 @@
    <!-- General Properties -->
    <xacro:property name="bladder_pos_x" value="-0.7" />
    <xacro:property name="bladder_pos_y" value="-0.35" />
+   <xacro:property name="damping" value="0.1" />
+   <xacro:property name="friction" value="0.2" />
   <!-- This file contains the table and bladder descriptions -->
    <xacro:include filename="$(find superchick)/material.xacro" />
    <xacro:include filename="$(find superchick)/table.xacro" />
@@ -44,27 +46,30 @@
     <axis xyz="1 0 0" rpy="0 0 0" />
     <parent link="big_bladder_link"/>
     <child link="headnball_link"/>
-    <limit effort="200.0" lower="0.1016" upper="0.1016" velocity="1.0" />
+    <limit effort="200.0" lower="-0.1016" upper="0.1016" velocity="1.0" />
     <safety_controller k_velocity="10" k_position="15" soft_lower_limit="-0.0" soft_upper_limit="0.3" />
-    <origin xyz="${(table_top_length)/4} 0 0" rpy="0 0 ${M_PI/2}" />
+    <origin xyz="${(1e-1/2)+1e-1} ${(table_top_width)/6} 0" rpy="0 0 ${M_PI/2}" />
   </joint>
 
   <joint name="rightbladder_to_neck" type="continuous">
-    <axis xyz="0 1 0" rpy="0 0 0" />
+    <axis xyz="1 -1 0" rpy="0 0 0" />
     <parent link="right_bladder"/>
     <child link="headnball_link"/>
-    <limit effort="200.0" lower="0" upper="0.1016" velocity="1.0" />
-    <safety_controller k_velocity="10" k_position="15" soft_lower_limit="0.0" soft_upper_limit="-0.3" />
+    <limit effort="200.0" lower="-0.1016" upper="0.1016" velocity="1.0" />
+    <dynamics damping="${damping}" friction="${friction}" />
+    <safety_controller k_velocity="10" k_position="15" soft_lower_limit="0.0" soft_upper_limit="0.3"/>
     <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}" />
   </joint>
 
   <joint name="leftbladder_to_neck" type="continuous">
-    <axis xyz="0 0 1" rpy="0 0 0" />
+    <axis xyz="1 1 0" rpy="0 0 0" />
     <parent link="left_bladder"/>
     <child link="headnball_link"/>
-    <limit effort="200.0" lower="0.1016" upper="0.1016" velocity="1.0" />
+    <limit effort="200.0" lower="-0.1016" upper="0.1016" velocity="1.0" />
+    <dynamics damping="${damping}" friction="${friction}" />
     <safety_controller k_velocity="10" k_position="15" soft_lower_limit="0.0" soft_upper_limit="0.3" />
-    <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}" />
+    <dynamics damping="${damping}" friction="${friction}" />
+    <origin xyz="0 0.25 0" rpy="0 0 ${M_PI/2}" />
   </joint>
 
   <joint name="tableTop_to_basePanel" type="fixed">

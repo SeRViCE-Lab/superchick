@@ -38,19 +38,19 @@
 
    <link name="left_bladder">
      <visual>
-       <origin xyz="0 0 0" rpy="0 0 0" />
+       <origin xyz="0 ${0.1/2} 0" rpy="0 0 0" />
        <geometry>
          <box size="${bladder_length} ${bladder_width} ${bladder_thickness}" />
        </geometry>
        <material name="bladder_color"/>
-       <origin xyz="0 0 0" rpy="0 0 0" />
+       <origin xyz="0 ${0.1/2} 0" rpy="0 0 0" />
      </visual>
 
      <collision>
        <geometry>        
         <box size="${bladder_length} ${bladder_width} ${bladder_thickness}" />
        </geometry>
-       <origin xyz="0 0 0" rpy="0 0 0" />
+       <origin xyz="0 ${0.1/2} 0" rpy="0 0 0" />
      </collision>
 
      <inertial>
