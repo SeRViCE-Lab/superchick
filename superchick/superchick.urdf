@@ -4,7 +4,6 @@
 <!-- |    EDITING THIS FILE BY HAND IS NOT RECOMMENDED                                 | -->
 <!-- =================================================================================== -->
 <robot name="superchick" xmlns:xacro="http://www.ros.org/wiki/xacro">
-  <!-- <xacro:include filename="$(find superchick)/superchick.gazebo" /> -->
   <!-- General Properties -->
   <!-- This file contains the table and bladder descriptions -->
   <!-- Matrial Girl 
@@ -368,20 +367,19 @@
     <child link="panel_3_oc"/>
     <origin xyz="0.23738125 -0.11350625 0"/>
   </joint>
-  <!-- General Properties -->
   <!-- vicon Frame-->
   <link name="vicon_frame">
     <visual>
       <origin rpy="1.570795 0 1.570795" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://superchick/meshes/vicon2.dae" scale=".001 .001 .001"/>
+        <mesh filename="package://superchick/meshes/vicon3.dae" scale=".001 .001 .001"/>
       </geometry>
       <material name="vicon_red"/>
     </visual>
     <collision>
       <origin rpy="1.570795 0 1.570795" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://superchick/meshes/vicon2.dae" scale=".001 .001 .001"/>
+        <mesh filename="package://superchick/meshes/vicon3.dae" scale=".001 .001 .001"/>
       </geometry>
       <material name="vicon_red"/>
     </collision>
@@ -448,7 +446,37 @@
   <joint name="vicon_to_world" type="fixed">
     <parent link="world"/>
     <child link="vicon_frame"/>
-    <origin rpy="0 0 0" xyz="-5 -4 2.00"/>
+    <origin rpy="0 0 0" xyz="-3.5 -2.0 -0.2"/>
   </joint>
+  <transmission name="base_transmission">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="joint1">
+      <hardwareInterface>EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="base_bladder">
+      <hardwareInterface>EffortJointInterface</hardwareInterface>
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+  <transmission name="right_transmission">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="rightbladder_to_neck">
+      <hardwareInterface>EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="right_bladder">
+      <hardwareInterface>EffortJointInterface</hardwareInterface>
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+  <transmission name="left_transmission">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="leftbladder_to_neck">
+      <hardwareInterface>EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="left_bladder">
+      <hardwareInterface>EffortJointInterface</hardwareInterface>
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
 </robot>
 

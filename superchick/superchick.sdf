@@ -1,5 +1,7 @@
 <sdf version='1.4'>
+
   <model name='superchick'>
+
     <link name='left_leg'>
       <pose>-0.6858 0 0.3 0 -0 0</pose>
       <inertial>
@@ -35,6 +37,7 @@
         <angular>0</angular>
       </velocity_decay>
     </link>
+
     <joint name='base_to_left_leg' type='revolute'>
       <child>left_leg</child>
       <parent>world</parent>
@@ -49,6 +52,7 @@
         <xyz>0 0 1</xyz>
       </axis>
     </joint>
+
     <link name='headnball_link'>
       <pose>-7.2966 0 2.59167 0 -0 1.57079</pose>
       <inertial>
@@ -86,6 +90,7 @@
         <angular>0</angular>
       </velocity_decay>
     </link>
+
     <joint name='rightbladder_to_neck' type='revolute'>
       <child>headnball_link</child>
       <parent>right_leg</parent>
@@ -100,108 +105,7 @@
         </dynamics>
       </axis>
     </joint>
-    <link name='headnball_link'>
-      <pose>-7.2966 0 2.59167 0 -0 1.57079</pose>
-      <inertial>
-        <pose>0 0 0 0 -0 0</pose>
-        <mass>0.01</mass>
-        <inertia>
-          <ixx>0.000833333</ixx>
-          <ixy>0</ixy>
-          <ixz>0</ixz>
-          <iyy>0.000833333</iyy>
-          <iyz>0</iyz>
-          <izz>0.000833333</izz>
-        </inertia>
-      </inertial>
-      <collision name='headnball_link_collision'>
-        <pose>0 -0.15 0.0366667 1.57079 -0 -3.14159</pose>
-        <geometry>
-          <mesh>
-            <scale>0.001 0.001 0.001</scale>
-            <uri>model://superchick/meshes/headnball.stl</uri>
-          </mesh>
-        </geometry>
-      </collision>
-      <visual name='headnball_link_visual'>
-        <pose>0 -0.15 0.0366667 1.57079 -0 -3.14159</pose>
-        <geometry>
-          <mesh>
-            <scale>0.001 0.001 0.001</scale>
-            <uri>model://superchick/meshes/headnball.stl</uri>
-          </mesh>
-        </geometry>
-      </visual>
-      <velocity_decay>
-        <linear>0</linear>
-        <angular>0</angular>
-      </velocity_decay>
-    </link>
-    <joint name='rightbladder_to_neck' type='revolute'>
-      <child>headnball_link</child>
-      <parent>right_leg</parent>
-      <axis>
-        <xyz>1 0.999999 0</xyz>
-        <limit>
-          <lower>-1e+16</lower>
-          <upper>1e+16</upper>
-        </limit>
-        <dynamics>
-          <damping>0.1</damping>
-        </dynamics>
-      </axis>
-    </joint>
-    <link name='headnball_link'>
-      <pose>-7.2966 0 2.59167 0 -0 1.57079</pose>
-      <inertial>
-        <pose>0 0 0 0 -0 0</pose>
-        <mass>0.01</mass>
-        <inertia>
-          <ixx>0.000833333</ixx>
-          <ixy>0</ixy>
-          <ixz>0</ixz>
-          <iyy>0.000833333</iyy>
-          <iyz>0</iyz>
-          <izz>0.000833333</izz>
-        </inertia>
-      </inertial>
-      <collision name='headnball_link_collision'>
-        <pose>0 -0.15 0.0366667 1.57079 -0 -3.14159</pose>
-        <geometry>
-          <mesh>
-            <scale>0.001 0.001 0.001</scale>
-            <uri>model://superchick/meshes/headnball.stl</uri>
-          </mesh>
-        </geometry>
-      </collision>
-      <visual name='headnball_link_visual'>
-        <pose>0 -0.15 0.0366667 1.57079 -0 -3.14159</pose>
-        <geometry>
-          <mesh>
-            <scale>0.001 0.001 0.001</scale>
-            <uri>model://superchick/meshes/headnball.stl</uri>
-          </mesh>
-        </geometry>
-      </visual>
-      <velocity_decay>
-        <linear>0</linear>
-        <angular>0</angular>
-      </velocity_decay>
-    </link>
-    <joint name='rightbladder_to_neck' type='revolute'>
-      <child>headnball_link</child>
-      <parent>right_leg</parent>
-      <axis>
-        <xyz>1 0.999999 0</xyz>
-        <limit>
-          <lower>-1e+16</lower>
-          <upper>1e+16</upper>
-        </limit>
-        <dynamics>
-          <damping>0.1</damping>
-        </dynamics>
-      </axis>
-    </joint>
+        
     <link name='right_leg'>
       <pose>0.6858 0 0.3 0 -0 0</pose>
       <inertial>
@@ -395,161 +299,9 @@
         <xyz>0 0 1</xyz>
       </axis>
     </joint>
-    <link name='headnball_link'>
-      <pose>-5.925 0 2.59167 0 -0 1.57079</pose>
-      <inertial>
-        <pose>0 0 0 0 -0 0</pose>
-        <mass>0.01</mass>
-        <inertia>
-          <ixx>0.000833333</ixx>
-          <ixy>0</ixy>
-          <ixz>0</ixz>
-          <iyy>0.000833333</iyy>
-          <iyz>0</iyz>
-          <izz>0.000833333</izz>
-        </inertia>
-      </inertial>
-      <collision name='headnball_link_collision'>
-        <pose>0 -0.15 0.0366667 1.57079 -0 -3.14159</pose>
-        <geometry>
-          <mesh>
-            <scale>0.001 0.001 0.001</scale>
-            <uri>model://superchick/meshes/headnball.stl</uri>
-          </mesh>
-        </geometry>
-      </collision>
-      <visual name='headnball_link_visual'>
-        <pose>0 -0.15 0.0366667 1.57079 -0 -3.14159</pose>
-        <geometry>
-          <mesh>
-            <scale>0.001 0.001 0.001</scale>
-            <uri>model://superchick/meshes/headnball.stl</uri>
-          </mesh>
-        </geometry>
-      </visual>
-      <velocity_decay>
-        <linear>0</linear>
-        <angular>0</angular>
-      </velocity_decay>
-    </link>
-    <joint name='rightbladder_to_neck' type='revolute'>
-      <child>headnball_link</child>
-      <parent>right_leg</parent>
-      <axis>
-        <xyz>1 0.999999 0</xyz>
-        <limit>
-          <lower>-1e+16</lower>
-          <upper>1e+16</upper>
-        </limit>
-        <dynamics>
-          <damping>0.1</damping>
-        </dynamics>
-      </axis>
-    </joint>
-    <link name='headnball_link'>
-      <pose>-5.925 0 2.59167 0 -0 1.57079</pose>
-      <inertial>
-        <pose>0 0 0 0 -0 0</pose>
-        <mass>0.01</mass>
-        <inertia>
-          <ixx>0.000833333</ixx>
-          <ixy>0</ixy>
-          <ixz>0</ixz>
-          <iyy>0.000833333</iyy>
-          <iyz>0</iyz>
-          <izz>0.000833333</izz>
-        </inertia>
-      </inertial>
-      <collision name='headnball_link_collision'>
-        <pose>0 -0.15 0.0366667 1.57079 -0 -3.14159</pose>
-        <geometry>
-          <mesh>
-            <scale>0.001 0.001 0.001</scale>
-            <uri>model://superchick/meshes/headnball.stl</uri>
-          </mesh>
-        </geometry>
-      </collision>
-      <visual name='headnball_link_visual'>
-        <pose>0 -0.15 0.0366667 1.57079 -0 -3.14159</pose>
-        <geometry>
-          <mesh>
-            <scale>0.001 0.001 0.001</scale>
-            <uri>model://superchick/meshes/headnball.stl</uri>
-          </mesh>
-        </geometry>
-      </visual>
-      <velocity_decay>
-        <linear>0</linear>
-        <angular>0</angular>
-      </velocity_decay>
-    </link>
-    <joint name='rightbladder_to_neck' type='revolute'>
-      <child>headnball_link</child>
-      <parent>right_leg</parent>
-      <axis>
-        <xyz>1 0.999999 0</xyz>
-        <limit>
-          <lower>-1e+16</lower>
-          <upper>1e+16</upper>
-        </limit>
-        <dynamics>
-          <damping>0.1</damping>
-        </dynamics>
-      </axis>
-    </joint>
-    <link name='headnball_link'>
-      <pose>-5.925 0 2.59167 0 -0 1.57079</pose>
-      <inertial>
-        <pose>0 0 0 0 -0 0</pose>
-        <mass>0.01</mass>
-        <inertia>
-          <ixx>0.000833333</ixx>
-          <ixy>0</ixy>
-          <ixz>0</ixz>
-          <iyy>0.000833333</iyy>
-          <iyz>0</iyz>
-          <izz>0.000833333</izz>
-        </inertia>
-      </inertial>
-      <collision name='headnball_link_collision'>
-        <pose>0 -0.15 0.0366667 1.57079 -0 -3.14159</pose>
-        <geometry>
-          <mesh>
-            <scale>0.001 0.001 0.001</scale>
-            <uri>model://superchick/meshes/headnball.stl</uri>
-          </mesh>
-        </geometry>
-      </collision>
-      <visual name='headnball_link_visual'>
-        <pose>0 -0.15 0.0366667 1.57079 -0 -3.14159</pose>
-        <geometry>
-          <mesh>
-            <scale>0.001 0.001 0.001</scale>
-            <uri>model://superchick/meshes/headnball.stl</uri>
-          </mesh>
-        </geometry>
-      </visual>
-      <velocity_decay>
-        <linear>0</linear>
-        <angular>0</angular>
-      </velocity_decay>
-    </link>
-    <joint name='rightbladder_to_neck' type='revolute'>
-      <child>headnball_link</child>
-      <parent>right_leg</parent>
-      <axis>
-        <xyz>1 0.999999 0</xyz>
-        <limit>
-          <lower>-1e+16</lower>
-          <upper>1e+16</upper>
-        </limit>
-        <dynamics>
-          <damping>0.1</damping>
-        </dynamics>
-      </axis>
-    </joint>
+    
     <link name='vicon_frame'>
-      <pose>-5 -4 2 0 -0 0</pose>
+      <pose>-3.5 -2 -0.2 0 -0 0</pose>
       <inertial>
         <pose>0 0 0 0 -0 0</pose>
         <mass>0.01</mass>
@@ -567,7 +319,7 @@
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
-            <uri>model://superchick/meshes/vicon2.dae</uri>
+            <uri>model://superchick/meshes/vicon3.dae</uri>
           </mesh>
         </geometry>
       </collision>
@@ -576,7 +328,7 @@
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
-            <uri>model://superchick/meshes/vicon2.dae</uri>
+            <uri>model://superchick/meshes/vicon3.dae</uri>
           </mesh>
         </geometry>
       </visual>
