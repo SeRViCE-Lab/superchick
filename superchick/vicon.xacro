@@ -6,7 +6,7 @@
     <visual>
       <origin xyz="0 0 0" rpy="${M_PI/2} 0 ${M_PI/2}" />
       <geometry>
-        <mesh filename="package://superchick/meshes/vicon2.dae" scale = ".001 .001 .001" />
+        <mesh filename="package://superchick/meshes/vicon3.dae" scale = ".001 .001 .001" />
       </geometry>
       <material name="vicon_red"/>
     </visual>
@@ -14,7 +14,7 @@
     <collision>
       <origin xyz="0 0 0" rpy="${M_PI/2} 0 ${M_PI/2}" />
       <geometry>
-        <mesh filename="package://superchick/meshes/vicon2.dae" scale = ".001 .001 .001" />
+        <mesh filename="package://superchick/meshes/vicon3.dae" scale = ".001 .001 .001" />
       </geometry>
       <material name="vicon_red"/>
     </collision>

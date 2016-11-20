@@ -11,7 +11,7 @@
         roslaunch superchick display.launch model:=table.urdf 
   -->
 
-  <xacro:property name="M_PI" value="3.14159" />
+  <xacro:property name="M_PI" value="${22/7}" />
 
   <!-- table top properties -->
   <xacro:property name="table_top_length" value="1.524" />
