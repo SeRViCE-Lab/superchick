@@ -240,8 +240,26 @@ local function optimize(neunet)
 		net.prediction = netout
 		net.loss = loss
 		net.iter = iter
-		net.network = neunet
+		-- net.network = neunet
+
+		net.input, net.hidden, net.output = {}, {}, {}
+		net.input.weights = neunet.modules[1].weight
+		net.input.biases = neunet.modules[1].bias
+		net.input.out = neunet.modules[1].output
+
+		--aggregate hidden layer properties
+		net.hidden.weights = neunet.modules[2].weight
+		net.hidden.gradInput = neunet.modules[2].bias
+		net.hidden.out = neunet.modules[2].output
+
+		--aggregate output layer ppties
+		net.output.weights = neunet.modules[3].weight
+		net.output.biases = neunet.modules[3].bias
+		net.output.out = neunet.modules[3].output
 	end
+
+	print('net props: ', net)
+	sys.sleep('30')
 
 	time = sys.clock() - time
 	print("<trainer> time to learn 1 sample = " .. (time*1000) .. 'ms')
@@ -299,9 +317,32 @@ end
 
 main()
 
+--[[
+mlp modules
+
+input layer 
+net= {}
+net.input, net.hidden, net.out = {}, {}, {}
+net.input.weights = neunet.modules[1].weight
+net.input.biases = neunet.modules[1].bias
+net.input.out = neunet.modules[1].output
+
+--aggregate hidden layer properties
+net.hidden.weights = neunet.modules[2].weight
+net.hidden.gradInput = neunet.modules[2].bias
+net.hidden.out = neunet.modules[2].output
+
+--aggregate output layer ppties
+net.output.weights = neunet.modules[3].weight
+net.output.biases = neunet.modules[3].bias
+net.output.out = neunet.modules[3].output
+
+]]
 
 
 		--[[ 
+		Recurrent Modules
+
 		neunet.modules[1].sharedClones[1].gradInput = Input gradients
 		neunet.modules[1].sharedClones[1].output = predictions
 		neunet.modules[1].outputs[1] = predictions
