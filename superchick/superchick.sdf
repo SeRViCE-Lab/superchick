@@ -1,0 +1,464 @@
+<sdf version='1.4'>
+  <model name='superchick'>
+    <link name='left_leg'>
+      <pose>-0.6858 0 0.3 0 -0 0</pose>
+      <inertial>
+        <pose>0 0 0 0 -0 0</pose>
+        <mass>0.01</mass>
+        <inertia>
+          <ixx>0.000833333</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.000833333</iyy>
+          <iyz>0</iyz>
+          <izz>0.000833333</izz>
+        </inertia>
+      </inertial>
+      <collision name='left_leg_collision'>
+        <pose>0 0 0 0 1.57075 0</pose>
+        <geometry>
+          <box>
+            <size>0.635 0.1778 0.0254</size>
+          </box>
+        </geometry>
+        <surface>
+          <contact>
+            <ode/>
+          </contact>
+          <friction>
+            <ode>
+              <mu>0.2</mu>
+              <mu2>0.2</mu2>
+            </ode>
+          </friction>
+        </surface>
+      </collision>
+      <visual name='left_leg_visual'>
+        <pose>0 0 0 0 1.57075 0</pose>
+        <geometry>
+          <box>
+            <size>0.635 0.1778 0.0254</size>
+          </box>
+        </geometry>
+        <material>
+          <script>
+            <name>Gazebo/Blue</name>
+            <uri>__default__</uri>
+          </script>
+        </material>
+      </visual>
+      <gravity>1</gravity>
+      <velocity_decay>
+        <linear>0</linear>
+        <angular>0</angular>
+      </velocity_decay>
+      <self_collide>0</self_collide>
+    </link>
+    <joint name='base_to_left_leg' type='revolute'>
+      <child>left_leg</child>
+      <parent>world</parent>
+      <axis>
+        <limit>
+          <lower>0</lower>
+          <upper>0</upper>
+        </limit>
+        <dynamics>
+          <damping>0</damping>
+        </dynamics>
+        <xyz>0 0 1</xyz>
+      </axis>
+      <physics>
+        <ode>
+          <limit>
+            <cfm>0</cfm>
+            <erp>0.2</erp>
+          </limit>
+        </ode>
+      </physics>
+    </joint>
+    <link name='headnball_link'>
+      <pose>-1.4938 0 0.656667 0 -0 1.57079</pose>
+      <inertial>
+        <pose>0 0 0 0 -0 0</pose>
+        <mass>0.1</mass>
+        <inertia>
+          <ixx>0.925288</ixx>
+          <ixy>0.379102</ixy>
+          <ixz>0.011081</ixz>
+          <iyy>0.91914</iyy>
+          <iyz>0.11118</iyz>
+          <izz>0.993738</izz>
+        </inertia>
+      </inertial>
+      <visual name='headnball_link_visual'>
+        <pose>0 0 0 1.57079 -0 -3.14159</pose>
+        <geometry>
+          <mesh>
+            <scale>0.001 0.001 0.001</scale>
+            <uri>model://superchick/meshes/headnball.dae</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <script>
+            <name>Gazebo/White</name>
+            <uri>__default__</uri>
+          </script>
+        </material>
+      </visual>
+      <gravity>1</gravity>
+      <velocity_decay>
+        <linear>0</linear>
+        <angular>0</angular>
+      </velocity_decay>
+      <self_collide>0</self_collide>
+    </link>
+    <joint name='bigbladder_to_head' type='revolute'>
+      <child>headnball_link</child>
+      <parent>right_leg</parent>
+      <axis>
+        <xyz>1.32679e-06 1 0</xyz>
+        <limit>
+          <lower>-1e+16</lower>
+          <upper>1e+16</upper>
+        </limit>
+        <dynamics>
+          <damping>0.1</damping>
+        </dynamics>
+      </axis>
+      <physics>
+        <ode>
+          <limit>
+            <cfm>0</cfm>
+            <erp>0.2</erp>
+          </limit>
+        </ode>
+      </physics>
+    </joint>
+    <link name='right_leg'>
+      <pose>0.6858 0 0.3 0 -0 0</pose>
+      <inertial>
+        <pose>-0.395778 0 0.155278 0 -0 0</pose>
+        <mass>0.09</mass>
+        <inertia>
+          <ixx>0.00777418</ixx>
+          <ixy>0</ixy>
+          <ixz>0.000655656</ixz>
+          <iyy>0.0107461</iyy>
+          <iyz>0</iyz>
+          <izz>0.0104719</izz>
+        </inertia>
+      </inertial>
+      <collision name='right_leg_collision'>
+        <pose>0 0 0 0 1.57075 0</pose>
+        <geometry>
+          <box>
+            <size>0.635 0.1778 0.0254</size>
+          </box>
+        </geometry>
+        <surface>
+          <contact>
+            <ode/>
+          </contact>
+          <friction>
+            <ode>
+              <mu>0.2</mu>
+              <mu2>0.2</mu2>
+            </ode>
+          </friction>
+        </surface>
+      </collision>
+      <collision name='right_leg_collision_big_bladder_link'>
+        <pose>-1.208 0 0.34 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>0.31496 0.31496 0.1016</size>
+          </box>
+        </geometry>
+        <surface>
+          <contact>
+            <ode/>
+          </contact>
+          <friction>
+            <ode>
+              <mu>0.2</mu>
+              <mu2>0.2</mu2>
+            </ode>
+          </friction>
+        </surface>
+        <surface>
+          <contact>
+            <ode/>
+          </contact>
+          <friction>
+            <ode>
+              <mu>0.2</mu>
+              <mu2>0.2</mu2>
+            </ode>
+          </friction>
+        </surface>
+      </collision>
+      <collision name='right_leg_collision_table_top'>
+        <pose>-0.7 0 0.34 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>1.524 0.6198 0.0381</size>
+          </box>
+        </geometry>
+        <surface>
+          <contact>
+            <ode/>
+          </contact>
+          <friction>
+            <ode>
+              <mu>0.2</mu>
+              <mu2>0.2</mu2>
+            </ode>
+          </friction>
+        </surface>
+        <surface>
+          <contact>
+            <ode/>
+          </contact>
+          <friction>
+            <ode>
+              <mu>0.2</mu>
+              <mu2>0.2</mu2>
+            </ode>
+          </friction>
+        </surface>
+      </collision>
+      <visual name='right_leg_visual'>
+        <pose>0 0 0 0 1.57075 0</pose>
+        <geometry>
+          <box>
+            <size>0.635 0.1778 0.0254</size>
+          </box>
+        </geometry>
+        <material>
+          <script>
+            <name>Gazebo/Blue</name>
+            <uri>__default__</uri>
+          </script>
+        </material>
+      </visual>
+      <visual name='right_leg_visual_big_bladder_link'>
+        <pose>-1.208 0 0.34 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>0.31496 0.31496 0.0508</size>
+          </box>
+        </geometry>
+        <material>
+          <script>
+            <name>Gazebo/Yellow</name>
+            <uri>__default__</uri>
+          </script>
+        </material>
+      </visual>
+      <visual name='right_leg_visual_table_cover'>
+        <pose>-0.7 0.1825 0.2206 -3.14159 0 0</pose>
+        <geometry>
+          <box>
+            <size>1.524 0.1397 0.227</size>
+          </box>
+        </geometry>
+        <material>
+          <script>
+            <name>Gazebo/Blue</name>
+            <uri>__default__</uri>
+          </script>
+        </material>
+      </visual>
+      <visual name='right_leg_visual_table_top'>
+        <pose>-0.7 0 0.325 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>1.524 0.6198 0.0381</size>
+          </box>
+        </geometry>
+        <material>
+          <script>
+            <name>Gazebo/Blue</name>
+            <uri>__default__</uri>
+          </script>
+        </material>
+      </visual>
+      <velocity_decay>
+        <linear>0</linear>
+        <angular>0</angular>
+      </velocity_decay>
+      <velocity_decay>
+        <linear>0</linear>
+        <angular>0</angular>
+      </velocity_decay>
+      <velocity_decay>
+        <linear>0</linear>
+        <angular>0</angular>
+      </velocity_decay>
+      <gravity>1</gravity>
+      <velocity_decay>
+        <linear>0</linear>
+        <angular>0</angular>
+      </velocity_decay>
+      <self_collide>0</self_collide>
+    </link>
+    <joint name='base_to_right_leg' type='revolute'>
+      <child>right_leg</child>
+      <parent>world</parent>
+      <axis>
+        <limit>
+          <lower>0</lower>
+          <upper>0</upper>
+        </limit>
+        <dynamics>
+          <damping>0</damping>
+        </dynamics>
+        <xyz>0 0 1</xyz>
+      </axis>
+      <physics>
+        <ode>
+          <limit>
+            <cfm>0</cfm>
+            <erp>0.2</erp>
+          </limit>
+        </ode>
+      </physics>
+    </joint>
+    <link name='headnball_link'>
+      <pose>-0.1222 0 0.656667 0 -0 1.57079</pose>
+      <inertial>
+        <pose>0 0 0 0 -0 0</pose>
+        <mass>0.1</mass>
+        <inertia>
+          <ixx>0.925288</ixx>
+          <ixy>0.379102</ixy>
+          <ixz>0.011081</ixz>
+          <iyy>0.91914</iyy>
+          <iyz>0.11118</iyz>
+          <izz>0.993738</izz>
+        </inertia>
+      </inertial>
+      <visual name='headnball_link_visual'>
+        <pose>0 0 0 1.57079 -0 -3.14159</pose>
+        <geometry>
+          <mesh>
+            <scale>0.001 0.001 0.001</scale>
+            <uri>model://superchick/meshes/headnball.dae</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <script>
+            <name>Gazebo/White</name>
+            <uri>__default__</uri>
+          </script>
+        </material>
+      </visual>
+      <gravity>1</gravity>
+      <velocity_decay>
+        <linear>0</linear>
+        <angular>0</angular>
+      </velocity_decay>
+      <self_collide>0</self_collide>
+    </link>
+    <joint name='bigbladder_to_head' type='revolute'>
+      <child>headnball_link</child>
+      <parent>right_leg</parent>
+      <axis>
+        <xyz>1.32679e-06 1 0</xyz>
+        <limit>
+          <lower>-1e+16</lower>
+          <upper>1e+16</upper>
+        </limit>
+        <dynamics>
+          <damping>0.1</damping>
+        </dynamics>
+      </axis>
+      <physics>
+        <ode>
+          <limit>
+            <cfm>0</cfm>
+            <erp>0.2</erp>
+          </limit>
+        </ode>
+      </physics>
+    </joint>
+    <link name='vicon_frame'>
+      <pose>-3.5 -2 -0.2 0 -0 0</pose>
+      <inertial>
+        <pose>0 0 0 0 -0 0</pose>
+        <mass>0.01</mass>
+        <inertia>
+          <ixx>0.000833333</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.000833333</iyy>
+          <iyz>0</iyz>
+          <izz>0.000833333</izz>
+        </inertia>
+      </inertial>
+      <collision name='vicon_frame_collision'>
+        <pose>0 0 0 1.57079 -0 1.57079</pose>
+        <geometry>
+          <mesh>
+            <scale>0.001 0.001 0.001</scale>
+            <uri>model://superchick/meshes/vicon3.dae</uri>
+          </mesh>
+        </geometry>
+        <surface>
+          <contact>
+            <ode/>
+          </contact>
+          <friction>
+            <ode>
+              <mu>0.2</mu>
+              <mu2>0.2</mu2>
+            </ode>
+          </friction>
+        </surface>
+      </collision>
+      <visual name='vicon_frame_visual'>
+        <pose>0 0 0 1.57079 -0 1.57079</pose>
+        <geometry>
+          <mesh>
+            <scale>0.001 0.001 0.001</scale>
+            <uri>model://superchick/meshes/vicon3.dae</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <script>
+            <name>Gazebo/Orange</name>
+            <uri>__default__</uri>
+          </script>
+        </material>
+      </visual>
+      <gravity>1</gravity>
+      <velocity_decay>
+        <linear>0</linear>
+        <angular>0</angular>
+      </velocity_decay>
+      <self_collide>0</self_collide>
+    </link>
+    <joint name='vicon_to_world' type='revolute'>
+      <child>vicon_frame</child>
+      <parent>world</parent>
+      <axis>
+        <limit>
+          <lower>0</lower>
+          <upper>0</upper>
+        </limit>
+        <dynamics>
+          <damping>0</damping>
+        </dynamics>
+        <xyz>0 0 1</xyz>
+      </axis>
+      <physics>
+        <ode>
+          <limit>
+            <cfm>0</cfm>
+            <erp>0.2</erp>
+          </limit>
+        </ode>
+      </physics>
+    </joint>
+  </model>
+</sdf>
