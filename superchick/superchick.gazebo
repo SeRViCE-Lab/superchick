@@ -2,12 +2,17 @@
 <robot>
 
   <!-- ros_control plugin -->
-<!--   <gazebo>
-    <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
-      <robotNamespace>/superchick</robotNamespace>
+  <gazebo>
+    <plugin name="superchick_gazebo" filename="libsuperchick_gazebo.so">
+      <robotParam>robot_description</robotParam>
+      <controlPeriod>0.001</controlPeriod>
+      <!-- <robotNamespace>/superchick</robotNamespace> -->
       <robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>
     </plugin>
-  </gazebo> -->
+  </gazebo>
+
+  <gazebo reference="superchick">
+  </gazebo>
 
   <!-- Link1 -->
   <gazebo reference="right_bladder">
@@ -63,7 +68,7 @@
   <gazebo reference="headnball_link">
     <mu1>0.2</mu1>
     <mu2>0.2</mu2>
-    <material>Gazebo/White</material>
+    <material>Gazebo/Orange</material>
   </gazebo>
 
   <!-- table_link1 -->
@@ -197,7 +202,7 @@
     <origin xyz="${(1e-1/2)+1e-1} ${(table_top_width)/6} 0" rpy="0 0 ${M_PI/2}" />
   </gazebo>
 
-  <gazebo reference="rightbladder_to_neck">
+<!--   <gazebo reference="rightbladder_to_neck">
     <axis xyz="1 -1 0" rpy="0 0 0" />
     <parent link="right_bladder"/>
     <child link="headnball_link"/>
@@ -216,7 +221,7 @@
     <safety_controller k_velocity="10" k_position="15" soft_lower_limit="0.0" soft_upper_limit="0.3" />
     <dynamics damping="${damping}" friction="${friction}" />
     <origin xyz="0 0.25 0" rpy="0 0 ${M_PI/2}" />
-  </gazebo>
+  </gazebo> -->
 
   <gazebo reference="tableTop_to_basePanel">
     <parent link="table_top"/>
@@ -229,5 +234,4 @@
     <child link="vicon_frame"/>
     <origin xyz="-5 -4 2.00" rpy="0 0 0" />
   </gazebo>
-
 </robot>

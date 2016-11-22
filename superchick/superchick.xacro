@@ -6,7 +6,7 @@
    <xacro:property name="bladder_pos_y" value="-0.35" />
    <xacro:property name="damping" value="0.1" />
    <xacro:property name="friction" value="0.2" />
-   <xacro:property name="sim" value="false" />
+   <xacro:property name="sim" value="true" />
   <!-- This file contains the table and bladder descriptions -->
    <xacro:include filename="$(find superchick)/material.xacro" />
    <xacro:include filename="$(find superchick)/table.xacro" />
@@ -27,7 +27,19 @@
     <origin xyz="${-(table_top_length)/2 + 0.23} 0 ${1e-1/3}" rpy="${0} 0 ${0}" />
   </joint>
 
-  <joint name="table_to_rightneckbladder" type="fixed">
+  <!-- Actuator Links -->
+  <joint name="bigbladder_to_head" type="continuous">
+    <axis xyz="1 0 0" rpy="0 0 0" />
+    <parent link="big_bladder_link"/>
+    <child link="headnball_link"/>
+    <limit effort="200.0" lower="-0.1016" upper="0.1016" velocity="1.0" />
+    <dynamics damping="${damping}" friction="${friction}" />
+    <safety_controller k_velocity="10" k_position="15" soft_lower_limit="-0.0" soft_upper_limit="0.3" />
+    <origin xyz="${(1e-1/2)+1e-1} ${(table_top_width)/6} 0" rpy="0 0 ${M_PI/2}" />
+  </joint>
+
+   <!-- Gazebo does not support parallel linkages -->
+<!--   <joint name="table_to_rightneckbladder" type="fixed">
     <parent link="table_top"/>
     <child link="right_bladder"/>
     <limit effort="200.0" lower="0.1016" upper="0.1016" velocity="1.0" />
@@ -41,18 +53,8 @@
     <limit effort="200.0" lower="0.1016" upper="0.1016" velocity="1.0" />
     <safety_controller k_velocity="10" k_position="15" soft_lower_limit="-0.05" soft_upper_limit="0.05" />
     <origin xyz="${-(table_top_length)/3 + 0.15} -0.12 ${1e-1/3.2}" rpy="${0} 0 ${0}" />
-  </joint>
-
-  <!-- Actuator Links -->
-  <joint name="bigbladder_to_head" type="continuous">
-    <axis xyz="1 0 0" rpy="0 0 0" />
-    <parent link="big_bladder_link"/>
-    <child link="headnball_link"/>
-    <limit effort="200.0" lower="-0.1016" upper="0.1016" velocity="1.0" />
-    <safety_controller k_velocity="10" k_position="15" soft_lower_limit="-0.0" soft_upper_limit="0.3" />
-    <origin xyz="${(1e-1/2)+1e-1} ${(table_top_width)/6} 0" rpy="0 0 ${M_PI/2}" />
-  </joint>
-
+  </joint> 
+  
   <joint name="rightbladder_to_neck" type="continuous">
     <axis xyz="1 -1 0" rpy="0 0 0" />
     <parent link="right_bladder"/>
@@ -72,12 +74,14 @@
     <safety_controller k_velocity="10" k_position="15" soft_lower_limit="0.0" soft_upper_limit="0.3" />
     <dynamics damping="${damping}" friction="${friction}" />
     <origin xyz="0 0.25 0" rpy="0 0 ${M_PI/2}" />
-  </joint>
+  </joint> 
+ -->
 
   <joint name="tableTop_to_basePanel" type="fixed">
     <parent link="table_top"/>
     <child link="base_panel"/>
-    <origin xyz="${-(table_top_length)/2 + 0.15} 0 ${1e-1/8}" rpy="${0} 0 ${M_PI/2}" />
+    <!-- <origin xyz="${-(table_top_length)/2 + 0.15} 0 ${1e-1/8}" rpy="${0} 0 ${M_PI/2}"  />-->
+     <origin xyz="${-(table_top_length)/2 + 0.15} 0 ${1e-1/8}" rpy="${0} 0 ${M_PI/2}"/>
   </joint>
 
   <joint name="vicon_to_world" type="fixed">
@@ -86,9 +90,15 @@
     <origin xyz="-3.5 -2.0 -0.2" rpy="0 0 0" />
   </joint>
 
+  <joint name="table_to_world" type="fixed">
+    <parent link="world"/>
+    <child link="table_top"/>
+    <origin xyz="-3.5 -2.0 -0.2" rpy="0 0 0" />
+  </joint>
+
   <transmission name="base_transmission">
      <type>transmission_interface/SimpleTransmission</type>
-     <joint name="joint1">
+     <joint name="bigbladder_to_head">
        <hardwareInterface>EffortJointInterface</hardwareInterface>
      </joint>
      <actuator name="base_bladder">
@@ -97,7 +107,8 @@
      </actuator>
    </transmission>
 
-   <transmission name="right_transmission">
+<!--Gazebo does not support parallel linkages
+    <transmission name="right_transmission">
       <type>transmission_interface/SimpleTransmission</type>
       <joint name="rightbladder_to_neck">
         <hardwareInterface>EffortJointInterface</hardwareInterface>
@@ -117,6 +128,6 @@
          <hardwareInterface>EffortJointInterface</hardwareInterface>
          <mechanicalReduction>1</mechanicalReduction>
        </actuator>
-     </transmission>
+     </transmission> -->
 
 </robot>

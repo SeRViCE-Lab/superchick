@@ -11,7 +11,7 @@
    <xacro:property name="mass" value="1e-2" />
    <xacro:property name="inertia_mom" value="${mass/12}" />
    
-   <link name="right_bladder">
+<!--    <link name="right_bladder">
      <visual>
        <origin xyz="0 0 0" rpy="0 0 0" />
        <geometry>
@@ -59,7 +59,7 @@
         iyy="${inertia_mom}" iyz="0.0000" 
         izz="${inertia_mom}"/>
      </inertial>
-   </link>
+   </link> -->
 
    <link name="big_bladder_link">
      <visual>

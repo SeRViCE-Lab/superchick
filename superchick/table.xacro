@@ -54,6 +54,11 @@
       </geometry>
     </collision>
 
+    <inertial>
+      <mass value="1"/>
+        <inertia ixx="0.13" iyy="0.524" izz="0.539" ixy="0" ixz="0" iyz="0" />
+    </inertial>
+
     <!-- KDL does not support root link inertia mass -->
 
   </link>

@@ -15,7 +15,7 @@
      <visual>
        <origin xyz="${0} ${head_y_orig} ${head_z_orig}" rpy="${M_PI/2} 0 ${-M_PI}" />
        <geometry>        
-         <mesh filename="package://superchick/meshes/headnball.stl" scale=".001 .001 .001" />
+         <mesh filename="package://superchick/meshes/headnball.dae" scale=".001 .001 .001" />
        </geometry>
        <material name="brown"/>
        <origin xyz="${0} ${head_y_orig} ${head_z_orig}" rpy="${M_PI/2} 0 ${-M_PI}" />
@@ -23,7 +23,7 @@
 
      <collision>
        <geometry>
-         <mesh filename="package://superchick/meshes/headnball.stl" scale=".001 .001 .001" />
+         <mesh filename="package://superchick/meshes/headnball.dae" scale=".001 .001 .001" />
        </geometry>
        <origin xyz="${0} ${head_y_orig} ${head_z_orig}" rpy="${M_PI/2} 0 ${-M_PI}" />
      </collision>
