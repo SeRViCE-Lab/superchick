@@ -15,6 +15,10 @@
   <run_depend>jointpub</run_depend>
   <run_depend>nn_controller</run_depend>
   <run_depend>superchick</run_depend>
+<<<<<<< HEAD
+=======
+  <run_depend>supermove_config</run_depend>
+>>>>>>> 9e79fa7
   <run_depend>superchick_cloud</run_depend>
   <run_depend>superchick_gazebo</run_depend>
   <run_depend>supermove_config</run_depend>
