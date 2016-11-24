@@ -13,18 +13,17 @@
    <!-- inflatable air bladder -->
    <link name="headnball_link">
      <visual>
-       <origin xyz="${0} ${0} ${0}" rpy="${M_PI/2} 0 ${-M_PI}" />
+       <origin xyz="${0} ${head_y_orig} ${head_z_orig}" rpy="${M_PI/2} 0 ${-M_PI}" />
        <geometry>        
-         <mesh filename="package://superchick/meshes/headnball.dae" scale=".001 .001 .001" />
+         <mesh filename="package://superchick/meshes/headnball.stl" scale=".001 .001 .001" />
        </geometry>
        <material name="brown"/>
-       <origin xyz="${0} ${0} ${0}" rpy="${M_PI/2} 0 ${-M_PI}" />
+       <origin xyz="${0} ${head_y_orig} ${head_z_orig}" rpy="${M_PI/2} 0 ${-M_PI}" />
      </visual>
-
 
      <collision>
        <geometry>
-         <mesh filename="package://superchick/meshes/headnball.dae" scale=".001 .001 .001" />
+         <mesh filename="package://superchick/meshes/headnball.stl" scale=".001 .001 .001" />
        </geometry>
        <origin xyz="${0} ${head_y_orig} ${head_z_orig}" rpy="${M_PI/2} 0 ${-M_PI}" />
      </collision>
@@ -36,11 +35,11 @@
         izz="${inertia_mom}"/>
      </inertial>
 
-     <inertial>
+<!--      <inertial>
        <mass value="1e-1"/>
        <inertia ixx="0.925288" ixy="0.379102" ixz="0.011081" 
                 iyy="0.919140" iyz="0.111180" izz="0.993738"/>
-     </inertial>
+     </inertial> -->
    </link>
 
 </robot>

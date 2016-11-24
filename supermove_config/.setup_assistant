@@ -1,8 +1,8 @@
 moveit_setup_assistant_config:
   URDF:
     package: superchick
-    relative_path: superchick.xacro
+    relative_path: superchick.urdf
   SRDF:
     relative_path: config/superchick.srdf
   CONFIG:
-    generated_timestamp: 1474150797
+    generated_timestamp: 1480007312

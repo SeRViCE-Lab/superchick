@@ -9,26 +9,16 @@
     <!--JOINTS: When a joint is specified, the child link of that joint (which will always exist) is automatically included-->
     <!--CHAINS: When a chain is specified, all the links along the chain (including endpoints) are included in the group. Additionally, all the joints that are parents to included links are also included. This means that joints along the chain and the parent joint of the base link are included in the group-->
     <!--SUBGROUPS: Groups can also be formed by referencing to already defined group names-->
-    <group name="bladder">
-        <chain base_link="bladder_link" tip_link="table_top" />
+    <group name="base_bladder">
+        <joint name="bigbladder_to_head" />
     </group>
     <!--END EFFECTOR: Purpose: Represent information about an end effector.-->
-    <end_effector name="bladder_to_headnball" parent_link="bladder_link" group="bladder" />
+    <end_effector name="base_eef" parent_link="big_bladder_link" group="base_bladder" />
     <!--VIRTUAL JOINT: Purpose: this element defines a virtual joint between a robot link and an external frame of reference (considered fixed with respect to the robot)-->
-    <virtual_joint name="FixedBase" type="planar" parent_frame="/world" child_link="base_link" />
+    <virtual_joint name="virtual_joint" type="fixed" parent_frame="world" child_link="headnball_link" />
     <!--DISABLE COLLISIONS: By default it is assumed that any link of the robot could potentially come into collision with any other link in the robot. This tag disables collision checking between a specified pair of links. -->
-    <disable_collisions link1="base_link" link2="base_panel" reason="Never" />
-    <disable_collisions link1="base_link" link2="bladder_link" reason="Never" />
-    <disable_collisions link1="base_link" link2="headnball_link" reason="Never" />
-    <disable_collisions link1="base_link" link2="left_leg" reason="Adjacent" />
-    <disable_collisions link1="base_link" link2="panel_12_oc" reason="Never" />
-    <disable_collisions link1="base_link" link2="panel_3_oc" reason="Never" />
-    <disable_collisions link1="base_link" link2="panel_9_oc" reason="Never" />
-    <disable_collisions link1="base_link" link2="right_leg" reason="Adjacent" />
-    <disable_collisions link1="base_link" link2="table_cover" reason="Never" />
-    <disable_collisions link1="base_link" link2="table_top" reason="Never" />
     <disable_collisions link1="base_panel" link2="base_panel" reason="Never" />
-    <disable_collisions link1="base_panel" link2="bladder_link" reason="Never" />
+    <disable_collisions link1="base_panel" link2="big_bladder_link" reason="Default" />
     <disable_collisions link1="base_panel" link2="left_leg" reason="Never" />
     <disable_collisions link1="base_panel" link2="panel_12_oc" reason="Adjacent" />
     <disable_collisions link1="base_panel" link2="panel_3_oc" reason="Default" />
@@ -36,44 +26,67 @@
     <disable_collisions link1="base_panel" link2="right_leg" reason="Never" />
     <disable_collisions link1="base_panel" link2="table_cover" reason="Never" />
     <disable_collisions link1="base_panel" link2="table_top" reason="Adjacent" />
-    <disable_collisions link1="bladder_link" link2="bladder_link" reason="Never" />
-    <disable_collisions link1="bladder_link" link2="headnball_link" reason="Adjacent" />
-    <disable_collisions link1="bladder_link" link2="left_leg" reason="Never" />
-    <disable_collisions link1="bladder_link" link2="panel_12_oc" reason="Never" />
-    <disable_collisions link1="bladder_link" link2="panel_3_oc" reason="Default" />
-    <disable_collisions link1="bladder_link" link2="panel_9_oc" reason="Never" />
-    <disable_collisions link1="bladder_link" link2="right_leg" reason="Never" />
-    <disable_collisions link1="bladder_link" link2="table_cover" reason="Never" />
-    <disable_collisions link1="bladder_link" link2="table_top" reason="Adjacent" />
+    <disable_collisions link1="base_panel" link2="vicon_frame" reason="Never" />
+    <disable_collisions link1="base_panel" link2="world" reason="Never" />
+    <disable_collisions link1="big_bladder_link" link2="big_bladder_link" reason="Never" />
+    <disable_collisions link1="big_bladder_link" link2="headnball_link" reason="Adjacent" />
+    <disable_collisions link1="big_bladder_link" link2="left_leg" reason="Never" />
+    <disable_collisions link1="big_bladder_link" link2="panel_12_oc" reason="Never" />
+    <disable_collisions link1="big_bladder_link" link2="panel_3_oc" reason="Never" />
+    <disable_collisions link1="big_bladder_link" link2="panel_9_oc" reason="Never" />
+    <disable_collisions link1="big_bladder_link" link2="right_leg" reason="Never" />
+    <disable_collisions link1="big_bladder_link" link2="table_cover" reason="Never" />
+    <disable_collisions link1="big_bladder_link" link2="table_top" reason="Adjacent" />
+    <disable_collisions link1="big_bladder_link" link2="vicon_frame" reason="Never" />
+    <disable_collisions link1="big_bladder_link" link2="world" reason="Never" />
     <disable_collisions link1="headnball_link" link2="headnball_link" reason="Never" />
-    <disable_collisions link1="headnball_link" link2="left_leg" reason="Never" />
     <disable_collisions link1="headnball_link" link2="panel_12_oc" reason="Never" />
+    <disable_collisions link1="headnball_link" link2="panel_3_oc" reason="Never" />
     <disable_collisions link1="headnball_link" link2="panel_9_oc" reason="Never" />
     <disable_collisions link1="headnball_link" link2="right_leg" reason="Never" />
+    <disable_collisions link1="headnball_link" link2="table_cover" reason="Never" />
+    <disable_collisions link1="headnball_link" link2="table_top" reason="Always" />
+    <disable_collisions link1="headnball_link" link2="vicon_frame" reason="Never" />
+    <disable_collisions link1="headnball_link" link2="world" reason="Never" />
     <disable_collisions link1="left_leg" link2="panel_12_oc" reason="Never" />
     <disable_collisions link1="left_leg" link2="panel_3_oc" reason="Never" />
     <disable_collisions link1="left_leg" link2="panel_9_oc" reason="Never" />
     <disable_collisions link1="left_leg" link2="right_leg" reason="Never" />
     <disable_collisions link1="left_leg" link2="table_cover" reason="Never" />
     <disable_collisions link1="left_leg" link2="table_top" reason="Adjacent" />
+    <disable_collisions link1="left_leg" link2="vicon_frame" reason="Never" />
+    <disable_collisions link1="left_leg" link2="world" reason="Adjacent" />
     <disable_collisions link1="panel_12_oc" link2="panel_12_oc" reason="Never" />
     <disable_collisions link1="panel_12_oc" link2="panel_3_oc" reason="Adjacent" />
     <disable_collisions link1="panel_12_oc" link2="panel_9_oc" reason="Adjacent" />
     <disable_collisions link1="panel_12_oc" link2="right_leg" reason="Never" />
     <disable_collisions link1="panel_12_oc" link2="table_cover" reason="Never" />
     <disable_collisions link1="panel_12_oc" link2="table_top" reason="Default" />
+    <disable_collisions link1="panel_12_oc" link2="vicon_frame" reason="Never" />
+    <disable_collisions link1="panel_12_oc" link2="world" reason="Never" />
     <disable_collisions link1="panel_3_oc" link2="panel_3_oc" reason="Never" />
     <disable_collisions link1="panel_3_oc" link2="panel_9_oc" reason="Never" />
     <disable_collisions link1="panel_3_oc" link2="right_leg" reason="Never" />
     <disable_collisions link1="panel_3_oc" link2="table_cover" reason="Never" />
     <disable_collisions link1="panel_3_oc" link2="table_top" reason="Default" />
+    <disable_collisions link1="panel_3_oc" link2="vicon_frame" reason="Never" />
+    <disable_collisions link1="panel_3_oc" link2="world" reason="Never" />
     <disable_collisions link1="panel_9_oc" link2="panel_9_oc" reason="Never" />
     <disable_collisions link1="panel_9_oc" link2="right_leg" reason="Never" />
     <disable_collisions link1="panel_9_oc" link2="table_cover" reason="Never" />
     <disable_collisions link1="panel_9_oc" link2="table_top" reason="Default" />
+    <disable_collisions link1="panel_9_oc" link2="vicon_frame" reason="Never" />
+    <disable_collisions link1="panel_9_oc" link2="world" reason="Never" />
     <disable_collisions link1="right_leg" link2="table_cover" reason="Never" />
     <disable_collisions link1="right_leg" link2="table_top" reason="Adjacent" />
+    <disable_collisions link1="right_leg" link2="vicon_frame" reason="Never" />
+    <disable_collisions link1="right_leg" link2="world" reason="Adjacent" />
     <disable_collisions link1="table_cover" link2="table_cover" reason="Default" />
     <disable_collisions link1="table_cover" link2="table_top" reason="Adjacent" />
+    <disable_collisions link1="table_cover" link2="vicon_frame" reason="Never" />
+    <disable_collisions link1="table_cover" link2="world" reason="Never" />
     <disable_collisions link1="table_top" link2="table_top" reason="Default" />
+    <disable_collisions link1="table_top" link2="vicon_frame" reason="Never" />
+    <disable_collisions link1="table_top" link2="world" reason="Never" />
+    <disable_collisions link1="vicon_frame" link2="world" reason="Adjacent" />
 </robot>

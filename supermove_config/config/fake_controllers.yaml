@@ -1,4 +1,4 @@
 controller_list:
-  - name: fake_iab_controller
+  - name: fake_base_bladder_controller
     joints:
-      - bladder_to_headnball
+      - bigbladder_to_head
