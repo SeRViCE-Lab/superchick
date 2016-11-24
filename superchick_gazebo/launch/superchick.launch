@@ -17,14 +17,21 @@
     <arg name="headless" value="$(arg headless)"/>
   </include>
 
+<<<<<<< HEAD:superchick_gazebo/launch/superchick.launch
    <param name="robot_description" command="$(find xacro)/xacro.py $(arg model)" />
    <param name="robot_sdf_description" textfile="$(find superchick)/superchick.sdf" />
   <node name="spawn_models" 
         pkg="gazebo_ros" 
         type="spawn_model"
         args="-z 1.0 -unpause -urdf -param robot_description -model superchick -param robot_description" respawn="false" output="screen" />
+=======
+  <!-- Run a python script to the send a service call to gazebo_ros to spawn a URDF robot -->
+<!--    <param name="robot_description" command="$(find xacro)/xacro.py $(arg model)" />
+  <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model"
+        args="-z 1.0 -unpause -urdf -model robot -param robot_description" respawn="false" output="screen" />
+>>>>>>> 936e7fe970c880cb3426ab904ddcc8395e001e97:superchick_gazebo/launch/gazebo.launch
   <node pkg="robot_state_publisher" type="robot_state_publisher"  name="robot_state_publisher">
     <param name="publish_frequency" type="double" value="30.0" /> 
   </node>
-
+ -->
 </launch>

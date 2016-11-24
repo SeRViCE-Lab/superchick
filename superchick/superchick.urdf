@@ -281,7 +281,88 @@ After five days of trying, I realized that adding a collision object to a contin
       <inertia ixx="0.925288" ixy="0.379102" ixz="0.011081" iyy="0.919140" iyz="0.111180" izz="0.993738"/>
     </inertial>
   </link>
+<<<<<<< HEAD
   <!-- <xacro:include filename="$(find superchick)/cage.xacro" /> -->
+=======
+  <!-- 12:00 panel -->
+  <link name="panel_12_oc">
+    <visual>
+      <geometry>
+        <box size="0.47 0.200025 0.0047625"/>
+      </geometry>
+      <material name="panel_color"/>
+      <origin rpy="1.570795 0 0" xyz="0 0 0"/>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="0.47 0.200025 0.0047625"/>
+      </geometry>
+      <origin rpy="1.570795 0 0" xyz="0 0 0"/>
+    </collision>
+    <inertial>
+      <mass value="0.01"/>
+      <inertia ixx="0.000833333333333" ixy="0.0" ixz="0.0" iyy="0.000833333333333" iyz="0.0000" izz="0.000833333333333"/>
+    </inertial>
+  </link>
+  <!-- Join 12:00 Panel to base_panel -->
+  <joint name="base_panel_to_12oc" type="fixed">
+    <parent link="base_panel"/>
+    <child link="panel_12_oc"/>
+    <origin xyz="0 0.09398 0.10239375"/>
+  </joint>
+  <!-- 9:00 Panel -->
+  <link name="panel_9_oc">
+    <visual>
+      <origin rpy="1.570795 0 1.570795" xyz="0 0 0"/>
+      <geometry>
+        <box size="0.231775 0.200025 0.0047625"/>
+      </geometry>
+      <material name="panel_color"/>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="0.231775 0.200025 0.0047625"/>
+      </geometry>
+      <origin rpy="1.570795 0 1.570795" xyz="0 0 0"/>
+    </collision>
+    <inertial>
+      <mass value="0.01"/>
+      <inertia ixx="0.000833333333333" ixy="0.0" ixz="0.0" iyy="0.000833333333333" iyz="0.0000" izz="0.000833333333333"/>
+    </inertial>
+  </link>
+  <!-- Join 9:00 Panel to 12:00 Panel -->
+  <joint name="12oc_to_9oc" type="fixed">
+    <parent link="panel_12_oc"/>
+    <child link="panel_9_oc"/>
+    <origin xyz="-0.23738125 -0.11350625 0"/>
+  </joint>
+  <!-- 3:00 Panel -->
+  <link name="panel_3_oc">
+    <visual>
+      <origin rpy="1.570795 0 1.570795" xyz="0 0 0"/>
+      <geometry>
+        <box size="0.231775 0.200025 0.0047625"/>
+      </geometry>
+      <material name="panel_color"/>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="0.231775 0.200025 0.0047625"/>
+      </geometry>
+      <origin rpy="1.570795 0 1.570795" xyz="0 0 0"/>
+    </collision>
+    <inertial>
+      <mass value="0.01"/>
+      <inertia ixx="0.000833333333333" ixy="0.0" ixz="0.0" iyy="0.000833333333333" iyz="0.0000" izz="0.000833333333333"/>
+    </inertial>
+  </link>
+  <!-- Join 3:00 Panel to 12:00 Panel -->
+  <joint name="12oc_to_3oc" type="fixed">
+    <parent link="panel_12_oc"/>
+    <child link="panel_3_oc"/>
+    <origin xyz="0.23738125 -0.11350625 0"/>
+  </joint>
+>>>>>>> 936e7fe970c880cb3426ab904ddcc8395e001e97
   <!-- vicon Frame-->
   <link name="vicon_frame">
     <visual>
@@ -571,6 +652,7 @@ After five days of trying, I realized that adding a collision object to a contin
     <child link="vicon_frame"/>
     <origin rpy="0 0 0" xyz="-3.5 -2.0 -0.2"/>
   </joint>
+<<<<<<< HEAD
   <!--   <transmission name="base_transmission">
      <type>transmission_interface/SimpleTransmission</type>
      <joint name="bigbladder_to_head">
@@ -603,5 +685,37 @@ After five days of trying, I realized that adding a collision object to a contin
          <mechanicalReduction>1</mechanicalReduction>
        </actuator>
      </transmission> -->
+=======
+  <transmission name="base_transmission">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="joint1">
+      <hardwareInterface>EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="base_bladder">
+      <hardwareInterface>EffortJointInterface</hardwareInterface>
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+  <transmission name="right_transmission">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="rightbladder_to_neck">
+      <hardwareInterface>EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="right_bladder">
+      <hardwareInterface>EffortJointInterface</hardwareInterface>
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+  <transmission name="left_transmission">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="leftbladder_to_neck">
+      <hardwareInterface>EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="left_bladder">
+      <hardwareInterface>EffortJointInterface</hardwareInterface>
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+>>>>>>> 936e7fe970c880cb3426ab904ddcc8395e001e97
 </robot>
 
