@@ -139,11 +139,11 @@
       <origin xyz="0 0 ${table_leg_height-0.65}" rpy="0 0 0" />
     </visual>
 
-<!--     <collision>
+    <collision>
       <geometry>
         <box size="${table_top_length} ${table_top_width} ${table_top_thickness}" />
       </geometry>
-    </collision> -->
+    </collision>
 
     <inertial>
       <mass value="${mass}"/>
@@ -175,11 +175,11 @@
       <origin xyz="0 0 ${-table_top_thickness}" rpy="0 0 0" />
     </visual>
 
-<!--     <collision>
+    <collision>
       <geometry>
         <box size="${table_cover_length} ${table_cover_width/2} ${table_cover_thickness}" />
       </geometry>
-    </collision> -->
+    </collision>
 
     <inertial>
       <mass value="${mass}"/>

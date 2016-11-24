@@ -6,13 +6,13 @@
    <xacro:property name="bladder_pos_y" value="-0.35" />
    <xacro:property name="damping" value="0.1" />
    <xacro:property name="friction" value="0.2" />
-   <xacro:property name="sim" value="true" />
+   <xacro:property name="sim" value="false" />
   <!-- This file contains the table and bladder descriptions -->
    <xacro:include filename="$(find superchick)/material.xacro" />
    <xacro:include filename="$(find superchick)/table.xacro" />
    <xacro:include filename="$(find superchick)/bladders.xacro" />
    <xacro:include filename="$(find superchick)/headnball.xacro" />
-   <!-- <xacro:include filename="$(find superchick)/cage.xacro" /> -->
+   <xacro:include filename="$(find superchick)/cage.xacro" />
    <xacro:include filename="$(find superchick)/vicon.xacro" />
    <xacro:if value="${sim == 'true'}">
     <xacro:include filename="$(find superchick)/superchick.gazebo" />
@@ -39,7 +39,7 @@
   </joint>
 
    <!-- Gazebo does not support parallel linkages -->
-<!--   <joint name="table_to_rightneckbladder" type="fixed">
+  <joint name="table_to_rightneckbladder" type="fixed">
     <parent link="table_top"/>
     <child link="right_bladder"/>
     <limit effort="200.0" lower="0.1016" upper="0.1016" velocity="1.0" />
@@ -75,13 +75,13 @@
     <dynamics damping="${damping}" friction="${friction}" />
     <origin xyz="0 0.25 0" rpy="0 0 ${M_PI/2}" />
   </joint> 
- -->
 
-<!--   <joint name="tableTop_to_basePanel" type="fixed">
+
+  <joint name="tableTop_to_basePanel" type="fixed">
     <parent link="table_top"/>
     <child link="base_panel"/>
      <origin xyz="${-(table_top_length)/2 + 0.15} 0 ${1e-1/8}" rpy="${0} 0 ${M_PI/2}"  />
-  </joint> -->
+  </joint>
 
   <joint name="vicon_to_world" type="fixed">
     <parent link="world"/>
@@ -89,7 +89,7 @@
     <origin xyz="-3.5 -2.0 -0.2" rpy="0 0 0" />
   </joint>
 
-<!--   <transmission name="base_transmission">
+  <transmission name="base_transmission">
      <type>transmission_interface/SimpleTransmission</type>
      <joint name="bigbladder_to_head">
        <hardwareInterface>EffortJointInterface</hardwareInterface>
@@ -98,9 +98,9 @@
        <hardwareInterface>EffortJointInterface</hardwareInterface>
        <mechanicalReduction>1</mechanicalReduction>
      </actuator>
-   </transmission> -->
+   </transmission>
 
-<!--Gazebo does not support parallel linkages
+<!-- Gazebo does not support parallel linkages -->
     <transmission name="right_transmission">
       <type>transmission_interface/SimpleTransmission</type>
       <joint name="rightbladder_to_neck">
@@ -121,7 +121,7 @@
          <hardwareInterface>EffortJointInterface</hardwareInterface>
          <mechanicalReduction>1</mechanicalReduction>
        </actuator>
-     </transmission> -->
+     </transmission> 
 
 <!--      <xacro:include filename="$(find pr2_description)/urdf/sensors/kinect2.urdf.xacro" />
      <xacro:kinect2_v0 name="head_mount" parent="head_plate_frame" >
