@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<package>
+  <name>kinematic_model</name>
+  <version>0.0.0</version>
+  <description>The kinematic_model package</description>
+  <maintainer email="patlekano@gmail.com">lex</maintainer>
+
+  <license>MIT</license>
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>moveit_msgs</build_depend>
+  <build_depend>roscpp</build_depend>
+  <build_depend>rospy</build_depend>
+  <build_depend>cmake_modules</build_depend>
+  <build_depend>moveit_core</build_depend>
+  <build_depend>moveit_ros</build_depend>
+  <build_depend>moveit_ros_planning</build_depend>
+  <build_depend>moveit_ros_planning_interface</build_depend>
+
+  <run_depend>moveit_msgs</run_depend>
+  <run_depend>moveit_ros</run_depend>
+  <run_depend>roscpp</run_depend>
+  <run_depend>rospy</run_depend>
+  <run_depend>cmake_modules</run_depend>
+  <run_depend>moveit_core</run_depend>
+  <run_depend>moveit_ros_planning</run_depend>
+  <run_depend>moveit_ros_planning_interface</run_depend>
+
+
+  <!-- The export tag contains other, unspecified, tags -->
+  <export>
+    <!-- Other tools can request additional information be placed here -->
+
+  </export>
+</package>
