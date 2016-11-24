@@ -2,13 +2,28 @@
 <robot>
 
   <!-- ros_control plugin -->
-<!--   <gazebo>
-    <plugin name="superchick_gazebo" filename="libsuperchick_gazebo.so">
+  <gazebo>
+    <plugin name="gazebo_ros_controller_manager" filename="libgazebo_ros_controller_manager.so">
       <robotParam>robot_description</robotParam>
-      <controlPeriod>0.001</controlPeriod>
+      <controlPeriod>0.001</controlPeriod>      
+      <alwaysOn>true</alwaysOn>
+      <updateRate>1000.0</updateRate>
       <robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>
     </plugin>
-  </gazebo> -->
+
+    <plugin name="gazebo_ros_power_monitor_controller" filename="libgazebo_ros_power_monitor.so">
+      <alwaysOn>true</alwaysOn>
+      <updateRate>1.0</updateRate>
+      <timeout>5</timeout>
+      <powerStateTopic>power_state</powerStateTopic>
+      <powerStateRate>10.0</powerStateRate>
+      <fullChargeCapacity>87.78</fullChargeCapacity>     
+      <dischargeRate>-474</dischargeRate>
+      <chargeRate>525</chargeRate>
+      <dischargeVoltage>15.52</dischargeVoltage>
+      <chargeVoltage>16.41</chargeVoltage>
+    </plugin>
+  </gazebo>
 
   <gazebo reference="superchick">
   </gazebo>
@@ -192,7 +207,7 @@
   </gazebo> -->
 
   <!-- Actuator Links -->
-  <gazebo reference="bigbladder_to_head">
+<!--   <gazebo reference="bigbladder_to_head">
     <axis xyz="1 0 0" rpy="0 0 0" />
     <parent link="big_bladder_link"/>
     <child link="headnball_link"/>
@@ -200,7 +215,7 @@
     <dynamics damping="${damping}" friction="${friction}" />
     <safety_controller k_velocity="10" k_position="15" soft_lower_limit="0.0" soft_upper_limit="0.3" />
     <origin xyz="${0.4} 0 ${0.1/6}" rpy="0 0 ${M_PI/2}" />
-  </gazebo>
+  </gazebo> -->
 
 <!--   <gazebo reference="rightbladder_to_neck">
     <axis xyz="1 -1 0" rpy="0 0 0" />

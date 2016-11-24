@@ -18,6 +18,12 @@ catkin_package(
   	gazebo_ros
 )
 
+install(DIRECTORY launch
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
+
+install(DIRECTORY worlds
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
+  
 ## Declare a C++ library
  add_library(${PROJECT_NAME}
    src/superchick_gazebo.cpp

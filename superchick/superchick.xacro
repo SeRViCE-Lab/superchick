@@ -28,7 +28,7 @@
   </joint>
 
   <!-- Actuator Links -->
-  <joint name="bigbladder_to_head" type="continuous">
+  <joint name="bigbladdo_to_head" type="continuous">
     <axis xyz="1 0 0" rpy="0 0 0" />
     <parent link="big_bladder_link"/>
     <child link="headnball_link"/>
@@ -89,7 +89,7 @@
     <origin xyz="-3.5 -2.0 -0.2" rpy="0 0 0" />
   </joint>
 
-  <transmission name="base_transmission">
+<!--   <transmission name="base_transmission">
      <type>transmission_interface/SimpleTransmission</type>
      <joint name="bigbladder_to_head">
        <hardwareInterface>EffortJointInterface</hardwareInterface>
@@ -98,7 +98,7 @@
        <hardwareInterface>EffortJointInterface</hardwareInterface>
        <mechanicalReduction>1</mechanicalReduction>
      </actuator>
-   </transmission>
+   </transmission> -->
 
 <!--Gazebo does not support parallel linkages
     <transmission name="right_transmission">
@@ -122,5 +122,10 @@
          <mechanicalReduction>1</mechanicalReduction>
        </actuator>
      </transmission> -->
+
+<!--      <xacro:include filename="$(find pr2_description)/urdf/sensors/kinect2.urdf.xacro" />
+     <xacro:kinect2_v0 name="head_mount" parent="head_plate_frame" >
+       <origin xyz="-0.137376 0 0.091746" rpy="0 0 0" />
+     </xacro:kinect2_v0> -->
 
 </robot>

@@ -135,11 +135,11 @@
       <material name="table_color"/>
       <origin rpy="0 0 0" xyz="0 0 -0.015"/>
     </visual>
-    <collision>
+    <!--     <collision>
       <geometry>
-        <box size="1.524 0.6198 0.0381"/>
+        <box size="${table_top_length} ${table_top_width} ${table_top_thickness}" />
       </geometry>
-    </collision>
+    </collision> -->
     <inertial>
       <mass value="0.01"/>
       <inertia ixx="0.000833333333333" ixy="0.0" ixz="0.0" iyy="0.000833333333333" iyz="0.0000" izz="0.000833333333333"/>
@@ -239,12 +239,12 @@
       <material name="bladder_color"/>
       <origin rpy="0 0 0" xyz="0 0 0"/>
     </visual>
-    <collision>
-      <geometry>
-        <box size="0.31496 0.31496 0.1016"/>
-      </geometry>
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-    </collision>
+    <!--      <collision>
+       <geometry>       
+        <box size="${bladder_constant*bladder_length} ${bladder_constant*bladder_width} ${2*bladder_thickness}" />
+       </geometry>
+       <origin xyz="0 0 0" rpy="0 0 0" />
+     </collision> -->
     <inertial>
       <mass value="0.01"/>
       <inertia ixx="0.000833333333333" ixy="0.0" ixz="0.0" iyy="0.000833333333333" iyz="0.0000" izz="0.000833333333333"/>
@@ -571,16 +571,16 @@ After five days of trying, I realized that adding a collision object to a contin
     <child link="vicon_frame"/>
     <origin rpy="0 0 0" xyz="-3.5 -2.0 -0.2"/>
   </joint>
-  <transmission name="base_transmission">
-    <type>transmission_interface/SimpleTransmission</type>
-    <joint name="bigbladder_to_head">
-      <hardwareInterface>EffortJointInterface</hardwareInterface>
-    </joint>
-    <actuator name="base_bladder">
-      <hardwareInterface>EffortJointInterface</hardwareInterface>
-      <mechanicalReduction>1</mechanicalReduction>
-    </actuator>
-  </transmission>
+  <!--   <transmission name="base_transmission">
+     <type>transmission_interface/SimpleTransmission</type>
+     <joint name="bigbladder_to_head">
+       <hardwareInterface>EffortJointInterface</hardwareInterface>
+     </joint>
+     <actuator name="base_bladder">
+       <hardwareInterface>EffortJointInterface</hardwareInterface>
+       <mechanicalReduction>1</mechanicalReduction>
+     </actuator>
+   </transmission> -->
   <!--Gazebo does not support parallel linkages
     <transmission name="right_transmission">
       <type>transmission_interface/SimpleTransmission</type>

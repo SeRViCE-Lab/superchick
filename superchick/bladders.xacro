@@ -71,12 +71,12 @@
        <origin xyz="0 0 0" rpy="0 0 0" />
      </visual>
 
-     <collision>
+<!--      <collision>
        <geometry>       
         <box size="${bladder_constant*bladder_length} ${bladder_constant*bladder_width} ${2*bladder_thickness}" />
        </geometry>
        <origin xyz="0 0 0" rpy="0 0 0" />
-     </collision>
+     </collision> -->
 
      <inertial>
        <mass value="${mass}"/>
