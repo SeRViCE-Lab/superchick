@@ -4,7 +4,6 @@
 <!-- |    EDITING THIS FILE BY HAND IS NOT RECOMMENDED                                 | -->
 <!-- =================================================================================== -->
 <robot name="superchick" xmlns:xacro="http://www.ros.org/wiki/xacro">
-  <!-- <xacro:include filename="$(find superchick)/superchick.gazebo" /> -->
   <!-- General Properties -->
   <!-- This file contains the table and bladder descriptions -->
   <!-- Matrial Girl 
@@ -178,46 +177,55 @@
   </joint>
   <!-- General Properties -->
   <!-- Lekan Ogunmolu | November 2016 -->
-  <link name="right_bladder">
-    <visual>
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <geometry>
-        <box size="0.15748 0.15748 0.0508"/>
-      </geometry>
-      <material name="bladder_color"/>
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-    </visual>
-    <collision>
-      <geometry>
-        <box size="0.15748 0.15748 0.0508"/>
-      </geometry>
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-    </collision>
-    <inertial>
-      <mass value="0.01"/>
-      <inertia ixx="0.000833333333333" ixy="0.0" ixz="0.0" iyy="0.000833333333333" iyz="0.0000" izz="0.000833333333333"/>
-    </inertial>
-  </link>
-  <link name="left_bladder">
-    <visual>
-      <origin rpy="0 0 0" xyz="0 0.05 0"/>
-      <geometry>
-        <box size="0.15748 0.15748 0.0508"/>
-      </geometry>
-      <material name="bladder_color"/>
-      <origin rpy="0 0 0" xyz="0 0.05 0"/>
-    </visual>
-    <collision>
-      <geometry>
-        <box size="0.15748 0.15748 0.0508"/>
-      </geometry>
-      <origin rpy="0 0 0" xyz="0 0.05 0"/>
-    </collision>
-    <inertial>
-      <mass value="0.01"/>
-      <inertia ixx="0.000833333333333" ixy="0.0" ixz="0.0" iyy="0.000833333333333" iyz="0.0000" izz="0.000833333333333"/>
-    </inertial>
-  </link>
+  <!--    <link name="right_bladder">
+     <visual>
+       <origin xyz="0 0 0" rpy="0 0 0" />
+       <geometry>
+         <box size="${bladder_length} ${bladder_width} ${bladder_thickness}" />
+       </geometry>
+       <material name="bladder_color"/>
+       <origin xyz="0 0 0" rpy="0 0 0" />
+     </visual>
+
+     <collision>
+       <geometry>        
+        <box size="${bladder_length} ${bladder_width} ${bladder_thickness}" />
+       </geometry>
+       <origin xyz="0 0 0" rpy="0 0 0" />
+     </collision>
+
+     <inertial>
+       <mass value="${mass}"/>
+       <inertia ixx="${mass/12}" ixy="0.0" ixz="0.0" 
+        iyy="${inertia_mom}" iyz="0.0000" 
+        izz="${inertia_mom}"/>
+     </inertial>
+   </link>
+
+   <link name="left_bladder">
+     <visual>
+       <origin xyz="0 ${0.1/2} 0" rpy="0 0 0" />
+       <geometry>
+         <box size="${bladder_length} ${bladder_width} ${bladder_thickness}" />
+       </geometry>
+       <material name="bladder_color"/>
+       <origin xyz="0 ${0.1/2} 0" rpy="0 0 0" />
+     </visual>
+
+     <collision>
+       <geometry>        
+        <box size="${bladder_length} ${bladder_width} ${bladder_thickness}" />
+       </geometry>
+       <origin xyz="0 ${0.1/2} 0" rpy="0 0 0" />
+     </collision>
+
+     <inertial>
+       <mass value="${mass}"/>
+       <inertia ixx="${mass/12}" ixy="0.0" ixz="0.0" 
+        iyy="${inertia_mom}" iyz="0.0000" 
+        izz="${inertia_mom}"/>
+     </inertial>
+   </link> -->
   <link name="big_bladder_link">
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -368,20 +376,19 @@
     <child link="panel_3_oc"/>
     <origin xyz="0.23738125 -0.11350625 0"/>
   </joint>
-  <!-- General Properties -->
   <!-- vicon Frame-->
   <link name="vicon_frame">
     <visual>
       <origin rpy="1.570795 0 1.570795" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://superchick/meshes/vicon2.dae" scale=".001 .001 .001"/>
+        <mesh filename="package://superchick/meshes/vicon3.dae" scale=".001 .001 .001"/>
       </geometry>
       <material name="vicon_red"/>
     </visual>
     <collision>
       <origin rpy="1.570795 0 1.570795" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://superchick/meshes/vicon2.dae" scale=".001 .001 .001"/>
+        <mesh filename="package://superchick/meshes/vicon3.dae" scale=".001 .001 .001"/>
       </geometry>
       <material name="vicon_red"/>
     </collision>
@@ -398,48 +405,55 @@
     <safety_controller k_position="15" k_velocity="10" soft_lower_limit="-0.05" soft_upper_limit="0.05"/>
     <origin rpy="0.0 0 0.0" xyz="-0.532 0 0.0333333333333"/>
   </joint>
-  <joint name="table_to_rightneckbladder" type="fixed">
+  <!--   <joint name="table_to_rightneckbladder" type="fixed">
     <parent link="table_top"/>
     <child link="right_bladder"/>
-    <limit effort="200.0" lower="0.1016" upper="0.1016" velocity="1.0"/>
-    <safety_controller k_position="15" k_velocity="10" soft_lower_limit="-0.05" soft_upper_limit="0.05"/>
-    <origin rpy="0.0 0 0.0" xyz="-0.358 0.12 0.03125"/>
+    <dynamics damping="0.1"/>
+    <limit effort="200.0" lower="0.1016" upper="0.1016" velocity="1.0" />
+    <safety_controller k_velocity="10" k_position="15" soft_lower_limit="-0.05" soft_upper_limit="0.05" />
+    <origin xyz="${-(table_top_length)/3 + 0.15} 0.12 ${1e-1/3.2}" rpy="${0} 0 ${0}" />
   </joint>
+
+
   <joint name="table_to_leftneckbladder" type="fixed">
     <parent link="table_top"/>
     <child link="left_bladder"/>
-    <limit effort="200.0" lower="0.1016" upper="0.1016" velocity="1.0"/>
-    <safety_controller k_position="15" k_velocity="10" soft_lower_limit="-0.05" soft_upper_limit="0.05"/>
-    <origin rpy="0.0 0 0.0" xyz="-0.358 -0.12 0.03125"/>
-  </joint>
+    <limit effort="200.0" lower="0.1016" upper="0.1016" velocity="1.0" />
+    <safety_controller k_velocity="10" k_position="15" soft_lower_limit="-0.05" soft_upper_limit="0.05" />
+    <origin xyz="${-(table_top_length)/3 + 0.15} -0.12 ${1e-1/3.2}" rpy="${0} 0 ${0}" />
+  </joint> -->
   <!-- Actuator Links -->
   <joint name="bigbladder_to_head" type="continuous">
     <axis rpy="0 0 0" xyz="1 0 0"/>
     <parent link="big_bladder_link"/>
     <child link="headnball_link"/>
     <limit effort="200.0" lower="-0.1016" upper="0.1016" velocity="1.0"/>
-    <safety_controller k_position="15" k_velocity="10" soft_lower_limit="-0.0" soft_upper_limit="0.3"/>
+    <dynamics damping="0.1" friction="0.2"/>
+    <safety_controller k_position="15" k_velocity="10" soft_lower_limit="0.0" soft_upper_limit="0.6"/>
     <origin rpy="0 0 1.570795" xyz="0.15 0.1033 0"/>
   </joint>
-  <joint name="rightbladder_to_neck" type="continuous">
-    <axis rpy="0 0 0" xyz="1 -1 0"/>
-    <parent link="right_bladder"/>
-    <child link="headnball_link"/>
-    <limit effort="200.0" lower="-0.1016" upper="0.1016" velocity="1.0"/>
-    <dynamics damping="0.1" friction="0.2"/>
-    <safety_controller k_position="15" k_velocity="10" soft_lower_limit="0.0" soft_upper_limit="0.3"/>
-    <origin rpy="0 0 1.570795" xyz="0 0 0"/>
+  <!--   <joint name="rightbladder_to_neck" type="continuous">
+    <axis xyz="1 -1 0" rpy="0 0 0" />
+    <mimic joint="bigbladder_to_head" multiplier="1" offset="0"/>
+    <parent link="headnball_link"/>
+    <child link="right_bladder"/>
+    <limit effort="200.0" lower="-0.1016" upper="0.1016" velocity="1.0" />
+    <dynamics damping="${damping}" friction="${friction}" />
+    <safety_controller k_velocity="10" k_position="15" soft_lower_limit="0.0" soft_upper_limit="0.3"/>
+    <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}" />
   </joint>
+
   <joint name="leftbladder_to_neck" type="continuous">
-    <axis rpy="0 0 0" xyz="1 1 0"/>
+    <axis xyz="1 1 0" rpy="0 0 0" />
+    <mimic joint="bigbladder_to_head" multiplier="1" offset="0"/>
     <parent link="left_bladder"/>
     <child link="headnball_link"/>
-    <limit effort="200.0" lower="-0.1016" upper="0.1016" velocity="1.0"/>
-    <dynamics damping="0.1" friction="0.2"/>
-    <safety_controller k_position="15" k_velocity="10" soft_lower_limit="0.0" soft_upper_limit="0.3"/>
-    <dynamics damping="0.1" friction="0.2"/>
-    <origin rpy="0 0 1.570795" xyz="0 0.25 0"/>
-  </joint>
+    <limit effort="200.0" lower="-0.1016" upper="0.1016" velocity="1.0" />
+    <dynamics damping="${damping}" friction="${friction}" />
+    <safety_controller k_velocity="10" k_position="15" soft_lower_limit="0.0" soft_upper_limit="0.3" />
+    <dynamics damping="${damping}" friction="${friction}" />
+    <origin xyz="0 0.25 0" rpy="0 0 ${M_PI/2}" />
+  </joint>  -->
   <joint name="tableTop_to_basePanel" type="fixed">
     <parent link="table_top"/>
     <child link="base_panel"/>
@@ -448,7 +462,38 @@
   <joint name="vicon_to_world" type="fixed">
     <parent link="world"/>
     <child link="vicon_frame"/>
-    <origin rpy="0 0 0" xyz="-5 -4 2.00"/>
+    <origin rpy="0 0 0" xyz="-3.5 -2.0 -0.2"/>
   </joint>
+  <transmission name="base_transmission">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="bigbladder_to_head">
+      <hardwareInterface>EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="base_bladder">
+      <hardwareInterface>EffortJointInterface</hardwareInterface>
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+  <!--    <transmission name="right_transmission">
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="rightbladder_to_neck">
+        <hardwareInterface>EffortJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="right_bladder">
+        <hardwareInterface>EffortJointInterface</hardwareInterface>
+        <mechanicalReduction>1</mechanicalReduction>
+      </actuator>
+    </transmission>
+
+    <transmission name="left_transmission">
+       <type>transmission_interface/SimpleTransmission</type>
+       <joint name="leftbladder_to_neck">
+         <hardwareInterface>EffortJointInterface</hardwareInterface>
+       </joint>
+       <actuator name="left_bladder">
+         <hardwareInterface>EffortJointInterface</hardwareInterface>
+         <mechanicalReduction>1</mechanicalReduction>
+       </actuator>
+     </transmission> -->
 </robot>
 

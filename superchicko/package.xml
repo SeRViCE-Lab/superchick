@@ -12,7 +12,6 @@
   <buildtool_depend>catkin</buildtool_depend>
 
   <run_depend>superchick</run_depend>
-  <run_depend>moveit_config</run_depend>
   <run_depend>supermove_config</run_depend>
   <run_depend>superchick_cloud</run_depend>
   <run_depend>jointpub</run_depend>

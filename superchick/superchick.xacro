@@ -15,7 +15,7 @@
    <xacro:include filename="$(find superchick)/cage.xacro" />
    <xacro:include filename="$(find superchick)/vicon.xacro" />
    <xacro:if value="${sim == 'true'}">
-    <xacro:include filename="$(find superchick)/superchick.gazebo" />
+    <xacro:include filename="$(find superchick_gazebo)/superchick.gazebo" />
    </xacro:if>
 
    <!-- table link to bladders -->
@@ -27,7 +27,7 @@
     <origin xyz="${-(table_top_length)/2 + 0.23} 0 ${1e-1/3}" rpy="${0} 0 ${0}" />
   </joint>
 
-  <joint name="table_to_rightneckbladder" type="fixed">
+<!--   <joint name="table_to_rightneckbladder" type="fixed">
     <parent link="table_top"/>
     <child link="right_bladder"/>
     <dynamics damping="0.1"/>
@@ -43,7 +43,7 @@
     <limit effort="200.0" lower="0.1016" upper="0.1016" velocity="1.0" />
     <safety_controller k_velocity="10" k_position="15" soft_lower_limit="-0.05" soft_upper_limit="0.05" />
     <origin xyz="${-(table_top_length)/3 + 0.15} -0.12 ${1e-1/3.2}" rpy="${0} 0 ${0}" />
-  </joint>
+  </joint> -->
 
   <!-- Actuator Links -->
   <joint name="bigbladder_to_head" type="continuous">
@@ -51,14 +51,16 @@
     <parent link="big_bladder_link"/>
     <child link="headnball_link"/>
     <limit effort="200.0" lower="-0.1016" upper="0.1016" velocity="1.0" />
-    <safety_controller k_velocity="10" k_position="15" soft_lower_limit="-0.0" soft_upper_limit="0.3" />
+    <dynamics damping="${damping}" friction="${friction}" />
+    <safety_controller k_velocity="10" k_position="15" soft_lower_limit="0.0" soft_upper_limit="${2*0.3}" />
     <origin xyz="${(1e-1/2)+1e-1} ${(table_top_width)/6} 0" rpy="0 0 ${M_PI/2}" />
   </joint>
 
-  <joint name="rightbladder_to_neck" type="continuous">
+<!--   <joint name="rightbladder_to_neck" type="continuous">
     <axis xyz="1 -1 0" rpy="0 0 0" />
-    <parent link="right_bladder"/>
-    <child link="headnball_link"/>
+    <mimic joint="bigbladder_to_head" multiplier="1" offset="0"/>
+    <parent link="headnball_link"/>
+    <child link="right_bladder"/>
     <limit effort="200.0" lower="-0.1016" upper="0.1016" velocity="1.0" />
     <dynamics damping="${damping}" friction="${friction}" />
     <safety_controller k_velocity="10" k_position="15" soft_lower_limit="0.0" soft_upper_limit="0.3"/>
@@ -67,6 +69,7 @@
 
   <joint name="leftbladder_to_neck" type="continuous">
     <axis xyz="1 1 0" rpy="0 0 0" />
+    <mimic joint="bigbladder_to_head" multiplier="1" offset="0"/>
     <parent link="left_bladder"/>
     <child link="headnball_link"/>
     <limit effort="200.0" lower="-0.1016" upper="0.1016" velocity="1.0" />
@@ -74,7 +77,7 @@
     <safety_controller k_velocity="10" k_position="15" soft_lower_limit="0.0" soft_upper_limit="0.3" />
     <dynamics damping="${damping}" friction="${friction}" />
     <origin xyz="0 0.25 0" rpy="0 0 ${M_PI/2}" />
-  </joint>
+  </joint>  -->
 
   <joint name="tableTop_to_basePanel" type="fixed">
     <parent link="table_top"/>
@@ -90,7 +93,7 @@
 
   <transmission name="base_transmission">
      <type>transmission_interface/SimpleTransmission</type>
-     <joint name="joint1">
+     <joint name="bigbladder_to_head">
        <hardwareInterface>EffortJointInterface</hardwareInterface>
      </joint>
      <actuator name="base_bladder">
@@ -99,7 +102,7 @@
      </actuator>
    </transmission>
 
-   <transmission name="right_transmission">
+<!--    <transmission name="right_transmission">
       <type>transmission_interface/SimpleTransmission</type>
       <joint name="rightbladder_to_neck">
         <hardwareInterface>EffortJointInterface</hardwareInterface>
@@ -119,6 +122,6 @@
          <hardwareInterface>EffortJointInterface</hardwareInterface>
          <mechanicalReduction>1</mechanicalReduction>
        </actuator>
-     </transmission>
+     </transmission> -->
 
 </robot>
