@@ -51,4 +51,7 @@
     <arg name="moveit_warehouse_database_path" value="$(arg db_path)"/>
   </include>
 
+  <!-- Run the superchcik gprs plugin  -->
+  <include file="$(find gps_agent_pkg)/launch/superchick_only_controller.launch"/>
+
 </launch>
