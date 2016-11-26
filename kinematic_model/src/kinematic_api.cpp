@@ -34,7 +34,7 @@ int main(int argc, char **argv)
   moveit_msgs::GetPositionIK::Response service_response;
 
   service_request.ik_request.group_name = "base_bladder";
-  service_request.ik_request.pose_stamped.header.frame_id = "head_lift_link";
+  service_request.ik_request.pose_stamped.header.frame_id = "headnball_link";
   service_request.ik_request.pose_stamped.pose.position.x = 0.75;
   service_request.ik_request.pose_stamped.pose.position.y = 0.188;
   service_request.ik_request.pose_stamped.pose.position.z = 0.0;

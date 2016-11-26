@@ -52,7 +52,7 @@
     <child link="headnball_link"/>
     <limit effort="200.0" lower="-0.1016" upper="0.1016" velocity="1.0" />
     <dynamics damping="${damping}" friction="${friction}" />
-    <safety_controller k_velocity="10" k_position="15" soft_lower_limit="0.0" soft_upper_limit="${2*0.3}" />
+    <safety_controller k_velocity="10" k_position="15" soft_lower_limit="0.0" soft_upper_limit="${0.3}" />
     <origin xyz="${(1e-1/2)+1e-1} ${(table_top_width)/6} 0" rpy="0 0 ${M_PI/2}" />
   </joint>
 
