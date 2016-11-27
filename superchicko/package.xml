@@ -11,13 +11,15 @@
 
   <buildtool_depend>catkin</buildtool_depend>
 
+  <run_depend>farnn</run_depend>
+  <run_depend>jointpub</run_depend>
   <run_depend>superchick</run_depend>
+  <run_depend>vicon_bridge</run_depend>
+  <run_depend>nn_controller</run_depend>
+  <run_depend>vicon_listener</run_depend>
+  <run_depend>kinematic_model</run_depend>
   <run_depend>supermove_config</run_depend>
   <run_depend>superchick_cloud</run_depend>
-  <run_depend>jointpub</run_depend>
-  <run_depend>farnn</run_depend>
-  <run_depend>vicon_bridge</run_depend>
-  <run_depend>vicon_listener</run_depend>
 
   <export>
     <metapackage/>
