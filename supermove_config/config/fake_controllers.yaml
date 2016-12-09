@@ -2,3 +2,6 @@ controller_list:
   - name: fake_base_bladder_controller
     joints:
       - bigbladder_to_head
+initial:
+  - group: base_bladder
+    pose:  home

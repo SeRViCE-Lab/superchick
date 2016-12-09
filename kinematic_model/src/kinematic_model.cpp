@@ -49,12 +49,12 @@ int main(int argc, char **argv)
 
   // Get Joint Values
   // ^^^^^^^^^^^^^^^^
-  // We can retreive the current set of joint values stored in the state for the right arm.
+  // We can retreive the current set of joint values stored in the state for the base bladder.
   std::vector<double> joint_values;
   kinematic_state->copyJointGroupPositions(joint_model_group, joint_values);
   for(std::size_t i = 0; i < joint_names.size(); ++i)
   {
-    ROS_INFO("Joint %s: %f", joint_names[i].c_str(), joint_values[i]);
+    ROS_INFO("Joint: %s: %f", joint_names[i].c_str(), joint_values[i]);
   }
 
   // Joint Limits
@@ -65,18 +65,18 @@ int main(int argc, char **argv)
   kinematic_state->setJointGroupPositions(joint_model_group, joint_values);
 
   /* Check whether any joint is outside its joint limits */
-  ROS_INFO_STREAM("Current state is " << (kinematic_state->satisfiesBounds() ? "valid" : "not valid"));
+  ROS_INFO_STREAM("Pre-Enforce Joint Limits: Current state is " << (kinematic_state->satisfiesBounds() ? "valid" : "not valid"));
 
   /* Enforce the joint limits for this state and check again*/
   kinematic_state->enforceBounds();
-  ROS_INFO_STREAM("Current state is " << (kinematic_state->satisfiesBounds() ? "valid" : "not valid"));
+  ROS_INFO_STREAM("Post-Enforce Joint Limits: Current state is " << (kinematic_state->satisfiesBounds() ? "valid" : "not valid"));
 
   // Forward Kinematics
   // ^^^^^^^^^^^^^^^^^^
   // Now, we can compute forward kinematics for a set of random joint
   // values. Note that we would like to find the pose of the
-  // "r_wrist_roll_link" which is the most distal link in the
-  // "right_arm" of the robot.
+  // "headnball link" which is the most distal link in the
+  // "head" of the robot.
   kinematic_state->setToRandomPositions(joint_model_group);
   const Eigen::Affine3d &end_effector_state = kinematic_state->getGlobalLinkTransform("headnball_link");
 
@@ -86,8 +86,8 @@ int main(int argc, char **argv)
 
   // Inverse Kinematics
   // ^^^^^^^^^^^^^^^^^^
-  // We can now solve inverse kinematics (IK) for the right arm of the
-  // PR2 robot. To solve IK, we will need the following:
+  // We can now solve inverse kinematics (IK) for the head of the
+  // chick robot. To solve IK, we will need the following:
   // * The desired pose of the end-effector (by default, this is the last link in the "right_arm" chain): end_effector_state that we computed in the step above.
   // * The number of attempts to be made at solving IK: 5
   // * The timeout for each attempt: 0.1 s
