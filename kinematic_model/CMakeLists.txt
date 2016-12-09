@@ -48,16 +48,21 @@ link_directories(${catkin_LIBRARY_DIRS})
 ## Declare a C++ executable
 add_executable(kinematic_model src/kinematic_model.cpp)
 add_executable(kinematic_api src/kinematic_api.cpp)
-add_executable(chick src/chick_planning.cpp)
+#add_executable(chick src/chick_planning.cpp)
+add_executable(headmove src/headmove.cpp)
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(kinematic_model
   ${catkin_LIBRARIES} ${Eigen_LIBRARIES} ${Boost_LIBRARIES}
 )
 
+target_link_libraries(headmove
+  ${catkin_LIBRARIES} ${Eigen_LIBRARIES} ${Boost_LIBRARIES}
+)
+
 target_link_libraries(kinematic_api
   ${catkin_LIBRARIES} ${Eigen_LIBRARIES} ${Boost_LIBRARIES}
 )
-target_link_libraries(chick
-  ${catkin_LIBRARIES} ${Eigen_LIBRARIES} ${Boost_LIBRARIES}
-)
+#target_link_libraries(chick
+#  ${catkin_LIBRARIES} ${Eigen_LIBRARIES} ${Boost_LIBRARIES}
+#)

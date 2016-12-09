@@ -31,8 +31,8 @@ int main(int argc, char **argv)
   //
   // .. _RobotModelLoader: http://docs.ros.org/indigo/api/moveit_ros_planning/html/classrobot__model__loader_1_1RobotModelLoader.html
   robot_model_loader::RobotModelLoader robot_model_loader("robot_description");
-  robot_model::RobotModelPtr kinematic_model = robot_model_loader.getModel();
-  ROS_INFO("Model frame: %s", kinematic_model->getModelFrame().c_str());
+  robot_model::RobotModelPtr RobotModel = robot_model_loader.getModel();
+  ROS_INFO("Model frame: %s", RobotModel->getModelFrame().c_str());
 
   // Using the :moveit_core:`RobotModel`, we can construct a
   // :moveit_core:`RobotState` that maintains the configuration
@@ -41,9 +41,9 @@ int main(int argc, char **argv)
   // :moveit_core:`JointModelGroup`, which represents the robot
   // model for a particular group, e.g. the "right_arm" of the PR2
   // robot.
-  robot_state::RobotStatePtr kinematic_state(new robot_state::RobotState(kinematic_model));
-  kinematic_state->setToDefaultValues();
-  const robot_state::JointModelGroup* joint_model_group = kinematic_model->getJointModelGroup("base_bladder");
+  robot_state::RobotStatePtr RobotState(new robot_state::RobotState(RobotModel));
+  RobotState->setToDefaultValues();
+  const robot_state::JointModelGroup* joint_model_group = RobotModel->getJointModelGroup("base_bladder");
 
   const std::vector<std::string> &joint_names = joint_model_group->getJointModelNames();
 
@@ -51,7 +51,7 @@ int main(int argc, char **argv)
   // ^^^^^^^^^^^^^^^^
   // We can retreive the current set of joint values stored in the state for the base bladder.
   std::vector<double> joint_values;
-  kinematic_state->copyJointGroupPositions(joint_model_group, joint_values);
+  RobotState->copyJointGroupPositions(joint_model_group, joint_values);
   for(std::size_t i = 0; i < joint_names.size(); ++i)
   {
     ROS_INFO("Joint: %s: %f", joint_names[i].c_str(), joint_values[i]);
@@ -62,14 +62,14 @@ int main(int argc, char **argv)
   // setJointGroupPositions() does not enforce joint limits by itself, but a call to enforceBounds() will do it.
   /* Set one joint in the right arm outside its joint limit */
   joint_values[0] = 1.57;
-  kinematic_state->setJointGroupPositions(joint_model_group, joint_values);
+  RobotState->setJointGroupPositions(joint_model_group, joint_values);
 
   /* Check whether any joint is outside its joint limits */
-  ROS_INFO_STREAM("Pre-Enforce Joint Limits: Current state is " << (kinematic_state->satisfiesBounds() ? "valid" : "not valid"));
+  ROS_INFO_STREAM("Pre-Enforce Joint Limits: Current state is " << (RobotState->satisfiesBounds() ? "valid" : "not valid"));
 
   /* Enforce the joint limits for this state and check again*/
-  kinematic_state->enforceBounds();
-  ROS_INFO_STREAM("Post-Enforce Joint Limits: Current state is " << (kinematic_state->satisfiesBounds() ? "valid" : "not valid"));
+  RobotState->enforceBounds();
+  ROS_INFO_STREAM("Post-Enforce Joint Limits: Current state is " << (RobotState->satisfiesBounds() ? "valid" : "not valid"));
 
   // Forward Kinematics
   // ^^^^^^^^^^^^^^^^^^
@@ -77,8 +77,8 @@ int main(int argc, char **argv)
   // values. Note that we would like to find the pose of the
   // "headnball link" which is the most distal link in the
   // "head" of the robot.
-  kinematic_state->setToRandomPositions(joint_model_group);
-  const Eigen::Affine3d &end_effector_state = kinematic_state->getGlobalLinkTransform("headnball_link");
+  RobotState->setToRandomPositions(joint_model_group);
+  const Eigen::Affine3d &end_effector_state = RobotState->getGlobalLinkTransform("headnball_link");
 
   /* Print end-effector pose. Remember that this is in the model frame */
   ROS_INFO_STREAM("Translation: " << end_effector_state.translation());
@@ -91,12 +91,12 @@ int main(int argc, char **argv)
   // * The desired pose of the end-effector (by default, this is the last link in the "right_arm" chain): end_effector_state that we computed in the step above.
   // * The number of attempts to be made at solving IK: 5
   // * The timeout for each attempt: 0.1 s
-  bool found_ik = kinematic_state->setFromIK(joint_model_group, end_effector_state, 10, 0.1);
+  bool found_ik = RobotState->setFromIK(joint_model_group, end_effector_state, 10, 0.1);
 
   // Now, we can print out the IK solution (if found):
   if (found_ik)
   {
-    kinematic_state->copyJointGroupPositions(joint_model_group, joint_values);
+    RobotState->copyJointGroupPositions(joint_model_group, joint_values);
     for(std::size_t i=0; i < joint_names.size(); ++i)
     {
       ROS_INFO("Joint %s: %f", joint_names[i].c_str(), joint_values[i]);
@@ -112,7 +112,7 @@ int main(int argc, char **argv)
   // We can also get the Jacobian from the :moveit_core:`RobotState`.
   Eigen::Vector3d reference_point_position(0.0,0.0,0.0);
   Eigen::MatrixXd jacobian;
-  kinematic_state->getJacobian(joint_model_group, kinematic_state->getLinkModel(joint_model_group->getLinkModelNames().back()),
+  RobotState->getJacobian(joint_model_group, RobotState->getLinkModel(joint_model_group->getLinkModelNames().back()),
                                reference_point_position,
                                jacobian);
   ROS_INFO_STREAM("Jacobian: " << jacobian);

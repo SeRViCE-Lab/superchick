@@ -44,7 +44,8 @@ int main(int argc, char **argv)
 
   // We will now construct a loader to load a planner, by name. 
   // Note that we are using the ROS pluginlib library here.
-  boost::scoped_ptr<pluginlib::ClassLoader<planning_interface::PlannerManager> > planner_plugin_loader;
+  boost::scoped_ptr<pluginlib::ClassLoader<ompl_interface::OMPLPlanner::PlannerManager> > planner_plugin_loader;
+  // boost::scoped_ptr<pluginlib::ClassLoader<planning_interface::PlannerManager> > planner_plugin_loader;
   planning_interface::PlannerManagerPtr planner_instance;
   std::string planner_plugin_name;
 
