@@ -188,6 +188,26 @@ local function log(t)
 end
 print('Will save at '..opt.save)
 
+local function signum(x)
+	local y
+	if x < 0 
+		then y = -1
+	elseif x = 0
+		then y = 0
+	elseif x > 0
+		then y = 1
+	end
+	return y
+end
+
+--param error is the parametric error between the reference model and the plant's output
+-- y is the state variable we are trying to optimize via gradient descent/MIT rule
+-- ref is the desired trajectory we want for the head 
+local function compute_gains(y, ref, param_error)
+	local Gamma, P, B, Lambda, K
+	Kydot = -Gamma_y * y * param_error * P * B * signum(Lambda)
+end
+
 local function optimize(neunet)	
 	local time = sys.clock()
 	local netout, loss, grad, gradIn, u

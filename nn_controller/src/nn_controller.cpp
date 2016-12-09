@@ -54,10 +54,9 @@ bool Controller::configure_controller(
 	nn_controller::amfcError::Request  &req,
 	nn_controller::amfcError::Response  &res)
 {
-	// this is the reference model. it is always time-varying
-	// y_m(t) = [k_m + y_0] * exp(a_m * t)
+	// this is the reference model. it is always time-varying1
 	k_m = 1.25;  
-	a_m = 0.8;   
+	a_m = -0.782404601/k;   
 	y_0 = 0;  //assume zero initial response
     now = std::chrono::high_resolution_clock::now();
     double elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - start).count() / 1000.0;
