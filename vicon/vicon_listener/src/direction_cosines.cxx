@@ -39,7 +39,7 @@ class Receiver
 
 private:
     float xm, ym, zm;
-    bool save, print, sim; 
+    bool save, print, sim, running; 
     double headRoll, headPitch, headYaw;
     double panelRoll, panelPitch, panelYaw;
 
@@ -66,7 +66,7 @@ private:
     std::mutex mutex;
     bool updatePose;
     ros::AsyncSpinner spinner;
-    unsigned long hardware_concurrency;
+    unsigned long const hardware_threads;
 
     //for rigidTransforms
     geometry_msgs::Vector3 panelTrans;
@@ -94,9 +94,9 @@ private:
 
 public:
     Receiver(ros::NodeHandle nm, bool save, bool print, bool sim)
-        :  nm_(nm), save(save), print(print), sim(sim), hardware_concurrency(std::thread::hardware_concurrency()),
+        :  nm_(nm), save(save), print(print), sim(sim), hardware_threads(std::thread::hardware_concurrency()),
            subVicon(nm_, "/vicon/markers", 1), subHead(nm_, "vicon/Superdude/head", 1), 
-           subPanel(nm_,"/vicon/Panel/rigid", 1), spinner(4),
+           subPanel(nm_,"/vicon/Panel/rigid", 1), spinner(2),
            sync(headSyncPolicy(10), subVicon, subHead, subPanel), updatePose(false)
     {      
         // ExactTime takes a queue size as its constructor argument, hence SyncPolicy(10)
@@ -119,23 +119,24 @@ private:
     void spawn()
     {
         if(spinner.canStart())
-            spinner.start();  
+            spinner.start(); 
+        running = true; 
         
-        // for(; !updatePose ;)
-        std::this_thread::sleep_for(std::chrono::milliseconds(1));     
+        while(!updatePose)
+            std::this_thread::sleep_for(std::chrono::milliseconds(1));     
 
-        // //spawn the threads
         //spawn the threads
-        threadsVector.push_back(std::thread(&Receiver::testQuat, this));
-        threadsVector.push_back(std::thread(&Receiver::modGramScmidt, this));
-        //call join on each thread in turn
-        std::for_each(threadsVector.begin(), threadsVector.end(), \
-                      std::mem_fn(&std::thread::join)); 
+        modGramScmidtThread = std::thread(&Receiver::modGramSchmidt, this);
+        
+        if(modGramScmidtThread.joinable())
+            modGramScmidtThread.join();
     }
 
     void unspawn()
     {
         spinner.stop();
+        modGramScmidtThread.detach();
+        running = false;
     }
 
     void callback(const vicon_bridge::MarkersConstPtr& markers_msg, 
@@ -193,86 +194,96 @@ private:
         // ROS_INFO_STREAM("check?: " << *markers_msg << *panel_msg << *head_msg);
     }
 
-    void modGramScmidt() noexcept
+    void modGramSchmidt() noexcept
     {
         std::vector<geometry_msgs::Point> headMarkersVector, panelMarkersVector;
         
-        if(updatePose)
-        {   
-            boost::mutex::scoped_lock lock(markers_mutex);
-            // std::lock_guard<std::mutex> lock(mutex);
-            {
-                headMarkersVector  = this->headMarkersVector;
-                panelMarkersVector = this->panelMarkersVector;
-                updatePose = false;
-            }
-            lock.unlock();
-        }
-
         //attached frame to face
         Vector3d fore, left, right, chin;  
-        fore << headMarkersVector[0].x, headMarkersVector[0].y,
-                headMarkersVector[0].z;
-        left << headMarkersVector[1].x, headMarkersVector[1].y,
-                headMarkersVector[1].z;  
-        right<< headMarkersVector[2].x, headMarkersVector[2].y,
-                headMarkersVector[2].z;
-        chin << headMarkersVector[3].x, headMarkersVector[3].y,
-                headMarkersVector[3].z;     
-
         //base markers
         Vector3d botLeft, botRight, topRight, topLeft; 
-        botLeft << panelMarkersVector[0].x, panelMarkersVector[0].y,
-                   panelMarkersVector[0].z;
-        botRight<< panelMarkersVector[1].x, panelMarkersVector[1].y,
-                   panelMarkersVector[1].z;
-        topRight<< panelMarkersVector[2].x, panelMarkersVector[2].y,
-                   panelMarkersVector[2].z;
-        topLeft << panelMarkersVector[3].x, panelMarkersVector[3].y,
-                   panelMarkersVector[3].z;
 
-        //see https://ocw.mit.edu/courses/mathematics/18-335j-introduction-to-numerical-methods-fall-2010/lecture-notes/MIT18_335JF10_lec10a_hand.pdf
-        std::vector<Vector3d> v(4), q(4);          
-        v[0] = fore;   v[1] = left;   v[2] = right;    v[3] = chin;
-        double r[3][3] = {};    
-        for(auto i = 0; i < 4; ++i)
-        {
-            r[i][i] = v[i].norm();
-            q[i]    = v[i]/r[i][i];
-            for(auto j = i +1; j < 4; ++j)
-            {
-                r[i][j] = q[i].transpose() * v[j];
-                v[j]    = v[j] - r[i][j] * q[i];
-            }
-        }    
-        Matrix3d headMGS;
-        // populate headMGS rotation basis matrix
-        for(auto i =0; i < 3; ++i)
-        { 
-            headMGS.col(i) = q[i];
-        }
-        this->headMGS = headMGS;
+        Matrix3d headMGS, tableMGS;
 
-        //compute basis vectors for table markers
-        v.clear(); q.clear();
-        v[0] = botLeft; v[1] = botRight; v[2] = topRight; v[3] = topLeft;
-        for(auto i = 0; i < 4; ++i)
-        {
-            r[i][i] = v[i].norm();
-            q[i]    = v[i]/r[i][i];
-            for(auto j = i +1; j < 4; ++j)
-            {
-                r[i][j] = q[i].transpose() * v[j];
-                v[j]    = v[j] - r[i][j] * q[i];
+        for(; running && ros::ok() ;)
+        {            
+            if(updatePose)
+            {   
+                boost::mutex::scoped_lock lock(markers_mutex);
+                // std::lock_guard<std::mutex> lock(mutex);
+                {
+                    headMarkersVector  = this->headMarkersVector;
+                    panelMarkersVector = this->panelMarkersVector;
+                    updatePose = false;
+                }
+                lock.unlock();
             }
-        }  
-        // populate headMGS rotation basis matrix
-        Matrix3d tableMGS;
-        for(auto i =0; i < 3; ++i)
-        { 
-            tableMGS.col(i) = q[i];
-        }
-        this->tableMGS = tableMGS;
+
+            fore << headMarkersVector[0].x, headMarkersVector[0].y,
+                    headMarkersVector[0].z;
+            left << headMarkersVector[1].x, headMarkersVector[1].y,
+                    headMarkersVector[1].z;  
+            right<< headMarkersVector[2].x, headMarkersVector[2].y,
+                    headMarkersVector[2].z;
+            chin << headMarkersVector[3].x, headMarkersVector[3].y,
+                    headMarkersVector[3].z;   
+
+            botLeft << panelMarkersVector[0].x, panelMarkersVector[0].y,
+                       panelMarkersVector[0].z;
+            botRight<< panelMarkersVector[1].x, panelMarkersVector[1].y,
+                       panelMarkersVector[1].z;
+            topRight<< panelMarkersVector[2].x, panelMarkersVector[2].y,
+                       panelMarkersVector[2].z;
+            topLeft << panelMarkersVector[3].x, panelMarkersVector[3].y,
+                       panelMarkersVector[3].z;
+            
+            //see https://ocw.mit.edu/courses/mathematics/18-335j-introduction-to-numerical-methods-fall-2010/lecture-notes/MIT18_335JF10_lec10a_hand.pdf
+            std::vector<Vector3d> v(4), q(4);   
+            //compute orthonormal basis vectors for face markers       
+            v[0] = fore;   v[1] = left;   v[2] = right;    v[3] = chin;
+            double r[3][3] = {};    
+            for(auto i = 0; i < 3; ++i)
+            {
+                r[i][i] = v[i].norm();
+                q[i]    = v[i]/r[i][i];
+                for(auto j = i +1; j < 3; ++j)
+                {
+                    r[i][j] = q[i].transpose() * v[j];
+                    v[j]    = v[j] - r[i][j] * q[i];
+                }
+            }  
+
+            
+            // populate headMGS rotation basis matrix
+            for(auto i =0; i < 3; ++i)
+            { 
+                headMGS.col(i) = q[i];
+            }
+            this->headMGS = headMGS;
+
+            //compute basis vectors for table markers
+            v.clear(); q.clear();
+            v[0] = botLeft; v[1] = botRight; v[2] = topRight; v[3] = topLeft;
+            for(auto i = 0; i < 4; ++i)
+            {
+                r[i][i] = v[i].norm();
+                q[i]    = v[i]/r[i][i];
+                for(auto j = i +1; j < 4; ++j)
+                {
+                    r[i][j] = q[i].transpose() * v[j];
+                    v[j]    = v[j] - r[i][j] * q[i];
+                }
+            }  
+            // populate tableMGS rotation basis matrix
+            for(auto i =0; i < 3; ++i)
+            { 
+                tableMGS.col(i) = q[i];
+            }
+            this->tableMGS = tableMGS;  
+
+            ROS_INFO_STREAM("Table MGS Vectors: " << tableMGS);
+            ROS_INFO_STREAM("Head MGS Vectors: " << headMGS);                     
+        } 
     }
 
     void testQuat() noexcept
@@ -340,58 +351,7 @@ private:
 
     }
     
-/*//   Now I compute the Gram-Schmidt orthonormalization and orthogonalization for the four vectors
-//     https://en.m.wikipedia.org/wiki/Gram%E2%80%93Schmidt_process#CITEREFGolubVan_Loan1996
-//     http://www.cs.cmu.edu/~kiranb/animation/p245-shoemake.pdf
-    void modgramschmidt(headmarkers markers, facemidpts facepoints)
-    {
-        //define req'd sys of finitely independent set
-        Vector3d v1(markers.foreo.x, markers.foreo.y, markers.foreo.z);
-        Vector3d v2(markers.lefto.x, markers.lefto.y, markers.lefto.z);
-        Vector3d v3(markers.righto.x, markers.righto.y, markers.righto.z);
-        Vector3d v4(markers.chino.x, markers.chino.y, markers.chino.z);    
-        
-        //define orthogonal set S' = {u1, u2, u3, u4}
-        Vector3d u1, u2, u3, u4;
-        //we set u1 to v1
-        u1 = v1 ;                                               
-        u2 = v2 - proj(u1, v2);
-        u3 = v3 - proj(u1, v3) - proj(u2, v3);
-        u4 = v4 - proj(u1, v4) - proj(u2, v4) - proj(u3, v4);
-
-        //define orthonormal set S' = {e1, e2, e3, e4}
-        Vector3d e1, e2, e3, e4;                                
-        e1 = u1 / u1.norm();
-        e2 = u2 / u2.norm();
-        e3 = u3 / u3.norm();
-        e4 = u4 / u4.norm();
-
-        //orthonormality check:: ||e1||, ||e2||, ||e3||, ||e4|| should be 1
-        if( !(e1.norm() == 1 || e2.norm() || e3.norm() || e4.norm()) )
-        {            
-
-        }
-        orth gonal  = {u1, u2, u3, u4};
-        orth normal = {e1, e2, e3, e4};
-
-        // void getKabschTrans()
-        // {
-            Eigen::Matrix3Xd in(4, 3), out(4, 3);
-
-            in.col(0) = v1;
-            in.col(1) = v2;
-            in.col(2) = v3;
-            in.col(3) = v4;
-
-            // Eigen::Affine3d A = Find3DAffineTransform(in, out);
-
-            ROS_INFO_STREAM("out " << out);
-        // }
-
-
-        rot(normal, facepoints);                                //compute rotation matrix
-    }
-
+/*
     void savepoints()
     {
         //Now we write the points to a text file for visualization processing
@@ -399,38 +359,6 @@ private:
         midface.open("midface.csv", std::ofstream::out | std::ofstream::app);
         midface << xm <<"\t" <<ym << "\t" << zm << "\n";
         midface.close();
-    }
-
-    MatrixXd rot(orth normal, facemidpts facepoints)
-    {
-        Vector3d col1, col2, col3, col4;
-        col1 = normal.e1;                       //each of these are 3 X 1 in dim
-        col2 = normal.e2;
-        col3 = normal.e3;
-        col4 = normal.e4;
-
-        // std::cout << "col1: " << col1 << "\n col1.size(): \n" << col1.rows() << ", " << col1.cols() << std::endl;
-
-        MatrixXd E(3, 4);
-        E.col(0) = col1;
-        E.col(1) = col2;
-        E.col(2) = col3;
-        E.col(3) = col4;
-
-        R.col(0)   = -col1;
-        R.col(1)   = col2;
-        R.col(2)   = col3;
-
-        MatrixXd Rt = R.transpose().eval();
-
-        Matrix3d I;
-        I = R * Rt;
-
-
-        float det = R.determinant();
-
-        rollpy(R, facepoints);                  //computes roll-pitch-yaw motion
-        return R;
     }
 
     //From Rotation Matrix, find rpy
