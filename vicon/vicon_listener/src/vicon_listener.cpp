@@ -12,11 +12,16 @@ Nov. 11, 2015*/
 #include <iomanip>
 #include <string>
 #include <fstream>
+#include <mutex>
 #include <iostream>
 
 #include <vicon_bridge/Markers.h>
 #include <vicon_listener/structs.h>
+#include <vicon_listener/kabsch.hpp>
 #include <geometry_msgs/Twist.h>
+
+#include <tf/transform_datatypes.h>
+#include <tf_conversions/tf_eigen.h>
 
 #include <boost/asio.hpp>
 #include "boost/bind.hpp"
@@ -29,6 +34,7 @@ std::string subject, segment;
 
 const short multicast_port = 30001;
 const int max_message_count = 300;                //because my head can never be more than 2m above the ground :)
+const std::string globalTopicName = "/vicon/Superdude/head";
 
 class sender
 {
@@ -121,12 +127,34 @@ private:
     std::vector<std::thread> threads;
     ros::NodeHandle nm_;
     ros::Publisher pub;
-// friend server;                       //somehow I could not get g++ to compile by exposing everything within  Receiver to server
+    Matrix3d R; //basis rotation matrix with respect to camera
+    boost::mutex rotation_mutex_;
+    geometry_msgs::Vector3 translation; 
+    geometry_msgs::Quaternion rotQuat;
+    std::mutex mutex;
+    bool updatePose;
+
 public:
     Receiver(const ros::NodeHandle nm, bool save, bool print, bool sim)
         :  nm_(nm), save(save), print(print), sim(sim)
     {          
         pub  = nm_.advertise<geometry_msgs::Twist>("/vicon/headtwist", 100);
+    }
+
+    void pose_callback(const geometry_msgs::TransformStamped::ConstPtr& pose_msg)
+    {
+        // ROS_INFO("in callback");
+        geometry_msgs::Vector3 translation = pose_msg->transform.translation;
+        geometry_msgs::Quaternion rotQuat = pose_msg->transform.rotation;
+
+        // ROS_INFO("Roll, %f, Pitch: %f, Yaw: %f", roll, pitch, yaw);
+
+        std::lock_guard<std::mutex> lock(mutex);
+        {
+            this->translation   = translation;
+            this->rotQuat       = rotQuat;
+            updatePose          = true;         
+        }
     }
 
     void callback(const vicon_bridge::Markers::ConstPtr& markers_msg)
@@ -150,11 +178,11 @@ public:
             // ROS_INFO_STREAM("markers_msg: " << *markers_msg);          
 
             //Print a bunch'o'stuff to assert correctness of the above
-            std::cout << "\n" << std::endl;
-            std::cout << foreheadname   <<  ":\n "    << forehead     << std::endl;
-            std::cout << leftcheekname  <<  ":\n "    << leftcheek    << std::endl;
-            std::cout << rightcheekname <<  ":\n "    << rightcheek   << std::endl;
-            std::cout << chinname       <<  ":\n "    << chin         << std::endl;
+            // std::cout << "\n" << std::endl;
+            // std::cout << foreheadname   <<  ":\n "    << forehead     << std::endl;
+            // std::cout << leftcheekname  <<  ":\n "    << leftcheek    << std::endl;
+            // std::cout << rightcheekname <<  ":\n "    << rightcheek   << std::endl;
+            // std::cout << chinname       <<  ":\n "    << chin         << std::endl;
         }
 
         headmarkers markers = {forehead, leftcheek, rightcheek, chin};
@@ -193,27 +221,17 @@ public:
         Vector3d v2(markers.lefto.x, markers.lefto.y, markers.lefto.z);
         Vector3d v3(markers.righto.x, markers.righto.y, markers.righto.z);
         Vector3d v4(markers.chino.x, markers.chino.y, markers.chino.z);    
+        
+        //define orthogonal set S' = {u1, u2, u3, u4}
+        Vector3d u1, u2, u3, u4;
+        //we set u1 to v1
+        u1 = v1 ;                                               
+        u2 = v2 - proj(u1, v2);
+        u3 = v3 - proj(u1, v3) - proj(u2, v3);
+        u4 = v4 - proj(u1, v4) - proj(u2, v4) - proj(u3, v4);
 
-        Vector3d u1, u2, u3, u4, u0;                            //define orthogonal set S' = {u1, u2, u3, u4}
-        Vector3d u31, u32, u41, u42, u43;                       //define intermediate orthogonal that avoids round-off errors
-
-        u1 = v1 ;                                               //we set u1 to v1
-        u2 = v2     - proj(u1, v2);
-
-        u31 = v3    - proj(u1, v3);
-        u32 = u31   - proj(u2, u31);
-        u3 = u32;
-
-        u41 = v4    - proj(u1, v4);
-        u42 = u41   - proj(u2, u41);
-        u43 = u42   - proj(u3, u42);
-        u4 = u43;
-
-        //orthogonality check: dot products among vectors should be null
-        float a1, a2, a3, a4;
-        a1 = u1.dot(u2); a2 = u2.dot(u3); a3 = u3.dot(u4); a4 = u2.dot(u4);
-
-        Vector3d e1, e2, e3, e4;                                //define orthonormal set S' = {e1, e2, e3, e4}
+        //define orthonormal set S' = {e1, e2, e3, e4}
+        Vector3d e1, e2, e3, e4;                                
         e1 = u1 / u1.norm();
         e2 = u2 / u2.norm();
         e3 = u3 / u3.norm();
@@ -227,15 +245,30 @@ public:
         orth gonal  = {u1, u2, u3, u4};
         orth normal = {e1, e2, e3, e4};
 
+        // void getKabschTrans()
+        // {
+            Eigen::Matrix3Xd in(4, 3), out(4, 3);
+
+            in.col(0) = v1;
+            in.col(1) = v2;
+            in.col(2) = v3;
+            in.col(3) = v4;
+
+            // Eigen::Affine3d A = Find3DAffineTransform(in, out);
+
+            ROS_INFO_STREAM("out " << out);
+        // }
+
+
         rot(normal, facepoints);                                //compute rotation matrix
     }
 
     Vector3d proj(Vector3d u, Vector3d v)                       //computes the projection of vector v onto u.
     {
         float ratio = v.dot(u) / u.dot(u);
-        Vector3d projuv = ratio * u;
+        u *= ratio;
 
-        return projuv;
+        return u;
     }
 
     void savepoints(/*float xm, float ym, float zm*/)
@@ -263,14 +296,13 @@ public:
         E.col(2) = col3;
         E.col(3) = col4;
 
-        MatrixXd R(3,3);
         R.col(0)   = -col1;
         R.col(1)   = col2;
         R.col(2)   = col3;
 
         MatrixXd Rt = R.transpose().eval();
 
-        MatrixXd I(3,3);
+        Matrix3d I;
         I = R * Rt;
 
 
@@ -308,11 +340,7 @@ public:
                 posemsg.angular.x = rpy(0);
                 posemsg.angular.y = rpy(1);
                 posemsg.angular.z = rpy(2);
-                
-                sender s(io_service, boost::asio::ip::address::from_string(multicast_address), posemsg.linear.x, \
-                                                        posemsg.linear.y, posemsg.linear.z, posemsg.angular.x, \
-                                                        posemsg.angular.y, posemsg.angular.z, print);
-            }
+           }
 
             else
             {   
@@ -328,25 +356,81 @@ public:
 
                 posemsg.angular.x = rpy(0);
                 posemsg.angular.y = rpy(1);
-                posemsg.angular.z = rpy(2);
-           
-                sender s(io_service, boost::asio::ip::address::from_string(multicast_address), posemsg.linear.x, \
-                                                        posemsg.linear.y, posemsg.linear.z, posemsg.angular.x, \
-                                                        posemsg.angular.y, posemsg.angular.z, print);
+                posemsg.angular.z = rpy(2);      
             }   
+
+            ROS_INFO("x, y, z, roll, pitch, yaw: %f %f %f %f %f %f", \
+                posemsg.linear.x, posemsg.linear.y, posemsg.linear.z,
+                posemsg.angular.x, posemsg.angular.y, posemsg.angular.z);  
+
+            ros::Rate r(100);
+            tf::TransformBroadcaster broadcaster;
+
+            if(nm_.ok()){                
+                tf::Transform transform;
+                transform.setOrigin(tf::Vector3(0.0,0.0,0.2));
+                transform.setRotation(tf::Quaternion(0.0, 0.0, 0.0, 1.0));
+
+                broadcaster.sendTransform(
+                  tf::StampedTransform( transform,
+                    ros::Time::now(),"table_link", globalTopicName));
+                r.sleep();
+            }
+
+            sender s(io_service, boost::asio::ip::address::from_string(multicast_address), posemsg.linear.x, \
+                                                    posemsg.linear.y, posemsg.linear.z, posemsg.angular.x, \
+                                                    posemsg.angular.y, posemsg.angular.z, print);
 
             io_service.run();
             pub.publish(posemsg);
             loop_rate.sleep();
-            if(print)                
-            {
-                // ROS_INFO_STREAM("Head Translation: " << posemsg.linear);
-                // ROS_INFO_STREAM("Head RPY Angles: " << posemsg.angular);
-
-            }
         }
 
+        headAboveTable();
+
         return rpy;
+    }
+    
+    /*I noticed that trasnformiung frames doen't help. 
+    Once we start rounding off numbers, we lose 
+    numerical stability and the pose information becomes a 
+    wombles*/
+    void headAboveTable()
+    {
+        Matrix3d Rot;
+        facemidpts facepoints;
+        boost::mutex::scoped_lock lock(rotation_mutex_);
+        Rot = this->R;
+        facepoints = this->facepoints;
+        lock.unlock();
+
+        Vector3d faceWRTCamera(facepoints.x, facepoints.y, facepoints.z);
+
+
+        Vector3d headHeight = Rot * faceWRTCamera;
+
+        //check norms
+        double faceTableNorm = faceWRTCamera.norm();
+        double faceCamNorm =    std::sqrt(std::pow(facepoints.x, 2) + 
+                                std::pow(facepoints.y, 2) + 
+                                std::pow(facepoints.z,2));
+
+        // ROS_INFO_STREAM("headHeight: " << headHeight.transpose());
+        // ROS_INFO_STREAM("facepoints: " << faceWRTCamera.transpose());
+
+        geometry_msgs::Quaternion rotQuat;
+        if(updatePose)
+        {
+            rotQuat = this->rotQuat;
+            tf::Quaternion q(rotQuat.x, rotQuat.y, rotQuat.z, rotQuat.w);
+            tf::Matrix3x3 m(q);
+            Eigen::Matrix3d e;
+            tf::matrixTFToEigen (m, e);
+            headHeight  = e * faceWRTCamera;
+            // ROS_INFO_STREAM("headHeight Stable: " << headHeight.transpose());
+            updatePose = false;
+        }
+        // ROS_INFO("face in Cam %f, face on Table %f", faceCamNorm, faceTableNorm);
     }
 };
 
@@ -400,6 +484,7 @@ int main(int argc, char **argv)
     Receiver  obj(nm, save, print, sim);
 
     ros::Subscriber sub = nm.subscribe("vicon/markers", 1000, &Receiver::callback, &obj );    
+    ros::Subscriber suj = nm.subscribe("vicon/Superdude/head", 1000, &Receiver::pose_callback, &obj );    
 
     ros::spin();
 

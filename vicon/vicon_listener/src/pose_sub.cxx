@@ -12,6 +12,8 @@
 #include <geometry_msgs/Quaternion.h>
 #include <geometry_msgs/TransformStamped.h>
 
+std::string&& globalTopicName = "/vicon/Superdude/head";
+
 class Receiver
 {
 private:
@@ -34,6 +36,7 @@ public:
 	spinner(hardware_concurrency/2)
 	{
 		// pose_sub_ = np_.subscribe("/vicon/Superdude/root", 10, &Receiver::pose_callback, this); 
+		setZeroPose();
 
 	}
 
@@ -42,30 +45,20 @@ public:
 
 	}
 
-/*	void spawn()
-	{	
-		begin();
-		end();	
-	}
-
-	void begin()
+	// set zero pose for head at rest
+	void setZeroPose()
 	{
-		if(spinner.canStart())
-		{
-			spinner.start();
-			ROS_INFO("spinning with %lu threads", hardware_concurrency/2);
-		}
+	  std::string&& zeropose = globalTopicName + "/zero_pose";
+	  if(!ros::param::has(zeropose + "orientation/w"))
+	  	ros::param::set(zeropose + "orientation/w", 0.47201963140666453);
+	  ros::param::set(zeropose + "orientation/x", 0.34138949874457175);
+	  ros::param::set(zeropose + "orientation/y", -0.5408836743327365);
+	  ros::param::set(zeropose + "orientation/z", 0.6067087674938981);
 
-		//spawn the threads
-		threadsVector.push_back(std::thread(&Receiver::getRPYFromQuaternion, this));
-		std::for_each(threadsVector.begin(), threadsVector.end(), \
-		              std::mem_fn(&std::thread::join)); 
+	  ros::param::set(zeropose + "position/x", 2.4439054570820558);
+	  ros::param::set(zeropose + "position/y", -0.4104102425921056);
+	  ros::param::set(zeropose + "position/z", 1.0033158333551102);
 	}
-
-	void end()
-	{
-	  spinner.stop(); 
-	}*/
 
 	void pose_callback(const geometry_msgs::TransformStamped::ConstPtr& pose_msg)
 	{
@@ -106,7 +99,9 @@ public:
 
 		rad2deg(std::move(roll)); rad2deg(std::move(pitch)); rad2deg(std::move(yaw)); 
 
-		ROS_INFO("Roll, %f, Pitch: %f, Yaw: %f", roll, pitch, yaw);	
+		printf("\n|\tx \t|\ty \t|\tz \t|\troll \t|\tpitch \t|\tyaw\n %f, \t%f, \t%f,  \t%f , \t%f, \t%f", translation.x, 
+					translation.y, translation.z, 
+					roll, pitch, yaw);	
 	}
 
 	inline void metersTomilli(geometry_msgs::Vector3&& translation)
@@ -131,7 +126,7 @@ int main(int argc, char** argv)
 	Receiver pose(np);// = new Receiver;
 	// pose.spawn();
 
-	ros::Subscriber sub = np.subscribe("/vicon/Superdude/head", 10, &Receiver::pose_callback, &pose);    
+	ros::Subscriber sub = np.subscribe(globalTopicName, 10, &Receiver::pose_callback, &pose);    
 
 	ros::spin();
 

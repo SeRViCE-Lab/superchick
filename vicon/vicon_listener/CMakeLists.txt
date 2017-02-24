@@ -228,6 +228,7 @@ message("\n\nBoost Include  Directories: " ${Boost_INCLUDE_DIRS}
 
 ## Declare a C++ executable
 add_executable(vicon_listener src/vicon_listener.cpp)
+add_executable(direction_cosines src/direction_cosines.cxx)
 add_executable(pose_sub src/pose_sub.cxx)
 
 ## Add cmake target dependencies of the executable
@@ -236,6 +237,7 @@ add_executable(pose_sub src/pose_sub.cxx)
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(vicon_listener  ${catkin_LIBRARIES} ${Boost_LIBRARIES})
+target_link_libraries(direction_cosines  ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 target_link_libraries(pose_sub ${catkin_LIBRARIES} ${Boost_LIBRARIES})      #This includes the serialization libraries
 
 ## Declare a cpp library
