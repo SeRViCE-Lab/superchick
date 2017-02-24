@@ -39,11 +39,12 @@ class Receiver
 
 private:
     float xm, ym, zm;
-    bool save, print, sim, running; 
+    bool save, print, sim, running, firstIter; 
     double headRoll, headPitch, headYaw;
     double panelRoll, panelPitch, panelYaw;
+    int count;
 
-    Vector3f rpy;
+    Vector3d rpy;
 
     std::string foreheadname, \
                 leftcheekname, \
@@ -73,9 +74,10 @@ private:
     geometry_msgs::Quaternion panelQuat;
 
     std::vector<std::thread> threadsVector;
-    std::thread testQuatThread, modGramScmidtThread;
+    std::thread testQuatThread, modGramScmidtThread,
+                rotationMatrixThread;
 
-    Matrix3d headMGS, tableMGS;
+    Matrix3d headMGS, tableMGS, rotationMatrix;
 
     //use exactTimePolicy to process panel markers and head markers
     // using namespace message_filters;
@@ -94,14 +96,13 @@ private:
 
 public:
     Receiver(ros::NodeHandle nm, bool save, bool print, bool sim)
-        :  nm_(nm), save(save), print(print), sim(sim), hardware_threads(std::thread::hardware_concurrency()),
-           subVicon(nm_, "/vicon/markers", 1), subHead(nm_, "vicon/Superdude/head", 1), 
-           subPanel(nm_,"/vicon/Panel/rigid", 1), spinner(2),
-           sync(headSyncPolicy(10), subVicon, subHead, subPanel), updatePose(false)
+    :  nm_(nm), save(save), print(print), sim(sim), hardware_threads(std::thread::hardware_concurrency()),
+       subVicon(nm_, "/vicon/markers", 1), subHead(nm_, "vicon/Superdude/head", 1), 
+       subPanel(nm_,"/vicon/Panel/rigid", 1), spinner(2), count(0), firstIter(false),
+       sync(headSyncPolicy(10), subVicon, subHead, subPanel), updatePose(false)
     {      
         // ExactTime takes a queue size as its constructor argument, hence SyncPolicy(10)
        sync.registerCallback(boost::bind(&Receiver::callback, this, _1, _2, _3));
-       // ROS_INFO("Class construct");
     }
 
     ~Receiver()
@@ -127,15 +128,20 @@ private:
 
         //spawn the threads
         modGramScmidtThread = std::thread(&Receiver::modGramSchmidt, this);
+        // rotationMatrixThread = std::thread(&Receiver::computeRotationMatrix,
+                                                             // this);
         
         if(modGramScmidtThread.joinable())
             modGramScmidtThread.join();
+        // if(rotationMatrixThread.joinable())
+            // rotationMatrixThread.join();
     }
 
     void unspawn()
     {
         spinner.stop();
         modGramScmidtThread.detach();
+        // rotationMatrixThread.detach();
         running = false;
     }
 
@@ -173,7 +179,6 @@ private:
         metersTomilli(std::move(panelTrans));
 
         boost::mutex::scoped_lock lock(markers_mutex);
-        // std::lock_guard<std::mutex> lock(mutex);
         this->forehead = forehead;
         this->leftcheek = leftcheek;
         this->rightcheek = rightcheek;
@@ -190,13 +195,12 @@ private:
 
         updatePose          = true;   
         lock.unlock();
-        // testQuat();
-        // ROS_INFO_STREAM("check?: " << *markers_msg << *panel_msg << *head_msg);
     }
 
     void modGramSchmidt() noexcept
     {
-        std::vector<geometry_msgs::Point> headMarkersVector, panelMarkersVector;
+        std::vector<geometry_msgs::Point> headMarkersVector, 
+                                          panelMarkersVector;
         
         //attached frame to face
         Vector3d fore, left, right, chin;  
@@ -205,17 +209,17 @@ private:
 
         Matrix3d headMGS, tableMGS;
 
+        Vector3d rpy;
+        ros::Rate looper(30);
+
         for(; running && ros::ok() ;)
         {            
             if(updatePose)
             {   
                 boost::mutex::scoped_lock lock(markers_mutex);
-                // std::lock_guard<std::mutex> lock(mutex);
-                {
-                    headMarkersVector  = this->headMarkersVector;
-                    panelMarkersVector = this->panelMarkersVector;
-                    updatePose = false;
-                }
+                headMarkersVector  = this->headMarkersVector;
+                panelMarkersVector = this->panelMarkersVector;
+                updatePose = false;
                 lock.unlock();
             }
 
@@ -236,11 +240,19 @@ private:
                        panelMarkersVector[2].z;
             topLeft << panelMarkersVector[3].x, panelMarkersVector[3].y,
                        panelMarkersVector[3].z;
+
+            //subtract the markers to create axes
+            left     -= right;
+            fore     -= left;
+            //table markers
+            topRight -= topLeft;
+            botLeft  -= topLeft;
+            // botRight -= topRight;
             
             //see https://ocw.mit.edu/courses/mathematics/18-335j-introduction-to-numerical-methods-fall-2010/lecture-notes/MIT18_335JF10_lec10a_hand.pdf
             std::vector<Vector3d> v(4), q(4);   
             //compute orthonormal basis vectors for face markers       
-            v[0] = fore;   v[1] = left;   v[2] = right;    v[3] = chin;
+            v[0] = left;   v[1] = fore;   v[2] = left.cross(fore); 
             double r[3][3] = {};    
             for(auto i = 0; i < 3; ++i)
             {
@@ -252,7 +264,6 @@ private:
                     v[j]    = v[j] - r[i][j] * q[i];
                 }
             }  
-
             
             // populate headMGS rotation basis matrix
             for(auto i =0; i < 3; ++i)
@@ -263,8 +274,9 @@ private:
 
             //compute basis vectors for table markers
             v.clear(); q.clear();
-            v[0] = botLeft; v[1] = botRight; v[2] = topRight; v[3] = topLeft;
-            for(auto i = 0; i < 4; ++i)
+            v[0] = topRight; v[1] = botLeft; v[2] = topRight.cross(botLeft); 
+            // v[0] = topRight; v[1] = botRight; v[2] = topRight.cross(botRight); 
+            for(auto i = 0; i < 3; ++i)
             {
                 r[i][i] = v[i].norm();
                 q[i]    = v[i]/r[i][i];
@@ -281,9 +293,72 @@ private:
             }
             this->tableMGS = tableMGS;  
 
-            ROS_INFO_STREAM("Table MGS Vectors: " << tableMGS);
-            ROS_INFO_STREAM("Head MGS Vectors: " << headMGS);                     
+            /*
+            The rotation matrix of the head with respect to the table follows
+            John Craig's Introduction to Robotics Book convention[p.22] and it 
+            is denoted by 
+
+            TRH = [ TXH    TYH     TZH ]   (H denotes head)
+
+                = [XH.XT  YH.XT   ZH.XT]    (T denotes table frame)
+                  [XH.YT  YH.YT   ZH.YT]
+                  [XH.ZT  YH.ZT   ZH.ZT]
+            where
+            H   = [XH  YH  ZH]
+            T   = [XT  YT  ZT]
+            */
+            //First Row
+            rotationMatrix(0, 0) = headMGS.col(0).dot(tableMGS.col(0));
+            rotationMatrix(0, 1) = headMGS.col(1).dot(tableMGS.col(0));
+            rotationMatrix(0, 2) = headMGS.col(2).dot(tableMGS.col(0));
+            //Second Row
+            rotationMatrix(1, 0) = headMGS.col(0).dot(tableMGS.col(1));
+            rotationMatrix(1, 1) = headMGS.col(1).dot(tableMGS.col(1));
+            rotationMatrix(1, 2) = headMGS.col(2).dot(tableMGS.col(1));
+            //Third Row
+            rotationMatrix(2, 0) = headMGS.col(0).dot(tableMGS.col(2));
+            rotationMatrix(2, 1) = headMGS.col(1).dot(tableMGS.col(2));
+            rotationMatrix(2, 2) = headMGS.col(2).dot(tableMGS.col(2));
+
+            this->rotationMatrix = rotationMatrix;
+            rollpy(rotationMatrix);
+
+            std::cout << "\nheadMGS: \n" << headMGS << std::endl;
+            std::cout << "tableMGS: \n" << tableMGS << std::endl;                        
+            std::cout <<"rpy in mgs: " << this->rpy.transpose() << std::endl;
+            looper.sleep();                  
         } 
+    }
+
+    //From Rotation Matrix, find rpy
+    void rollpy(Matrix3d R) //const
+    {   
+        Vector3d rpy;
+        if (  (std::fabs(R(0,0)) < .001) && (std::fabs(R(1,0)) < .001) )           
+        {
+            // singularity
+            rpy(0) = 0;
+            rpy(1) = std::atan2(-R(2,0), R(0,0));
+            rpy(2) = std::atan2(-R(1,2), R(1,1));
+        }
+        else
+        {   
+            rpy(0) = std::atan2(R(1,0), R(0,0));
+            rpy(1) = std::atan2(
+                                -R(2,0), (
+                                         (std::cos(rpy(0)) * R(0,0)) + 
+                                         (std::sin(rpy(0)) * R(1,0))
+                                         )
+                                );
+            rpy(2) = std::atan2(
+                                (std::sin(rpy(0)) * R(0,2) - std::cos(rpy(0)) * R(1,2)), 
+                                (std::cos(rpy(0))*R(1,1) - std::sin(rpy(0))*R(0,1))
+                                );
+        }   
+        //convert to degree
+        rad2deg(std::forward<Vector3d>(rpy));
+        // ROS_INFO_STREAM("rpy: " << rpy.transpose()); 
+        this->rpy = rpy;
     }
 
     void testQuat() noexcept
@@ -325,12 +400,6 @@ private:
         tf::Matrix3x3 m(q);
         m.getRPY(roll, pitch, yaw);
         rad2deg(std::move(roll)); rad2deg(std::move(pitch)); rad2deg(std::move(yaw)); 
-        // if(print)
-        // {
-        //     printf("\n|\tx \t|\ty \t|\tz \t|\troll \t|\tpitch \t|\tyaw\n %f, \t%f, \t%f,  \t%f , \t%f, \t%f", translation.x, 
-        //         translation.y, translation.z, 
-        //         roll, pitch, yaw);  
-        // }
     }
 
     inline void metersTomilli(geometry_msgs::Vector3&& translation)
@@ -345,13 +414,13 @@ private:
         x  *= 180/M_PI;
     }
 
-    void getHeadPrincipalDirections()
+    inline void rad2deg(Vector3d&& x)
     {
-        geometry_msgs::Point forehead, leftcheek, rightcheek, chin;
+        rad2deg(std::move(x(0)));
+        rad2deg(std::move(x(1)));
+        rad2deg(std::move(x(2)));
+    }   
 
-    }
-    
-/*
     void savepoints()
     {
         //Now we write the points to a text file for visualization processing
@@ -359,117 +428,7 @@ private:
         midface.open("midface.csv", std::ofstream::out | std::ofstream::app);
         midface << xm <<"\t" <<ym << "\t" << zm << "\n";
         midface.close();
-    }
-
-    //From Rotation Matrix, find rpy
-    Vector3f rollpy(MatrixXd R, facemidpts facepoints)
-    {
-        float sp, cp;
-        MatrixXf Rf = R.cast<float>();
-
-        ros::Rate loop_rate(30);                       //publish at 30Hz
-        geometry_msgs::Twist posemsg;
-
-        if(ros::ok())
-        {           
-            if (abs(R(0,0)) < .001 & abs(R(1,0)) < .001)           
-            {
-                // singularity
-                rpy(0) = 0;
-                rpy(1) = atan2(-Rf(2,0), Rf(0,0));
-                rpy(2) = atan2(-Rf(1,2), Rf(1,1));
-
-                posemsg.linear.x = facepoints.x;
-                posemsg.linear.y = facepoints.y;
-                posemsg.linear.z = facepoints.z;
-
-                posemsg.angular.x = rpy(0);
-                posemsg.angular.y = rpy(1);
-                posemsg.angular.z = rpy(2);
-           }
-
-            else
-            {   
-                rpy(0) = atan2(Rf(1,0), Rf(0,0));
-                sp = sin(rpy(0));
-                cp = cos(rpy(0));
-                rpy(1) = atan2(-Rf(2,0), cp * Rf(0,0) + sp * Rf(1,0));
-                rpy(2) = atan2(sp * Rf(0,2) - cp * Rf(1,2), cp*Rf(1,1) - sp*Rf(0,1));
-                
-                posemsg.linear.x = facepoints.x;
-                posemsg.linear.y = facepoints.y;
-                posemsg.linear.z = facepoints.z;
-
-                posemsg.angular.x = rpy(0);
-                posemsg.angular.y = rpy(1);
-                posemsg.angular.z = rpy(2);      
-            }   
-
-            // ROS_INFO("x, y, z, roll, pitch, yaw: %f %f %f %f %f %f", \
-            //     posemsg.linear.x, posemsg.linear.y, posemsg.linear.z,
-            //     posemsg.angular.x, posemsg.angular.y, posemsg.angular.z);  
-
-            ros::Rate r(100);
-            tf::TransformBroadcaster broadcaster;
-
-            if(nm_.ok()){                
-                tf::Transform transform;
-                transform.setOrigin(tf::Vector3(0.0,0.0,0.2));
-                transform.setRotation(tf::Quaternion(0.0, 0.0, 0.0, 1.0));
-
-                broadcaster.sendTransform(
-                  tf::StampedTransform( transform,
-                    ros::Time::now(),"table_link", globalTopicName));
-                r.sleep();
-            }
-
-            pub.publish(posemsg);
-            loop_rate.sleep();
-        }
-
-        // headAboveTable();
-
-        return rpy;
-    }
-    
-
-    void headAboveTable()
-    {
-        Matrix3d Rot;
-        facemidpts facepoints;
-        boost::mutex::scoped_lock lock(rotation_mutex_);
-        Rot = this->R;
-        facepoints = this->facepoints;
-        lock.unlock();
-
-        Vector3d faceWRTCamera(facepoints.x, facepoints.y, facepoints.z);
-
-
-        Vector3d headHeight = Rot * faceWRTCamera;
-
-        //check norms
-        double faceTableNorm = faceWRTCamera.norm();
-        double faceCamNorm =    std::sqrt(std::pow(facepoints.x, 2) + 
-                                std::pow(facepoints.y, 2) + 
-                                std::pow(facepoints.z,2));
-
-        // ROS_INFO_STREAM("headHeight: " << headHeight.transpose());
-        // ROS_INFO_STREAM("facepoints: " << faceWRTCamera.transpose());
-
-        geometry_msgs::Quaternion rotQuat;
-        if(updatePose)
-        {
-            rotQuat = this->rotQuat;
-            tf::Quaternion q(rotQuat.x, rotQuat.y, rotQuat.z, rotQuat.w);
-            tf::Matrix3x3 m(q);
-            Eigen::Matrix3d e;
-            tf::matrixTFToEigen (m, e);
-            headHeight  = e * faceWRTCamera;
-            // ROS_INFO_STREAM("headHeight Stable: " << headHeight.transpose());
-            updatePose = false;
-        }
-        // ROS_INFO("face in Cam %f, face on Table %f", faceCamNorm, faceTableNorm);
-    }*/
+    }    
 };
 
 
