@@ -1,7 +1,7 @@
 /*
 Olalekan Ogunmolu. 
 SeRViCe Lab, 
-Nov. 11, 2015*/
+Feb. 18, 2017*/
 
 #include "ros/ros.h"
 #include <ros/spinner.h>
@@ -50,9 +50,6 @@ private:
                 leftcheekname, \
                 rightcheekname, \
                 chinname;
-
-    geometry_msgs::Point chin, forehead, leftcheek, rightcheek;
-    geometry_msgs::Point botRight, botLeft, topRight, topLeft;
 
     std::vector<geometry_msgs::Point> headMarkersVector, 
                                       panelMarkersVector;
@@ -150,21 +147,20 @@ private:
                 const geometry_msgs::TransformStampedConstPtr& head_msg)
     {   
         //solve all vicon markers here
-        geometry_msgs::Point forehead, leftcheek, rightcheek, chin;
         //Retrieve geometry_msgs translation for four markers on superchicko 
         std::vector<geometry_msgs::Point> headMarkersVector;
         headMarkersVector.resize(4);
-        headMarkersVector[0] = forehead    = markers_msg -> markers[0].translation;
-        headMarkersVector[1] = leftcheek   = markers_msg -> markers[1].translation;
-        headMarkersVector[2] = rightcheek  = markers_msg -> markers[2].translation;
-        headMarkersVector[3] = chin        = markers_msg -> markers[3].translation;
+        headMarkersVector[0] = markers_msg -> markers[0].translation;  //fore
+        headMarkersVector[1] = markers_msg -> markers[1].translation;   //left
+        headMarkersVector[2] = markers_msg -> markers[2].translation;   //chin
+        headMarkersVector[3] = markers_msg -> markers[3].translation;   //right
 
         std::vector<geometry_msgs::Point> panelMarkersVector;
         panelMarkersVector.resize(4);
-        panelMarkersVector[0] = botLeft    = markers_msg->markers[4].translation;
-        panelMarkersVector[1] = botRight   = markers_msg->markers[5].translation;
-        panelMarkersVector[2] = topRight   = markers_msg->markers[6].translation;
-        panelMarkersVector[3] = topLeft    = markers_msg->markers[7].translation;
+        panelMarkersVector[0] = markers_msg->markers[4].translation;    //tabfore
+        panelMarkersVector[1] = markers_msg->markers[5].translation;    //tableft
+        panelMarkersVector[2] = markers_msg->markers[6].translation;    //tabchin
+        panelMarkersVector[3] = markers_msg->markers[7].translation;    //tabright
 
         //solve head transformedstamp markers here
         geometry_msgs::Vector3 headTrans = head_msg->transform.translation;
@@ -179,11 +175,6 @@ private:
         metersTomilli(std::move(panelTrans));
 
         boost::mutex::scoped_lock lock(markers_mutex);
-        this->forehead = forehead;
-        this->leftcheek = leftcheek;
-        this->rightcheek = rightcheek;
-        this->chin = chin;
-
         this->headTrans   = headTrans;
         this->headQuat    = headQuat;
 
@@ -205,12 +196,12 @@ private:
         //attached frame to face
         Vector3d fore, left, right, chin;  
         //base markers
-        Vector3d botLeft, botRight, topRight, topLeft; 
+        Vector3d tabfore, tableft, tabright, tabchin; 
 
         Matrix3d headMGS, tableMGS;
 
         Vector3d rpy;
-        ros::Rate looper(30);
+        ros::Rate looper(10);
 
         for(; running && ros::ok() ;)
         {            
@@ -227,32 +218,43 @@ private:
                     headMarkersVector[0].z;
             left << headMarkersVector[1].x, headMarkersVector[1].y,
                     headMarkersVector[1].z;  
-            right<< headMarkersVector[2].x, headMarkersVector[2].y,
+            chin << headMarkersVector[2].x, headMarkersVector[2].y,
                     headMarkersVector[2].z;
-            chin << headMarkersVector[3].x, headMarkersVector[3].y,
+            right << headMarkersVector[3].x, headMarkersVector[3].y,
                     headMarkersVector[3].z;   
 
-            botLeft << panelMarkersVector[0].x, panelMarkersVector[0].y,
+            tabfore << panelMarkersVector[0].x, panelMarkersVector[0].y,
                        panelMarkersVector[0].z;
-            botRight<< panelMarkersVector[1].x, panelMarkersVector[1].y,
+            tableft << panelMarkersVector[1].x, panelMarkersVector[1].y,
                        panelMarkersVector[1].z;
-            topRight<< panelMarkersVector[2].x, panelMarkersVector[2].y,
+            tabchin << panelMarkersVector[2].x, panelMarkersVector[2].y,
                        panelMarkersVector[2].z;
-            topLeft << panelMarkersVector[3].x, panelMarkersVector[3].y,
+            tabright << panelMarkersVector[3].x, panelMarkersVector[3].y,
                        panelMarkersVector[3].z;
 
             //subtract the markers to create axes
             left     -= right;
             fore     -= left;
             //table markers
-            topRight -= topLeft;
-            botLeft  -= topLeft;
+            tableft -= tabright;
+            tabfore  -= tableft;
             // botRight -= topRight;
+            //define the unit axis vectors kx, ky, kz for head frame
+            Vector3d kx, ky, kz;
+            kx = fore.cross(chin)/(fore.cross(chin)).norm();
+            ky = left.cross(right)/(left.cross(right)).norm();
+            kz = kx.cross(ky);
+            //define the unit axes vectors kxp, kyp, kzp forthe table frame'
+            Vector3d kxp, kyp, kzp;
+            kxp = tabfore.cross(tabchin)/(tabfore.cross(tabchin)).norm();
+            kyp = tableft.cross(tabright)/(tableft.cross(tabfore)).norm();
+            kyp = kxp.cross(kyp);
             
             //see https://ocw.mit.edu/courses/mathematics/18-335j-introduction-to-numerical-methods-fall-2010/lecture-notes/MIT18_335JF10_lec10a_hand.pdf
             std::vector<Vector3d> v(4), q(4);   
             //compute orthonormal basis vectors for face markers       
-            v[0] = left;   v[1] = fore;   v[2] = left.cross(fore); 
+            // v[0] = kx;   v[1] = ky;   v[2] = kz; 
+            v[0] = left; v[1] = right; v[2] = left.cross(right);
             double r[3][3] = {};    
             for(auto i = 0; i < 3; ++i)
             {
@@ -274,8 +276,8 @@ private:
 
             //compute basis vectors for table markers
             v.clear(); q.clear();
-            v[0] = topRight; v[1] = botLeft; v[2] = topRight.cross(botLeft); 
-            // v[0] = topRight; v[1] = botRight; v[2] = topRight.cross(botRight); 
+            v[0] = kxp; v[1] = kyp; v[2] = kzp; 
+            v[0] = tableft; v[1] = tabright; v[2] = tableft.cross(tabright); 
             for(auto i = 0; i < 3; ++i)
             {
                 r[i][i] = v[i].norm();
