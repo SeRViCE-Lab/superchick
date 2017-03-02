@@ -16,6 +16,7 @@ Feb. 18, 2017*/
 
 #include <vicon_bridge/Markers.h>
 #include <geometry_msgs/Point.h>
+#include <geometry_msgs/Pose.h>
 
 #include <tf/transform_datatypes.h>
 #include <tf_conversions/tf_eigen.h>
@@ -36,7 +37,6 @@ using namespace Eigen;
 
 class Receiver
 { 
-
 private:
     float xm, ym, zm;
     bool save, print, sim, running, firstIter; 
@@ -45,11 +45,6 @@ private:
     int count;
 
     Vector3d rpy;
-
-    std::string foreheadname, \
-                leftcheekname, \
-                rightcheekname, \
-                chinname;
 
     std::vector<geometry_msgs::Point> headMarkersVector, 
                                       panelMarkersVector;
@@ -69,6 +64,9 @@ private:
     //for rigidTransforms
     geometry_msgs::Vector3 panelTrans;
     geometry_msgs::Quaternion panelQuat;
+    //pose vector
+    geometry_msgs::Pose pose;
+    ros::Publisher pose_pub_;
 
     std::vector<std::thread> threadsVector;
     std::thread testQuatThread, modGramScmidtThread,
@@ -100,6 +98,7 @@ public:
     {      
         // ExactTime takes a queue size as its constructor argument, hence SyncPolicy(10)
        sync.registerCallback(boost::bind(&Receiver::callback, this, _1, _2, _3));
+       pose_pub_ = nm_.advertise<geometry_msgs::Pose>("/mannequine_head/pose", 10);
     }
 
     ~Receiver()
@@ -241,6 +240,43 @@ private:
             // botRight -= topRight;
             //define the unit axis vectors kx, ky, kz for head frame
             Vector3d kx, ky, kz;
+
+            /*adapted from Teddy's code
+            * Gets the orientation quaternion of a planar model such that the 
+            * z-axis is normal to the plane, and the x-y
+            * axis are as close as possible to the the table frame
+            */
+            //http://answers.ros.org/question/31006/how-can-a-vector3-axis-be-used-to-produce-a-quaternion/
+            Vector3d item_z((left(0)+right(0)+fore(0)+chin(0))/4, 
+                            (left(1)+right(1)+fore(1)+chin(1))/4, 
+                            (left(2)+right(2)+fore(2)+chin(2))/4);
+            item_z.normalize();
+
+            Vector3d table_z(0.0, 0.0, 1.0);
+            // z_vector.normalize();
+
+            double normAcrossB = item_z.cross(table_z).norm(); // this gives us A cross B norm
+            double normBcrossA = table_z.cross(item_z).norm(); // this gives us B cross A norm
+            double AdotB = item_z.dot(table_z);
+
+            Matrix3d G; // this is matrix G for manipulation
+            G <<    AdotB, -1*normAcrossB, 0,
+                    normAcrossB, AdotB, 0,
+                    0, 0, 1;
+
+            //Calc U
+            Vector3d U = (AdotB * item_z).normalized();
+            Vector3d V = (table_z - AdotB * item_z).normalized();
+            Vector3d W = table_z.cross(item_z);
+            Matrix3d Fproto;
+            Fproto << U, V, W;
+
+            Matrix3d Rotation_Matrix = (Fproto * G * Fproto.inverse()).inverse();
+            // Quaterniond q(Rotation_Matrix);
+            // tf::Quaternion tf_q;
+            // tf::quaternionEigenToTF(q, tf_q);
+
+            // tf::Vector3 y_vector = axis_vector.cross(z_vector);
             kx = fore.cross(chin)/(fore.cross(chin)).norm();
             ky = left.cross(right)/(left.cross(right)).norm();
             kz = kx.cross(ky);
@@ -323,11 +359,22 @@ private:
             rotationMatrix(2, 2) = headMGS.col(2).dot(tableMGS.col(2));
 
             this->rotationMatrix = rotationMatrix;
+            // rollpy(Rotation_Matrix);
             rollpy(rotationMatrix);
 
-            std::cout << "\nheadMGS: \n" << headMGS << std::endl;
-            std::cout << "tableMGS: \n" << tableMGS << std::endl;                        
-            std::cout <<"rpy in mgs: " << this->rpy.transpose() << std::endl;
+            // std::cout << "\nheadMGS: \n" << headMGS << std::endl;
+            // std::cout << "tableMGS: \n" << tableMGS << std::endl;                        
+            // std::cout <<"rpy in mgs: " << this->rpy.transpose() << std::endl;
+
+            pose.position.x = item_z(0) * 1000;
+            pose.position.y = item_z(1) * 1000;
+            pose.position.z = item_z(2) * 1000;
+            pose.orientation.x = this->rpy(0); //roll
+            pose.orientation.y = this->rpy(1); //pitch
+            pose.orientation.z = this->rpy(2); //yaw
+            pose.orientation.w = 1.0;
+            pose_pub_.publish(pose);
+
             looper.sleep();                  
         } 
     }
