@@ -28,6 +28,7 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
   tf
+  tf_conversions
   cmake_modules         #https://github.com/ros/cmake_modules/blob/0.3-devel/README.md#usage
   roslaunch              #http://wiki.ros.org/roslaunch#Catkin
 )
@@ -166,7 +167,9 @@ find_package(cmake_modules REQUIRED)
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
   INCLUDE_DIRS include
-   CATKIN_DEPENDS diagnostic_updater dynamic_reconfigure geometry_msgs roscpp tf message_runtime 
+   CATKIN_DEPENDS diagnostic_updater dynamic_reconfigure 
+                  geometry_msgs roscpp 
+                  tf message_runtime tf_conversions
 )
 
 ###########
@@ -225,14 +228,17 @@ message("\n\nBoost Include  Directories: " ${Boost_INCLUDE_DIRS}
 
 ## Declare a C++ executable
 add_executable(vicon_listener src/vicon_listener.cpp)
+add_executable(direction_cosines src/direction_cosines.cxx)
+add_executable(pose_sub src/pose_sub.cxx)
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
 # add_dependencies(vicon_listener ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
-target_link_libraries(vicon_listener  ${catkin_LIBRARIES})
-target_link_libraries(vicon_listener ${Boost_LIBRARIES})      #This includes the serialization libraries
+target_link_libraries(vicon_listener  ${catkin_LIBRARIES} ${Boost_LIBRARIES})
+target_link_libraries(direction_cosines  ${catkin_LIBRARIES} ${Boost_LIBRARIES})
+target_link_libraries(pose_sub ${catkin_LIBRARIES} ${Boost_LIBRARIES})      #This includes the serialization libraries
 
 ## Declare a cpp library
 # add_library(vicon_bridge

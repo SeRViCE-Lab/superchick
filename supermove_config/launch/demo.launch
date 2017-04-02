@@ -5,6 +5,8 @@
   <!-- Allow user to specify database location -->
   <arg name="db_path" default="$(find supermove_config)/default_warehouse_mongo_db" />
 
+  <arg name="vicon" default="true" />
+
   <!-- By default, we are not in debug mode -->
   <arg name="debug" default="false" />
 
@@ -21,6 +23,11 @@
     <param name="/use_gui" value="false"/>
     <rosparam param="/source_list">[/move_group/fake_controller_joint_states]</rosparam>
   </node>
+
+
+  <group unless="$(arg vicon)">
+    <node name="superchick_cloud" pkg="superchick_cloud" type="cloud.py" output="screen" />
+  </group>
 
   <!-- Given the published joint states, publish tf for the robot links -->
   <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="true" output="screen" />
@@ -43,5 +50,8 @@
   <include file="$(find supermove_config)/launch/default_warehouse_db.launch" if="$(arg db)">
     <arg name="moveit_warehouse_database_path" value="$(arg db_path)"/>
   </include>
+
+  <!-- Run the superchcik gprs plugin  -->
+  <include file="$(find gps_agent_pkg)/launch/superchick_only_controller.launch"/>
 
 </launch>

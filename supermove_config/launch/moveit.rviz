@@ -1,5 +1,6 @@
 Panels:
   - Class: rviz/Displays
+<<<<<<< HEAD
     Help Height: 84
     Name: Displays
     Property Tree Widget:
@@ -7,6 +8,19 @@ Panels:
         - /MotionPlanning1
       Splitter Ratio: 0.74256
     Tree Height: 664
+=======
+    Help Height: 78
+    Name: Displays
+    Property Tree Widget:
+      Expanded:
+        - /Global Options1
+        - /MotionPlanning1
+        - /MotionPlanning1/Scene Geometry1
+        - /MotionPlanning1/Planning Request1
+        - /MotionPlanning1/Planned Path1
+      Splitter Ratio: 0.74256
+    Tree Height: 78
+>>>>>>> master
   - Class: rviz/Help
     Name: Help
   - Class: rviz/Views
@@ -45,6 +59,7 @@ Visualization Manager:
       Name: MotionPlanning
       Planned Path:
         Links:
+<<<<<<< HEAD
           base_bellow_link:
             Alpha: 1
             Show Axes: false
@@ -191,11 +206,23 @@ Visualization Manager:
             Show Trail: false
             Value: true
           l_gripper_palm_link:
+=======
+          All Links Enabled: true
+          Expand Joint Details: false
+          Expand Link Details: false
+          Expand Tree: false
+          Link Tree Style: Links in Alphabetic Order
+          base_panel:
+>>>>>>> master
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
+<<<<<<< HEAD
           l_gripper_r_finger_link:
+=======
+          big_bladder_link:
+>>>>>>> master
             Alpha: 1
             Show Axes: false
             Show Trail: false
@@ -210,12 +237,16 @@ Visualization Manager:
             Show Axes: false
             Show Trail: false
             Value: true
+<<<<<<< HEAD
           l_shoulder_pan_link:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
           l_upper_arm_link:
+=======
+          panel_12_oc:
+>>>>>>> master
             Alpha: 1
             Show Axes: false
             Show Trail: false
@@ -325,9 +356,19 @@ Visualization Manager:
             Show Axes: false
             Show Trail: false
             Value: true
+          vicon_frame:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          world:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
         Loop Animation: true
         Robot Alpha: 0.5
-        Show Robot Collision: false
+        Show Robot Collision: true
         Show Robot Visual: true
         Show Trail: false
         State Display Time: 0.05 s
@@ -344,7 +385,11 @@ Visualization Manager:
         Goal State Color: 250; 128; 0
         Interactive Marker Size: 0
         Joint Violation Color: 255; 0; 255
+<<<<<<< HEAD
         Planning Group: left_arm
+=======
+        Planning Group: base_bladder
+>>>>>>> master
         Query Goal State: true
         Query Start State: false
         Show Workspace: false
@@ -362,36 +407,96 @@ Visualization Manager:
       Scene Robot:
         Attached Body Color: 150; 50; 150
         Links:
+<<<<<<< HEAD
           base_bellow_link:
+=======
+          All Links Enabled: true
+          Expand Joint Details: false
+          Expand Link Details: false
+          Expand Tree: false
+          Link Tree Style: Links in Alphabetic Order
+          base_panel:
+>>>>>>> master
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
+<<<<<<< HEAD
           base_footprint:
+=======
+          big_bladder_link:
+>>>>>>> master
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
+<<<<<<< HEAD
           base_link:
+=======
+          headnball_link:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
+          left_leg:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          panel_12_oc:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          panel_3_oc:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          panel_9_oc:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          right_leg:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          table_cover:
+>>>>>>> master
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+<<<<<<< HEAD
           bl_caster_l_wheel_link:
+=======
+          table_top:
+>>>>>>> master
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
+<<<<<<< HEAD
           bl_caster_r_wheel_link:
+=======
+          vicon_frame:
+>>>>>>> master
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
+<<<<<<< HEAD
           bl_caster_rotation_link:
+=======
+          world:
+>>>>>>> master
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
+<<<<<<< HEAD
           br_caster_l_wheel_link:
             Alpha: 1
             Show Axes: false
@@ -538,11 +643,49 @@ Visualization Manager:
             Show Trail: false
             Value: true
           l_upper_arm_roll_link:
+=======
+        Robot Alpha: 0.5
+        Show Robot Collision: false
+        Show Robot Visual: true
+      Value: true
+    - Class: moveit_rviz_plugin/MotionPlanning
+      Enabled: true
+      Move Group Namespace: ""
+      MoveIt_Goal_Tolerance: 0
+      MoveIt_Planning_Attempts: 10
+      MoveIt_Planning_Time: 5
+      MoveIt_Use_Constraint_Aware_IK: true
+      MoveIt_Warehouse_Host: 127.0.0.1
+      MoveIt_Warehouse_Port: 33829
+      MoveIt_Workspace:
+        Center:
+          X: 0
+          Y: 0
+          Z: 0
+        Size:
+          X: 2
+          Y: 2
+          Z: 2
+      Name: MotionPlanning
+      Planned Path:
+        Interrupt Display: false
+        Links:
+          All Links Enabled: true
+          Expand Joint Details: false
+          Expand Link Details: false
+          Expand Tree: false
+          Link Tree Style: Links in Alphabetic Order
+          base_panel:
+>>>>>>> master
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
+<<<<<<< HEAD
           l_wrist_flex_link:
+=======
+          big_bladder_link:
+>>>>>>> master
             Alpha: 1
             Show Axes: false
             Show Trail: false
@@ -557,7 +700,109 @@ Visualization Manager:
             Show Axes: false
             Show Trail: false
             Value: true
+<<<<<<< HEAD
           r_elbow_flex_link:
+=======
+          panel_12_oc:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          panel_3_oc:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          panel_9_oc:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          right_leg:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          table_cover:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          table_top:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          vicon_frame:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          world:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+        Loop Animation: false
+        Robot Alpha: 0.5
+        Show Robot Collision: false
+        Show Robot Visual: true
+        Show Trail: false
+        State Display Time: 0.05 s
+        Trajectory Topic: /move_group/display_planned_path
+      Planning Metrics:
+        Payload: 1
+        Show Joint Torques: false
+        Show Manipulability: false
+        Show Manipulability Index: false
+        Show Weight Limit: false
+        TextHeight: 0.08
+      Planning Request:
+        Colliding Link Color: 255; 0; 0
+        Goal State Alpha: 1
+        Goal State Color: 250; 128; 0
+        Interactive Marker Size: 0
+        Joint Violation Color: 255; 0; 255
+        Planning Group: base_bladder
+        Query Goal State: true
+        Query Start State: true
+        Show Workspace: false
+        Start State Alpha: 1
+        Start State Color: 0; 255; 0
+      Planning Scene Topic: planning_scene
+      Robot Description: robot_description
+      Scene Geometry:
+        Scene Alpha: 0.9
+        Scene Color: 50; 230; 50
+        Scene Display Time: 0.2
+        Show Scene Geometry: true
+        Voxel Coloring: Z-Axis
+        Voxel Rendering: Occupied Voxels
+      Scene Robot:
+        Attached Body Color: 150; 50; 150
+        Links:
+          All Links Enabled: true
+          Expand Joint Details: false
+          Expand Link Details: false
+          Expand Tree: false
+          Link Tree Style: Links in Alphabetic Order
+          base_panel:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          big_bladder_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          headnball_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          left_leg:
+>>>>>>> master
             Alpha: 1
             Show Axes: false
             Show Trail: false
@@ -642,8 +887,24 @@ Visualization Manager:
             Show Axes: false
             Show Trail: false
             Value: true
+<<<<<<< HEAD
         Robot Alpha: 0.5
         Show Scene Robot: true
+=======
+          vicon_frame:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          world:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+        Robot Alpha: 1
+        Show Robot Collision: false
+        Show Robot Visual: true
+>>>>>>> master
       Value: true
   Enabled: true
   Global Options:
@@ -659,6 +920,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/XYOrbit
+<<<<<<< HEAD
       Distance: 2.9965
       Focal Point:
         X: 0.113567
@@ -668,22 +930,51 @@ Visualization Manager:
       Near Clip Distance: 0.01
       Pitch: 0.509797
       Target Frame: /world
+=======
+      Distance: 4.71505
+      Enable Stereo Rendering:
+        Stereo Eye Separation: 0.06
+        Stereo Focal Distance: 1
+        Swap Stereo Eyes: false
+        Value: false
+      Focal Point:
+        X: 0.531664
+        Y: -0.577612
+        Z: 4.61937e-07
+      Name: Current View
+      Near Clip Distance: 0.01
+      Pitch: 0.509797
+      Target Frame: world
+>>>>>>> master
       Value: XYOrbit (rviz)
       Yaw: 5.65995
     Saved: ~
 Window Geometry:
   Displays:
     collapsed: false
+<<<<<<< HEAD
   Height: 1337
+=======
+  Height: 1177
+>>>>>>> master
   Help:
     collapsed: false
   Hide Left Dock: false
   Hide Right Dock: false
   Motion Planning:
     collapsed: false
+<<<<<<< HEAD
   QMainWindow State: 000000ff00000000fd0000000100000000000002a2000004bcfc0200000005fb000000100044006900730070006c00610079007301000000410000032d000000dd00fffffffb0000000800480065006c00700000000342000000bb0000007600fffffffb0000000a0056006900650077007300000003b0000000b0000000b000fffffffb0000000c00430061006d00650072006100000002ff000001610000000000000000fb0000001e004d006f00740069006f006e00200050006c0061006e006e0069006e00670100000374000001890000017400ffffff0000047a000004bc00000001000000020000000100000002fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Views:
     collapsed: false
   Width: 1828
   X: 459
   Y: -243
+=======
+  QMainWindow State: 000000ff00000000fd0000000100000000000002a200000456fc0200000006fb000000100044006900730070006c0061007900730100000028000000dd000000dd00fffffffb0000000800480065006c00700000000342000000bb0000007600fffffffb0000000a0056006900650077007300000003b0000000b0000000b000fffffffb0000000c00430061006d00650072006100000002ff000001610000000000000000fb0000001e004d006f00740069006f006e00200050006c0061006e006e0069006e0067010000010b000001b1000001b100fffffffb0000001e004d006f00740069006f006e00200050006c0061006e006e0069006e006701000002c2000001bc000001b100ffffff000001170000045600000001000000020000000100000002fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  Views:
+    collapsed: false
+  Width: 959
+  X: 65
+  Y: 52
+>>>>>>> master

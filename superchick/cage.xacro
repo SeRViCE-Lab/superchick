@@ -72,7 +72,7 @@
 	<joint name="base_panel_to_12oc" type="fixed">
 		<parent link="base_panel"/>
 		<child link="panel_12_oc"/>
-		<origin xyz="0 ${1e-1} ${0.08/2.1}"/>
+		<origin xyz="0 ${distance_panel_12_oc_from_center} ${(panel_thickness/2) + (panel_height/2)}" />
 	</joint>
 
 	<!-- 9:00 Panel -->
