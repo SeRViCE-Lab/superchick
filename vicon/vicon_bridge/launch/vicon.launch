@@ -1,0 +1,67 @@
+<launch>	
+	<!-- Author: Olalekan Ogunmolu Sept - Oct 2016 -->
+	<arg name="subject_name"    value="Superdude"  />
+	<arg name="segment_name"    default="head" />	
+	<arg name="save"   default="false" />	
+	<arg name="print"  default="true" />
+	<arg name="respawn" default="true" />
+	<arg name="sim"   default="false" />
+	<arg name="useSigma"   default="false" />
+	<!-- Native Gram-Schmidt: use vicon_listener-->	
+	<arg name="listen"   default="false" />  
+	<!-- More Acurate: use direction cosines in computing face pose-->
+	<arg name="direction_cosines"   default="true" /> 
+	<!-- launch neuro-adaptive control node -->
+	<arg name="controller"   default="true" /> 
+	<!-- Controller reference params -->	
+	<arg name="z"   default="732.1345689"  />
+	<arg name="roll"     default="23.6700447343" />
+	<arg name="pitch"    default="22.512646679" />	
+	<arg name="yaw"         default="139.7705324369"  />
+	
+	<group unless="$(arg sim)">
+		<!-- if simulating, do not launch bridge nor listener -->
+		<node pkg="vicon_bridge" type="vicon_bridge" name="vicon" output="screen">
+			<param name="stream_mode" value="ClientPull" type="str" />
+			<param name="datastream_hostport" value="10.0.0.4:801" type="str" />
+			<param name="tf_ref_frame_id" value="/world" type="str" />
+			<param name="rate" type="int" value="30" />
+		</node>
+
+		<group if="$(arg listen)">
+			<node pkg="vicon_listener" type="vicon_listener" name="vicon_listener" output="screen"  args="$(arg subject_name) $(arg segment_name)" respawn="true">		
+				<param name="save" value="$(arg save)" type="bool"/>
+				<param name="print" value="$(arg print)" type="bool"/>
+				<param name="sim" value="$(arg sim)" type="bool" />
+			</node>
+
+			<node pkg="superchick_cloud" type="cloud.py" name="superchick_cloud">
+				<param name="sim" value="$(arg sim)" type="bool" />			
+				<param name="rate" type="int" value="30" />
+			</node>
+		</group>	
+
+		<group if="$(arg direction_cosines)">
+			<node pkg="vicon_listener" type="direction_cosines" name="direction_cosines" output="screen">				
+				<param name="save" value="$(arg save)" type="bool"/>
+				<param name="print" value="$(arg print)" type="bool"/>
+				<param name="sim" value="$(arg sim)" type="bool" />
+				<param name="useSigma" value="$(arg useSigma)" type="bool" />
+			</node>
+		</group>
+
+	</group>
+
+	<group if="$(arg controller)">
+		<node pkg="nn_controller" type="nn_controller" name="nn_controller" output="screen" args="$(arg z) $(arg pitch) $(arg roll) $(arg yaw)"  respawn="false"/>		
+		<param name="z"    	value="$(arg z)"  	 type="double" />
+		<param name="pitch" value="$(arg pitch)" type="double" />	
+		<param name="roll"  value="$(arg roll)"  type="double" />
+		<param name="yaw"   value="$(arg yaw)"   type="double" />
+		<param name="print"   value="$(arg print)"   type="bool" />
+		<param name="useSigma"   value="$(arg useSigma)"   type="bool" />
+		<param name="save"   value="$(arg save)"   type="bool" />
+	</group>
+
+
+</launch>
