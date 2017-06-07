@@ -25,13 +25,13 @@ catkin_package(
     DEPENDS
       gazebo_ros
     CATKIN_DEPENDS
-      joint_state_controller 
-      joint_state_publisher 
-      position_controllers 
-      robot_state_publisher 
-      roslaunch 
-      rviz 
-      urdf 
+      joint_state_controller
+      joint_state_publisher
+      position_controllers
+      robot_state_publisher
+      roslaunch
+      rviz
+      urdf
       xacro
     INCLUDE_DIRS
     LIBRARIES
@@ -39,7 +39,7 @@ catkin_package(
 
 # Xacro files # this is a hack here so world files are not dumped to \
 #src dir
-file(GLOB xacro_files ${CMAKE_CURRENT_SOURCE_DIR}/*world.xacro)
+file(GLOB xacro_files ${CMAKE_CURRENT_SOURCE_DIR}/*.xacro)
 
 foreach(it ${xacro_files})
   # remove .xacro extension
