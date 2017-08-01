@@ -26,28 +26,48 @@
 	</body>
 
 	<body name="table_top">
-		<geom type="box" size="1.524 0.6198 0.0381" pos="0 0 -0.3" material="table_color" euler="0 0 180" />
+		<geom type="box" size="1.524 0.6198 0.0381" pos="0 0 .9731" material="table_color" euler="0 0 180" />
 		<inertial pos="0 0 0" mass=".01" diaginertia="166.667 166.667 166.667"/>
 	</body>
 
 	<body name="table_cover">
-		<geom type="box" size="1.524 0.2794 0.227" pos="0 0.3928 .015" material="table_cover_color" euler="-90 0 0" />
+		<geom type="box" size="1.524 0.2794 0.227" pos="0 0.3928 .656" material="table_cover_color" euler="-90 0 0" />
 	</body>
 
 	<body name="big_bladder">
-		<geom type="box" size="0.31496 0.31496 0.0508" pos="0.532 0 -0.373333333333" material="bladder_color" euler="0 0 0" />
+		<geom type="box" size="0.31496 0.31496 0.0508" pos="0.532 0 1.062" material="bladder_color" euler="0 0 0" />
 	</body>
 
 	<body name="headnball">
-		<geom type="mesh" mesh="headnball_mesh" euler="90 90 180" material="brown" pos="0.15 0.1033 -0.3833"/>
+		<geom type="mesh" mesh="headnball_mesh" euler="90 90 0" material="brown" pos="0.15 -0.1033 1.012"/>
 	</body>
 
 	<body name="base_panel">
-		<geom type="box" size="0.5842 0.2794 0.0047625" pos="-0.612 0 -.3533" material="panel_color" euler="0 0 0" />
+		<geom type="box" size="0.5842 0.2794 0.0047625" pos="-0.612 0 1.017" material="panel_color" euler="0 0 0" />
+	</body>
+
+	<body name="panel_12_oc">
+		<geom type="box" size="00.231775 0.200025 0.0047625" pos="0.847 0 1.207" material="panel_color" euler="90 90 0" />
+	</body>
+
+	<body name="panel_9_oc">
+		<geom type="box" size="00.231775 0.200025 0.0047625" pos=".46748 0.32 1.207" material="panel_color" euler="90 0 0" />
+	</body>
+<!--
+	<body name="panel_3_oc">
+		<geom type="box" size="00.231775 0.200025 0.0047625" pos="0.23738125 -0.11350625 0" material="panel_color" euler="90 0 90" />
+	</body>
+
+	<body name="bladder_3_oc">
+		<geom type="box" size="00.231775 0.200025 0.0508" pos="-0.2 -0.1 .1" material="bladder_color" euler="90 0 90" />
+	</body>
+
+	<body name="bladder_9_oc">
+		<geom type="box" size="00.231775 0.200025 0.0508" pos="0.2 -0.1 -.1" material="bladder_color" euler="90 0 90" />
 	</body>
 
 
-
+-->
 
 </worldbody>
 
