@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<robot name="superchick" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+   <!-- General Properties -->
+   <xacro:property name="head_height" value="0.2794" />
+   <xacro:property name="head_width" value="0.2032" />
+   <xacro:property name="head_thickness" value="0.1778" />
+   <xacro:property name="M_PI" value="3.14159" ns="headnball"/>
+   <xacro:property name="head_x_orig" value="-0.1" />   
+   <xacro:property name="head_y_orig" value="${1.5*-1e-1}" /> 
+   <xacro:property name="head_z_orig" value="${0.11/3}" /> 
+
+   <!-- inflatable air bladder -->
+   <link name="headnball_link">
+     <visual>
+       <origin xyz="${0} ${head_y_orig} ${head_z_orig}" rpy="${M_PI/2} 0 ${-M_PI}" />
+       <geometry>        
+         <mesh filename="package://superchick/meshes/headnball.stl" scale=".001 .001 .001" />
+       </geometry>
+       <material name="brown"/>
+       <origin xyz="${0} ${head_y_orig} ${head_z_orig}" rpy="${M_PI/2} 0 ${-M_PI}" />
+     </visual>
+
+     <collision>
+       <geometry>
+         <mesh filename="package://superchick/meshes/headnball.stl" scale=".001 .001 .001" />
+       </geometry>
+       <origin xyz="${0} ${head_y_orig} ${head_z_orig}" rpy="${M_PI/2} 0 ${-M_PI}" />
+     </collision>
+
+     <inertial>
+       <mass value="${mass}"/>
+       <inertia ixx="${mass/12}" ixy="0.0" ixz="0.0" 
+        iyy="${inertia_mom}" iyz="0.0000" 
+        izz="${inertia_mom}"/>
+     </inertial>
+
+<!--      <inertial>
+       <mass value="1e-1"/>
+       <inertia ixx="0.925288" ixy="0.379102" ixz="0.011081" 
+                iyy="0.919140" iyz="0.111180" izz="0.993738"/>
+     </inertial> -->
+   </link>
+
+</robot>
+
+<!-- 
+Mesh Bounding Box Size 183.247528 233.881210 390.197662
+Mesh Bounding Box Diag 490.442963 
+Mesh Volume is 1747609.625000
+Mesh Surface is 308892.718750
+Thin shell barycenter 95.753151 109.246353 218.224380
+Center of Mass is 98.803001 53.798462 504.412964
+Inertia Tensor is :
+| -213251981312.000000 -4579728384.000000 3054556928.000000 |
+| -4579728384.000000 -220260909056.000000 26342836224.000000 |
+| 3054556928.000000 26342836224.000000 11755722752.000000 |
+Principal axes are :
+| 0.925288 0.379102 0.011081 |
+| -0.377915 0.919140 0.111180 |
+| 0.031964 -0.107061 0.993738 |
+axis momenta are :
+| -211275972608.000000 -225218248704.000000 14737041408.000000 |
+ -->
