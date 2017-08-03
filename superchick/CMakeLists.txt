@@ -33,8 +33,8 @@ find_package(osgGA)
 set(OSG_LIBRARIES ${OSG_LIBRARY} ${OSGVIEWER_LIBRARY} ${OPENTHREADS_LIBRARY} ${OSGGA_LIBRARY} )
 include_directories(SYSTEM ${OSG_INCLUDE_DIR})
 include_directories("${MUJOCO_SOURCE_DIR}/include"  ${Boost_INCLUDE_DIRS})
-message("osg includes: ${OSG_INCLUDE_DIR}")
-message("mujoco dir: " ${MUJOCO_SOURCE_DIR})
+# message("osg includes: ${OSG_INCLUDE_DIR}")
+# message("mujoco dir: " ${MUJOCO_SOURCE_DIR})
 
 catkin_package(
     DEPENDS
@@ -48,11 +48,28 @@ catkin_package(
       rviz
       urdf
       xacro
+      LIBRARIES mj_viewer
 )
 
 add_library(mj_viewer src/mujoco_viewer.cpp)
+# add_dependencies(mj_viewer ${catkin_EXPORTED_TARGETS} mj_viewer_gencpp)
 target_link_libraries(mj_viewer ${MUJOCO_SOURCE_DIR}/bin/libmujoco150.so ${OSG_LIBRARIES})
-add_dependencies(mj_viewer ${catkin_EXPORTED_TARGETS} ${PROJECT_NAME}_gencpp)
 
 add_executable(chick_viewer src/test_chick.cpp)
-target_link_libraries(chick_viewer ${Boost_FILESYSTEM_LIBRARY} mj_viewer ${catkin_LIBRARIES})
+
+
+install(TARGETS mj_viewer
+      ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+      LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+      RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
+
+install(DIRECTORY include/${PROJECT_NAME}/
+      DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION})
+
+target_link_libraries(chick_viewer ${Boost_FILESYSTEM_LIBRARY}  
+                      ${MUJOCO_SOURCE_DIR}/bin/libmujoco150.so 
+                      ${MUJOCO_SOURCE_DIR}/bin/libglew.so 
+                      /home/$ENV{USER}/catkin_ws/devel/lib/libmj_viewer.so
+                      ${catkin_LIBRARIES} ${OSG_LIBRARIES} 
+                      # -lm -ldl
+                      )

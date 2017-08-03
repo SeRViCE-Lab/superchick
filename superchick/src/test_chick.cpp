@@ -24,13 +24,23 @@ namespace pathfinder
 	        return true;
 	    }
 	}
-}
 
+	void getMujocoFile(boost::filesystem::path & mujocoPath)
+	{
+		const char* user_name = std::getenv("USER");
+		// std::string user_name_str = user_name.c_str();
+		char *user_name_c = new char[user_name.c_str().length() + 1];
+		strcat(user_name_c, "/mujoco/mjpro150/mj_key.txt")
+
+		mujocoPath = "/home" / user_name;
+	}
+
+}
 
 
 int main(int argc, char** argv){
 
-	ros::init(argc, argv, "superchick node");
+	ros::init(argc, argv, "superchick_node");
 
 	const std::string& package_name("superchick");
 	boost::filesystem::path chick_path;
@@ -51,8 +61,14 @@ int main(int argc, char** argv){
 	char *model_filename = new char[model_filename_c.length() + 1];
 	strcpy(model_filename, model_filename_c.c_str());
 
+	// activate software
+	boost::filesystem::path mjkey_file;
+	pathfinder::getMujocoFile(mjkey_file);
+
+	mj_activate(mjkey_file.c_str());
+
 	NewModelFromXML(model_filename, model);
-	mjData* data = mj_makeData(model); //, option);
+	mjData* data = mj_makeData(model);
 	delete[] model_filename;
 
 	if(!model)
