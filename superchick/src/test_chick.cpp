@@ -28,11 +28,7 @@ namespace pathfinder
 	void getMujocoFile(boost::filesystem::path & mujocoPath)
 	{
 		std::string const & user_name = std::getenv("USER");
-		// std::str ing user_name_str = user_name.c_str();
-		// char *user_name_c = new char[user_name.c_str().length() + 1];
 		std::string const& key_path = user_name + "/mujoco/mjpro150/mjkey.txt";
-		// strcat(user_name, keypath);
-		// user_name = keypath;
 
 		mujocoPath = "/home/" + key_path;
 	}
