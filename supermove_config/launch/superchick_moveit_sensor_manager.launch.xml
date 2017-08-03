@@ -1,7 +1,0 @@
-<launch>
-<<<<<<< HEAD
-
-=======
-	<rosparam command="load" file="$(find supermove_config)/config/vicon.yaml" />
->>>>>>> master
-</launch>
