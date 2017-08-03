@@ -24,23 +24,35 @@ namespace pathfinder
 	        return true;
 	    }
 	}
-}
 
+	void getMujocoFile(boost::filesystem::path & mujocoPath)
+	{
+		std::string const & user_name = std::getenv("USER");
+		// std::str ing user_name_str = user_name.c_str();
+		// char *user_name_c = new char[user_name.c_str().length() + 1];
+		std::string const& key_path = user_name + "/mujoco/mjpro150/mjkey.txt";
+		// strcat(user_name, keypath);
+		// user_name = keypath;
+
+		mujocoPath = "/home/" + key_path;
+	}
+
+}
 
 
 int main(int argc, char** argv){
 
-	ros::init(argc, argv, "superchick node");
+	ros::init(argc, argv, "superchick_node");
 
 	const std::string& package_name("superchick");
 	boost::filesystem::path chick_path;
 
 	if(!pathfinder::getROSPackagePath(package_name, chick_path)){
-		ROS_INFO("Could not find the package %s. Please make sure you clone the %s o package", 
+		ROS_INFO("Could not find the package %s. Please make sure you clone the %s o package",
 			package_name.c_str(), package_name.c_str());
 		return EXIT_FAILURE;
 	}
-		
+
 	std::stringstream ss;
   	ss << chick_path.c_str() << "/models/superchick.mjcf";
   	std::string model_filename_c = ss.str();
@@ -51,8 +63,16 @@ int main(int argc, char** argv){
 	char *model_filename = new char[model_filename_c.length() + 1];
 	strcpy(model_filename, model_filename_c.c_str());
 
+	// activate software
+	boost::filesystem::path mjkey_file;
+	pathfinder::getMujocoFile(mjkey_file);
+
+	printf("mjkey_file: %s\n", mjkey_file.c_str());
+
+	mj_activate(mjkey_file.c_str());
+
 	NewModelFromXML(model_filename, model);
-	mjData* data = mj_makeData(model); //, option);
+	mjData* data = mj_makeData(model);
 	delete[] model_filename;
 
 	if(!model)
