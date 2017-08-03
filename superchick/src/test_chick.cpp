@@ -25,12 +25,14 @@ namespace pathfinder
 	    }
 	}
 
-	void getMujocoFile(boost::filesystem::path & mujocoPath)
+	bool getMujocoFile(boost::filesystem::path & mujocoPath)
 	{
 		std::string const & user_name = std::getenv("USER");
 		std::string const& key_path = user_name + "/mujoco/mjpro150/mjkey.txt";
 
 		mujocoPath = "/home/" + key_path;
+
+		return true;
 	}
 
 }
@@ -61,9 +63,9 @@ int main(int argc, char** argv){
 
 	// activate software
 	boost::filesystem::path mjkey_file;
-	pathfinder::getMujocoFile(mjkey_file);
-
-	printf("mjkey_file: %s\n", mjkey_file.c_str());
+	if(!pathfinder::getMujocoFile(mjkey_file))
+		printf("Ouch, I had problem reconciling the path variable with your dir structure. %s", 
+			   "please ensure you have a Linux system. Darwin architectures are yet unsupported.");
 
 	mj_activate(mjkey_file.c_str());
 
@@ -72,7 +74,7 @@ int main(int argc, char** argv){
 	delete[] model_filename;
 
 	if(!model)
-		ROS_WARN("Ouch, had problem loading model there: %s",  model_filename);
+		ROS_WARN("Ouch! I had problem loading model %s there",  model_filename);
 
     MujocoOSGViewer viewer;
     viewer.SetModel(model);

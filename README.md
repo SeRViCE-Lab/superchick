@@ -16,6 +16,10 @@
 			rosrun superchick chick_viewer
 		```
 
+	Below is an example of the scene in mjpro150
+
+	![mjpro_model](/superchick/config/mjmodel.jpg)
+
 ### Superchicko Rviz Plugin
 
 Generate superchick urdf like
