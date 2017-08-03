@@ -2,55 +2,57 @@ cmake_minimum_required(VERSION 2.8.3)
 project(superchick)
 
 find_package(catkin REQUIRED COMPONENTS
-  controller_manager
-  gazebo_ros
-  joint_state_controller
-  joint_state_publisher
-  position_controllers
-  robot_state_publisher
+  # controller_manager
+  # gazebo_ros
+  # joint_state_controller
+  # joint_state_publisher
+  # position_controllers
+  # robot_state_publisher
   roslaunch
   rviz
   urdf
   xacro
+  roslib
 )
 
 # Depend on system install of Gazebo
-find_package(gazebo REQUIRED)
+# find_package(gazebo REQUIRED)
 
+# include_directories(include ${catkin_INCLUDE_DIRS} ${GAZEBO_INCLUDE_DIRS} ${SDFormat_INCLUDE_DIRS})
+# add_definitions("-DmjUSEDOUBLE")
 
+set(MUJOCO_SOURCE_DIR $ENV{HOME}/mujoco/mjpro150)
 
-include_directories(include ${catkin_INCLUDE_DIRS} ${GAZEBO_INCLUDE_DIRS} ${SDFormat_INCLUDE_DIRS})
+include_directories(include ${catkin_INCLUDE_DIRS} ${CMAKE_SOURCE_DIR}/)
+find_package( Boost COMPONENTS filesystem system serialization thread REQUIRED)
+find_package( osg )
+find_package( osgViewer )
+find_package( OpenThreads )
+find_package(osgGA)
+
+set(OSG_LIBRARIES ${OSG_LIBRARY} ${OSGVIEWER_LIBRARY} ${OPENTHREADS_LIBRARY} ${OSGGA_LIBRARY} )
+include_directories(SYSTEM ${OSG_INCLUDE_DIR})
+include_directories("${MUJOCO_SOURCE_DIR}/include"  ${Boost_INCLUDE_DIRS})
+message("osg includes: ${OSG_INCLUDE_DIR}")
+message("mujoco dir: " ${MUJOCO_SOURCE_DIR})
 
 catkin_package(
     DEPENDS
-      gazebo_ros
+      # gazebo_ros
     CATKIN_DEPENDS
-      joint_state_controller
-      joint_state_publisher
-      position_controllers
-      robot_state_publisher
+      # joint_state_controller
+      # joint_state_publisher
+      # position_controllers
+      # robot_state_publisher
       roslaunch
       rviz
       urdf
       xacro
-    INCLUDE_DIRS
-    LIBRARIES
 )
 
-# Xacro files # this is a hack here so world files are not dumped to \
-#src dir
-file(GLOB xacro_files ${CMAKE_CURRENT_SOURCE_DIR}/*.xacro)
+add_library(mj_viewer src/mujoco_viewer.cpp)
+target_link_libraries(mj_viewer ${MUJOCO_SOURCE_DIR}/bin/libmujoco150.so ${OSG_LIBRARIES})
+add_dependencies(mj_viewer ${catkin_EXPORTED_TARGETS} ${PROJECT_NAME}_gencpp)
 
-foreach(it ${xacro_files})
-  # remove .xacro extension
-  string(REGEX MATCH "(.*)[.]xacro$" unused ${it})
-  set(output_filename ${CMAKE_MATCH_1})
-
-  # create a rule to generate ${output_filename} from {it}
-  xacro_add_xacro_file(${it} ${output_filename})
-
-  list(APPEND world_files ${output_filename})
-endforeach(it)
-
-# add an abstract target to actually trigger the builds
-add_custom_target(fathom_files ALL DEPENDS ${world_files})
+add_executable(chick_viewer src/test_chick.cpp)
+target_link_libraries(chick_viewer ${Boost_FILESYSTEM_LIBRARY} mj_viewer ${catkin_LIBRARIES})

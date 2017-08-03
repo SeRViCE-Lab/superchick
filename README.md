@@ -19,6 +19,16 @@ run novalis like
 	roslaunch superchick display.launch model:=src/superchicko/superchick/novalis.xacro
 ```
 
+### MUJOCO Plugin
+
+1. 	Install [openscene-grapgh](sudo apt-get install openscenegraph libopenscenegraph-dev). 
+
+2. Then install [mujoco](https://www.roboti.us/index.html) (v1.50+) and put the downloaded mjpro150 folder in your home directory under a folder called `mujoco`. MuJoCo is a high-quality physics engine and requires requires a license.Obtain a key, which should be named mjkey.txt, and place the key into the mjpro150 directory.
+
+3. Run the mujoco model viewer with catkin like so:
+
+`catkin build`
+
 ### Example Display in Rviz
 ![Example Display in Rviz](/superchick/meshes/model.png)
 

@@ -7,20 +7,20 @@
   <license>BSD</license>
 
   <buildtool_depend>catkin</buildtool_depend>
-  <build_depend>joint_state_controller</build_depend>
+<!--  <build_depend>joint_state_controller</build_depend>
   <build_depend>joint_state_publisher</build_depend>
   <build_depend>position_controllers</build_depend>
-  <build_depend>robot_state_publisher</build_depend>
+  <build_depend>robot_state_publisher</build_depend> -->
   <build_depend>roslaunch</build_depend>
   <build_depend>rviz</build_depend>
   <build_depend>urdf</build_depend>
   <build_depend>xacro</build_depend>
-  <build_depend>gazebo_ros</build_depend>
+<!--   <build_depend>gazebo_ros</build_depend>
   <run_depend>gazebo_ros</run_depend>
   <run_depend>joint_state_controller</run_depend>
   <run_depend>joint_state_publisher</run_depend>
   <run_depend>position_controllers</run_depend>
-  <run_depend>robot_state_publisher</run_depend>
+  <run_depend>robot_state_publisher</run_depend> -->
   <run_depend>roslaunch</run_depend>
   <run_depend>rviz</run_depend>
   <run_depend>urdf</run_depend>
@@ -30,10 +30,10 @@
     <!-- gazebo_ros_paths_plugin automatically adds these to
         GAZEBO_PLUGIN_PATH and GAZEBO_MODEL_PATH when you do this export inside
         the package.xml file. You can than use URIs of type model://my_package/stuff. -->
-    <gazebo_ros                                                                 
+    <!--  <gazebo_ros   
         gazebo_plugin_path="${prefix}/lib"
         gazebo_model_path="${prefix}/superchick.sdf" 
-        /> 
+        />  -->
   </export>
   <!-- 
         gazebo_media_path="${prefix}:/another/path" -->
