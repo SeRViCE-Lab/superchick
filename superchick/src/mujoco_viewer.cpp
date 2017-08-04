@@ -1,6 +1,6 @@
 /*  Olalekan Ogunmolu
 *   Adapted from here :
-*         https://github.com/cbfinn/gps/blob/master/3rdparty/mjcpy2/mujoco_osg_viewer.cpp
+*         https://github.com/lakehanne/gps/blob/master/3rdparty/mjcpy2/mujoco_osg_viewer.cpp
 * 	August 2017
 */
 
@@ -205,11 +205,11 @@ osg::Node* createGroundPlane(){
     vertices->push_back( osg::Vec3d( -infty,  infty, 0 ) );
     texCoords->push_back( osg::Vec2( 0, texCoordExtreme ) );
 
-//     osg::ref_ptr<osg::Vec4Array> colors = new osg::Vec4Array;
-//     colors->push_back(osg::Vec4(0.2, 0.2, 0.2, 1.0) );
-//     // colors->push_back(osg::Vec4(0.0, 0.5, 0.0, 1.0) );
-//     groundPlaneGeometry->setColorArray(colors.get());
-//     groundPlaneGeometry->setColorBinding(osg::Geometry::BIND_PER_PRIMITIVE_SET);
+    osg::ref_ptr<osg::Vec4Array> colors = new osg::Vec4Array;
+    colors->push_back(osg::Vec4(0.2, 0.2, 0.2, 1.0) );
+    colors->push_back(osg::Vec4(0.0, 0.5, 0.0, 1.0) );
+    groundPlaneGeometry->setColorArray(colors.get());
+    groundPlaneGeometry->setColorBinding(osg::Geometry::BIND_PER_PRIMITIVE_SET);
 
     osg::ref_ptr<osg::DrawElementsUInt> quad =
         new osg::DrawElementsUInt(osg::PrimitiveSet::QUADS);

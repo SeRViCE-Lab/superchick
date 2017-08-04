@@ -6,7 +6,7 @@
 <robot name="superchick" xmlns:xacro="http://www.ros.org/wiki/xacro">
   <!-- General Properties -->
   <!-- This file contains the table and bladder descriptions -->
-  <!-- Matrial Girl 
+  <!-- Matrial Girl
     Lekan Ogunmolu-->
   <material name="table_color">
     <color rgba="0.8 0.8 0.8 1"/>
@@ -41,11 +41,11 @@
   <!-- Model for the Superchick Table Spec
       Author: Olalekan Ogunmolu, August 2016
 
-        Generate urdf with 
+        Generate urdf with
         rosrun xacro xacro src/superchick/table.xacro > table.urdf
-        Then run with 
+        Then run with
 
-        roslaunch superchick display.launch model:=table.urdf 
+        roslaunch superchick display.launch model:=table.urdf
   -->
   <!-- table top properties -->
   <!-- table leg properties -->
@@ -146,11 +146,11 @@
     <child link="table_top"/>
     <origin xyz="-0.6858 0 0.35 "/>
   </joint>
-  <joint name="leftleg_to_tabletop" type="fixed">
+  <!-- <joint name="leftleg_to_tabletop" type="fixed">
     <parent link="left_leg"/>
     <child link="table_top"/>
     <origin xyz="-0.6858 0 0.35 "/>
-  </joint>
+  </joint> -->
   <link name="table_cover">
     <visual>
       <origin rpy="0 0 0" xyz="0 0 -0.0381"/>
@@ -188,7 +188,7 @@
      </visual>
 
      <collision>
-       <geometry>        
+       <geometry>
         <box size="${bladder_length} ${bladder_width} ${bladder_thickness}" />
        </geometry>
        <origin xyz="0 0 0" rpy="0 0 0" />
@@ -196,8 +196,8 @@
 
      <inertial>
        <mass value="${mass}"/>
-       <inertia ixx="${mass/12}" ixy="0.0" ixz="0.0" 
-        iyy="${inertia_mom}" iyz="0.0000" 
+       <inertia ixx="${mass/12}" ixy="0.0" ixz="0.0"
+        iyy="${inertia_mom}" iyz="0.0000"
         izz="${inertia_mom}"/>
      </inertial>
    </link>
@@ -213,7 +213,7 @@
      </visual>
 
      <collision>
-       <geometry>        
+       <geometry>
         <box size="${bladder_length} ${bladder_width} ${bladder_thickness}" />
        </geometry>
        <origin xyz="0 ${0.1/2} 0" rpy="0 0 0" />
@@ -221,8 +221,8 @@
 
      <inertial>
        <mass value="${mass}"/>
-       <inertia ixx="${mass/12}" ixy="0.0" ixz="0.0" 
-        iyy="${inertia_mom}" iyz="0.0000" 
+       <inertia ixx="${mass/12}" ixy="0.0" ixz="0.0"
+        iyy="${inertia_mom}" iyz="0.0000"
         izz="${inertia_mom}"/>
      </inertial>
    </link> -->
@@ -269,7 +269,7 @@
     </inertial>
     <!--      <inertial>
        <mass value="1e-1"/>
-       <inertia ixx="0.925288" ixy="0.379102" ixz="0.011081" 
+       <inertia ixx="0.925288" ixy="0.379102" ixz="0.011081"
                 iyy="0.919140" iyz="0.111180" izz="0.993738"/>
      </inertial> -->
   </link>
@@ -496,4 +496,3 @@
        </actuator>
      </transmission> -->
 </robot>
-
