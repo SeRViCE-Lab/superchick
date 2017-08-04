@@ -20,24 +20,12 @@
 
 ### Superchicko Rviz Plugin
 
-Generate superchick urdf like
-
-```bash
-rosrun xacro xacro src/superchicko/superchick/superchick.xacro > superchick.xacro
-```
+Generate superchick urdf like `rosrun xacro xacro src/superchicko/superchick/superchick.xacro > superchick.xacro`
 
 ### Novalis Rviz Plugin
-Then run urdf like longhorn cattle, aka
+Then run urdf:	`roslaunch superchick display.launch model:=superchick.urdf`
 
-```bash
-	roslaunch superchick display.launch model:=superchick.urdf
-```
-
-run novalis like
-
-```bash
-	roslaunch superchick display.launch model:=src/superchicko/superchick/novalis.xacro
-```
+run novalis like: `roslaunch superchick display.launch model:=src/superchicko/superchick/novalis.xacro`
 
 ### @TODO:
 To deploy on real robot, pass arg sim as true. This will launch the `superchick/launch/robot_interface.launch` file that brings the robot alive.
@@ -65,3 +53,4 @@ When having issues with loading libompl.so.10 with movegroup node, doing the fol
 
 ```bash
 	sudo cp /opt/ros/indigo/lib/x86_64-linux-gnu/libompl.so.10 /usr/local/lib/x86_64-linux-gnu/
+```
