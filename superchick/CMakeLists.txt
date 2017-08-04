@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(superchick)
 
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 find_package(catkin REQUIRED COMPONENTS
   # controller_manager
   # gazebo_ros
@@ -66,10 +69,10 @@ install(TARGETS mj_viewer
 install(DIRECTORY include/${PROJECT_NAME}/
       DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION})
 
-target_link_libraries(chick_viewer ${Boost_FILESYSTEM_LIBRARY}  
-                      ${MUJOCO_SOURCE_DIR}/bin/libmujoco150.so 
-                      ${MUJOCO_SOURCE_DIR}/bin/libglew.so 
+target_link_libraries(chick_viewer ${Boost_FILESYSTEM_LIBRARY}
+                      ${MUJOCO_SOURCE_DIR}/bin/libmujoco150.so
+                      ${MUJOCO_SOURCE_DIR}/bin/libglew.so
                       /home/$ENV{USER}/catkin_ws/devel/lib/libmj_viewer.so
-                      ${catkin_LIBRARIES} ${OSG_LIBRARIES} 
+                      ${catkin_LIBRARIES} ${OSG_LIBRARIES}
                       # -lm -ldl
                       )

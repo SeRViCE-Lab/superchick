@@ -24,7 +24,7 @@
 #include <osgGA/TrackballManipulator>
 #include <osgGA/KeySwitchMatrixManipulator>
 
-#define PLOT_JOINTS 0
+#define PLOT_JOINTS 1
 
 // mujoco 1.50 or newer
 #define MJC150 1
@@ -225,13 +225,14 @@ osg::Node* createGroundPlane(){
 osg::Node* createOSGNode(const mjModel* model, int i_geom) {
     int geom = model->geom_type[i_geom];
     mjtNum* size = model->geom_size + 3*i_geom;
-    osg::Shape* shape = NULL;
+    osg::Shape* shape = nullptr;
     switch (geom) {
         case mjGEOM_PLANE: {
             return createGroundPlane();
         }
-        // case mjGEOM_HFIELD:
-        //     break;
+        case mjGEOM_HFIELD:
+            // unimplemented
+            break;
         case mjGEOM_SPHERE: {
             shape = new osg::Sphere();
             ((osg::Sphere*)shape)->setRadius(size[0]);
@@ -243,7 +244,7 @@ osg::Node* createOSGNode(const mjModel* model, int i_geom) {
             ((osg::Capsule*)shape)->setHeight(2*size[1]);
             break;
         }
-        #if 0
+        #if PLOT_JOINTS
         case mjGEOM_ELLIPSOID: {
             osg::MatrixTransform* mt = new osg::MatrixTransform(osg::Matrix::scale(size[0], size[1], size[2]));
             osg::Sphere* sphere = new osg::Sphere();
@@ -251,7 +252,7 @@ osg::Node* createOSGNode(const mjModel* model, int i_geom) {
             osg::Geode* geode1 = new osg::Geode;
             geode1->addDrawable(new osg::ShapeDrawable(sphere));
             mt->addChild(geode1);
-            geode->addChild(mt);
+            // geode->addChild(mt);
             break;
         }
         #endif
@@ -295,7 +296,7 @@ osg::Node* createOSGNode(const mjModel* model, int i_geom) {
     osg::Geode* geode = new osg::Geode;
     osg::ShapeDrawable* drawable = new osg::ShapeDrawable(shape);
     float* p = model->geom_rgba + i_geom*4;
-    drawable->setColor(osg::Vec4(p[0],p[1],p[2],p[3]));
+    // drawable->setColor(osg::Vec4(p[0],p[1],p[2],p[3]));
     geode->addDrawable(drawable);
 
     return geode;
@@ -304,7 +305,7 @@ osg::Node* createOSGNode(const mjModel* model, int i_geom) {
 
 
 MujocoOSGViewer::MujocoOSGViewer()
-: m_data(NULL), m_model(NULL)
+: m_data(nullptr), m_model(nullptr)
 {
     m_root = new osg::Group;
     m_robot = new osg::Group;
@@ -327,7 +328,7 @@ MujocoOSGViewer::MujocoOSGViewer()
 }
 
 MujocoOSGViewer::MujocoOSGViewer(int width, int height, osg::Vec3 cam_pos, osg::Vec3 cam_target)
-: m_data(NULL), m_model(NULL)
+: m_data(nullptr), m_model(nullptr)
 {
     m_viewer.setThreadingModel(osgViewer::ViewerBase::SingleThreaded);
 
@@ -352,7 +353,7 @@ MujocoOSGViewer::MujocoOSGViewer(int width, int height, osg::Vec3 cam_pos, osg::
 }
 
 MujocoOSGViewer::MujocoOSGViewer(osg::Vec3 cam_pos, osg::Vec3 cam_target)
-: m_data(NULL), m_model(NULL){
+: m_data(nullptr), m_model(nullptr){
     m_viewer.setThreadingModel(osgViewer::ViewerBase::SingleThreaded);
 
     m_root = new osg::Group;
@@ -435,7 +436,7 @@ void MujocoOSGViewer::StopAsyncRendering() {
 
 void MujocoOSGViewer::SetModel(const mjModel* m) {
     m_model = m;
-    if (m_data!=NULL) mj_deleteData(m_data);
+    if (m_data!=nullptr) mj_deleteData(m_data);
     m_data = mj_makeData(m_model);
 
     m_geomTFs.clear();
@@ -456,12 +457,12 @@ void MujocoOSGViewer::SetModel(const mjModel* m) {
     m_axTFs.resize(m->njnt);
     for (int i=0; i < m->njnt; ++i) {
         if (m_model->jnt_type[i] == mjJNT_HINGE) {
-            printf("jnt type %i %i\n",i,m_model->jnt_type[i]);
+            // printf("jnt type %i %i\n",i,m_model->jnt_type[i]);
             osg::Cylinder* shape = new osg::Cylinder();
-            shape->setRadius(0.01);
-            shape->setHeight(0.3);
+            shape->setRadius(0.05);
+            shape->setHeight(0.5);
             osg::ShapeDrawable* drawable = new osg::ShapeDrawable(shape);
-            drawable->setColor(osg::Vec4(1,1,0,1));
+            // drawable->setColor(osg::Vec4(1,1,0,1));
             osg::Geode* geode = new osg::Geode;
             geode->addDrawable(drawable);
             osg::MatrixTransform* tf = new osg::MatrixTransform;
@@ -481,7 +482,7 @@ void MujocoOSGViewer::SetData(const mjData* d) {
 void NewModelFromXML(const char* filename,mjModel*& model) {
     char errmsg[100];
 #if MJC150
-    model = mj_loadXML(filename, NULL, errmsg, sizeof(errmsg));
+    model = mj_loadXML(filename, nullptr, errmsg, sizeof(errmsg));
 #else
     model = mj_loadXML(filename, errmsg);
 #endif

@@ -1,4 +1,5 @@
 #include <ros/ros.h>
+#include <memory>
 #include <sstream>
 #include <string.h>
 #include <ros/package.h>
@@ -49,16 +50,16 @@ int main(int argc, char** argv){
   	ss << chick_path.c_str() << "/models/superchick.mjcf";
   	std::string model_filename_c = ss.str();
 
-	mjOption* option;
 	mjModel* model;
 
 	char *model_filename = new char[model_filename_c.length() + 1];
+	// char* model_filename = std::make_shared<char> (new char[model_filename_c.length() + 1]);// no_except;
 	strcpy(model_filename, model_filename_c.c_str());
 
 	// activate software
 	boost::filesystem::path mjkey_file;
 	if(!pathfinder::getMujocoFile(mjkey_file))
-		printf("Ouch, I had problem reconciling the path variable with your dir structure. %s", 
+		printf("Ouch, I had problem reconciling the path variable with your dir structure. %s",
 			   "please ensure you have a Linux system. Darwin architectures are yet unsupported.");
 
 	mj_activate(mjkey_file.c_str());
@@ -81,6 +82,11 @@ int main(int argc, char** argv){
     	viewer.RenderOnce();
     	OpenThreads::Thread::microSleep(30000);
     }
+		//deallocate existing model
+		mj_deleteModel(model);
+		//deallocate existing mjData
+		mj_deleteData(data);
+    mj_deactivate();
 
     return EXIT_SUCCESS;
 }
