@@ -122,8 +122,7 @@ void makeCheckImage64x64x3( GLubyte img[64][64][3],
     }
 }
 
-osg::Image *createCheckImage()
-{
+osg::Image *createCheckImage(){
     osg::Image *img = new osg::Image;
     img->allocateImage( 64, 64, 3, GL_RGB, GL_UNSIGNED_BYTE );
 
@@ -353,8 +352,7 @@ MujocoOSGViewer::MujocoOSGViewer(int width, int height, osg::Vec3 cam_pos, osg::
 }
 
 MujocoOSGViewer::MujocoOSGViewer(osg::Vec3 cam_pos, osg::Vec3 cam_target)
-: m_data(NULL), m_model(NULL)
-{
+: m_data(NULL), m_model(NULL){
     m_viewer.setThreadingModel(osgViewer::ViewerBase::SingleThreaded);
 
     m_root = new osg::Group;

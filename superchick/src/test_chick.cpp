@@ -8,25 +8,20 @@
 #include <boost/tuple/tuple.hpp>
 #include "superchick/mujoco_osg_viewer.hpp"
 
-namespace pathfinder
-{
-	bool getROSPackagePath(const std::string pkgName, boost::filesystem::path & pkgPath)
-	{
+namespace pathfinder{
+	bool getROSPackagePath(const std::string pkgName, boost::filesystem::path & pkgPath)	{
 	    pkgPath = ros::package::getPath(pkgName);
-	    if (pkgPath.empty())
-	    {
+	    if (pkgPath.empty())	    {
 	        printf("Could not find package '%s' ", pkgName.c_str());
 	        return false;
 	    }
-	    else
-	    {
+	    else	    {
 	        printf("%s package found here: %s", pkgName.c_str(), pkgPath.c_str());
 	        return true;
 	    }
 	}
 
-	bool getMujocoFile(boost::filesystem::path & mujocoPath)
-	{
+	bool getMujocoFile(boost::filesystem::path & mujocoPath)	{
 		std::string const & user_name = std::getenv("USER");
 		std::string const& key_path = user_name + "/mujoco/mjpro150/mjkey.txt";
 
@@ -34,7 +29,6 @@ namespace pathfinder
 
 		return true;
 	}
-
 }
 
 
@@ -74,7 +68,7 @@ int main(int argc, char** argv){
 	delete[] model_filename;
 
 	if(!model)
-		ROS_WARN("Ouch! I had problem loading model %s there",  model_filename);
+		ROS_FATAL("Ouch! I had problem loading model %s there",  model_filename);
 
     MujocoOSGViewer viewer;
     viewer.SetModel(model);

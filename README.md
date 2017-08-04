@@ -2,23 +2,21 @@
 
 ### MUJOCO Plugin
 
-1. 	Install [openscene-grapgh](sudo apt-get install openscenegraph libopenscenegraph-dev).
+1. 	Install [openscene-graph](http://www.openscenegraph.org/): `sudo apt-get install openscenegraph libopenscenegraph-dev`.
 
-2. Then install [mujoco](https://www.roboti.us/index.html) (v1.50+) and put the downloaded mjpro150 folder in your home directory under a folder called `mujoco`. MuJoCo is a high-quality physics engine and requires requires a license. Obtain a key, which should be named mjkey.txt, and place the key into the mjpro150 directory.
+2. Install [mujoco](https://www.roboti.us/index.html) (v1.50+) and then put the downloaded mjpro150 folder in your home directory under a folder called mujoco. MuJoCo is a high-quality physics engine and requires a license to use. Obtain a key, which should be named mjkey.txt, and place the key into the mjpro150 directory.
 
-3. Compile the mujoco model viewer with catkin like so:
+3. Compile the mujoco model viewer with catkin: `catkin build`
 
-`catkin build`
+4. Visualize the model: `rosrun superchick chick_viewer`.
 
-4. Then visualize the model like so:
+	Below is an example of the scene in mjpro150:
 
-		```bash
-			rosrun superchick chick_viewer
-		```
+	<!-- ![mjpro_model](/superchick/config/mjmodel.jpg) -->
 
-	Below is an example of the scene in mjpro150
-
-	![mjpro_model](/superchick/config/mjmodel.jpg)
+	<div class="fig figcenter fighighlight">
+	  <img src="/superchick/config/mjmodel.jpg" height="75%" width="70%" align="middle" style="border-left: 1px solid black;" />
+	</div>
 
 ### Superchicko Rviz Plugin
 
