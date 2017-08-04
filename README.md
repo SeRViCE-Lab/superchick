@@ -1,4 +1,4 @@
-### This is the mujoco bindings to the osrf ros code from last year
+<!-- ### This is the mujoco binding to the osrf ros code from 2016 -->
 
 ### MUJOCO Plugin
 

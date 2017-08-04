@@ -224,7 +224,8 @@ osg::Node* createGroundPlane(){
 
 osg::Node* createOSGNode(const mjModel* model, int i_geom) {
     int geom = model->geom_type[i_geom];
-    mjtNum* size = model->geom_size + 3*i_geom;
+    mjtNum* size = model->geom_size + 3*i_geom;  // i_geom will be 12 in size
+    // std::cout<< "size: " << size[i_geom] << " i_geom " << i_geom << "\n";
     osg::Shape* shape = nullptr;
     switch (geom) {
         case mjGEOM_PLANE: {
@@ -248,11 +249,13 @@ osg::Node* createOSGNode(const mjModel* model, int i_geom) {
         case mjGEOM_ELLIPSOID: {
             osg::MatrixTransform* mt = new osg::MatrixTransform(osg::Matrix::scale(size[0], size[1], size[2]));
             osg::Sphere* sphere = new osg::Sphere();
-            sphere->setRadius(1);
+            sphere->setRadius(2);
             osg::Geode* geode1 = new osg::Geode;
-            geode1->addDrawable(new osg::ShapeDrawable(sphere));
+            osg::ShapeDrawable* sphereDrawable = new osg::ShapeDrawable(sphere);
+            sphereDrawable->setColor( osg::Vec4(1.0, 1.0, 0, 1.0) );
+            geode1->addDrawable(sphereDrawable);
             mt->addChild(geode1);
-            // geode->addChild(mt);
+            // geode1->addChild(mt);
             break;
         }
         #endif
@@ -296,7 +299,7 @@ osg::Node* createOSGNode(const mjModel* model, int i_geom) {
     osg::Geode* geode = new osg::Geode;
     osg::ShapeDrawable* drawable = new osg::ShapeDrawable(shape);
     float* p = model->geom_rgba + i_geom*4;
-    // drawable->setColor(osg::Vec4(p[0],p[1],p[2],p[3]));
+    drawable->setColor(osg::Vec4(p[0],p[1],p[2],p[3]));
     geode->addDrawable(drawable);
 
     return geode;
