@@ -1,0 +1,33 @@
+# -*- coding: utf-8 -*-
+"""
+Step 5: Adding a controller.
+The controller will connect user actions to the simulated behaviour.
+"""
+from stlib.scene import Scene, Interaction
+from tripod import Tripod
+
+"""
+The controller is implemented in this file: tripodcontroller.py
+"""
+from tripodcontroller import MyController
+
+
+def createScene(rootNode):
+    scene = Scene(rootNode, gravity=[0.0, -9810, 0.0])
+    rootNode.dt = 0.01
+    scene.VisualStyle.displayFlags = "showBehavior"
+
+    scene.createObject("FreeMotionAnimationLoop")
+    scene.createObject("GenericConstraintSolver", maxIterations=1e3, tolerance=1e-5)
+
+    scene.createObject("MeshSTLLoader", name="loader", filename="data/mesh/blueprint.stl")
+    scene.createObject("OglModel", src="@loader")
+
+    model = scene.createChild("Model")
+    tripod = Tripod(model)
+
+    MyController(rootNode, tripod.actuatedarms)
+
+    Interaction(rootNode, targets=[tripod.ActuatedArm0,
+                                   tripod.ActuatedArm1,
+                                   tripod.ActuatedArm2])

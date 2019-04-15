@@ -1,0 +1,37 @@
+BeginZE /home/lex/Documents/IAB8/compoz/slab-new.gid/slab-new.vv
+   x -21.9583778381347656 36.9583778381347656
+   y 37.4130058288574219 -2.41300582885742188
+   z -59.7390174865722656 59.7390174865722656
+   e 19.9130058288574219
+   v 0.138641075880162917 -0.11337295795109327 -0.183658927474447925
+   r 0.96653743995933572
+   m 0.906831920146942139 0.32359015941619873 -0.270083755254745483 0 -0.386462748050689697 0.894096076488494873 -0.226359665393829346 0 0.168233081698417664 0.309647500514984131 0.935850441455841064 0 0 0 0 1
+   c 7.5 17.5 0
+   pd 0
+   pno 0
+   pfo 0
+   pf 4
+   pv 0
+   NowUse 1
+   DrawingType 0
+   LightVector 90 90 150 0
+   OGLShadow(UseShadows) 0
+   OGLShadow(RenderMode) RenderNice
+   OGLShadow(ShadowBias) -0.002
+   OGLShadow(AmbientShadows) 1
+   OGLShadow(UseFBO) 1
+   OGLShadow(FBOSize) 2048
+   OGLShadow(DimmedLightFactor) 0.02
+   OGLStereo(UseStereo) 0
+   OGLStereo(RelativeEyeDistance) 1
+   OGLStereo(FlipEyes) 0
+   OGLStereo(StereoMode) AnaglyphColors
+   OGLStereo(EyeDistance) 0.075
+   OGLStereo(LeftEyeDistance) 1 0 0 1
+   OGLStereo(RightEyeDistance) 0 1 1 1
+EndZE /home/lex/Documents/IAB8/compoz/slab-new.gid/slab-new.vv
+
+BeginMirror
+   Mirror 0 Angle 0.0 AngleFake -15.0 SizeFactor 2.0 HeightOffset 0.25 Color #d9e5f24d Backlight Off EdgeStyle No Type Scene DrawMode Mirror
+EndMirror
+
