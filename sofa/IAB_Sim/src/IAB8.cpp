@@ -133,7 +133,7 @@ void addGUIParameters(ArgumentParser* argumentParser)
 int main(int argc, char** argv)
 {
     // Add resources dir to GuiDataRepository
-    const std::string runSofaIniFilePath = Utils::getSofaPathTo("/etc/runSofa.ini");
+    const std::string runSofaIniFilePath = Utils::getSofaPathTo("imports/runSofa.ini");
     std::map<std::string, std::string> iniFileValues = Utils::readBasicIniFile(runSofaIniFilePath);
     if (iniFileValues.find("RESOURCES_DIR") != iniFileValues.end())
     {
@@ -151,27 +151,6 @@ int main(int argc, char** argv)
     sofa::helper::BackTrace::autodump();
 
     ExecParams::defaultInstance()->setAspectID(0);
-
-#ifdef WIN32
-    {
-        HANDLE hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
-        COORD s;
-        s.X = 160; s.Y = 10000;
-        SetConsoleScreenBufferSize(hStdout, s);
-        CONSOLE_SCREEN_BUFFER_INFO csbi;
-        if (GetConsoleScreenBufferInfo(hStdout, &csbi))
-        {
-            SMALL_RECT winfo;
-            winfo = csbi.srWindow;
-            //winfo.Top = 0;
-            winfo.Left = 0;
-            //winfo.Bottom = csbi.dwSize.Y-1;
-            winfo.Right = csbi.dwMaximumWindowSize.X-1;
-            SetConsoleWindowInfo(hStdout, TRUE, &winfo);
-        }
-
-    }
-#endif
 
     sofa::gui::initMain();
 
@@ -332,9 +311,9 @@ int main(int argc, char** argv)
     MessageDispatcher::addHandler(&MainPerComponentLoggingMessageHandler::getInstance()) ;
 
     // Output FileRepositories
-    msg_info("runSofa") << "PluginRepository paths = " << PluginRepository.getPathsJoined();
-    msg_info("runSofa") << "DataRepository paths = " << DataRepository.getPathsJoined();
-    msg_info("runSofa") << "GuiDataRepository paths = " << GuiDataRepository.getPathsJoined();
+    msg_info("IAB") << "PluginRepository paths = " << PluginRepository.getPathsJoined();
+    msg_info("IAB") << "DataRepository paths = " << DataRepository.getPathsJoined();
+    msg_info("IAB") << "GuiDataRepository paths = " << GuiDataRepository.getPathsJoined();
 
     // Initialise paths
     BaseGUI::setConfigDirectoryPath(Utils::getSofaPathPrefix() + "/config", true);
@@ -353,19 +332,19 @@ int main(int argc, char** argv)
     {
         if (PluginRepository.findFile(configPluginPath, "", nullptr))
         {
-            msg_info("runSofa") << "Loading automatically plugin list in " << configPluginPath;
+            msg_info("IAB") << "Loading automatically plugin list in " << configPluginPath;
             PluginManager::getInstance().readFromIniFile(configPluginPath);
         }
         else if (PluginRepository.findFile(defaultConfigPluginPath, "", nullptr))
         {
-            msg_info("runSofa") << "Loading automatically plugin list in " << defaultConfigPluginPath;
+            msg_info("IAB") << "Loading automatically plugin list in " << defaultConfigPluginPath;
             PluginManager::getInstance().readFromIniFile(defaultConfigPluginPath);
         }
         else
-            msg_info("runSofa") << "No plugin list found. No plugin will be automatically loaded.";
+            msg_info("IAB") << "No plugin list found. No plugin will be automatically loaded.";
     }
     else
-        msg_info("runSofa") << "Automatic plugin loading disabled.";
+        msg_info("IAB") << "Automatic plugin loading disabled.";
 
     PluginManager::getInstance().init();
 
