@@ -77,10 +77,6 @@ using  sofa::helper::logging::MainPerComponentLoggingMessageHandler ;
 
 #include <sofa/helper/AdvancedTimer.h>
 
-#ifdef WIN32
-#include <windows.h>
-#endif
-
 #define BOOST_NO_CXX11_SCOPED_ENUMS
 #include <boost/filesystem.hpp>
 #undef BOOST_NO_CXX11_SCOPED_ENUMS
@@ -141,9 +137,9 @@ bool pathToSofaBuild(boost::filesystem::path&& SofaInstallPath,
   // SofaInstallPath = cwd + "/../../../../../sofa/master/build/install/";
   // SofaBuildPath   = cwd + "/../../../../../sofa/master/build/";
   #ifdef __linux__
-    std::string sofa_path = "/Users/olalekanogunmolu/sofa/v18.06";
+    std::string sofa_path = "/home/lex/sofa/v18.06";
   #elif __APPLE__
-    auto sofa_path = "/home/lex/sofa/master";
+    auto sofa_path = "/Users/olalekanogunmolu/sofa/master";
   #else
     std::cout << "Unknown compiler" << std::endl;
   #endif
@@ -166,18 +162,19 @@ int main(int argc, char** argv)
                        }
 
     // Add resources dir to GuiDataRepository
-    auto runSofaIniFilePath = SofaInstallPath / "share/sofa/gui/qt";
-    auto dir = SofaInstallPath / "share/sofa/gui/qt/";
+    // auto runSofaIniFilePath = SofaInstallPath / "share/sofa/gui/qt";
+    auto dir = SofaInstallPath / "share/sofa"; //
     if(FileSystem::isDirectory(dir.string()))
     {
         sofa::gui::GuiDataRepository.addFirstPath(dir.string());
+        // sofa::gui::GuiDataRepository.addFirstPath(dir);
     }
 
     msg_info("dir ") << dir.string() ;
     // msg_info("SofaInstallPath ") << SofaInstallPath.string() ;
 
     // Force add plugins dir to PluginRepository (even if not existing)
-    PluginRepository.addFirstPath(SofaBuildPath.string() + "/plugins");
+    // PluginRepository.addFirstPath(SofaBuildPath.string() + "/plugins");
     PluginRepository.addFirstPath(SofaBuildPath.string() + "/lib");
 
     sofa::helper::BackTrace::autodump();
@@ -349,7 +346,7 @@ int main(int argc, char** argv)
 
     // Initialise paths
     BaseGUI::setConfigDirectoryPath(SofaBuildPath.string() + "/config", true);
-    BaseGUI::setScreenshotDirectoryPath(SofaBuildPath.string()  + "/screenshots", true);
+    BaseGUI::setScreenshotDirectoryPath(SetDirectory::GetCurrentDir() +  "/screenshots", true);
 
     if (!files.empty())
         fileName = files[0];
@@ -359,6 +356,8 @@ int main(int argc, char** argv)
       // std::cout << " plugins [" << i << "] " << plugins[i] << "\n";
       PluginManager::getInstance().loadPlugin(plugins[i]);
     }
+
+    // msg_info("IAB") << "plugins " << plugins[0];
 
     std::string configPluginPath = TOSTRING(CONFIG_PLUGIN_FILENAME);
     std::string defaultConfigPluginPath = TOSTRING(DEFAULT_CONFIG_PLUGIN_FILENAME);
@@ -386,22 +385,9 @@ int main(int argc, char** argv)
     if (int err = GUIManager::Init(argv[0],gui.c_str()))
         return err;
 
-    const std::string cwd = SetDirectory::GetCurrentDir();
-
     if (fileName.empty())
     {
-        if (loadRecent) // try to reload the latest scene
-        {
-            string scenes = BaseGUI::getConfigDirectoryPath() + "/runSofa.ini";
-            std::ifstream mrulist(scenes.c_str());
-            std::getline(mrulist,fileName);
-            mrulist.close();
-        }
-        else
-            // fileName = SofaInstallPath.string()+ "/share/sofa/examples/Demos/caduceus.scn";
-            fileName = cwd + "../";
-
-        fileName = DataRepository.getFile(fileName);
+        fileName = DataRepository.getFile(SetDirectory::GetCurrentDir() + "/../src/head-iab.scn");
     }
 
 

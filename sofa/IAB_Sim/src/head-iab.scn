@@ -14,7 +14,7 @@
     <SpotLight name="light2" color="1 1 1" position="0 40 100" direction="0 0 -1" cutoff="30" exponent="1" />
 
     <CollisionResponse name="Response" response="FrictionContact" />
-    <Node name="Snake" >
+    <Node name="Human" >
 
         <SparseGridRamification name="grid" n="4 12 3" fileTopology="../../IAB8/compoz/full-phantom.obj" nbVirtualFinerLevels="3" finestConnectivity="0"/>
 
@@ -40,19 +40,20 @@
             <BarycentricMapping input="@.." output="@VisualBody" />
         </Node>
 
-        <!-- <Node name="VisuCornea" tags="Visual" >
-            <OglModel  name="VisualCornea" fileMesh="mesh/snake_cornea.obj"   />
+        <Node name="VisuCornea" tags="Visual" >
+            <OglModel  name="VisualCornea" fileMesh="../../IAB8/compoz/full-phantom.obj"   />
             <BarycentricMapping input="@.." output="@VisualCornea" />
         </Node>
 
         <Node name="VisuEye" tags="Visual" >
-            <OglModel  name="VisualEye" fileMesh="mesh/snake_yellowEye.obj"   />
+            <OglModel  name="VisualEye" fileMesh="../../IAB8/compoz/full-phantom.obj"   />
             <BarycentricMapping input="@.." output="@VisualEye" />
-        </Node>-->
+        </Node>
     </Node>
 
+<!--
     <Node name="Base" >
-        <!-- <Node name="Stick">
+       <Node name="Stick">
                  <MeshObjLoader name="loader" filename="mesh/collision_batons.obj" />
                  <Mesh src="@loader" />
                  <MechanicalObject src="@loader" name="CollisModel" />
@@ -79,6 +80,6 @@
 
         <!-- <Node name="Visu" tags="Visual" >
             <OglModel  name="OglModel" fileMesh="mesh/SOFA_pod.obj" />
-        </Node> -->
-    </Node>
+        </Node>
+    </Node>-->
 </Node>
