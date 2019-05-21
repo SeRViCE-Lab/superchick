@@ -140,9 +140,15 @@ bool pathToSofaBuild(boost::filesystem::path&& SofaInstallPath,
 
   // SofaInstallPath = cwd + "/../../../../../sofa/master/build/install/";
   // SofaBuildPath   = cwd + "/../../../../../sofa/master/build/";
-
-  SofaInstallPath = "/Users/olalekanogunmolu/sofa/master/build/install/";
-  SofaBuildPath   = "/Users/olalekanogunmolu/sofa/master/build/";
+  #ifdef __linux__
+    std::string sofa_path = "/Users/olalekanogunmolu/sofa/v18.06";
+  #elif __APPLE__
+    auto sofa_path = "/home/lex/sofa/master";
+  #else
+    std::cout << "Unknown compiler" << std::endl;
+  #endif
+  SofaInstallPath = sofa_path + "/build/install/";
+  SofaBuildPath   = sofa_path + "/build";
 
   return true;
 }
@@ -381,7 +387,7 @@ int main(int argc, char** argv)
         return err;
 
     const std::string cwd = SetDirectory::GetCurrentDir();
-    
+
     if (fileName.empty())
     {
         if (loadRecent) // try to reload the latest scene
@@ -393,7 +399,7 @@ int main(int argc, char** argv)
         }
         else
             // fileName = SofaInstallPath.string()+ "/share/sofa/examples/Demos/caduceus.scn";
-            fileName = cwd + "../"
+            fileName = cwd + "../";
 
         fileName = DataRepository.getFile(fileName);
     }
