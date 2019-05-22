@@ -1,0 +1,10 @@
+<Node name="LegLongNode">
+  <MeshSTLLoader name="leg_long_loader" filename="../meshes/leg_base_long.stl"/>
+    <Mesh name="leg_long_mesh" src="@leg_long_loader"/>
+    <MechanicalObject name="leg_long-states" src="@leg_long_loader" />
+    <TetrahedronSetTopologyContainer name="LongLegTetra" src="@leg_long_loader" />
+    <TetrahedronSetGeometryAlgorithms name="LongLegAlgos" template="Vec3d"  drawTetrahedra="1"/>
+    <OglModel name="LegLongVisu" position="@leg_long_loader.position"
+              vertices="@leg_long_loader.position" normal="@leg_long_loader.normals"
+              triangles="@leg_long_loader.triangles" color="gray" />
+</Node>

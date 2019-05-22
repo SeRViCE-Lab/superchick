@@ -1,0 +1,10 @@
+<Node name="SpringNode">
+  <MeshSTLLoader name="spring_loader" filename="../meshes/springs.stl"/>
+    <Mesh name="spring_mesh" src="@spring_loader"/>
+    <MechanicalObject name="spring-states" src="@spring_loader" />
+    <TetrahedronSetTopologyContainer name="SpringTetra" src="@spring_loader" />
+    <TetrahedronSetGeometryAlgorithms name="SpringAlgos" template="Vec3d"  drawTetrahedra="1"/>
+    <OglModel name="SpringVisu" position="@spring_loader.position"
+              vertices="@spring_loader.position" normal="@spring_loader.normals"
+              triangles="@spring_loader.triangles" color="yellow" />
+</Node>

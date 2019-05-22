@@ -4,7 +4,7 @@
 # compile CXX with /usr/bin/c++
 CXX_FLAGS =   -std=c++14 -DGTEST_LINKED_AS_SHARED_LIBRARY=1 -fPIC -std=gnu++11
 
-CXX_DEFINES = -DCONFIG_PLUGIN_FILENAME=/home/lex/sofa/v18.06/build/lib/plugin_list.conf -DDEFAULT_CONFIG_PLUGIN_FILENAME=/home/lex/sofa/v18.06/build/lib/plugin_list.conf.default -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NO_DEBUG -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB -DUSING_DOUBLE -Duse_namespace
+CXX_DEFINES = -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NO_DEBUG -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB -DUSING_DOUBLE -Duse_namespace
 
 CXX_INCLUDES = -isystem /home/lex/sofa/v18.06/build/install/include -isystem /home/lex/anaconda3/include/qt -isystem /home/lex/anaconda3/include/qt/QtCore -isystem /home/lex/anaconda3/./mkspecs/linux-g++ -isystem /home/lex/anaconda3/include/qt/QtWidgets -isystem /home/lex/anaconda3/include/qt/QtGui -isystem /home/lex/anaconda3/include/qt/QtOpenGL -isystem /home/lex/anaconda3/include/qt/QtXml -isystem /usr/include/python2.7 
 

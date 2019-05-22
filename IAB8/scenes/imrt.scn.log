@@ -1,0 +1,15 @@
+
+--- NEW SESSION: 22/05/2019 16:18:57 ---
+/visualStyle1.displayFlags = showAll hideAdvancedRendering showWireframe hideNormals
+/visualStyle1.displayFlags = showAll hideOptions
+/visualStyle1.displayFlags = showAll hideOptions
+
+--- NEW SESSION: 22/05/2019 16:49:51 ---
+/Sphere/SphereNode/SpherePoints.drawColorEdges = 0.4 1 0.298039 1
+/Sphere/SphereNode/SpherePoints.drawColorTriangles = 0.298039 0.498039 0.8 1
+/Sphere/SphereNode/SpherePoints.drawColorTetrahedra = 1 1 0 1
+
+--- NEW SESSION: 22/05/2019 17:42:59 ---
+/Sphere/SphereNode/SpherePoints.drawColorEdges = 0.4 1 0.298039 1
+/Sphere/SphereNode/SpherePoints.drawColorTriangles = 0.298039 0.498039 0.8 1
+/Sphere/SphereNode/SpherePoints.drawColorTetrahedra = 1 1 0 1

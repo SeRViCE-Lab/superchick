@@ -46,21 +46,21 @@ include_directories("${CMAKE_INSTALL_PREFIX}/include")
 set(SOFA_LIBS_DIR "${CMAKE_INSTALL_PREFIX}/lib")
 link_directories(${SOFA_LIBS_DIR})
 
-# message(STATUS "Boost Libraries: ${Boost_LIBRARIES}")
-# message(STATUS "Boost_LIBRARY_DIRS: ${Boost_LIBRARY_DIRS}")
-# message(STATUS "Boost Includes: ${Boost_INCLUDE_DIRS}")
+set(SOFA_LIBS SofaComponentAdvanced
+							SofaComponentMisc
+							SofaSimulationGraph
+							SofaGuiMain
+							SofaMiscCollision
+							SofaPython
+							SofaSparseSolver
+							SofaPreconditioner)
 
 add_executable(${PROJECT_NAME} src/IAB8.cpp)
+# add_executable(simple_iab 2src/IABSimple.cpp)
 
 target_compile_definitions(${PROJECT_NAME} PUBLIC "CONFIG_PLUGIN_FILENAME=${_configPluginFileName}")
 target_compile_definitions(${PROJECT_NAME} PUBLIC "DEFAULT_CONFIG_PLUGIN_FILENAME=${_defaultConfigPluginFileName}")
 
-target_link_libraries(${PROJECT_NAME} SofaComponentAdvanced
-																			SofaComponentMisc
-																			SofaSimulationGraph
-																			SofaGuiMain
-																			SofaMiscCollision
-																			SofaPython
-																			SofaSparseSolver
-																			SofaPreconditioner
+target_link_libraries(${PROJECT_NAME} ${SOFA_LIBS}
 																			${Boost_FILESYSTEM_LIBRARY})
+# target_link_libraries(simple_iab ${SOFA_LIBS})

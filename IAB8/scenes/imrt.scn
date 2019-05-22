@@ -1,0 +1,35 @@
+<?xml version="1.0" ?>
+<Node name="IMRT" gravity="0 -9.81 0" dt="0.04">
+  <VisualStyle displayFlags="showVisual showBehavior
+               showCollision hideOptions showMapping" />
+  <DefaultPipeline name="DefaultCollisionPipeline" verbose="0" draw="0" depth="6" />
+  <BruteForceDetection name="Detection" />
+  <MinProximityIntersection name="Proximity" alarmDistance="0.3" contactDistance="0.2" />
+  <DefaultContactManager name="Response" response="default" />
+  <!-- <TreeCollisionGroupManager name="Group" /> -->
+
+  <Node name="Sphere">
+    <include href="sphere.scn" />
+  </Node>
+
+  <Node name="TableStand">
+    <include href="table_stand.scn" />
+  </Node>
+
+  <Node name="LongLeg">
+    <include href="long_leg.scn" />
+  </Node>
+
+  <Node name="ShortLeg">
+    <include href="short_leg.scn" />
+  </Node>
+
+  <Node name="Human">
+    <include href="human.scn" />
+  </Node>
+
+  <Node name="Springs">
+    <include href="springs.scn" />
+  </Node>
+
+</Node>

@@ -155,7 +155,14 @@ int main(int argc, char** argv)
       {msg_info(" ") << "could not load the paths";}
 
     // Add resources dir to GuiDataRepository
-    auto dir = SofaInstallPath / "share/sofa/gui/runSofa/";
+    #ifdef __linux__
+      auto dir = SofaInstallPath / "share/sofa/gui/qt";
+    #elif __APPLE__
+      auto dir = SofaInstallPath / "share/sofa/gui/runSofa/";
+    #else
+      std::cout << "unknown dir path" << "\n";
+    #endif
+
     if(FileSystem::isDirectory(dir.string()))
     {
         sofa::gui::GuiDataRepository.addFirstPath(dir.string());
@@ -373,7 +380,7 @@ int main(int argc, char** argv)
 
     if (fileName.empty())
     {
-        fileName = DataRepository.getFile(SetDirectory::GetCurrentDir() + "/../scenes/head-iab.scn");
+        fileName = DataRepository.getFile(SetDirectory::GetCurrentDir() + "/../scenes/imrt.scn");
     }
 
 

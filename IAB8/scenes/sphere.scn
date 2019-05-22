@@ -1,0 +1,10 @@
+<Node name="SphereNode">
+  <MeshVTKLoader name="sphere_loader" filename="../meshes/sphere.vtk"/>
+    <Mesh name="sphere_mesh" src="@sphere_loader"/>
+    <MechanicalObject name="spherical-states" src="@sphere_loader" />
+    <TetrahedronSetTopologyContainer name="SphereTetra" src="@sphere_loader" />
+    <TetrahedronSetGeometryAlgorithms name="SpherePoints" template="Vec3d"  drawTetrahedra="1"/>
+    <OglModel name="SphereVisu" position="@sphere_loader.position"
+              vertices="@sphere_loader.position" normal="@sphere_loader.normals"
+              triangles="@sphere_loader.triangles" color="gray" />
+</Node>

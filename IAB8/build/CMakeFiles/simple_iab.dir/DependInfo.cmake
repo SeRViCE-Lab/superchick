@@ -4,14 +4,12 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
-  "/home/lex/Documents/superchicko/IAB8/src/IAB8.cpp" "/home/lex/Documents/superchicko/IAB8/build/CMakeFiles/IAB8.dir/src/IAB8.cpp.o"
+  "/home/lex/Documents/superchicko/IAB8/src/IABSimple.cpp" "/home/lex/Documents/superchicko/IAB8/build/CMakeFiles/simple_iab.dir/src/IABSimple.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 
 # Preprocessor definitions for this target.
 set(CMAKE_TARGET_DEFINITIONS_CXX
-  "CONFIG_PLUGIN_FILENAME=/home/lex/sofa/v18.06/build/lib/plugin_list.conf"
-  "DEFAULT_CONFIG_PLUGIN_FILENAME=/home/lex/sofa/v18.06/build/lib/plugin_list.conf.default"
   "NDEBUG"
   "QT_CORE_LIB"
   "QT_GUI_LIB"
