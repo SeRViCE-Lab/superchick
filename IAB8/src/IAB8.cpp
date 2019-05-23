@@ -158,7 +158,8 @@ int main(int argc, char** argv)
     #ifdef __linux__
       auto dir = SofaInstallPath / "share/sofa/gui/qt";
     #elif __APPLE__
-      auto dir = SofaInstallPath / "share/sofa/gui/runSofa/";
+      // auto dir = SofaInstallPath / "share/sofa/gui/runSofa/";
+      auto dir = SofaInstallPath / "share/sofa/gui/qt/"; // /runSofa/";
     #else
       std::cout << "unknown dir path" << "\n";
     #endif
