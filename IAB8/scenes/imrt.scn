@@ -2,34 +2,49 @@
 <Node name="IMRT" gravity="0 -9.81 0" dt="0.04">
   <VisualStyle displayFlags="showVisual showBehavior
                showCollision hideOptions showMapping" />
-  <DefaultPipeline name="DefaultCollisionPipeline" verbose="0" draw="0" depth="6" />
-  <BruteForceDetection name="Detection" />
-  <MinProximityIntersection name="Proximity" alarmDistance="0.3" contactDistance="0.2" />
-  <DefaultContactManager name="Response" response="default" />
-  <!-- <TreeCollisionGroupManager name="Group" /> -->
+  <LCPConstraintSolver name="lCPConstraintSolver"  printLog="0"
+                      initial_guess="0"  build_lcp="0"  tolerance="0.001"
+                      maxIt="1000"  mu="0.2"  group="0" />
+  <FreeMotionAnimationLoop name="freeMotionAnimationLoop" />
+  <DefaultPipeline name="DefaultCollisionPipeline" verbose="0" draw="0" depth="15" />
+  <BruteForceDetection name="ForceDetection" />
+  <MinProximityIntersection name="Proximity" alarmDistance="0.02" contactDistance="0.02" />
+  <LightManager name="lightManager"  listening="1" />
+	<SpotLight name="light1"  color="1 1 1"  position="0 80 25"  direction="0 -1 -0.8"  cutoff="30"  exponent="1" />
+	<!-- <SpotLight name="light2"  color="1 1 1"  position="0 40 100"  direction="0 0 -1"  cutoff="30"  exponent="1" />
+	<VisualManagerPass name="visualManagerPass0"  tags="Visu"  listening="1" />
+	<DefaultContactManager name="Response"  response="FrictionContact" />
+  <CompositingVisualLoop name="compositingVisualLoop3" />
+  <OglShader name="oglShader0"  tags="Visu"  fileVertexShader="shaders/phong.vert"  fileFragmentShader="shaders/phong.frag" /> -->
 
-  <Node name="Sphere">
-    <include href="sphere.scn" />
-  </Node>
+  <!-- <CollisionPipeline verbose="0" />
+  <CollisionResponse response="default" /> -->
+  <!-- <Node name="Sphere">
+    <include href="sphere.scn" scale="5" rx="-45" ry="15" dz="15"/>
+  </Node> -->
 
-  <Node name="TableStand">
+  <!-- <Node name="TableStand">
     <include href="table_stand.scn" />
-  </Node>
+  </Node> -->
 
+  <Node name="TableCushions">
+    <include href="table_cushion.scn" scale=".05" rx="0" ry="0" dz="0" />
+  </Node>
+<!--
   <Node name="LongLeg">
-    <include href="long_leg.scn" />
+    <include href="long_leg.scn" scale=".05" rx="15" ry="5" dz="5"/>
   </Node>
 
   <Node name="ShortLeg">
     <include href="short_leg.scn" />
-  </Node>
-
+  </Node> -->
+<!--
   <Node name="Human">
     <include href="human.scn" />
   </Node>
 
   <Node name="Springs">
     <include href="springs.scn" />
-  </Node>
+  </Node> -->
 
 </Node>

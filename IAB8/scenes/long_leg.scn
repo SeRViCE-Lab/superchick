@@ -4,7 +4,7 @@
     <MechanicalObject name="leg_long-states" src="@leg_long_loader" />
     <TetrahedronSetTopologyContainer name="LongLegTetra" src="@leg_long_loader" />
     <TetrahedronSetGeometryAlgorithms name="LongLegAlgos" template="Vec3d"  drawTetrahedra="1"/>
-    <OglModel name="LegLongVisu" position="@leg_long_loader.position"
+    <OglModel name="LegLongVisu" position="-25 5"
               vertices="@leg_long_loader.position" normal="@leg_long_loader.normals"
-              triangles="@leg_long_loader.triangles" color="gray" />
+              triangles="@leg_long_loader.triangles" color="green" />
 </Node>

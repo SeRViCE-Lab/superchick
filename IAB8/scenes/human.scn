@@ -1,10 +1,7 @@
 <Node name="HumanNode">
   <MeshObjLoader name="human_loader" filename="../meshes/human.obj"/>
-    <Mesh name="human_mesh" src="@human_loader"/>
     <MechanicalObject name="human-states" src="@human_loader" />
     <TetrahedronSetTopologyContainer name="HumanTetra" src="@human_loader" />
     <TetrahedronSetGeometryAlgorithms name="HumanAlgos" template="Vec3d"  drawTetrahedra="1"/>
-    <OglModel name="HumanVisu" position="@human_loader.position"
-              vertices="@human_loader.position" normal="@human_loader.normals"
-              triangles="@human_loader.triangles" color="yellow" />
+    <OglModel name="HumanVisu" src="@human_loader" position="@human_loader.position" color="red" />
 </Node>

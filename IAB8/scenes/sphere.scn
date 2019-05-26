@@ -4,7 +4,5 @@
     <MechanicalObject name="spherical-states" src="@sphere_loader" />
     <TetrahedronSetTopologyContainer name="SphereTetra" src="@sphere_loader" />
     <TetrahedronSetGeometryAlgorithms name="SpherePoints" template="Vec3d"  drawTetrahedra="1"/>
-    <OglModel name="SphereVisu" position="@sphere_loader.position"
-              vertices="@sphere_loader.position" normal="@sphere_loader.normals"
-              triangles="@sphere_loader.triangles" color="gray" />
+    <OglModel name="SphereVisu" src="@sphere_loader" translation="8 0 0"  color="gray" />
 </Node>

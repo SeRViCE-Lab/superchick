@@ -4,7 +4,7 @@
     <MechanicalObject name="spring-states" src="@spring_loader" />
     <TetrahedronSetTopologyContainer name="SpringTetra" src="@spring_loader" />
     <TetrahedronSetGeometryAlgorithms name="SpringAlgos" template="Vec3d"  drawTetrahedra="1"/>
-    <OglModel name="SpringVisu" position="@spring_loader.position"
+    <OglModel name="SpringVisu" position="15 -15"
               vertices="@spring_loader.position" normal="@spring_loader.normals"
               triangles="@spring_loader.triangles" color="yellow" />
 </Node>

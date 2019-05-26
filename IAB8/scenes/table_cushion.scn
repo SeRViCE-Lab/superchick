@@ -1,0 +1,9 @@
+<!-- Leg stand -->
+<Node name="BaseBlock">
+  <MeshObjLoader name="table-cushion-loader" filename="../meshes/table_cushions.obj"/>
+    <Mesh name="table-cushion-mesh" src="@table-cushion-loader"/>
+    <MechanicalObject name="table-cushion-states" src="@table-cushion-loader" />
+    <TetrahedronSetTopologyContainer name="tableStandTetra" src="@table-cushion-loader" />
+    <TetrahedronSetGeometryAlgorithms name="tableStandAlgos" template="Vec3d"  drawTetrahedra="1"/>
+    <OglModel name="BaseVisu" translation="0 0 0" color="brown" />
+</Node>
