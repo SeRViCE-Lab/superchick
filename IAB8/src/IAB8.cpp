@@ -157,6 +157,7 @@ int main(int argc, char** argv)
     // Add resources dir to GuiDataRepository
     #ifdef __linux__
       auto dir = SofaInstallPath / "share/sofa/gui/qt";
+      // dir =  dir  ;  SofaInstallPath / "share/sofa";  // for shaders
     #elif __APPLE__
       // auto dir = SofaInstallPath / "share/sofa/gui/runSofa/";
       auto dir = SofaInstallPath / "share/sofa/gui/qt/"; // /runSofa/";
