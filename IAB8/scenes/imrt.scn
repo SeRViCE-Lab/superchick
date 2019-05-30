@@ -2,82 +2,62 @@
 <Node name="IMRT" gravity="0 -9.81 0" dt="0.04">
   <VisualStyle displayFlags="showVisual showBehavior
                showCollision hideOptions showMapping" />
-  <LCPConstraintSolver name="lCPConstraintSolver"  printLog="0"
-                      initial_guess="0"  build_lcp="0"  tolerance="0.001"
-                      maxIt="1000"  mu="0.2"  group="0" />
-  <FreeMotionAnimationLoop name="freeMotionAnimationLoop" />
   <DefaultPipeline name="DefaultCollisionPipeline" verbose="0" draw="0" depth="15" />
   <BruteForceDetection name="ForceDetection" />
   <MinProximityIntersection name="Proximity" alarmDistance="0.02" contactDistance="0.02" />
+  <CollisionResponse name="Response" response="default" />
   <LightManager name="lightManager"  listening="1" />
   <SpotLight name="light1" color="1 0 0" position="0.5 0.7 2" cutoff="25" exponent="1" />
-  <PositionalLight name="light2" color="0 1 0" attenuation="0.1" position="0.5 -1.7 2" />
-  <DirectionalLight name="light2" color="0.1 0.3 0.6" direction=".4 .4 .9" />
+  <PositionalLight name="lightpos" color="0 1 0" attenuation="0.1" position="0.5 -1.7 2" />
+  <DirectionalLight name="lightdir" color="0.1 0.3 0.6" direction=".4 .4 .9" />
   <VisualManagerPass name="visualManagerPass0"  tags="Visu"  listening="1" />
-	<DefaultContactManager name="Response"  response="FrictionContact" />
+	<DefaultContactManager name="DefaultResponse"  response="FrictionContact" />
   <CompositingVisualLoop name="compositingVisualLoop3" />
-  <OglShader name="oglShader0"  tags="Visu"  fileVertexShader="shaders/phong.vert"  fileFragmentShader="shaders/phong.frag" />
 
-  <Node name="SphereNode">
-    <!-- <SparseGridRamificationTopology name="sparseGridRamificationTopology1"  fileTopology="../meshes/sphere.vtk"  n="4 12 3"  nbVirtualFinerLevels="3"  finestConnectivity="0" /> -->
-    <MeshVTKLoader name="sphere-loader"  filename="../meshes/sphere.vtk" />
-    <MechanicalObject src="@sphere-loader" template="Vec3d" name="dofs"  position="0 0 0"  velocity="0 0 0"  force="0 0 0"  externalForce="0 0 0"  restScale="1"  translation="0 2 0"  scale3d="1 1 1" />
-		<TetrahedronSetTopologyContainer name="SphereTetra" src="@sphere-loader" />
-    <TetrahedronSetGeometryAlgorithms name="SpherePoints" template="Vec3d"  drawTetrahedra="1"/>
-    <EulerImplicitSolver name="cg_odesolver"  rayleighStiffness="0.03"  rayleighMass="1" />
-		<CGLinearSolver template="GraphScattered" name="linear solver"  iterations="20"  tolerance="1e-12"  threshold="1e-18" />
-		<UniformMass template="Vec3d" name="uniformMass1"  totalMass="1" />
-		<TetrahedronFEMForceField template="Vec3d" name="FEM"  printLog="0"  method="large"  poissonRatio="0.3"  youngModulus="30000"  updateStiffnessMatrix="0"  gatherPt=" "  gatherBsize=" " />
-		<UncoupledConstraintCorrection template="Vec3d" name="uncoupledConstraintCorrection1" />
-    <Node 	 name="SphereCollis"  >
-      <MeshVTKLoader name="sphere-loader"  filename="../meshes/sphere.vtk" />
-      <MeshTopology name="meshTopology1"  position="@sphere-loader.position"  edges="@sphere-loader.edges"  triangles="@sphere-loader.triangles"  quads="@sphere-loader.quads"  tetrahedra="@sphere-loader.tetras"  hexahedra="@sphere-loader.hexas" />
-      <MechanicalObject template="Vec3d" name="sphere-collis-states"  position="@sphere-loader.position"  velocity="0 0 0"  force="0 0 0"  externalForce="0 0 0"  restScale="1" />
-      <TTriangleModel template="Vec3d" name="tTriangleModel1"  selfCollision="0" />
-      <TLineModel template="Vec3d" name="tLineModel1"  selfCollision="0" />
-      <TPointModel template="Vec3d" name="tPointModel1"  selfCollision="0" />
-      <BarycentricMapping template="Vec3d,Vec3d" name="barycentricMap1"  tags="Visu"  input="@.."  output="@." />
+  <Node name="IABChains">
+    <Node name="QuadChain">
+      <!--  These are the chains around the head on the plane -->
+      <include name="QuadChain-TopLeft" href="sphere.scn" scale="2.5" dx="-45" dy="45" dz="0"  rx="0" ry="0"/>
+      <include name="QuadChain-TopRight" href="sphere.scn" scale="2.5" dx="45" dy="45" dz="0"  rx="0" ry="0"/>
+      <include name="QuadChain-BottomRight" href="sphere.scn" scale="2.5" dx="45" dy="-45" dz="0"  rx="0" ry="0"/>
+      <include name="QuadChain-BottomLeft" href="sphere.scn" scale="2.5" dx="-45" dy="-45" dz="0"  rx="0" ry="0"/>
     </Node>
-    <Node 	 name="SphereVisu"  tags="SphereVisu"  >
-			<OglModel template="ExtVec3d." name="SphereVisBody"  tags="Visu"  src="@..sphere-loader"  material="Default Diffuse 1 0.74902 0.74902 0.74902 1 Ambient 1 0.2 0.2 0.2 1 Specular 0 1 1 1 1 Emissive 0 0 0 0 0 Shininess 0 45 "  primitiveType="DEFAULT"  blendEquation="GL_FUNC_ADD"  sfactor="GL_SRC_ALPHA"  dfactor="GL_ONE_MINUS_SRC_ALPHA" />
-			<BarycentricMapping template="Vec3d,ExtVec3d." name="barycentricMap2"  tags="Visu"  input="@.."  output="@SphereVisBody" />
-		</Node>
 
-    <!-- <MeshVTKLoader name="sphere-loader" filename="../meshes/sphere.vtk"/>
-      <Mesh name="sphere_mesh" src="@sphere-loader"/>
-      <MechanicalObject name="spherical-states" src="@sphere-loader" />
-      <TetrahedronSetTopologyContainer name="SphereTetra" src="@sphere-loader" />
-      <TetrahedronSetGeometryAlgorithms name="SpherePoints" template="Vec3d"  drawTetrahedra="1"/>
-      <OglModel name="SphereVisu" src="@sphere-loader" translation="0 0 0"  color="gray" /> -->
-  </Node>
+    <!--  These are the chains at the sides of the head -->
+    <Node name="SideChainLeft">
+      <include name="SideChainLeft-Top" href="sphere.scn" scale="2.5" dx="-45" dy="45" dz="45"  rx="0" ry="0" color="pink"/>
+      <include name="SideChainLeft-Bottom" href="sphere.scn" scale="2.5" dx="-45" dy="-45" dz="45"  rx="0" ry="0" color="pink"/>
+    </Node>
 
-<!--
-  <Node name="Sphere">
-    <include href="sphere.scn" scale=".5" rx="0" ry="0" dz="0"/>
-  </Node>
-
-  <Node name="TableStand">
-    <include href="table_stand.scn" />
-  </Node>
-
-  <Node name="TableCushions">
-    <include href="table_cushion.scn" scale=".05" rx="0" ry="0" dz="0" />
-  </Node>
-
-  <Node name="LongLeg">
-    <include href="long_leg.scn" scale=".05" rx="15" ry="5" dz="5"/>
-  </Node>
-
-  <Node name="ShortLeg">
-    <include href="short_leg.scn" />
+    <Node name="SideChainRight">
+      <include name="SideChainRight-Top" href="sphere.scn" scale="2.5" dx="45" dy="45" dz="45"  rx="0" ry="0" color="blue"/>
+      <include name="SideChainRight-Bottom" href="sphere.scn" scale="2.5" dx="45" dy="-45" dz="45"  rx="0" ry="0" color="blue"/>
+    </Node>
   </Node>
 
   <Node name="Human">
-    <include href="human.scn" />
+    <include href="human.scn" position="0 0 25" scale="40.5"/>
   </Node>
 
-  <Node name="Springs">
+  <!-- <Node name="TableStand">
+    <include href="table_stand.scn" />
+  </Node> -->
+
+  <!-- <Node name="TableCushions">
+    <include href="table_cushion.scn" scale=".05" rx="0" ry="0" dz="0" />
+  </Node> -->
+
+  <!-- <Node name="LongLeg">
+    <include href="long_leg.scn" scale=".05" rx="15" ry="5" dz="5"/>
+  </Node> -->
+
+  <!-- <Node name="ShortLeg">
+    <include href="short_leg.scn" />
+  </Node> -->
+
+  <!-- <Node name="Springs">
     <include href="springs.scn" />
   </Node> -->
+
 
 </Node>
