@@ -17,26 +17,26 @@
   <Node name="IABChains">
     <Node name="QuadChain">
       <!--  These are the chains around the head on the plane -->
-      <include name="QuadChain-TopLeft" href="sphere.scn" scale="2.5" dx="-45" dy="45" dz="0"  rx="0" ry="0"/>
-      <include name="QuadChain-TopRight" href="sphere.scn" scale="2.5" dx="45" dy="45" dz="0"  rx="0" ry="0"/>
-      <include name="QuadChain-BottomRight" href="sphere.scn" scale="2.5" dx="45" dy="-45" dz="0"  rx="0" ry="0"/>
-      <include name="QuadChain-BottomLeft" href="sphere.scn" scale="2.5" dx="-45" dy="-45" dz="0"  rx="0" ry="0"/>
+      <include name="QuadChain-TopLeft" href="sphere.scn" scale="5" dx="-60" dy="60" dz="0"/>
+      <include name="QuadChain-TopRight" href="sphere.scn" scale="5" dx="60" dy="60" dz="0"/>
+      <include name="QuadChain-BottomRight" href="sphere.scn" scale="5" dx="60" dy="-60" dz="0"/>
+      <include name="QuadChain-BottomLeft" href="sphere.scn" scale="5" dx="-60" dy="-60" dz="0"/>
     </Node>
 
     <!--  These are the chains at the sides of the head -->
-    <Node name="SideChainLeft">
-      <include name="SideChainLeft-Top" href="sphere.scn" scale="2.5" dx="-45" dy="45" dz="45"  rx="0" ry="0" color="pink"/>
-      <include name="SideChainLeft-Bottom" href="sphere.scn" scale="2.5" dx="-45" dy="-45" dz="45"  rx="0" ry="0" color="pink"/>
+    <!-- <Node name="SideChainLeft">
+      <include name="SideChainLeft-Top" href="sphere.scn" scale="1.0" dx="-30" dy="30" dz="30" color="pink"/>
+      <include name="SideChainLeft-Bottom" href="sphere.scn" scale="1.0" dx="-30" dy="-30" dz="30" color="pink"/>
     </Node>
 
     <Node name="SideChainRight">
-      <include name="SideChainRight-Top" href="sphere.scn" scale="2.5" dx="45" dy="45" dz="45"  rx="0" ry="0" color="blue"/>
-      <include name="SideChainRight-Bottom" href="sphere.scn" scale="2.5" dx="45" dy="-45" dz="45"  rx="0" ry="0" color="blue"/>
-    </Node>
+      <include name="SideChainRight-Top" href="sphere.scn" scale="1.0" dx="30" dy="30" dz="30" color="blue"/>
+      <include name="SideChainRight-Bottom" href="sphere.scn" scale="1.0" dx="30" dy="-30" dz="30" color="blue"/>
+    </Node>-->
   </Node>
 
   <Node name="Human">
-    <include href="human.scn" position="0 0 25" scale="40.5"/>
+    <include href="human.scn" position="0 0 15" scale="40"/>
   </Node>
 
   <!-- <Node name="TableStand">
