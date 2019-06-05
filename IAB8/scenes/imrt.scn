@@ -1,4 +1,4 @@
-<?xml version="1.0" ?>
+<?xml version="5" ?>
 <Node name="IMRT" gravity="0 -9.81 0" dt="0.04">
   <VisualStyle displayFlags="showVisual showBehavior
                showCollision hideOptions showMapping" />
@@ -24,15 +24,15 @@
     </Node>
 
     <!--  These are the chains at the sides of the head -->
-    <!-- <Node name="SideChainLeft">
-      <include name="SideChainLeft-Top" href="sphere.scn" scale="1.0" dx="-30" dy="30" dz="30" color="pink"/>
-      <include name="SideChainLeft-Bottom" href="sphere.scn" scale="1.0" dx="-30" dy="-30" dz="30" color="pink"/>
+    <Node name="SideChainLeft">
+      <include name="SideChainLeft-Top" href="sphere.scn" scale="5" dx="-60" dy="60" dz="90" color="pink"/>
+      <include name="SideChainLeft-Bottom" href="sphere.scn" scale="5" dx="-60" dy="-60" dz="90" color="pink"/>
     </Node>
 
     <Node name="SideChainRight">
-      <include name="SideChainRight-Top" href="sphere.scn" scale="1.0" dx="30" dy="30" dz="30" color="blue"/>
-      <include name="SideChainRight-Bottom" href="sphere.scn" scale="1.0" dx="30" dy="-30" dz="30" color="blue"/>
-    </Node>-->
+      <include name="SideChainRight-Top" href="sphere.scn" scale="5" dx="60" dy="60" dz="90" color="blue"/>
+      <include name="SideChainRight-Bottom" href="sphere.scn" scale="5" dx="60" dy="-60" dz="90" color="blue"/>
+    </Node>
   </Node>
 
   <Node name="Human">
