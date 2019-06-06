@@ -16,13 +16,12 @@
 
   <Node name="IABChains">
     <Node name="BaseChain">
-      <include name="NeckLeft" href="sphere.scn" scale="1" dx="-13" dy="30" dz="-10"/>
-      <include name="NeckRight" href="sphere.scn" scale="1" dx="13" dy="30" dz="-10"/>
-      <include name="RearHeadLeft" href="sphere.scn" scale="1" dx="-15" dy="45" dz="-10"/>
-      <include name="RearHeadRight" href="sphere.scn" scale="1" dx="15" dy="45" dz="-10"/>
+      <include name="NeckLeft" href="sphere.scn" scale="1" dx="-13" dy="30" dz="-10" />
+      <include name="NeckRight" href="sphere.scn" scale="1" dx="13" dy="30" dz="-10" />
+      <include name="RearHeadLeft" href="sphere.scn" scale="1" dx="-15" dy="45" dz="-10" />
+      <include name="RearHeadRight" href="sphere.scn" scale="1" dx="15" dy="45" dz="-10" />
     </Node>
 
-    <!--  These are the chains at the sides of the head -->
     <Node name="SideChains">
       <include name="ButtLeft" href="sphere.scn" scale="1" dx="-14" dy="25" dz="10" color="red"/>
       <include name="ButtRight" href="sphere.scn" scale="1" dx="14" dy="25" dz="10" color="red"/>
@@ -31,21 +30,27 @@
     </Node>
   </Node>
 
+  <!-- TODO: This is not yet revealed in ogl -->
   <Node name="SpringConnections">
     <include name="necks-connector" href="springs.scn" scale="5" dx="-13" dy="30" dz="-10" />
   </Node>
 
+  <!-- Not replicating the four stands here -->
+  <!-- <Node name="TableStand">
+    <include href="table_stand.scn" scale="1e-5" dx="-13" dy="-13" dz="-20" />
+    <include href="table_stand.scn" scale="1e-5" dx="-13" dy="13" dz="-20" />
+    <include href="table_stand.scn" scale="1e-5" dx="13" dy="13" dz="-20" />
+    <include href="table_stand.scn" scale="1e-5" dx="13" dy="-13" dz="-20" />
+  </Node> -->
+
   <Node name="Human">
-    <include href="human.scn" position="0 0 15" scale="40"/>
+    <!-- <include href="human.scn" position="0 0 15" scale="40" color="brown"/> -->
+    <include href="human.scn" position="0 0 15" scale="40" color="brown" rx="-90" />
   </Node>
 
-  <!-- <Node name="TableStand">
-    <include href="table_stand.scn" />
-  </Node> -->
-
-  <!-- <Node name="TableCushions">
-    <include href="table_cushion.scn" scale=".05" rx="0" ry="0" dz="0" />
-  </Node> -->
+  <Node name="TableCushions">
+    <include href="table_cushion.scn" translation="-10 -10 0" position="0 0 -15" scale=".05"  ry="90" />
+  </Node>
 
   <!-- <Node name="LongLeg">
     <include href="long_leg.scn" scale=".05" rx="15" ry="5" dz="5"/>

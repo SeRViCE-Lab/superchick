@@ -10,7 +10,7 @@
   <!-- <SphereForceField stiffness="1000" damping="1" center="0 1 3" radius="1" draw="1" /> -->
   <!-- <PlaneForceField stiffness="1000" damping="20" normal="0 1 0" d="-3" draw="1" /> -->
 
-  <UncoupledConstraintCorrection template="Vec3d" name="uncoupledConstraintCorrection1" />
+  <!-- <UncoupledConstraintCorrection template="Vec3d" name="uncoupledConstraintCorrection1" /> -->
   <!-- <TetrahedronSetTopologyContainer name="SphereTetra" src="@sphere_loader" />
   <TetrahedronSetGeometryAlgorithms name="SpherePoints" template="Vec3d"  drawTetrahedra="1"/> -->
   <Node name="SphereVisu" >
@@ -26,5 +26,6 @@
   <TLineModel template="Vec3d" name="tLineModel1"  selfCollision="0" />
   <TPointModel template="Vec3d" name="tPointModel1"  selfCollision="0" />
   <!-- <BarycentricMapping template="Vec3d,Vec3d" name="barycentricMap1"   input="@.."  output="@." /> -->
+	<BarycentricMapping />
 </Node>
 </Node>
