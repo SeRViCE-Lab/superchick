@@ -17,17 +17,17 @@
   <Node name="IABChains">
     <!-- Note that dy is now dz due to the -90 of cushions and human rotation -->
     <Node name="BaseChain">
-      <include name="RearHeadLeft" href="sphere.scn" scale="1" dx="-18" dy="190" dz="40" />
-      <include name="RearHeadRight" href="sphere.scn" scale="1" dx="16" dy="190" dz="40" />
-      <include name="NeckLeft" href="sphere.scn" scale="1" dx="-18" dy="190" dz="62" />
-      <include name="NeckRight" href="sphere.scn" scale="1" dx="16" dy="190" dz="62" />
+      <include name="RearHeadLeft" href="sphere.scn" scale="1" dx="-15" dy="190" dz="40" />
+      <include name="RearHeadRight" href="sphere.scn" scale="1" dx="15" dy="190" dz="40" />
+      <include name="NeckLeft" href="sphere.scn" scale="1" dx="-14" dy="190" dz="62" />
+      <include name="NeckRight" href="sphere.scn" scale="1" dx="14" dy="190" dz="62" />
     </Node>
 
     <Node name="SideChains">
       <include name="TempleLeft" href="sphere.scn" scale="1" dx="-16" dy="210" dz="40" />
-      <include name="TempleRight" href="sphere.scn" scale="1" dx="16" dy="210" dz="40" />
-      <include name="ChinLeft" href="sphere.scn" scale="1" dx="-14" dy="210" dz="62" />
-      <include name="ChinRight" href="sphere.scn" scale="1" dx="14" dy="210" dz="62" />
+      <include name="TempleRight" href="sphere.scn" scale="1" dx="16" dy="210" dz="40"  />
+      <include name="ChinLeft" href="sphere.scn" scale="1" dx="-14" dy="210" dz="62"/>
+      <include name="ChinRight" href="sphere.scn" scale="1" dx="14" dy="210" dz="62"/>
     </Node>
   </Node>
 
