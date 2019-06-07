@@ -7,29 +7,51 @@
   <MinProximityIntersection name="Proximity" alarmDistance="0.02" contactDistance="0.02" />
   <CollisionResponse name="Response" response="default" />
   <LightManager name="lightManager"  listening="1" />
-  <SpotLight name="light1" color="1 0 0" position="0.5 0.7 2" cutoff="25" exponent="1" />
-  <PositionalLight name="lightpos" color="0 1 0" attenuation="0.1" position="0.5 -1.7 2" />
-  <DirectionalLight name="lightdir" color="0.1 0.3 0.6" direction=".4 .4 .9" />
+  <SpotLight name="light1" color="0 0 1" position="0.5 -70 60" cutoff="125" exponent="1" />
+  <PositionalLight name="lightpos" color="0.5 .7 0.2" attenuation="0.1" position="0.5 -1.7 60" />
+  <DirectionalLight name="lightdir" color="1 1 1" direction=".5 .5 .65" />
   <VisualManagerPass name="visualManagerPass0"  tags="Visu"  listening="1" />
 	<DefaultContactManager name="DefaultResponse"  response="FrictionContact" />
   <CompositingVisualLoop name="compositingVisualLoop3" />
 
   <Node name="IABChains">
+    <!-- Note that dy is now dz due to the -90 of cushions and human rotation -->
     <Node name="BaseChain">
-      <include name="NeckLeft" href="sphere.scn" scale="1" dx="-13" dy="30" dz="-10" />
-      <include name="NeckRight" href="sphere.scn" scale="1" dx="13" dy="30" dz="-10" />
-      <include name="RearHeadLeft" href="sphere.scn" scale="1" dx="-15" dy="45" dz="-10" />
-      <include name="RearHeadRight" href="sphere.scn" scale="1" dx="15" dy="45" dz="-10" />
+      <include name="RearHeadLeft" href="sphere.scn" scale="1" dx="-18" dy="190" dz="40" />
+      <include name="RearHeadRight" href="sphere.scn" scale="1" dx="16" dy="190" dz="40" />
+      <include name="NeckLeft" href="sphere.scn" scale="1" dx="-18" dy="190" dz="62" />
+      <include name="NeckRight" href="sphere.scn" scale="1" dx="16" dy="190" dz="62" />
     </Node>
 
     <Node name="SideChains">
-      <include name="ButtLeft" href="sphere.scn" scale="1" dx="-14" dy="25" dz="10" color="red"/>
-      <include name="ButtRight" href="sphere.scn" scale="1" dx="14" dy="25" dz="10" color="red"/>
-      <include name="TopLeft" href="sphere.scn" scale="1" dx="-18" dy="45" dz="10" color="blue"/>
-      <include name="TopRight" href="sphere.scn" scale="1" dx="18" dy="45" dz="10" color="blue"/>
+      <include name="TempleLeft" href="sphere.scn" scale="1" dx="-16" dy="210" dz="40" />
+      <include name="TempleRight" href="sphere.scn" scale="1" dx="16" dy="210" dz="40" />
+      <include name="ChinLeft" href="sphere.scn" scale="1" dx="-14" dy="210" dz="62" />
+      <include name="ChinRight" href="sphere.scn" scale="1" dx="14" dy="210" dz="62" />
     </Node>
   </Node>
 
+    <Node name="Human">
+      <include href="human.scn" dy="195" dz="90" scale="40" color="brown" rx="-90" />
+    </Node>
+
+    <Node name="TableCushions">
+      <!-- Note that dy is now dz due to the -90 rotation -->
+      <include href="table_cushion.scn" translation="-10 -10 0"
+            scale=".1" dx="95" dy="0" dz="15" ry="-90" color="brown" />
+      <include href="table_cushion.scn" translation="-10 -10 0"
+          scale=".1" dx="95" dy="30" dz="15" ry="-90" color="brown" />
+      <include href="table_cushion.scn" translation="-10 -10 0"
+            scale=".1" dx="95" dy="60" dz="15" ry="-90" color="brown" />
+      <include href="table_cushion.scn" translation="-10 -10 0"
+            scale=".1" dx="95" dy="60" dz="15" ry="-90" color="brown" />
+      <include href="table_cushion.scn" translation="-10 -10 0"
+            scale=".1" dx="95" dy="90" dz="15" ry="-90" color="brown" />
+      <include href="table_cushion.scn" translation="-10 -10 0"
+            scale=".1" dx="95" dy="120" dz="15" ry="-90" color="brown" />
+      <include href="table_cushion.scn" translation="-10 -10 0"
+            scale=".1" dx="95" dy="150" dz="15" ry="-90" color="brown" />
+    </Node>
   <!-- TODO: This is not yet revealed in ogl -->
   <Node name="SpringConnections">
     <include name="necks-connector" href="springs.scn" scale="5" dx="-13" dy="30" dz="-10" />
@@ -42,15 +64,6 @@
     <include href="table_stand.scn" scale="1e-5" dx="13" dy="13" dz="-20" />
     <include href="table_stand.scn" scale="1e-5" dx="13" dy="-13" dz="-20" />
   </Node> -->
-
-  <Node name="Human">
-    <!-- <include href="human.scn" position="0 0 15" scale="40" color="brown"/> -->
-    <include href="human.scn" position="0 0 15" scale="40" color="brown" rx="-90" />
-  </Node>
-
-  <Node name="TableCushions">
-    <include href="table_cushion.scn" translation="-10 -10 0" position="0 0 -15" scale=".05"  ry="90" />
-  </Node>
 
   <!-- <Node name="LongLeg">
     <include href="long_leg.scn" scale=".05" rx="15" ry="5" dz="5"/>
