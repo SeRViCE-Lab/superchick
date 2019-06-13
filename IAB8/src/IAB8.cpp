@@ -8,7 +8,6 @@ using std::string;
 #include <vector>
 using std::vector;
 
-
 #include <sofa/helper/ArgumentParser.h>
 #include <SofaSimulationCommon/common.h>
 #include <sofa/simulation/Node.h>
@@ -157,10 +156,8 @@ int main(int argc, char** argv)
     // Add resources dir to GuiDataRepository
     #ifdef __linux__
       auto dir = SofaInstallPath / "share/sofa/gui/qt";
-      // dir =  dir  ;  SofaInstallPath / "share/sofa";  // for shaders
     #elif __APPLE__
-      // auto dir = SofaInstallPath / "share/sofa/gui/runSofa/";
-      auto dir = SofaInstallPath / "share/sofa/gui/qt/"; // /runSofa/";
+      auto dir = SofaInstallPath / "share/sofa/gui/qt/";
     #else
       std::cout << "unknown dir path" << "\n";
     #endif
@@ -185,7 +182,7 @@ int main(int argc, char** argv)
     bool        loadRecent = false;
     bool        temporaryFile = false;
     bool        testMode = false;
-    bool        noAutoloadPlugins = false;
+    bool        noAutoloadPlugins = true;
     bool        noSceneCheck = false;
     unsigned int nbMSSASamples = 1;
     bool computationTimeAtBegin = false;
@@ -286,54 +283,6 @@ int main(int argc, char** argv)
     sofa::simulation::setSimulation(new TreeSimulation());
 #endif
 
-    if (colorsStatus == "unset") {
-        // If the parameter is unset, check the environment variable
-        const char * colorStatusEnvironment = std::getenv("SOFA_COLOR_TERMINAL");
-        if (colorStatusEnvironment != nullptr) {
-            const std::string status (colorStatusEnvironment);
-            if (status == "yes" || status == "on" || status == "always")
-                sofa::helper::console::setStatus(sofa::helper::console::Status::On);
-            else if (status == "no" || status == "off" || status == "never")
-                sofa::helper::console::setStatus(sofa::helper::console::Status::Off);
-            else
-                sofa::helper::console::setStatus(sofa::helper::console::Status::Auto);
-        }
-    } else if (colorsStatus == "auto")
-        sofa::helper::console::setStatus(sofa::helper::console::Status::Auto);
-    else if (colorsStatus == "yes")
-        sofa::helper::console::setStatus(sofa::helper::console::Status::On);
-    else if (colorsStatus == "no")
-        sofa::helper::console::setStatus(sofa::helper::console::Status::Off);
-
-    //TODO(dmarchal): Use smart pointer there to avoid memory leaks !!
-    if (messageHandler == "auto" )
-    {
-        MessageDispatcher::clearHandlers() ;
-        MessageDispatcher::addHandler( new ConsoleMessageHandler() ) ;
-    }
-    else if (messageHandler == "clang")
-    {
-        MessageDispatcher::clearHandlers() ;
-        MessageDispatcher::addHandler( new ClangMessageHandler() ) ;
-    }
-    else if (messageHandler == "sofa")
-    {
-        MessageDispatcher::clearHandlers() ;
-        MessageDispatcher::addHandler( new ConsoleMessageHandler() ) ;
-    }
-    else if (messageHandler == "rich")
-    {
-        MessageDispatcher::clearHandlers() ;
-        MessageDispatcher::addHandler( new ConsoleMessageHandler(&RichConsoleStyleMessageFormatter::getInstance()) ) ;
-    }
-    else if (messageHandler == "test"){
-        MessageDispatcher::addHandler( new ExceptionMessageHandler() ) ;
-    }
-    else{
-        msg_warning("") << "Invalid argument '" << messageHandler << "' for '--formatting'";
-    }
-    MessageDispatcher::addHandler(&MainPerComponentLoggingMessageHandler::getInstance()) ;
-
     // Output FileRepositories
     msg_info("IAB") << "PluginRepository paths = " << PluginRepository.getPathsJoined();
     msg_info("IAB") << "DataRepository paths = " << DataRepository.getPathsJoined();
@@ -347,24 +296,13 @@ int main(int argc, char** argv)
         fileName = files[0];
 
     for (unsigned int i=0; i<plugins.size(); i++)
-    {
-      // std::cout << " plugins [" << i << "] " << plugins[i] << "\n";
       PluginManager::getInstance().loadPlugin(plugins[i]);
-    }
 
-    // msg_info("IAB") << "plugins " << plugins[0];
-
-    std::string configPluginPath = TOSTRING(CONFIG_PLUGIN_FILENAME);
-    std::string defaultConfigPluginPath = TOSTRING(DEFAULT_CONFIG_PLUGIN_FILENAME);
+    std::string defaultConfigPluginPath = DataRepository.getFile(SetDirectory::GetCurrentDir() + "/../patient/plugins.conf");
 
     if (!noAutoloadPlugins)
     {
-        if (PluginRepository.findFile(configPluginPath, "", nullptr))
-        {
-            msg_info("IAB") << "Loading plugin list in " << configPluginPath;
-            PluginManager::getInstance().readFromIniFile(configPluginPath);
-        }
-        else if (PluginRepository.findFile(defaultConfigPluginPath, "", nullptr))
+        if (PluginRepository.findFile(defaultConfigPluginPath, "", nullptr))
         {
             msg_info("IAB") << "Loading default plugin list in " << defaultConfigPluginPath;
             PluginManager::getInstance().readFromIniFile(defaultConfigPluginPath);
@@ -403,9 +341,7 @@ int main(int argc, char** argv)
         groot = sofa::simulation::getSimulation()->createNewGraph("");
 
     if (!verif.empty())
-    {
         loadVerificationData(verif, fileName, groot.get());
-    }
 
     if( computationTimeAtBegin )
     {
@@ -428,12 +364,6 @@ int main(int argc, char** argv)
 
     if (startAnim)
         groot->setAnimate(true);
-    if (printFactory)
-    {
-        msg_info("") << "////////// FACTORY //////////" ;
-        sofa::helper::printFactoryLog();
-        msg_info("") << "//////// END FACTORY ////////" ;
-    }
 
     if( computationTimeSampling>0 )
     {
@@ -447,13 +377,6 @@ int main(int argc, char** argv)
     if (int err = GUIManager::MainLoop(groot,fileName.c_str()))
         return err;
     groot = dynamic_cast<Node*>( GUIManager::CurrentSimulation() );
-
-    if (testMode)
-    {
-        string xmlname = fileName.substr(0,fileName.length()-4)+"-scene.scn";
-        msg_info("") << "Exporting to XML " << xmlname ;
-        sofa::simulation::getSimulation()->exportXML(groot.get(), xmlname.c_str());
-    }
 
     if (groot!=NULL)
         sofa::simulation::getSimulation()->unload(groot);

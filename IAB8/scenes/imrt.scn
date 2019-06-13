@@ -37,19 +37,19 @@
 
     <Node name="TableCushions">
       <!-- Note that dy is now dz due to the -90 rotation -->
-      <include href="table_cushion.scn" translation="-10 -10 0"
+      <include href="table_cushion.scn" name="Cushion-1" translation="-10 -10 0"
             scale=".1" dx="95" dy="0" dz="15" ry="-90" color="brown" />
-      <include href="table_cushion.scn" translation="-10 -10 0"
+      <include href="table_cushion.scn" name="Cushion-2" translation="-10 -10 0"
           scale=".1" dx="95" dy="30" dz="15" ry="-90" color="brown" />
-      <include href="table_cushion.scn" translation="-10 -10 0"
+      <include href="table_cushion.scn" name="Cushion-3" translation="-10 -10 0"
             scale=".1" dx="95" dy="60" dz="15" ry="-90" color="brown" />
-      <include href="table_cushion.scn" translation="-10 -10 0"
+      <include href="table_cushion.scn" name="Cushion-4" translation="-10 -10 0"
             scale=".1" dx="95" dy="60" dz="15" ry="-90" color="brown" />
-      <include href="table_cushion.scn" translation="-10 -10 0"
+      <include href="table_cushion.scn" name="Cushion-5" translation="-10 -10 0"
             scale=".1" dx="95" dy="90" dz="15" ry="-90" color="brown" />
-      <include href="table_cushion.scn" translation="-10 -10 0"
+      <include href="table_cushion.scn" name="Cushion-6" translation="-10 -10 0"
             scale=".1" dx="95" dy="120" dz="15" ry="-90" color="brown" />
-      <include href="table_cushion.scn" translation="-10 -10 0"
+      <include href="table_cushion.scn" name="Cushion-7" translation="-10 -10 0"
             scale=".1" dx="95" dy="150" dz="15" ry="-90" color="brown" />
     </Node>
   <!-- TODO: This is not yet revealed in ogl -->

@@ -15,7 +15,7 @@
   <Node name="TableCushVisu">
     <OglModel name="BaseVisu"  src="@../table-cushion-loader" translation="0 0 0" color="brown"
        dx="0" dy="0" dz="0" rx="0" ry="0" rz="0" scale="1.0" />
-    <BarycentricMapping input="@.." output="@TableCushVisual" />
+    <!-- <BarycentricMapping input="@.." output="@TableCushVisual" /> -->
   </Node>
 
   <Node 	 name="CushCollis"  >
