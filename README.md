@@ -1,5 +1,21 @@
 <!-- ### This is the mujoco binding to the osrf ros code from 2016 -->
 
+### SOFA Plugin
+
+There is now a SOFA scene file. Here, we arranged three soft robot kinematic chains around the head of the patient (there are eight individual soft robots), position the patient lying in a supine manner on a treatment table, and then actuate the soft robots to compensate for patient motion. The soft robots are interconnected by passive elastic materials to allow motion contact with the head throughout manipulation. Control details are in my PhD dissertation.
+
+Example screenshots are presented below:
+
+[Full scene file](/IAB8/patient/data/Full-scene.png)
+
+[Head and Soft Robots only](/IAB8/patient/data/Head-Soros.png)
+
+Source codes for this scene file are in
+
++ [CPP Source File](/IAB8/src/IAB8.cpp)  and
+
++ [Scene Main File](/IAB8/scenes/imrt.scn)
+
 ### MUJOCO Plugin
 
 1. 	Install [openscene-graph](http://www.openscenegraph.org/): `sudo apt-get install openscenegraph libopenscenegraph-dev`.
