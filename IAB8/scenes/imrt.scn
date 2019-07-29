@@ -35,47 +35,13 @@
       <include href="human.scn" dy="195" dz="90" scale="40" color="brown" rx="-90" />
     </Node>
 
-    <Node name="TableCushions">
-      <!-- Note that dy is now dz due to the -90 rotation -->
-      <include href="table_cushion.scn" name="Cushion-1" translation="-10 -10 0"
-            scale=".1" dx="95" dy="0" dz="15" ry="-90" color="brown" />
-      <include href="table_cushion.scn" name="Cushion-2" translation="-10 -10 0"
-          scale=".1" dx="95" dy="30" dz="15" ry="-90" color="brown" />
-      <include href="table_cushion.scn" name="Cushion-3" translation="-10 -10 0"
-            scale=".1" dx="95" dy="60" dz="15" ry="-90" color="brown" />
-      <include href="table_cushion.scn" name="Cushion-4" translation="-10 -10 0"
-            scale=".1" dx="95" dy="60" dz="15" ry="-90" color="brown" />
-      <include href="table_cushion.scn" name="Cushion-5" translation="-10 -10 0"
-            scale=".1" dx="95" dy="90" dz="15" ry="-90" color="brown" />
-      <include href="table_cushion.scn" name="Cushion-6" translation="-10 -10 0"
-            scale=".1" dx="95" dy="120" dz="15" ry="-90" color="brown" />
-      <include href="table_cushion.scn" name="Cushion-7" translation="-10 -10 0"
-            scale=".1" dx="95" dy="150" dz="15" ry="-90" color="brown" />
+    <Node name="Linac_Collimator" >
+      <include href="linac.scn" name="linac-and-collimator"
+            scale="1" dx="0" dy="0" dz="0" ry="0" color="brown" />
     </Node>
+
   <!-- TODO: This is not yet revealed in ogl -->
   <Node name="SpringConnections">
     <include name="necks-connector" href="springs.scn" scale="5" dx="-13" dy="30" dz="-10" />
   </Node>
-
-  <!-- Not replicating the four stands here -->
-  <!-- <Node name="TableStand">
-    <include href="table_stand.scn" scale="1e-5" dx="-13" dy="-13" dz="-20" />
-    <include href="table_stand.scn" scale="1e-5" dx="-13" dy="13" dz="-20" />
-    <include href="table_stand.scn" scale="1e-5" dx="13" dy="13" dz="-20" />
-    <include href="table_stand.scn" scale="1e-5" dx="13" dy="-13" dz="-20" />
-  </Node> -->
-
-  <!-- <Node name="LongLeg">
-    <include href="long_leg.scn" scale=".05" rx="15" ry="5" dz="5"/>
-  </Node> -->
-
-  <!-- <Node name="ShortLeg">
-    <include href="short_leg.scn" />
-  </Node> -->
-
-  <!-- <Node name="Springs">
-    <include href="springs.scn" />
-  </Node> -->
-
-
 </Node>
