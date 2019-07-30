@@ -41,7 +41,7 @@
     </Node>
 
   <!-- TODO: This is not yet revealed in ogl -->
-  <Node name="SpringConnections">
+  <!-- <Node name="SpringConnections">
     <include name="necks-connector" href="springs.scn" scale="5" dx="-13" dy="30" dz="-10" />
-  </Node>
+  </Node> -->
 </Node>
