@@ -3,29 +3,20 @@
 	<CGLinearSolver template="GraphScattered" iterations="25" tolerance="1e-12"  threshold="1e-18"  />
     <!-- Above from TORUS FEM -->
   <MeshVTKLoader name="sphere_loader" filename="../meshes/sphere.vtk"/>
-  <MechanicalObject name="spherical-states" src="@sphere_loader" template="Vec3d"
-     dx="0" dy="0" dz="0" rx="0" ry="0" rz="0" scale="1.0"
+  <MechanicalObject name="spherical-states" src="@sphere_loader" template="Vec3d" scale="1.0"
      externalForce="0 0 0"  restScale="1"  translation="0 0 0"  scale3d="1 1 1" />
  	<UniformMass totalMass="5" />
-  <!-- <SphereForceField stiffness="1000" damping="1" center="0 1 3" radius="1" draw="1" /> -->
-  <!-- <PlaneForceField stiffness="1000" damping="20" normal="0 1 0" d="-3" draw="1" /> -->
 
-  <!-- <UncoupledConstraintCorrection template="Vec3d" name="uncoupledConstraintCorrection1" /> -->
-  <!-- <TetrahedronSetTopologyContainer name="SphereTetra" src="@sphere_loader" />
-  <TetrahedronSetGeometryAlgorithms name="SpherePoints" template="Vec3d"  drawTetrahedra="1"/> -->
   <Node name="SphereVisu" >
-    <OglModel name="SphereVisual"  src="@../sphere_loader" translation="0 0 0"  color="blue"
-       dx="0" dy="0" dz="0" rx="0" ry="0" rz="0" scale="1.0"/>
+    <OglModel name="SphereVisual"  src="@../sphere_loader" translation="0 0 0"  color="blue" dx="-15" dy="190" dz="40"/>
     <BarycentricMapping input="@.." output="@SphereVisual" />
   </Node>
 <Node 	 name="SphereCollis"  >
   <MeshVTKLoader name="sphere-collis-loader"  filename="../meshes/sphere.vtk" />
-  <MeshTopology name="meshTopology"  dx="0" dy="0" dz="0" rx="0" ry="0" rz="0" scale="1.0" />
-  <MechanicalObject template="Vec3d" name="sphere-collis-states"  position="0 0 0"  velocity="0 0 0"  force="0 0 0"  externalForce="0 0 0"  restScale="1" />
-  <!-- <TTriangleModel template="Vec3d" name="tTriangleModel1"  selfCollision="0" />
-  <TLineModel template="Vec3d" name="tLineModel1"  selfCollision="0" />
-  <TPointModel template="Vec3d" name="tPointModel1"  selfCollision="0" /> -->
-  <!-- <BarycentricMapping template="Vec3d,Vec3d" name="barycentricMap1"   input="@.."  output="@." /> -->
+  <MeshTopology name="meshTopology"  />
+  <!-- scale="1.0" -->
+  <MechanicalObject template="Vec3d" name="sphere-collis-states"  velocity="0 0 0"  force="0 0 0"  externalForce="0 0 0" />
+
 	<BarycentricMapping />
 </Node>
 </Node>

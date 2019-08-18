@@ -9,11 +9,12 @@
   <TetrahedronSetGeometryAlgorithms name="linacAlgos" template="Vec3d"  drawTetrahedra="1"/>
   <OglModel name="linacVisu" position="0 0"
             vertices="@linac-loader.position" normal="@linac-loader.normals"
-            triangles="@linac-loader.triangles" color="brown" />
+            triangles="@linac-loader.triangles" color="white" />
 
     <Node 	 name="LinacCollis"  >
       <MeshObjLoader name="linac-collis-loader"  filename="../meshes/linac/truebeam.obj" />
-      <MeshTopology name="meshTopology"  dx="0" dy="0" dz="0" rx="0" ry="0" rz="0" scale="1.0" />
+      <MeshTopology name="meshTopology"   />
+      <!-- dx="0" dy="0" dz="0" rx="0" ry="0" rz="0" scale="1.0" -->
       <MechanicalObject template="Vec3d" name="linac-collis-states"  position="0 0 0"  velocity="0 0 0"  force="0 0 0"  externalForce="0 0 0"  restScale="1" />
       <TTriangleModel template="Vec3d" name="tTriangleModel1"  selfCollision="0" />
       <TLineModel template="Vec3d" name="tLineModel1"  selfCollision="0" />

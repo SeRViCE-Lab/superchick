@@ -137,7 +137,7 @@ bool pathToSofaBuild(boost::filesystem::path&& SofaInstallPath,
   #elif __APPLE__
     std::string sofa_path = "/Users/olalekanogunmolu/sofa/master";
   #else
-    std::cout << "Unknown compiler" << std::endl;
+      std::cout << "unknown dir path" << "\n";
   #endif
 
   SofaInstallPath = sofa_path + "/" + "build/install/";
@@ -153,21 +153,16 @@ int main(int argc, char** argv)
     if(!(pathToSofaBuild(std::move(SofaInstallPath), std::move(SofaBuildPath))))
       {msg_info(" ") << "could not load the paths";}
 
-    // Add resources dir to GuiDataRepository
-    #ifdef __linux__
-      auto dir = SofaInstallPath / "share/sofa/gui/qt";
-    #elif __APPLE__
-      auto dir = SofaInstallPath / "share/sofa/gui/qt/";
-    #else
-      std::cout << "unknown dir path" << "\n";
-    #endif
-
-    if(FileSystem::isDirectory(dir.string()))
+    const std::string etcDir = SofaInstallPath.string() + "/etc";
+    const std::string sofaIniFilePath = etcDir + "/runSofa.ini";
+    std::map<std::string, std::string> iniFileValues = Utils::readBasicIniFile(sofaIniFilePath);
+    if (iniFileValues.find("RESOURCES_DIR") != iniFileValues.end())
     {
-        sofa::gui::GuiDataRepository.addFirstPath(dir.string());
+        std::string iniFileValue = iniFileValues["RESOURCES_DIR"];
+        if (!FileSystem::isAbsolute(iniFileValue))
+            iniFileValue = etcDir + "/" + iniFileValue;
+        sofa::gui::GuiDataRepository.addFirstPath(iniFileValue);
     }
-    msg_info("dir ") << dir.string() ;
-    PluginRepository.addFirstPath(SofaBuildPath.string() + "/lib");
 
     sofa::helper::BackTrace::autodump();
 
@@ -176,16 +171,10 @@ int main(int argc, char** argv)
     sofa::gui::initMain();
 
     string fileName ;
-    bool        startAnim = false;
-    bool        showHelp = false;
-    bool        printFactory = false;
-    bool        loadRecent = false;
-    bool        temporaryFile = false;
-    bool        testMode = false;
+    bool noSceneCheck, temporaryFile = false;
     bool        noAutoloadPlugins = true;
-    bool        noSceneCheck = false;
+    // bool         = false;
     unsigned int nbMSSASamples = 1;
-    bool computationTimeAtBegin = false;
     unsigned int computationTimeSampling=0; ///< Frequency of display of the computation time statistics, in number of animation steps. 0 means never.
     string    computationTimeOutputType="stdout";
 
@@ -216,15 +205,8 @@ int main(int argc, char** argv)
     gui_help += ")";
 
     ArgumentParser* argParser = new ArgumentParser(argc, argv);
-    argParser->addArgument(po::value<bool>(&showHelp)->default_value(false)->implicit_value(true),                  "help,h", "Display this help message");
-    argParser->addArgument(po::value<bool>(&startAnim)->default_value(false)->implicit_value(true),                 "start,a", "start the animation loop");
-    argParser->addArgument(po::value<bool>(&computationTimeAtBegin)->default_value(false)->implicit_value(true),    "computationTimeAtBegin,b", "Output computation time statistics of the init (at the begin of the simulation)");
-    argParser->addArgument(po::value<unsigned int>(&computationTimeSampling)->default_value(0),                     "computationTimeSampling", "Frequency of display of the computation time statistics, in number of animation steps. 0 means never.");
-    argParser->addArgument(po::value<std::string>(&computationTimeOutputType)->default_value("stdout"),             "computationTimeOutputType,o", "Output type for the computation time statistics: either stdout, json or ljson");
     argParser->addArgument(po::value<std::string>(&gui)->default_value(""),                                         "gui,g", gui_help.c_str());
     argParser->addArgument(po::value<std::vector<std::string>>(&plugins),                                           "load,l", "load given plugins");
-    argParser->addArgument(po::value<bool>(&noAutoloadPlugins)->default_value(false)->implicit_value(true),         "noautoload", "disable plugins autoloading");
-    argParser->addArgument(po::value<bool>(&noSceneCheck)->default_value(false)->implicit_value(true),              "noscenecheck", "disable scene checking for each scene loading");
 
     // example of an option using lambda function which ensure the value passed is > 0
     argParser->addArgument(po::value<unsigned int>(&nbMSSASamples)->default_value(1)->notifier([](unsigned int value)
@@ -235,11 +217,8 @@ int main(int argc, char** argv)
         }
     }),                                                                                                             "msaa,m", "number of samples for MSAA (Multi Sampling Anti Aliasing ; value < 2 means disabled");
 
-    argParser->addArgument(po::value<bool>(&printFactory)->default_value(false)->implicit_value(true),              "factory,p", "print factory logs");
-    argParser->addArgument(po::value<bool>(&loadRecent)->default_value(false)->implicit_value(true),                "recent,r", "load most recently opened file");
+    // argParser->addArgument(po::value<bool>(&loadRecent)->default_value(false)->implicit_value(true),                "recent,r", "load most recently opened file");
     argParser->addArgument(po::value<std::string>(&simulationType),                                                 "simu,s", "select the type of simulation (bgl, dag, tree)");
-    argParser->addArgument(po::value<bool>(&temporaryFile)->default_value(false)->implicit_value(true),             "tmp", "the loaded scene won't appear in history of opened files");
-    argParser->addArgument(po::value<bool>(&testMode)->default_value(false)->implicit_value(true),                  "test", "select test mode with xml output after N iteration");
     argParser->addArgument(po::value<std::string>(&verif)->default_value(""), "verification,v",                     "load verification data for the scene");
     argParser->addArgument(po::value<std::string>(&colorsStatus)->default_value("unset", "auto")->implicit_value("yes"),     "colors,c", "use colors on stdout and stderr (yes, no, auto)");
     argParser->addArgument(po::value<std::string>(&messageHandler)->default_value("auto"), "formatting,f",          "select the message formatting to use (auto, clang, sofa, rich, test)");
@@ -255,12 +234,6 @@ int main(int argc, char** argv)
     addGUIParameters(argParser);
     argParser->parse();
     files = argParser->getInputFileList();
-
-    if(showHelp)
-    {
-        argParser->showHelp();
-        exit( EXIT_SUCCESS );
-    }
 
     // Note that initializations must be done after ArgumentParser that can exit the application (without cleanup)
     // even if everything is ok e.g. asking for help
@@ -332,9 +305,7 @@ int main(int argc, char** argv)
 
     // Create and register the SceneCheckerListener before scene loading
     if(!noSceneCheck)
-    {
         sofa::simulation::SceneLoader::addListener( SceneCheckerListener::getInstance() );
-    }
 
     Node::SPtr groot = sofa::simulation::getSimulation()->load(fileName.c_str());
     if( !groot )
@@ -343,27 +314,14 @@ int main(int argc, char** argv)
     if (!verif.empty())
         loadVerificationData(verif, fileName, groot.get());
 
-    if( computationTimeAtBegin )
-    {
-        sofa::helper::AdvancedTimer::setEnabled("Init", true);
-        sofa::helper::AdvancedTimer::setInterval("Init", 1);
-        sofa::helper::AdvancedTimer::setOutputType("Init", computationTimeOutputType);
-        sofa::helper::AdvancedTimer::begin("Init");
-    }
-
     sofa::simulation::getSimulation()->init(groot.get());
-    if( computationTimeAtBegin )
-    {
-        msg_info("") << sofa::helper::AdvancedTimer::end("Init", groot.get());
-    }
     GUIManager::SetScene(groot,fileName.c_str(), temporaryFile);
 
 
     //=======================================
     //Apply Options
 
-    if (startAnim)
-        groot->setAnimate(true);
+    groot->setAnimate(true);
 
     if( computationTimeSampling>0 )
     {
