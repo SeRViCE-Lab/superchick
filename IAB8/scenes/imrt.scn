@@ -6,13 +6,14 @@
   <BruteForceDetection name="ForceDetection" />
   <MinProximityIntersection name="Proximity" alarmDistance="0.02" contactDistance="0.02" />
   <CollisionResponse name="Response" response="default" />
+  <RequiredPlugin name='SofaOpenglVisual'/> <!-- PLUGINIZED since SOFA v19.06 -->
   <LightManager name="lightManager"  listening="1" />
-  <SpotLight name="light1" color="0 0 1" position="0.5 -70 60" cutoff="125" exponent="1" />
-  <PositionalLight name="lightpos" color="0.5 .7 0.2" attenuation="0.1" position="0.5 -1.7 60" />
-  <DirectionalLight name="lightdir" color="1 1 1" direction=".5 .5 .65" />
-  <VisualManagerPass name="visualManagerPass0"  tags="Visu"  listening="1" />
+  <!-- <SpotLight name="light1" color="0 0 1" position="0.5 -70 60" cutoff="125" exponent="1" /> -->
+  <!-- <PositionalLight name="lightpos" color="0.5 .7 0.2" attenuation="0.1" position="0.5 -1.7 60" /> -->
+  <!-- <DirectionalLight name="lightdir" color="1 1 1" direction=".5 .5 .65" /> -->
+  <!-- <VisualManagerPass name="visualManagerPass0"  tags="Visu"  listening="1" /> -->  <!-- PLUGINIZED since SOFA v19.06 -->
 	<DefaultContactManager name="DefaultResponse"  response="FrictionContact" />
-  <CompositingVisualLoop name="compositingVisualLoop3" />
+  <!-- <CompositingVisualLoop name="compositingVisualLoop3" /> -->  <!-- PLUGINIZED since SOFA v19.06 -->
 
   <Node name="IABChains">
     <!-- Note that dy is now dz due to the -90 of cushions and human rotation -->

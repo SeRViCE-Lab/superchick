@@ -50,12 +50,6 @@ Boost_LIBRARY_DIR_DEBUG:PATH=/usr/local/lib
 //Boost library directory RELEASE
 Boost_LIBRARY_DIR_RELEASE:PATH=/usr/local/lib
 
-//Boost locale library (debug)
-Boost_LOCALE_LIBRARY_DEBUG:FILEPATH=/usr/local/lib/libboost_locale-mt.dylib
-
-//Boost locale library (release)
-Boost_LOCALE_LIBRARY_RELEASE:FILEPATH=/usr/local/lib/libboost_locale-mt.dylib
-
 //Boost program_options library (debug)
 Boost_PROGRAM_OPTIONS_LIBRARY_DEBUG:FILEPATH=/usr/local/lib/libboost_program_options-mt.dylib
 
@@ -268,7 +262,7 @@ GLEW_LIBRARY_DEBUG:FILEPATH=GLEW_LIBRARY_DEBUG-NOTFOUND
 GLEW_LIBRARY_RELEASE:FILEPATH=/usr/local/lib/libGLEW.dylib
 
 //The directory containing a CMake configuration file for GTest.
-GTest_DIR:PATH=/Users/olalekanogunmolu/sofa/master/build/install/lib/cmake/GTest
+GTest_DIR:PATH=/Users/olalekanogunmolu/sofa/v19.06/build/install/lib/cmake/GTest
 
 //Value Computed by CMake
 IAB8_BINARY_DIR:STATIC=/Users/olalekanogunmolu/Documents/superchicko/IAB8/build
@@ -277,10 +271,10 @@ IAB8_BINARY_DIR:STATIC=/Users/olalekanogunmolu/Documents/superchicko/IAB8/build
 IAB8_SOURCE_DIR:STATIC=/Users/olalekanogunmolu/Documents/superchicko/IAB8
 
 //The directory containing a CMake configuration file for MiniFlowVR.
-MiniFlowVR_DIR:PATH=/Users/olalekanogunmolu/sofa/master/build/install/lib/cmake/MiniFlowVR
+MiniFlowVR_DIR:PATH=/Users/olalekanogunmolu/sofa/v19.06/build/install/lib/cmake/MiniFlowVR
 
 //The directory containing a CMake configuration file for Newmat.
-Newmat_DIR:PATH=/Users/olalekanogunmolu/sofa/master/build/install/lib/cmake/Newmat
+Newmat_DIR:PATH=/Users/olalekanogunmolu/sofa/v19.06/build/install/lib/cmake/Newmat
 
 //Path to a file.
 PYTHON_INCLUDE_DIR:PATH=/Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk/usr/include/python2.7
@@ -292,7 +286,10 @@ PYTHON_LIBRARY:FILEPATH=/usr/lib/libpython2.7.dylib
 PYTHON_LIBRARY_DEBUG:FILEPATH=PYTHON_LIBRARY_DEBUG-NOTFOUND
 
 //The directory containing a CMake configuration file for QGLViewer.
-QGLViewer_DIR:PATH=/Users/olalekanogunmolu/sofa/master/build/install/lib/cmake/QGLViewer
+QGLViewer_DIR:PATH=/Users/olalekanogunmolu/sofa/v19.06/build/install/lib/cmake/QGLViewer
+
+//The directory containing a CMake configuration file for Qt5Charts.
+Qt5Charts_DIR:PATH=/Users/olalekanogunmolu/anaconda3/lib/cmake/Qt5Charts
 
 //The directory containing a CMake configuration file for Qt5Core.
 Qt5Core_DIR:PATH=/Users/olalekanogunmolu/anaconda3/lib/cmake/Qt5Core
@@ -313,37 +310,37 @@ Qt5Xml_DIR:PATH=/Users/olalekanogunmolu/anaconda3/lib/cmake/Qt5Xml
 Qt5_DIR:PATH=/Users/olalekanogunmolu/anaconda3/lib/cmake/Qt5
 
 //The directory containing a CMake configuration file for SofaAdvanced.
-SofaAdvanced_DIR:PATH=/Users/olalekanogunmolu/sofa/master/build/install/lib/cmake/SofaAdvanced
+SofaAdvanced_DIR:PATH=/Users/olalekanogunmolu/sofa/v19.06/build/install/lib/cmake/SofaAdvanced
 
 //The directory containing a CMake configuration file for SofaBase.
-SofaBase_DIR:PATH=/Users/olalekanogunmolu/sofa/master/build/install/lib/cmake/SofaBase
+SofaBase_DIR:PATH=/Users/olalekanogunmolu/sofa/v19.06/build/install/lib/cmake/SofaBase
 
 //The directory containing a CMake configuration file for SofaCommon.
-SofaCommon_DIR:PATH=/Users/olalekanogunmolu/sofa/master/build/install/lib/cmake/SofaCommon
+SofaCommon_DIR:PATH=/Users/olalekanogunmolu/sofa/v19.06/build/install/lib/cmake/SofaCommon
 
 //The directory containing a CMake configuration file for SofaFramework.
-SofaFramework_DIR:PATH=/Users/olalekanogunmolu/sofa/master/build/install/lib/cmake/SofaFramework
+SofaFramework_DIR:PATH=/Users/olalekanogunmolu/sofa/v19.06/build/install/lib/cmake/SofaFramework
 
 //The directory containing a CMake configuration file for SofaGeneral.
-SofaGeneral_DIR:PATH=/Users/olalekanogunmolu/sofa/master/build/install/lib/cmake/SofaGeneral
+SofaGeneral_DIR:PATH=/Users/olalekanogunmolu/sofa/v19.06/build/install/lib/cmake/SofaGeneral
 
 //The directory containing a CMake configuration file for SofaGui.
-SofaGui_DIR:PATH=/Users/olalekanogunmolu/sofa/master/build/install/lib/cmake/SofaGui
+SofaGui_DIR:PATH=/Users/olalekanogunmolu/sofa/v19.06/build/install/lib/cmake/SofaGui
 
 //The directory containing a CMake configuration file for SofaMiscCollision.
-SofaMiscCollision_DIR:PATH=/Users/olalekanogunmolu/sofa/master/build/install/lib/cmake/SofaMiscCollision
+SofaMiscCollision_DIR:PATH=/Users/olalekanogunmolu/sofa/v19.06/build/install/plugins/SofaMiscCollision/lib/cmake/SofaMiscCollision
 
 //The directory containing a CMake configuration file for SofaMisc.
-SofaMisc_DIR:PATH=/Users/olalekanogunmolu/sofa/master/build/install/lib/cmake/SofaMisc
+SofaMisc_DIR:PATH=/Users/olalekanogunmolu/sofa/v19.06/build/install/lib/cmake/SofaMisc
 
 //The directory containing a CMake configuration file for SofaPython.
-SofaPython_DIR:PATH=/Users/olalekanogunmolu/sofa/master/build/install/lib/cmake/SofaPython
+SofaPython_DIR:PATH=/Users/olalekanogunmolu/sofa/v19.06/build/install/plugins/SofaPython/lib/cmake/SofaPython
 
 //The directory containing a CMake configuration file for SofaSimulation.
-SofaSimulation_DIR:PATH=/Users/olalekanogunmolu/sofa/master/build/install/lib/cmake/SofaSimulation
+SofaSimulation_DIR:PATH=/Users/olalekanogunmolu/sofa/v19.06/build/install/lib/cmake/SofaSimulation
 
 //The directory containing a CMake configuration file for TinyXML.
-TinyXML_DIR:PATH=/Users/olalekanogunmolu/sofa/master/build/install/lib/cmake/TinyXML
+TinyXML_DIR:PATH=/Users/olalekanogunmolu/sofa/v19.06/build/install/lib/cmake/TinyXML
 
 //Path to a file.
 ZLIB_INCLUDE_DIR:PATH=/Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk/usr/include
@@ -383,10 +380,6 @@ Boost_INCLUDE_DIR-ADVANCED:INTERNAL=1
 Boost_LIBRARY_DIR_DEBUG-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: Boost_LIBRARY_DIR_RELEASE
 Boost_LIBRARY_DIR_RELEASE-ADVANCED:INTERNAL=1
-//ADVANCED property for variable: Boost_LOCALE_LIBRARY_DEBUG
-Boost_LOCALE_LIBRARY_DEBUG-ADVANCED:INTERNAL=1
-//ADVANCED property for variable: Boost_LOCALE_LIBRARY_RELEASE
-Boost_LOCALE_LIBRARY_RELEASE-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: Boost_PROGRAM_OPTIONS_LIBRARY_DEBUG
 Boost_PROGRAM_OPTIONS_LIBRARY_DEBUG-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: Boost_PROGRAM_OPTIONS_LIBRARY_RELEASE
@@ -559,7 +552,7 @@ ZLIB_LIBRARY_DEBUG-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: ZLIB_LIBRARY_RELEASE
 ZLIB_LIBRARY_RELEASE-ADVANCED:INTERNAL=1
 //Components requested for this build tree.
-_Boost_COMPONENTS_SEARCHED:INTERNAL=atomic;chrono;date_time;filesystem;locale;program_options;system;thread
+_Boost_COMPONENTS_SEARCHED:INTERNAL=atomic;chrono;date_time;filesystem;program_options;system;thread
 //Last used Boost_INCLUDE_DIR value.
 _Boost_INCLUDE_DIR_LAST:INTERNAL=/usr/local/include
 //Last used Boost_LIBRARY_DIR_DEBUG value.

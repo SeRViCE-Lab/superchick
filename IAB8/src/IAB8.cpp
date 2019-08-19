@@ -18,8 +18,7 @@ using std::vector;
 #include <SofaSimulationGraph/init.h>
 #include <SofaSimulationGraph/DAGSimulation.h>
 #endif
-#include <SofaSimulationTree/init.h>
-#include <SofaSimulationTree/TreeSimulation.h>
+
 using sofa::simulation::Node;
 #include <sofa/simulation/SceneLoaderFactory.h>
 #include <SofaGraphComponent/SceneCheckerListener.h>
@@ -45,7 +44,7 @@ using sofa::helper::system::FileSystem;
 using sofa::gui::GUIManager;
 
 #include <sofa/gui/Main.h>
-#include <sofa/gui/BatchGUI.h>  // For the default number of iterations
+#include <sofa/gui/BatchGUI.h>  // needed for BaseGUI
 #include <sofa/helper/system/gl.h>
 #include <sofa/helper/system/atomic.h>
 
@@ -56,49 +55,20 @@ using sofa::helper::Utils;
 
 using sofa::component::misc::CompareStateCreator;
 using sofa::component::misc::ReadStateActivator;
-using sofa::simulation::tree::TreeSimulation;
+// using sofa::simulation::tree::TreeSimulation;
 using sofa::simulation::graph::DAGSimulation;
 using sofa::helper::system::SetDirectory;
 using sofa::core::objectmodel::BaseNode ;
-using sofa::gui::BatchGUI;
 using sofa::gui::BaseGUI;
 
-#include <sofa/helper/logging/Messaging.h>
-
-#include <sofa/helper/logging/ConsoleMessageHandler.h>
-using sofa::helper::logging::ConsoleMessageHandler ;
-
-#include <sofa/core/logging/RichConsoleStyleMessageFormatter.h>
-using  sofa::helper::logging::RichConsoleStyleMessageFormatter ;
-
-#include <sofa/core/logging/PerComponentLoggingMessageHandler.h>
-using  sofa::helper::logging::MainPerComponentLoggingMessageHandler ;
-
 #include <sofa/helper/AdvancedTimer.h>
+#include <sofa/helper/logging/Messaging.h>
 
 #define BOOST_NO_CXX11_SCOPED_ENUMS
 #include <boost/filesystem.hpp>
 #undef BOOST_NO_CXX11_SCOPED_ENUMS
 
 #include <sofa/gui/GuiDataRepository.h>
-using sofa::gui::GuiDataRepository ;
-
-using sofa::helper::system::DataRepository;
-using sofa::helper::system::PluginRepository;
-using sofa::helper::system::PluginManager;
-
-#include <sofa/helper/logging/MessageDispatcher.h>
-using sofa::helper::logging::MessageDispatcher ;
-
-#include <sofa/helper/logging/ClangMessageHandler.h>
-using sofa::helper::logging::ClangMessageHandler ;
-
-#include <sofa/helper/logging/ExceptionMessageHandler.h>
-using sofa::helper::logging::ExceptionMessageHandler;
-
-#define STRINGIFY(x) #x
-#define TOSTRING(x) STRINGIFY(x)
-
 
 void loadVerificationData(string& directory, string& filename, Node* node)
 {
@@ -126,16 +96,14 @@ void addGUIParameters(ArgumentParser* argumentParser)
     GUIManager::RegisterParameters(argumentParser);
 }
 
+// // set sofa build path
 bool pathToSofaBuild(boost::filesystem::path&& SofaInstallPath,
                      boost::filesystem::path&& SofaBuildPath)
-{
-  // set sofa build path
-  const std::string cwd = SetDirectory::GetCurrentDir();
-
+{  
   #ifdef __linux__
-    std::string sofa_path = "/home/lex/sofa/v18.06";
+    std::string sofa_path = "/home/lex/sofa/v19.06";
   #elif __APPLE__
-    std::string sofa_path = "/Users/olalekanogunmolu/sofa/master";
+    std::string sofa_path = "/Users/olalekanogunmolu/sofa/v19.06";
   #else
       std::cout << "unknown dir path" << "\n";
   #endif
@@ -153,77 +121,38 @@ int main(int argc, char** argv)
     if(!(pathToSofaBuild(std::move(SofaInstallPath), std::move(SofaBuildPath))))
       {msg_info(" ") << "could not load the paths";}
 
-    const std::string etcDir = SofaInstallPath.string() + "/etc";
-    const std::string sofaIniFilePath = etcDir + "/runSofa.ini";
-    std::map<std::string, std::string> iniFileValues = Utils::readBasicIniFile(sofaIniFilePath);
-    if (iniFileValues.find("RESOURCES_DIR") != iniFileValues.end())
-    {
-        std::string iniFileValue = iniFileValues["RESOURCES_DIR"];
-        if (!FileSystem::isAbsolute(iniFileValue))
-            iniFileValue = etcDir + "/" + iniFileValue;
-        sofa::gui::GuiDataRepository.addFirstPath(iniFileValue);
-    }
-
     sofa::helper::BackTrace::autodump();
-
     ExecParams::defaultInstance()->setAspectID(0);
-
     sofa::gui::initMain();
 
     string fileName ;
     bool noSceneCheck, temporaryFile = false;
-    bool        noAutoloadPlugins = true;
-    // bool         = false;
     unsigned int nbMSSASamples = 1;
     unsigned int computationTimeSampling=0; ///< Frequency of display of the computation time statistics, in number of animation steps. 0 means never.
     string    computationTimeOutputType="stdout";
-
-    string gui = "";
-    string verif = "";
-
-#if defined(SOFA_HAVE_DAG)
+    string gui,  verif = "";
     string simulationType = "dag";
-#else
-    string simulationType = "tree";
-#endif
 
-    vector<string> plugins;
-    vector<string> files;
+    vector<string> plugins, files;
 #ifdef SOFA_SMP
     string nProcs="";
-    bool        disableStealing = false;
-    bool        affinity = false;
+    bool        disableStealing, affinity = false;
 #endif
     string colorsStatus = "unset";
     string messageHandler = "auto";
     bool enableInteraction = false ;
-    int width = 800;
+    int width = 600;
     int height = 600;
 
-    string gui_help = "choose the UI (";
-    gui_help += GUIManager::ListSupportedGUI('|');
-    gui_help += ")";
 
     ArgumentParser* argParser = new ArgumentParser(argc, argv);
-    argParser->addArgument(po::value<std::string>(&gui)->default_value(""),                                         "gui,g", gui_help.c_str());
-    argParser->addArgument(po::value<std::vector<std::string>>(&plugins),                                           "load,l", "load given plugins");
-
-    // example of an option using lambda function which ensure the value passed is > 0
-    argParser->addArgument(po::value<unsigned int>(&nbMSSASamples)->default_value(1)->notifier([](unsigned int value)
-    {
-        if (value < 1) {
-            std::cerr << "msaa sample cannot be lower than 1" << std::endl;
-            exit( EXIT_FAILURE );
-        }
-    }),                                                                                                             "msaa,m", "number of samples for MSAA (Multi Sampling Anti Aliasing ; value < 2 means disabled");
-
-    // argParser->addArgument(po::value<bool>(&loadRecent)->default_value(false)->implicit_value(true),                "recent,r", "load most recently opened file");
-    argParser->addArgument(po::value<std::string>(&simulationType),                                                 "simu,s", "select the type of simulation (bgl, dag, tree)");
-    argParser->addArgument(po::value<std::string>(&verif)->default_value(""), "verification,v",                     "load verification data for the scene");
-    argParser->addArgument(po::value<std::string>(&colorsStatus)->default_value("unset", "auto")->implicit_value("yes"),     "colors,c", "use colors on stdout and stderr (yes, no, auto)");
-    argParser->addArgument(po::value<std::string>(&messageHandler)->default_value("auto"), "formatting,f",          "select the message formatting to use (auto, clang, sofa, rich, test)");
-    argParser->addArgument(po::value<bool>(&enableInteraction)->default_value(false)->implicit_value(true),         "interactive,i", "enable interactive mode for the GUI which includes idle and mouse events (EXPERIMENTAL)");
-    argParser->addArgument(po::value<std::vector<std::string> >()->multitoken(), "argv",                            "forward extra args to the python interpreter");
+    argParser->addArgument(po::value<std::vector<std::string>>(&plugins), "load,l", "load given plugins");
+    argParser->addArgument(po::value<std::string>(&simulationType),  "simu,s", "select the type of simulation (bgl, dag, tree)");
+    argParser->addArgument(po::value<std::string>(&verif)->default_value(""), "verification,v","load verification data for the scene");
+    argParser->addArgument(po::value<std::string>(&colorsStatus)->default_value("unset", "auto")->implicit_value("yes"),"colors,c", "use colors on stdout and stderr (yes, no, auto)");
+    argParser->addArgument(po::value<std::string>(&messageHandler)->default_value("auto"), "formatting,f","select the message formatting to use (auto, clang, sofa, rich, test)");
+    argParser->addArgument(po::value<bool>(&enableInteraction)->default_value(false)->implicit_value(true),"interactive,i", "enable interactive mode for the GUI which includes idle and mouse events (EXPERIMENTAL)");
+    argParser->addArgument(po::value<std::vector<std::string> >()->multitoken(), "argv","forward extra args to the python interpreter");
 
 #ifdef SOFA_SMP
     argParser->addArgument(po::value<bool>(&disableStealing)->default_value(false)->implicit_value(true),           "disableStealing,w", "Disable Work Stealing")
@@ -237,7 +166,7 @@ int main(int argc, char** argv)
 
     // Note that initializations must be done after ArgumentParser that can exit the application (without cleanup)
     // even if everything is ok e.g. asking for help
-    sofa::simulation::tree::init();
+    // sofa::simulation::tree::init();
 #ifdef SOFA_HAVE_DAG
     sofa::simulation::graph::init();
 #endif
@@ -247,55 +176,35 @@ int main(int argc, char** argv)
     sofa::component::initComponentAdvanced();
     sofa::component::initComponentMisc();
 
-#ifdef SOFA_HAVE_DAG
-    if (simulationType == "tree")
-        sofa::simulation::setSimulation(new TreeSimulation());
-    else
-        sofa::simulation::setSimulation(new DAGSimulation());
-#else //SOFA_HAVE_DAG
-    sofa::simulation::setSimulation(new TreeSimulation());
-#endif
-
-    // Output FileRepositories
-    msg_info("IAB") << "PluginRepository paths = " << PluginRepository.getPathsJoined();
-    msg_info("IAB") << "DataRepository paths = " << DataRepository.getPathsJoined();
-    msg_info("IAB") << "GuiDataRepository paths = " << GuiDataRepository.getPathsJoined();
+    sofa::simulation::setSimulation(new DAGSimulation());
 
     // Initialise paths
-    BaseGUI::setConfigDirectoryPath(SofaBuildPath.string() + "/config", true);
-    BaseGUI::setScreenshotDirectoryPath(SetDirectory::GetCurrentDir() +  "/screenshots", true);
+    sofa::gui::BaseGUI::setConfigDirectoryPath(SofaBuildPath.string() + "/config", true);
+    sofa::gui::BaseGUI::setScreenshotDirectoryPath(SetDirectory::GetCurrentDir() +  "/screenshots", true);
 
     if (!files.empty())
         fileName = files[0];
 
     for (unsigned int i=0; i<plugins.size(); i++)
-      PluginManager::getInstance().loadPlugin(plugins[i]);
+      sofa::helper::system::PluginManager::getInstance().loadPlugin(plugins[i]);
 
-    std::string defaultConfigPluginPath = DataRepository.getFile(SetDirectory::GetCurrentDir() + "/../patient/plugins.conf");
-
-    if (!noAutoloadPlugins)
+    std::string defaultConfigPluginPath = sofa::helper::system::PluginRepository.getPathsJoined() + "/../patient/plugins.conf";
+    std::string SofaGuiInitPath = sofa::helper::system::PluginRepository.getPathsJoined() + "/../patient/SofaGuiQt.ini";
+    if (sofa::helper::system::PluginRepository.findFile(defaultConfigPluginPath, "", nullptr))
     {
-        if (PluginRepository.findFile(defaultConfigPluginPath, "", nullptr))
-        {
-            msg_info("IAB") << "Loading default plugin list in " << defaultConfigPluginPath;
-            PluginManager::getInstance().readFromIniFile(defaultConfigPluginPath);
-        }
-        else
-            msg_info("IAB") << "No plugin list found. No plugin will be automatically loaded.";
+        msg_info("IAB") << "Loading default plugin list in " << defaultConfigPluginPath;
+        sofa::helper::system::PluginManager::getInstance().readFromIniFile(SofaGuiInitPath);
     }
     else
-        msg_info("IAB") << "Automatic plugin loading disabled.";
+        msg_info("IAB") << "No plugin list found. No plugin will be automatically loaded.";
 
-    PluginManager::getInstance().init();
+    sofa::helper::system::PluginManager::getInstance().init();
 
     if (int err = GUIManager::Init(argv[0],gui.c_str()))
         return err;
 
     if (fileName.empty())
-    {
-        fileName = DataRepository.getFile(SetDirectory::GetCurrentDir() + "/../scenes/imrt.scn");
-    }
-
+        fileName = sofa::helper::system::DataRepository.getFile(SetDirectory::GetCurrentDir() + "/../scenes/imrt.scn");
 
     if (int err=GUIManager::createGUI(nullptr))
         return err;
@@ -320,7 +229,6 @@ int main(int argc, char** argv)
 
     //=======================================
     //Apply Options
-
     groot->setAnimate(true);
 
     if( computationTimeSampling>0 )
@@ -343,9 +251,7 @@ int main(int argc, char** argv)
     GUIManager::closeGUI();
 
     sofa::simulation::common::cleanup();
-    sofa::simulation::tree::cleanup();
-#ifdef SOFA_HAVE_DAG
+    // sofa::simulation::tree::cleanup()
     sofa::simulation::graph::cleanup();
-#endif
     return 0;
 }
