@@ -5,16 +5,28 @@ add_definitions(-std=c++14)
 
 find_package(Boost COMPONENTS filesystem system REQUIRED)
 
-set(sofadir "/Users/$ENV{USER}/sofa/v19.06")
+set(SOFA_DIR "$ENV{HOME}/$ENV{USER}/sofa/v19.06")
+
+
+if(APPLE)
+	list(APPEND CMAKE_MODULE_PATH "${SOFA_DIR}/build/cmake/Modules")
+elseif(UNIX)
+	list(APPEND CMAKE_MODULE_PATH "${SOFA_DIR}/build/cmake")
+else()
+    message(STATUS "Windows not supported")
+endif()
 
 # add definitions for sofa_dir for fwd pickup bu iab.cpp
-add_definitions(-DSOFADIR=${sofadir})
+add_definitions(-DSOFADIR=${SOFA_DIR})
+
+message(STATUS "CMAKE_MODULE_PATH: ${CMAKE_MODULE_PATH}")
+# message(STATUS "HOME: $ENV{HOME}")
+# message(STATUS "USER: $ENV{USER}")
 
 
-list(APPEND CMAKE_PREFIX_PATH "${sofadir}/build/install/lib/cmake")
-list(APPEND CMAKE_MODULE_PATH "${sofadir}/build/cmake/Modules")
-set(CMAKE_INSTALL_PREFIX "${sofadir}/build/install")
-set(RUN_SOFA_DIR "${sofadir}/applications/projects/runSofa")
+list(APPEND CMAKE_PREFIX_PATH "${SOFA_DIR}/build/install/lib/cmake")
+set(CMAKE_INSTALL_PREFIX "${SOFA_DIR}/build/install")
+set(RUN_SOFA_DIR "${SOFA_DIR}/applications/projects/runSofa")
 set(RC_FILES "${RUN_SOFA_DIR}/runSofa.icns")
 set(RC_FILES "${RUN_SOFA_DIR}/runSofa.rc")
 
@@ -31,7 +43,7 @@ include(${RUN_SOFA_DIR}/cmake/GeneratePluginConfig.cmake)
 # message(STATUS "CMAKE_INSTALL_PREFIX: ${CMAKE_INSTALL_PREFIX}")
 
 
-set(_pluginLocation "${sofadir}/build/lib")
+set(_pluginLocation "${SOFA_DIR}/build/lib")
 set(_configPluginFileName "${_pluginLocation}/plugin_list.conf")
 set(_defaultConfigPluginFileName "${_configPluginFileName}.default")
 set(_defaultConfigPluginFilePath "${_defaultConfigPluginFileName}")
