@@ -31,7 +31,7 @@ Source codes for this scene file are in
 	<!-- ![mjpro_model](/superchick/config/mjmodel.jpg) -->
 
 	<div class="fig figcenter fighighlight">
-	  <img src="/superchick/config/mjmodel.jpg" height="75%" width="70%" align="middle" style="border-left: 1px solid black;" />
+	  <img src="ros_sofa/superchick/config/mjmodel.jpg" height="75%" width="70%" align="middle" style="border-left: 1px solid black;" />
 	</div>
 
 ### Superchicko Rviz Plugin
