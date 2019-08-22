@@ -50,13 +50,6 @@ include_directories("${CMAKE_INSTALL_PREFIX}/include")
 set(SOFA_LIBS_DIR "${CMAKE_INSTALL_PREFIX}/lib")
 link_directories(${SOFA_LIBS_DIR})
 
-
-# set(_configPluginFileName plugin_list.conf)
-# set(_defaultConfigPluginFileName "${_configPluginFileName}.default")
-# set(_defaultConfigPluginFilePath "${CMAKE_BINARY_DIR}/${_pluginLocation}/${_defaultConfigPluginFileName}")
-# sofa_generate_plugin_config(${_defaultConfigPluginFilePath})
-# message("Write Plugin list at ${_defaultConfigPluginFilePath}")
-
 set(SOFA_LIBS SofaComponentAdvanced
 							SofaComponentMisc
 							SofaSimulationGraph

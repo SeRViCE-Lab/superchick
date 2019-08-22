@@ -47,7 +47,7 @@ using sofa::gui::GUIManager;
 #include <sofa/gui/Main.h>
 #include <sofa/gui/BatchGUI.h>  // needed for BaseGUI
 #include <sofa/helper/system/gl.h>
-#include <sofa/helper/system/atomic.h>
+// #include <sofa/helper/system/atomic.h>
 
 using sofa::core::ExecParams ;
 
@@ -56,26 +56,29 @@ using sofa::helper::Utils;
 
 using sofa::component::misc::CompareStateCreator;
 using sofa::component::misc::ReadStateActivator;
-// using sofa::simulation::tree::TreeSimulation;
 using sofa::simulation::graph::DAGSimulation;
 using sofa::helper::system::SetDirectory;
 using sofa::core::objectmodel::BaseNode ;
+using sofa::gui::BatchGUI;
 using sofa::gui::BaseGUI;
 
 #include <sofa/helper/AdvancedTimer.h>
 #include <sofa/helper/logging/Messaging.h>
 
-#define BOOST_NO_CXX11_SCOPED_ENUMS
-#include <boost/filesystem.hpp>
-#undef BOOST_NO_CXX11_SCOPED_ENUMS
 
 #include <sofa/gui/GuiDataRepository.h>
+using sofa::gui::GuiDataRepository ;
+
+using sofa::helper::system::DataRepository;
+using sofa::helper::system::PluginRepository;
+using sofa::helper::system::PluginManager;
 
 // see http://www.decompile.com/cpp/faq/file_and_line_error_string.htm
 #define STRINGIFY(x) #x
 #define TOSTRING(x) STRINGIFY(x)
 #define AT __FILE__ ":" TOSTRING(__LINE__)
 #define SOFA SOFA_ROOT
+// easy debugging preprocessors
 #define OUT_INFO(__X__) (std::cout << __X__ <<std::endl)
 #define OUTT(__X__, __Y__) (std::cout << __X__ << ", " << __Y__ << std::endl)
 
@@ -109,8 +112,21 @@ void addGUIParameters(ArgumentParser* argumentParser)
 int main(int argc, char** argv)
 {
     auto SofaBuildPath = std::string(TOSTRING(SOFA)) + "/build";
+    OUTT("SofaBuildPath: ", SofaBuildPath);
 
-    // OUTT("SofaBuildPath ", SofaBuildPath);
+    std::string dir = SofaBuildPath + "install/share/sofa/gui/qt/";
+    dir = SetDirectory::GetRelativeFromProcess(dir.c_str());
+    if(FileSystem::isDirectory(dir))
+    {
+        sofa::gui::GuiDataRepository.addFirstPath(dir);
+    }
+
+    // Add plugins and modules dirs to PluginRepository
+    if ( FileSystem::isDirectory(Utils::getSofaPathPrefix()+"/plugins") )
+    {
+        PluginRepository.addFirstPath(Utils::getSofaPathPrefix()+"/plugins");
+    }
+
     sofa::helper::BackTrace::autodump();
     ExecParams::defaultInstance()->setAspectID(0);
     sofa::gui::initMain();
@@ -133,7 +149,6 @@ int main(int argc, char** argv)
     bool enableInteraction = false ;
     int width = 600;
     int height = 600;
-
 
     ArgumentParser* argParser = new ArgumentParser(argc, argv);
     argParser->addArgument(po::value<std::vector<std::string>>(&plugins), "load,l", "load given plugins");
@@ -164,6 +179,12 @@ int main(int argc, char** argv)
 
     sofa::simulation::setSimulation(new DAGSimulation());
 
+    // Output FileRepositories
+    msg_info("runSofa") << "PluginRepository paths = " << PluginRepository.getPathsJoined();
+    msg_info("runSofa") << "DataRepository paths = " << DataRepository.getPathsJoined();
+    msg_info("runSofa") << "GuiDataRepository paths = " << GuiDataRepository.getPathsJoined();
+
+
     // Initialise paths
     sofa::gui::BaseGUI::setConfigDirectoryPath(SofaBuildPath + "/config", true);
     sofa::gui::BaseGUI::setScreenshotDirectoryPath(SetDirectory::GetCurrentDir() +  "/screenshots", true);
@@ -172,25 +193,27 @@ int main(int argc, char** argv)
         fileName = files[0];
 
     for (unsigned int i=0; i<plugins.size(); i++)
-      sofa::helper::system::PluginManager::getInstance().loadPlugin(plugins[i]);
+      // PluginManager::getInstance().loadPlugin(SofaBuildPath + "/lib/lib" + plugins[i] + ".so");
+      PluginManager::getInstance().loadPluginByPath(SofaBuildPath + "/lib" + plugins[i]);
 
-    std::string defaultConfigPluginPath = sofa::helper::system::PluginRepository.getPathsJoined() + "/../patient/plugins.conf";
-    std::string SofaGuiInitPath = sofa::helper::system::PluginRepository.getPathsJoined() + "/../patient/SofaGuiQt.ini";
-    if (sofa::helper::system::PluginRepository.findFile(defaultConfigPluginPath, "", nullptr))
+    std::string configPluginPath = PluginRepository.getPathsJoined() + "/../patient/plugins.conf"; //TOSTRING(CONFIG_PLUGIN_FILENAME);
+    std::string defaultConfigPluginPath = SofaBuildPath + "lib/plugin_list.conf.default";
+
+    if (PluginRepository.findFile(configPluginPath, "", nullptr))
     {
-        msg_info("IAB") << "Loading default plugin list in " << defaultConfigPluginPath;
-        sofa::helper::system::PluginManager::getInstance().readFromIniFile(SofaGuiInitPath);
+        msg_info("IAB") << "Loading patient plugins in " << configPluginPath;
+        PluginManager::getInstance().readFromIniFile(configPluginPath);
     }
     else
-        msg_info("IAB") << "No plugin list found. No plugin will be automatically loaded.";
+        msg_info("IAB") << "Plugins not provided. Not loading plugins.";
 
-    sofa::helper::system::PluginManager::getInstance().init();
+    PluginManager::getInstance().init();
 
     if (int err = GUIManager::Init(argv[0],gui.c_str()))
         return err;
 
     if (fileName.empty())
-        fileName = sofa::helper::system::DataRepository.getFile(SetDirectory::GetCurrentDir() + "/../scenes/imrt.scn");
+        fileName = DataRepository.getFile(SetDirectory::GetCurrentDir() + "/../scenes/imrt.scn");
 
     if (int err=GUIManager::createGUI(nullptr))
         return err;
@@ -237,7 +260,6 @@ int main(int argc, char** argv)
     GUIManager::closeGUI();
 
     sofa::simulation::common::cleanup();
-    // sofa::simulation::tree::cleanup()
     sofa::simulation::graph::cleanup();
     return 0;
 }
