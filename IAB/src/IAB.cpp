@@ -8,6 +8,7 @@ using std::string;
 #include <vector>
 using std::vector;
 
+//#include <IAB/IAB-config.h>
 #include <sofa/helper/ArgumentParser.h>
 #include <SofaSimulationCommon/common.h>
 #include <sofa/simulation/Node.h>
@@ -70,6 +71,14 @@ using sofa::gui::BaseGUI;
 
 #include <sofa/gui/GuiDataRepository.h>
 
+// useful debugging macros
+#define STRINGIFY(x) #x
+#define TOSTRING(x) STRINGIFY(x)
+#define AT __FILE__ ":" TOSTRING(__LINE__)
+#define SOFA SOFA_ROOT
+#define OUT_INFO(__X__) (std::cout << __X__ <<std::endl)
+#define OUTT(__X__, __Y__) (std::cout << __X__ << ", " << __Y__ << std::endl)
+
 void loadVerificationData(string& directory, string& filename, Node* node)
 {
     msg_info("") << "loadVerificationData from " << directory << " and file " << filename ;
@@ -96,31 +105,12 @@ void addGUIParameters(ArgumentParser* argumentParser)
     GUIManager::RegisterParameters(argumentParser);
 }
 
-// // set sofa build path
-bool pathToSofaBuild(boost::filesystem::path&& SofaInstallPath,
-                     boost::filesystem::path&& SofaBuildPath)
-{  
-  #ifdef __linux__
-    std::string sofa_path = "/home/lex/sofa/v19.06";
-  #elif __APPLE__
-    std::string sofa_path = "/Users/olalekanogunmolu/sofa/v19.06";
-  #else
-      std::cout << "unknown dir path" << "\n";
-  #endif
-
-  SofaInstallPath = sofa_path + "/" + "build/install/";
-  SofaBuildPath   = sofa_path + "/" + "build";
-
-  return true;
-}
-
 
 int main(int argc, char** argv)
 {
-    boost::filesystem::path SofaInstallPath, SofaBuildPath;
-    if(!(pathToSofaBuild(std::move(SofaInstallPath), std::move(SofaBuildPath))))
-      {msg_info(" ") << "could not load the paths";}
+    auto SofaBuildPath = std::string(TOSTRING(SOFA)) + "/build";
 
+    OUTT("SofaBuildPath ", SofaBuildPath);
     sofa::helper::BackTrace::autodump();
     ExecParams::defaultInstance()->setAspectID(0);
     sofa::gui::initMain();
@@ -163,10 +153,6 @@ int main(int argc, char** argv)
     addGUIParameters(argParser);
     argParser->parse();
     files = argParser->getInputFileList();
-
-    // Note that initializations must be done after ArgumentParser that can exit the application (without cleanup)
-    // even if everything is ok e.g. asking for help
-    // sofa::simulation::tree::init();
 #ifdef SOFA_HAVE_DAG
     sofa::simulation::graph::init();
 #endif
@@ -179,7 +165,7 @@ int main(int argc, char** argv)
     sofa::simulation::setSimulation(new DAGSimulation());
 
     // Initialise paths
-    sofa::gui::BaseGUI::setConfigDirectoryPath(SofaBuildPath.string() + "/config", true);
+    sofa::gui::BaseGUI::setConfigDirectoryPath(SofaBuildPath + "/config", true);
     sofa::gui::BaseGUI::setScreenshotDirectoryPath(SetDirectory::GetCurrentDir() +  "/screenshots", true);
 
     if (!files.empty())

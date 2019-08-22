@@ -1,0 +1,1 @@
+#cmakedefine SOFA_ROOT
