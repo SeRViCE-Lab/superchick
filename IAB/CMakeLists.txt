@@ -5,12 +5,14 @@ add_definitions(-std=c++14)
 
 find_package(Boost COMPONENTS filesystem system REQUIRED)
 
-set(SOFA_DIR "$ENV{HOME}/$ENV{USER}/sofa/v19.06")
-
-
 if(APPLE)
+	set(SOFA_DIR "$ENV{HOME}/$ENV{USER}/sofa/v19.06")
 	list(APPEND CMAKE_MODULE_PATH "${SOFA_DIR}/build/cmake/Modules")
-elseif(UNIX)
+elseif(UNIX AND NOT APPLE)
+	# check if we are on docker or a host
+	execute_process(COMMAND ${CMAKE_COMMAND} -E echo uname -n OUTPUT_VARIABLE NODE_TYPE)
+	if(${NODE_TYPE} $ENV{USER})
+	set(SOFA_DIR "$ENV{HOME}/$ENV{USER}/sofa/v19.06")
 	list(APPEND CMAKE_MODULE_PATH "${SOFA_DIR}/build/cmake")
 else()
     message(STATUS "Windows not supported")
@@ -20,8 +22,6 @@ endif()
 add_definitions(-DSOFADIR=${SOFA_DIR})
 
 message(STATUS "CMAKE_MODULE_PATH: ${CMAKE_MODULE_PATH}")
-# message(STATUS "HOME: $ENV{HOME}")
-# message(STATUS "USER: $ENV{USER}")
 
 
 list(APPEND CMAKE_PREFIX_PATH "${SOFA_DIR}/build/install/lib/cmake")
@@ -68,7 +68,7 @@ set(SOFA_LIBS SofaComponentAdvanced
 							SofaSparseSolver
 							SofaPreconditioner)
 
-add_executable(${PROJECT_NAME} src/IAB8.cpp)
+add_executable(${PROJECT_NAME} src/IAB.cpp)
 
 target_compile_definitions(${PROJECT_NAME} PUBLIC "CONFIG_PLUGIN_FILENAME=${_configPluginFileName}")
 target_compile_definitions(${PROJECT_NAME} PUBLIC "DEFAULT_CONFIG_PLUGIN_FILENAME=${_defaultConfigPluginFileName}")
