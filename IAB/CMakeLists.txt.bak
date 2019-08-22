@@ -11,6 +11,11 @@ find_package(Boost COMPONENTS filesystem system REQUIRED)
 	 					"e.g. cmake -DSOFA_ROOT=/sofa /path/to/CMakeLists.txt")
 endif()
 
+# add definitions for sofa_dir for fwd pickup bu iab.cpp
+add_definitions(-DSOFA_ROOT=${SOFA_ROOT})
+
+set(RUN_SOFA_ROOT "${SOFA_ROOT}/applications/projects/runSofa")
+
 if(APPLE)
 	list(APPEND CMAKE_MODULE_PATH "${SOFA_ROOT}/build/cmake/Modules")
 	set(RC_FILES "${RUN_SOFA_ROOT}/runSofa.icns")
@@ -21,17 +26,25 @@ else()
     message(STATUS "Windows not supported -- yet.")
 endif()
 
-# add definitions for sofa_dir for fwd pickup bu iab.cpp
-add_definitions(-DSOFA_ROOT=${SOFA_ROOT})
-
 message(STATUS "SOFA_ROOT: ${SOFA_ROOT}")
 message(STATUS "CMAKE_MODULE_PATH: ${CMAKE_MODULE_PATH}")
 
-
-list(APPEND CMAKE_PREFIX_PATH "${SOFA_ROOT}/build/install/lib/cmake")
+include(${RUN_SOFA_ROOT}/cmake/GeneratePluginConfig.cmake)
 set(CMAKE_INSTALL_PREFIX "${SOFA_ROOT}/build/install")
-set(RUN_SOFA_ROOT "${SOFA_ROOT}/applications/projects/runSofa")
+# if MSVC then plugins are located in bin/ instead of lib/ on Mac and Linux
+if(MSVC)
+    set(_pluginLocation "bin")
+else()
+    set(_pluginLocation "lib")
+endif()
 
+# set(_configPluginFileName plugin_list.conf)
+# set(_defaultConfigPluginFileName "${_configPluginFileName}.default")
+# set(_defaultConfigPluginFilePath "${CMAKE_BINARY_DIR}/${_pluginLocation}/${_defaultConfigPluginFileName}")
+# sofa_generate_plugin_config(${_defaultConfigPluginFilePath})
+# message("Write Plugin list at ${_defaultConfigPluginFilePath}")
+
+# list(APPEND CMAKE_PREFIX_PATH "${SOFA_ROOT}/build/install/lib/cmake")
 find_package(SofaBase REQUIRED)
 find_package(SofaFramework REQUIRED)
 find_package(SofaSimulation REQUIRED)
@@ -40,8 +53,6 @@ find_package(SofaMiscCollision REQUIRED)
 find_package(SofaPython REQUIRED)
 find_package(Qt5 REQUIRED COMPONENTS  Charts)
 
-include(${RUN_SOFA_ROOT}/cmake/GeneratePluginConfig.cmake)
-
 if(Boost_FOUND)
   include_directories(${Boost_INCLUDE_DIRS})
 endif()
@@ -49,13 +60,6 @@ endif()
 include_directories("${CMAKE_INSTALL_PREFIX}/include")
 set(SOFA_LIBS_DIR "${CMAKE_INSTALL_PREFIX}/lib")
 link_directories(${SOFA_LIBS_DIR})
-
-
-# set(_configPluginFileName plugin_list.conf)
-# set(_defaultConfigPluginFileName "${_configPluginFileName}.default")
-# set(_defaultConfigPluginFilePath "${CMAKE_BINARY_DIR}/${_pluginLocation}/${_defaultConfigPluginFileName}")
-# sofa_generate_plugin_config(${_defaultConfigPluginFilePath})
-# message("Write Plugin list at ${_defaultConfigPluginFilePath}")
 
 set(SOFA_LIBS SofaComponentAdvanced
 							SofaComponentMisc

@@ -71,7 +71,7 @@ using sofa::gui::BaseGUI;
 
 #include <sofa/gui/GuiDataRepository.h>
 
-// useful debugging macros
+// see http://www.decompile.com/cpp/faq/file_and_line_error_string.htm
 #define STRINGIFY(x) #x
 #define TOSTRING(x) STRINGIFY(x)
 #define AT __FILE__ ":" TOSTRING(__LINE__)
@@ -79,7 +79,7 @@ using sofa::gui::BaseGUI;
 #define OUT_INFO(__X__) (std::cout << __X__ <<std::endl)
 #define OUTT(__X__, __Y__) (std::cout << __X__ << ", " << __Y__ << std::endl)
 
-void loadVerificationData(string& directory, string& filename, Node* node)
+void loadVerificationData(std::string& directory, std::string& filename, Node* node)
 {
     msg_info("") << "loadVerificationData from " << directory << " and file " << filename ;
 
@@ -110,7 +110,7 @@ int main(int argc, char** argv)
 {
     auto SofaBuildPath = std::string(TOSTRING(SOFA)) + "/build";
 
-    OUTT("SofaBuildPath ", SofaBuildPath);
+    // OUTT("SofaBuildPath ", SofaBuildPath);
     sofa::helper::BackTrace::autodump();
     ExecParams::defaultInstance()->setAspectID(0);
     sofa::gui::initMain();
