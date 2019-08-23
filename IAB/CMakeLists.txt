@@ -23,6 +23,7 @@ endif()
 
 # add definitions for sofa_dir for fwd pickup bu iab.cpp
 add_definitions(-DSOFA_ROOT=${SOFA_ROOT})
+add_definitions(-DIAB_ROOT=${CMAKE_SOURCE_DIR})
 
 message(STATUS "SOFA_ROOT: ${SOFA_ROOT}")
 message(STATUS "CMAKE_MODULE_PATH: ${CMAKE_MODULE_PATH}")

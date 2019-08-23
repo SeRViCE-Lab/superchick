@@ -8,7 +8,6 @@ using std::string;
 #include <vector>
 using std::vector;
 
-//#include <IAB/IAB-config.h>
 #include <sofa/helper/ArgumentParser.h>
 #include <SofaSimulationCommon/common.h>
 #include <sofa/simulation/Node.h>
@@ -77,10 +76,14 @@ using sofa::helper::system::PluginManager;
 #define STRINGIFY(x) #x
 #define TOSTRING(x) STRINGIFY(x)
 #define AT __FILE__ ":" TOSTRING(__LINE__)
+
+// imported from cmakelists
 #define SOFA SOFA_ROOT
+// #define IAB_ROOT IAB_ROOT
+
 // easy debugging preprocessors
 #define OUT_INFO(__X__) (std::cout << __X__ <<std::endl)
-#define OUTT(__X__, __Y__) (std::cout << __X__ << ", " << __Y__ << std::endl)
+#define OUTT(__X__, __Y__) (std::cout << __X__ << __Y__ << std::endl)
 
 void loadVerificationData(std::string& directory, std::string& filename, Node* node)
 {
@@ -112,9 +115,12 @@ void addGUIParameters(ArgumentParser* argumentParser)
 int main(int argc, char** argv)
 {
     auto SofaBuildPath = std::string(TOSTRING(SOFA)) + "/build";
-    OUTT("SofaBuildPath: ", SofaBuildPath);
+    std::string IAB_PATH = std::string(TOSTRING(IAB_ROOT));
 
-    std::string dir = SofaBuildPath + "install/share/sofa/gui/qt/";
+    OUTT("SofaBuildPath: ", SofaBuildPath);
+    OUTT("IAB_PATH: ", IAB_PATH);
+
+    std::string dir = SofaBuildPath + "/install/share/sofa/gui/qt/";
     dir = SetDirectory::GetRelativeFromProcess(dir.c_str());
     if(FileSystem::isDirectory(dir))
     {
@@ -180,9 +186,9 @@ int main(int argc, char** argv)
     sofa::simulation::setSimulation(new DAGSimulation());
 
     // Output FileRepositories
-    msg_info("runSofa") << "PluginRepository paths = " << PluginRepository.getPathsJoined();
-    msg_info("runSofa") << "DataRepository paths = " << DataRepository.getPathsJoined();
-    msg_info("runSofa") << "GuiDataRepository paths = " << GuiDataRepository.getPathsJoined();
+    msg_info("IAB") << "PluginRepository paths = " << PluginRepository.getPathsJoined();
+    msg_info("IAB") << "DataRepository paths = " << DataRepository.getPathsJoined();
+    msg_info("IAB") << "GuiDataRepository paths = " << GuiDataRepository.getPathsJoined();
 
 
     // Initialise paths
@@ -193,11 +199,9 @@ int main(int argc, char** argv)
         fileName = files[0];
 
     for (unsigned int i=0; i<plugins.size(); i++)
-      // PluginManager::getInstance().loadPlugin(SofaBuildPath + "/lib/lib" + plugins[i] + ".so");
       PluginManager::getInstance().loadPluginByPath(SofaBuildPath + "/lib" + plugins[i]);
 
-    std::string configPluginPath = PluginRepository.getPathsJoined() + "/../patient/plugins.conf"; //TOSTRING(CONFIG_PLUGIN_FILENAME);
-    std::string defaultConfigPluginPath = SofaBuildPath + "lib/plugin_list.conf.default";
+    std::string configPluginPath =  IAB_PATH + "/patient/plugins.conf";
 
     if (PluginRepository.findFile(configPluginPath, "", nullptr))
     {
