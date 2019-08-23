@@ -137,7 +137,7 @@ int main(int argc, char** argv)
     ExecParams::defaultInstance()->setAspectID(0);
     sofa::gui::initMain();
 
-    string fileName ;
+    // string fileName ;
     bool noSceneCheck, temporaryFile = false;
     unsigned int nbMSSASamples = 1;
     unsigned int computationTimeSampling=0; ///< Frequency of display of the computation time statistics, in number of animation steps. 0 means never.
@@ -195,8 +195,8 @@ int main(int argc, char** argv)
     sofa::gui::BaseGUI::setConfigDirectoryPath(SofaBuildPath + "/config", true);
     sofa::gui::BaseGUI::setScreenshotDirectoryPath(SetDirectory::GetCurrentDir() +  "/screenshots", true);
 
-    if (!files.empty())
-        fileName = files[0];
+    // if (!files.empty())
+    //     fileName = files[0];
 
     for (unsigned int i=0; i<plugins.size(); i++)
       PluginManager::getInstance().loadPluginByPath(SofaBuildPath + "/lib" + plugins[i]);
@@ -216,8 +216,8 @@ int main(int argc, char** argv)
     if (int err = GUIManager::Init(argv[0],gui.c_str()))
         return err;
 
-    if (fileName.empty())
-        fileName = DataRepository.getFile(SetDirectory::GetCurrentDir() + "/../scenes/imrt.scn");
+    // if (fileName.empty())
+    std::string fileName = DataRepository.getFile(SetDirectory::GetCurrentDir() + "/../scenes/imrt.scn");
 
     if (int err=GUIManager::createGUI(nullptr))
         return err;

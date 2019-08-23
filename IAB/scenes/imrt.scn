@@ -1,18 +1,18 @@
 <?xml version="5" ?>
-<Node name="IMRT" gravity="0 -9.81 0" dt="0.04">
-  <VisualStyle displayFlags="showVisual showBehavior
-               showCollision hideOptions showMapping" />
-  <DefaultPipeline name="DefaultCollisionPipeline" verbose="0" draw="0" depth="15" />
+<Node name="IMRT" gravity="0 -1000 0" dt="0.04">
+  <RequiredPlugin name="SofaOpenglVisual"/>
+  <RequiredPlugin pluginName="CImgPlugin"/>
+  <RequiredPlugin name='SofaOpenglVisual'/>
+  <VisualStyle displayFlags="showVisual showBehavior showCollision hideOptions showMapping" />
+  <LCPConstraintSolver tolerance="1e-3" maxIt="1000" initial_guess="false" build_lcp="false"  printLog="0" mu="0.2"/>
+  <FreeMotionAnimationLoop />
+
+  <DefaultPipeline verbose="0" draw="0" depth="15" />
   <BruteForceDetection name="ForceDetection" />
   <MinProximityIntersection name="Proximity" alarmDistance="0.02" contactDistance="0.02" />
-  <CollisionResponse name="Response" response="default" />
-  <RequiredPlugin name='SofaOpenglVisual'/> <!-- PLUGINIZED since SOFA v19.06 -->
-  <LightManager name="lightManager"  listening="1" />
-  <!-- <SpotLight name="light1" color="0 0 1" position="0.5 -70 60" cutoff="125" exponent="1" /> -->
-  <!-- <PositionalLight name="lightpos" color="0.5 .7 0.2" attenuation="0.1" position="0.5 -1.7 60" /> -->
-  <!-- <DirectionalLight name="lightdir" color="1 1 1" direction=".5 .5 .65" /> -->
-  <!-- <VisualManagerPass name="visualManagerPass0"  tags="Visu"  listening="1" /> -->  <!-- PLUGINIZED since SOFA v19.06 -->
-	<DefaultContactManager name="DefaultResponse"  response="FrictionContact" />
+
+  <LightManager/>
+	<DefaultContactManager name="Response"  response="FrictionContact" />
   <!-- <CompositingVisualLoop name="compositingVisualLoop3" /> -->  <!-- PLUGINIZED since SOFA v19.06 -->
 
   <Node name="IABChains">
@@ -40,6 +40,23 @@
       <include href="linac.scn" name="linac-and-collimator" color="brown" />
     </Node>
 
+    <Node name="TableCushions">
+       <!-- Note that dy is now dz due to the -90 rotation -->
+      <include href="table_cushion.scn" name="Cushion-1" translation="-10 -10 0"
+               scale=".1" dx="95" dy="0" dz="15" ry="-90" color="brown" />
+      <include href="table_cushion.scn" name="Cushion-2" translation="-10 -10 0"
+          scale=".1" dx="95" dy="30" dz="15" ry="-90" color="brown" />
+      <include href="table_cushion.scn" name="Cushion-3" translation="-10 -10 0"
+            scale=".1" dx="95" dy="60" dz="15" ry="-90" color="brown" />
+      <include href="table_cushion.scn" name="Cushion-4" translation="-10 -10 0"
+            scale=".1" dx="95" dy="60" dz="15" ry="-90" color="brown" />
+      <include href="table_cushion.scn" name="Cushion-5" translation="-10 -10 0"
+            scale=".1" dx="95" dy="90" dz="15" ry="-90" color="brown" />
+      <include href="table_cushion.scn" name="Cushion-6" translation="-10 -10 0"
+            scale=".1" dx="95" dy="120" dz="15" ry="-90" color="brown" />
+      <include href="table_cushion.scn" name="Cushion-7" translation="-10 -10 0"
+            scale=".1" dx="95" dy="150" dz="15" ry="-90" color="brown" />
+    </Node>
   <!-- TODO: This is not yet revealed in ogl -->
   <Node name="SpringConnections">
     <include name="necks-connector" href="springs.scn" scale="5" dx="-13" dy="30" dz="-10" />
