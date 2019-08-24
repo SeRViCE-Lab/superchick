@@ -15,3 +15,7 @@
 
 + Note that the shell environment is Oh-my-zsh. I left a bash_aliases file in /root/.bash_aliases that .zshrc sources.
 Make your custom aliases and path commands there.
+
+
+FAQS:
++ Connecting a X on MAC to remote machine
