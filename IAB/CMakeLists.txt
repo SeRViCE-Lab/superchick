@@ -69,8 +69,8 @@ set(SOFA_LIBS SofaComponentAdvanced
 							SofaGuiMain
 							SofaMiscCollision
 							SofaPython
-							SofaSparseSolver
-							SofaPreconditioner
+							# SofaSparseSolver
+							# SofaPreconditioner
 							)
 
 add_executable(${PROJECT_NAME} src/IAB.cpp)

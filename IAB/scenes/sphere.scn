@@ -9,7 +9,7 @@
 
   <Node name="SphereVisu" >
     <OglModel name="SphereVisual"  src="@../sphere_loader" translation="0 0 0"  color="blue" dx="-15" dy="190" dz="40"/>
-    <BarycentricMapping input="@.." output="@SphereVisual" />
+    <!-- <BarycentricMapping input="@.." output="@SphereVisual" /> -->
   </Node>
 <Node 	 name="SphereCollis"  >
   <MeshVTKLoader name="sphere-collis-loader"  filename="../meshes/sphere.vtk" />
@@ -17,6 +17,6 @@
   <!-- scale="1.0" -->
   <MechanicalObject template="Vec3d" name="sphere-collis-states"  velocity="0 0 0"  force="0 0 0"  externalForce="0 0 0" />
 
-	<BarycentricMapping />
+	<!-- <BarycentricMapping /> -->
 </Node>
 </Node>

@@ -20,8 +20,8 @@
     <MeshObjLoader name="cushion-collis-loader"  filename="../meshes/table_cushions.obj" />
     <MeshTopology name="meshTopology"  />
     <MechanicalObject template="Vec3d" name="cushion-collis-states"  position="0 0 0"  velocity="0 0 0"  force="0 0 0"  externalForce="0 0 0"  restScale="1" />
-    <TTriangleModel template="Vec3d" name="tTriangleModel1"  selfCollision="0" />
+    <!-- <TTriangleModel template="Vec3d" name="tTriangleModel1"  selfCollision="0" />
     <TLineModel template="Vec3d" name="tLineModel1"  selfCollision="0" />
-    <TPointModel template="Vec3d" name="tPointModel1"  selfCollision="0" />
+    <TPointModel template="Vec3d" name="tPointModel1"  selfCollision="0" /> -->
   </Node>
 </Node>
