@@ -1,5 +1,6 @@
 #! /bin/bash
-xhost +local:root 
+
+xhost +local:root
 
 # export SOFA_ROOT=/sofa/build
 export IMAGE=lakehanne/sofa:IAB
@@ -11,20 +12,6 @@ if [[ "$(uname -s)" == 'Linux'  ]]; then
       -v ~/Documents/superchicko:/root/superchicko:rw \
       $IMAGE
 elif [[ "$(uname -s)" == 'Darwin' ]]; then
-  #statements
-  #  echo -e "OS: MAC. Running docker compose up\n"
-  # docker-compose up
-  #docker run -ti --rm -v /tmp/.X11-unix:/tmp/.X11-unix:ro \
-  #  -e DISPLAY=$DISPLAY \
-  #  -v ~/Documents/superchicko:/root/superchicko:rw \
-  #  $IMAGE
-  #fi
-  # echo -e "OS: MAC.\n"
-  # # docker-compose up
-  # docker run -ti --rm -v /tmp/.X11-unix:/tmp/.X11-unix:ro \
-  #   -e DISPLAY=$DISPLAY \
-  #   -v ~/Documents/superchicko:/root/superchicko:rw \
-  #   $IMAGE
   export ip=$(ifconfig en1 | grep inet | awk '$1=="inet" {print $2}')
   # echo -e "ip: ${ip}"
   xhost + $ip
