@@ -1,8 +1,8 @@
 <?xml version="5" ?>
+<!-- <APIVersion="19.06"> -->
 <Node name="IMRT" gravity="0 -1000 0" dt="0.04">
   <RequiredPlugin name="SofaOpenglVisual"/>
   <RequiredPlugin pluginName="CImgPlugin"/>
-  <RequiredPlugin name='SofaOpenglVisual'/>
   <VisualStyle displayFlags="showVisual showBehavior showCollision hideOptions showMapping" />
   <LCPConstraintSolver tolerance="1e-3" maxIt="1000" initial_guess="false" build_lcp="false"  printLog="0" mu="0.2"/>
   <FreeMotionAnimationLoop />
