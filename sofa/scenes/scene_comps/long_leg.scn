@@ -1,5 +1,5 @@
 <Node name="LegLongNode">
-  <MeshSTLLoader name="leg_long_loader" filename="../meshes/leg_base_long.stl"/>
+  <MeshSTLLoader name="leg_long_loader" filename="../../meshes/leg_base_long.stl"/>
     <Mesh name="leg_long_mesh" src="@leg_long_loader"/>
     <MechanicalObject name="leg_long-states" src="@leg_long_loader" />
     <TetrahedronSetTopologyContainer name="LongLegTetra" src="@leg_long_loader" />

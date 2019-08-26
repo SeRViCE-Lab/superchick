@@ -30,7 +30,7 @@ SOFA_IABPLUGIN_API void initExternalModule()
 
 SOFA_IABPLUGIN_API const char* getModuleName()
 {
-    return "IABPlugin";
+    return "IAB Plugin";
 }
 
 SOFA_IABPLUGIN_API const char* getModuleVersion()
@@ -45,7 +45,7 @@ SOFA_IABPLUGIN_API const char* getModuleLicense()
 
 SOFA_IABPLUGIN_API const char* getModuleDescription()
 {
-    return "IAB Plugin";
+    return "Plugin for deformation and hydrostaticity of IAB";
 }
 
 SOFA_IABPLUGIN_API const char* getModuleComponentList()

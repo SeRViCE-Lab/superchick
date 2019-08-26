@@ -1,5 +1,5 @@
 <Node name="LegShortNode">
-  <MeshSTLLoader name="leg_short_loader" filename="../meshes/leg_base_small.stl"/>
+  <MeshSTLLoader name="leg_short_loader" filename="../../meshes/leg_base_small.stl"/>
     <Mesh name="leg_short_mesh" src="@leg_short_loader"/>
     <MechanicalObject name="leg_short-states" src="@leg_short_loader" />
     <TetrahedronSetTopologyContainer name="ShortLegTetra" src="@leg_short_loader" />

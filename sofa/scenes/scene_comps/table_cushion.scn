@@ -3,7 +3,7 @@
   <EulerImplicitSolver rayleighStiffness="0.01"  rayleighMass="0.1" />
 	<CGLinearSolver template="GraphScattered" iterations="25" tolerance="1e-12"  threshold="1e-18"  />
 
-  <MeshObjLoader name="table-cushion-loader" filename="../meshes/table_cushions.obj"/>
+  <MeshObjLoader name="table-cushion-loader" filename="../../meshes/table_cushions.obj"/>
   <!-- <Mesh name="table-cushion-mesh" src="@table-cushion-loader"/> -->
   <MechanicalObject name="table-cushion-states" src="@table-cushion-loader" template="Vec3d"
      externalForce="0 0 0"  restScale="1"  translation="0 0 0"  scale3d="1 1 1" />
@@ -17,7 +17,7 @@
   </Node>
 
   <Node 	 name="CushCollis"  >
-    <MeshObjLoader name="cushion-collis-loader"  filename="../meshes/table_cushions.obj" />
+    <MeshObjLoader name="cushion-collis-loader"  filename="../../meshes/table_cushions.obj" />
     <MeshTopology name="meshTopology"  />
     <MechanicalObject template="Vec3d" name="cushion-collis-states"  position="0 0 0"  velocity="0 0 0"  force="0 0 0"  externalForce="0 0 0"  restScale="1" />
     <!-- <TTriangleModel template="Vec3d" name="tTriangleModel1"  selfCollision="0" />

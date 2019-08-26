@@ -8,6 +8,7 @@ using std::string;
 #include <vector>
 using std::vector;
 
+#include <IABPlugin/include/initPlugin.h>
 #include <sofa/helper/ArgumentParser.h>
 #include <SofaSimulationCommon/common.h>
 #include <sofa/simulation/Node.h>
@@ -116,9 +117,11 @@ int main(int argc, char** argv)
 {
     auto SofaBuildPath = std::string(TOSTRING(SOFA));
     std::string IAB_PATH = std::string(TOSTRING(IAB_ROOT));
+    std::string IABBuildPATH = IAB_PATH + "/build";
 
-    OUTT("SofaBuildPath: ", SofaBuildPath);
-    OUTT("IAB_PATH: ", IAB_PATH);
+
+    // OUTT("SofaBuildPath: ", SofaBuildPath);
+    // OUTT("IAB_PATH: ", IAB_PATH);
 
     std::string dir = SofaBuildPath + "/install/share/sofa/gui/qt/";
     dir = SetDirectory::GetRelativeFromProcess(dir.c_str());
@@ -199,7 +202,11 @@ int main(int argc, char** argv)
     //     fileName = files[0];
 
     for (unsigned int i=0; i<plugins.size(); i++)
-      PluginManager::getInstance().loadPluginByPath(SofaBuildPath + "/lib" + plugins[i]);
+    {
+      // if(!PluginManager::getInstance().loadPluginByPath(SofaBuildPath + "/lib/" + plugins[i]));
+      // try current build path
+      PluginManager::getInstance().loadPluginByPath(IABBuildPATH + "/lib/" + plugins[i]);
+    }
 
     std::string configPluginPath =  IAB_PATH + "/patient/plugins.conf";
 

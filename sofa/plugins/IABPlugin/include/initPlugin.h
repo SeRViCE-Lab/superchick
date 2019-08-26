@@ -19,65 +19,20 @@
 *                                                                             *
 * Contact information: contact@sofa-framework.org                             *
 ******************************************************************************/
-#ifndef DATAWIDGETUNSIGNED_H
-#define DATAWIDGETUNSIGNED_H
+#include <IABPlugin/include/config.h>
 
-#include <config.h>
+extern "C" {
 
-#include <sofa/gui/qt/DataWidget.h>
+SOFA_IABPLUGIN_API void initExternalModule();
 
-#include <QLabel>
-#include <QVBoxLayout>
-#include <QSlider>
-#include <QString>
+SOFA_IABPLUGIN_API const char* getModuleName();
 
+SOFA_IABPLUGIN_API const char* getModuleVersion();
 
-namespace sofa
-{
+SOFA_IABPLUGIN_API const char* getModuleLicense();
 
-namespace gui
-{
+SOFA_IABPLUGIN_API const char* getModuleDescription();
 
-namespace qt
-{
+SOFA_IABPLUGIN_API const char* getModuleComponentList();
 
-
-/**
- * \brief Customization of the representation of Data<unsigned> types
- * in the gui. In the .cpp file this widget is registered to represent
- * myData from BehaviorModel in the gui.
- **/
-class DataWidgetUnsigned : public TDataWidget<unsigned>
-{
-    Q_OBJECT
-public :
-    // The class constructor takes a TData<unsigned> since it creates
-    // a widget for a that particular data type.
-    DataWidgetUnsigned(QWidget* parent, const char* name, core::objectmodel::Data<unsigned> *data):
-        TDataWidget<unsigned>(parent, name,data) {};
-
-    // In this method we  create the widgets and perform the signal / slots
-    // connections.
-    virtual bool createWidgets();
-    virtual void setDataReadOnly(bool readOnly);
-protected slots:
-    void change();
-protected:
-    ///Implements how update the widgets knowing the data value.
-    virtual void readFromData();
-    ///Implements how to update the data, knowing the widget value.
-    virtual void writeToData();
-    QSlider *qslider;
-    QLabel *label1;
-    QLabel *label2;
-};
-
-
-} // namespace qt
-
-} // namespace gui
-
-} // namespace sofa
-
-
-#endif // DATAWIDGETUNSIGNED_H
+}

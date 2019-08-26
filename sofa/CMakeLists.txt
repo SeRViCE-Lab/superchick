@@ -58,8 +58,11 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/src/cmake/macros.cmake)
 add_subdirectory(plugins/IABPlugin)
 
 include_directories("${CMAKE_INSTALL_PREFIX}/include")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/plugins/")
+
+
 set(SOFA_LIBS_DIR "${CMAKE_INSTALL_PREFIX}/lib")
-link_directories(${SOFA_LIBS_DIR})
+link_directories(${SOFA_LIBS_DIR} "${CMAKE_BINARY_DIR}/lib")
 
 set(SOFA_LIBS SofaComponentAdvanced
 							SofaComponentMisc
@@ -70,4 +73,4 @@ set(SOFA_LIBS SofaComponentAdvanced
 							)
 
 add_executable(${PROJECT_NAME} src/IAB.cpp)
-target_link_libraries(${PROJECT_NAME} ${SOFA_LIBS})
+target_link_libraries(${PROJECT_NAME} ${SOFA_LIBS} IABPlugin)
