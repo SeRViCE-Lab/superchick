@@ -1,0 +1,82 @@
+<?xml version="5" ?>
+<!-- <APIVersion="19.06"> -->
+<Node name="IMRT" gravity="0 -1000 0" dt="0.04">
+  <RequiredPlugin name="SofaOpenglVisual"/>
+  <RequiredPlugin pluginName="CImgPlugin"/>
+  <RequiredPlugin pluginName="IABPlugin"/>
+  <VisualStyle displayFlags="showVisual showBehavior showCollision hideOptions showMapping" />
+  <LCPConstraintSolver tolerance="1e-3" maxIt="1000" initial_guess="false" build_lcp="false"  printLog="0" mu="0.2"/>
+  <FreeMotionAnimationLoop />
+
+  <DefaultPipeline verbose="0" draw="0" depth="15" />
+  <BruteForceDetection name="ForceDetection" />
+  <MinProximityIntersection name="Proximity" alarmDistance="0.02" contactDistance="0.02" />
+
+  <LightManager/>
+	<DefaultContactManager name="Response"  response="FrictionContact" />
+  <!-- <CompositingVisualLoop name="compositingVisualLoop3" /> -->  <!-- PLUGINIZED since SOFA v19.06 -->
+
+  <Node name="IABChains">
+    <!-- Note that dy is now dz due to the -90 of cushions and human rotation -->
+    <Node name="BaseChain">
+      <include name="RearHeadLeft" href="scene_comps/sphere.scn" dx="-15" dy="190" dz="40" />
+      <include name="RearHeadRight" href="scene_comps/sphere.scn" dx="15" dy="190" dz="40" />
+      <include name="NeckLeft" href="scene_comps/sphere.scn" dx="-14" dy="190" dz="62" />
+      <include name="NeckRight" href="scene_comps/sphere.scn" dx="14" dy="190" dz="62" />
+    </Node>
+
+    <Node name="SideChains">
+      <include name="TempleLeft" href="scene_comps/sphere.scn" dx="-16" dy="210" dz="40" />
+      <include name="TempleRight" href="scene_comps/sphere.scn" dx="16" dy="210" dz="40"  />
+      <include name="ChinLeft" href="scene_comps/sphere.scn" dx="-14" dy="210" dz="62"/>
+      <include name="ChinRight" href="scene_comps/sphere.scn" dx="14" dy="210" dz="62"/>
+    </Node>
+  </Node>
+
+    <Node name="Human">
+      <include href="scene_comps/human.scn" dy="195" dz="90" scale="40" color="brown" rx="-90" />
+    </Node>
+
+    <Node name="Linac_Collimator" >
+      <include href="scene_comps/linac.scn" name="linac-and-collimator" color="brown" />
+    </Node>
+
+    <Node name="TableCushions">
+       <!-- Note that dy is now dz due to the -90 rotation -->
+      <include href="scene_comps/table_cushion.scn" name="Cushion-1" translation="-10 -10 0"
+               scale=".1" dx="95" dy="0" dz="15" ry="-90" color="brown" />
+      <include href="scene_comps/table_cushion.scn" name="Cushion-2" translation="-10 -10 0"
+          scale=".1" dx="95" dy="30" dz="15" ry="-90" color="brown" />
+      <include href="scene_comps/table_cushion.scn" name="Cushion-3" translation="-10 -10 0"
+            scale=".1" dx="95" dy="60" dz="15" ry="-90" color="brown" />
+      <include href="scene_comps/table_cushion.scn" name="Cushion-4" translation="-10 -10 0"
+            scale=".1" dx="95" dy="60" dz="15" ry="-90" color="brown" />
+      <include href="scene_comps/table_cushion.scn" name="Cushion-5" translation="-10 -10 0"
+            scale=".1" dx="95" dy="90" dz="15" ry="-90" color="brown" />
+      <include href="scene_comps/table_cushion.scn" name="Cushion-6" translation="-10 -10 0"
+            scale=".1" dx="95" dy="120" dz="15" ry="-90" color="brown" />
+      <include href="scene_comps/table_cushion.scn" name="Cushion-7" translation="-10 -10 0"
+            scale=".1" dx="95" dy="150" dz="15" ry="-90" color="brown" />
+    </Node>
+  <!-- TODO: This is not yet revealed in ogl -->
+  <Node name="SpringConnections">
+    <include name="necks-connector" href="scene_comps/springs.scn" scale="5" dx="-13" dy="30" dz="-10" />
+  </Node>
+
+  <!-- <Node name="IABParallel" >
+      <VisualStyle displayFlags="hideVisualModels showBehaviorModels showMappings showForceFields"/>
+      <Node name="parent node with independent DOFs">
+          <EulerSolver name="ODE solver"/>
+          <MechanicalObject template="Vec1d" name="angles"/>
+          <UniformMass template="Vec1d" name="mass"/>
+          <Node name="child node with DOFs mapped from the parent">
+              <MechanicalObject template="Vec3d" name="endpoint coordinates" position="1 -0.1 0"/>
+              <MyMappingPendulumInPlane name="angle->coord mapping" input="@.." output="@."/>
+              <ConstantForceField force="1 -1 0" points="0"/>
+              <MyBehaviorModel name="dummy component"/>
+              <MyProjectiveConstraintSet name="dummy component"/>
+          </Node>
+      </Node>
+  </Node> -->
+
+</Node>
