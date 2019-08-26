@@ -19,14 +19,11 @@
 *                                                                             *
 * Contact information: contact@sofa-framework.org                             *
 ******************************************************************************/
-#ifndef PLUGINEXAMPLE_MYPROJECTIVECONSTRAINTSET_H
-#define PLUGINEXAMPLE_MYPROJECTIVECONSTRAINTSET_H
+#ifndef IABPLUGIN_BEHAVIORMODEL_H
+#define IABPLUGIN_BEHAVIORMODEL_H
 
-#include <PluginExample/config.h>
-
-#include <sofa/core/behavior/ProjectiveConstraintSet.h>
-#include <sofa/defaulttype/RigidTypes.h>
-#include <sofa/defaulttype/VecTypes.h>
+#include <config.h>
+#include <sofa/core/BehaviorModel.h>
 
 
 namespace sofa
@@ -35,44 +32,39 @@ namespace sofa
 namespace component
 {
 
-namespace projectiveconstraintset
+namespace behaviormodel
 {
 
 
-template <class DataTypes>
-class MyProjectiveConstraintSet: public core::behavior::ProjectiveConstraintSet<DataTypes>
+/**
+ * This BehaviorModel does nothing but contain a custom data widget.
+ */
+class BehaviorModel : public sofa::core::BehaviorModel
 {
+
 public:
-    SOFA_CLASS(SOFA_TEMPLATE(MyProjectiveConstraintSet, DataTypes), SOFA_TEMPLATE(core::behavior::ProjectiveConstraintSet, DataTypes));
-    typedef core::behavior::ProjectiveConstraintSet<DataTypes> Inherit;
-    typedef typename Inherit::DataVecCoord DataVecCoord;
-    typedef typename Inherit::DataVecDeriv DataVecDeriv;
-    typedef typename Inherit::DataMatrixDeriv DataMatrixDeriv;
-    typedef typename DataTypes::VecDeriv VecDeriv;
-    typedef typename DataTypes::MatrixDeriv MatrixDeriv;
-    typedef typename DataTypes::MatrixDeriv::RowType MatrixDerivRowType;
-    typedef typename DataTypes::VecCoord VecCoord;
+    SOFA_CLASS(BehaviorModel, sofa::core::BehaviorModel);
 
 protected:
-    MyProjectiveConstraintSet();
-    ~MyProjectiveConstraintSet();
+    BehaviorModel();
+    ~BehaviorModel() override;
 
 public:
-    void init();
+    void init() override;
+    void reinit() override;
+    void updatePosition(double dt) override;
 
-    void reinit();
-
-    void projectResponse(const core::MechanicalParams* /* mparams */, DataVecDeriv& /* dx */) {};
-    void projectVelocity(const core::MechanicalParams* /* mparams */, DataVecDeriv& /* v */) {};
-    void projectPosition(const core::MechanicalParams* /* mparams */, DataVecCoord& /* x */) {};
-    void projectJacobianMatrix(const core::MechanicalParams* /* mparams */, DataMatrixDeriv& /* cData */) {};
+protected:
+    Data<unsigned> customUnsignedData; ///< Example of unsigned data with custom widget
+    Data<unsigned> regularUnsignedData; ///< Example of unsigned data with standard widget
 };
 
 
-} // namespace projectiveconstraintset
+} // namespace behaviormodel
 
 } // namespace component
 
 } // namespace sofa
 
-#endif // PLUGINEXAMPLE_MYPROJECTIVECONSTRAINTSET_H
+
+#endif // IABPLUGIN_BEHAVIORMODEL_H

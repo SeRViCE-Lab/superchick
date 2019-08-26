@@ -19,7 +19,7 @@
 *                                                                             *
 * Contact information: contact@sofa-framework.org                             *
 ******************************************************************************/
-#include "MyDataWidgetUnsigned.h"
+#include "DataWidgetUnsigned.h"
 
 #include <sofa/helper/Factory.h>
 
@@ -36,18 +36,18 @@ namespace qt
 
 /*
  * Register this new class in the DataWidgetFactory.  The factory key is the
- * Data widget property (see MyBehaviorModel constructor).
+ * Data widget property (see BehaviorModel constructor).
  */
-helper::Creator<DataWidgetFactory, MyDataWidgetUnsigned> DW_myData("widget_myData",false);
+helper::Creator<DataWidgetFactory, DataWidgetUnsigned> DW_Data("widget_Data",false);
 
-bool MyDataWidgetUnsigned::createWidgets()
+bool DataWidgetUnsigned::createWidgets()
 {
-    unsigned myData_value = getData()->virtualGetValue();
+    unsigned Data_value = getData()->virtualGetValue();
 
     qslider = new QSlider(Qt::Horizontal, this);
     qslider->setTickPosition(QSlider::TicksBelow);
     qslider->setRange(0, 100);
-    qslider->setValue((int)myData_value);
+    qslider->setValue((int)Data_value);
 
     QString label1_text("Data current value = ");
     label1_text.append(getData()->getValueString().c_str());
@@ -73,19 +73,19 @@ bool MyDataWidgetUnsigned::createWidgets()
     return true;
 }
 
-void MyDataWidgetUnsigned::setDataReadOnly(bool readOnly)
+void DataWidgetUnsigned::setDataReadOnly(bool readOnly)
 {
     qslider->setEnabled(!readOnly);
 }
 
-void MyDataWidgetUnsigned::readFromData()
+void DataWidgetUnsigned::readFromData()
 {
     qslider->setValue((int)getData()->virtualGetValue());
 
-    QString label1_text("myData current value = ");
+    QString label1_text("Data current value = ");
     label1_text.append(getData()->getValueString().c_str());
 
-    QString label2_text = "myData value after updating = ";
+    QString label2_text = "Data value after updating = ";
     label2_text.append(QString().setNum(qslider->value()));
 
     label1->setText(label1_text);
@@ -93,25 +93,25 @@ void MyDataWidgetUnsigned::readFromData()
 
 }
 
-void MyDataWidgetUnsigned::writeToData()
+void DataWidgetUnsigned::writeToData()
 {
     unsigned widget_value = (unsigned)qslider->value();
     getData()->virtualSetValue(widget_value);
 
-    QString label1_text("myData current value = ");
+    QString label1_text("Data current value = ");
     label1_text.append(getData()->getValueString().c_str());
-    QString label2_text = "myData value after updating = ";
+    QString label2_text = "Data value after updating = ";
     label2_text.append(QString().setNum(qslider->value()));
 
     label1->setText(label1_text);
     label2->setText(label2_text);
 }
 
-void MyDataWidgetUnsigned::change()
+void DataWidgetUnsigned::change()
 {
-    QString label1_text("myData current value = ");
+    QString label1_text("Data current value = ");
     label1_text.append(getData()->getValueString().c_str());
-    QString label2_text = "myData value after updating = ";
+    QString label2_text = "Data value after updating = ";
     label2_text.append(QString().setNum(qslider->value()));
 
     label1->setText(label1_text);

@@ -19,7 +19,13 @@
 *                                                                             *
 * Contact information: contact@sofa-framework.org                             *
 ******************************************************************************/
-#define SOFA_COMPONENT_FORCEFIELD_TEMPLATEFORCEFIELD_CPP
+#include "MappingPendulumInPlane.inl"
+
+#include <sofa/core/Mapping.inl>
+#include <sofa/core/ObjectFactory.h>
+#include <sofa/defaulttype/VecTypes.h>
+#include <sofa/defaulttype/VecTypes.h>
+
 
 namespace sofa
 {
@@ -27,32 +33,25 @@ namespace sofa
 namespace component
 {
 
-namespace forcefield
+namespace mapping
 {
 
 using namespace sofa::defaulttype;
 
 
-// Give a description of your class
-// and declare the DataTypes on which the ForceField is instantiated
+int MappingPendulumInPlaneClass = core::RegisterObject("Mapping from an angle to a point in 2D")
+    .add< MappingPendulumInPlane<Vec1Types, Vec3Types> >()
+    .add< MappingPendulumInPlane<Vec1Types, Vec2Types> >()
 
-int TemplateForceFieldClass = core::RegisterObject("Description here of the physics of your ForceField")
-        .add< TemplateForceFieldClass<Vec3Types> >()
-        .add< TemplateForceFieldClass<Vec2Types> >()
-        .add< TemplateForceFieldClass<Vec1Types> >()
-        .add< TemplateForceFieldClass<Vec6Types> >()
+    ;
 
-        ;
-
-template class TemplateForceField<Vec3Types>;
-template class TemplateForceField<Vec2Types>;
-template class TemplateForceField<Vec1Types>;
-template class TemplateForceField<Vec6Types>;
+template class MappingPendulumInPlane<Vec1Types, Vec3Types>;
+template class MappingPendulumInPlane<Vec1Types, Vec2Types>;
 
 
 
-} // namespace forcefield
+}	//mapping
 
-} // namespace component
+}	//component
 
-} // namespace sofa
+}	//sofa

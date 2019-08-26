@@ -19,11 +19,8 @@
 *                                                                             *
 * Contact information: contact@sofa-framework.org                             *
 ******************************************************************************/
-#ifndef PLUGINEXAMPLE_MYBEHAVIORMODEL_H
-#define PLUGINEXAMPLE_MYBEHAVIORMODEL_H
 
-#include <PluginExample/config.h>
-#include <sofa/core/BehaviorModel.h>
+#include "ProjectiveConstraintSet.h"
 
 
 namespace sofa
@@ -32,39 +29,38 @@ namespace sofa
 namespace component
 {
 
-namespace behaviormodel
+namespace projectiveconstraintset
 {
 
 
-/**
- * This BehaviorModel does nothing but contain a custom data widget.
- */
-class MyBehaviorModel : public sofa::core::BehaviorModel
+
+template <class DataTypes>
+ProjectiveConstraintSet<DataTypes>::ProjectiveConstraintSet()
+    :core::behavior::ProjectiveConstraintSet<DataTypes>(NULL)
 {
-
-public:
-    SOFA_CLASS(MyBehaviorModel, sofa::core::BehaviorModel);
-
-protected:
-    MyBehaviorModel();
-    ~MyBehaviorModel() override;
-
-public:
-    void init() override;
-    void reinit() override;
-    void updatePosition(double dt) override;
-
-protected:
-    Data<unsigned> customUnsignedData; ///< Example of unsigned data with custom widget
-    Data<unsigned> regularUnsignedData; ///< Example of unsigned data with standard widget
-};
+}
 
 
-} // namespace behaviormodel
+template <class DataTypes>
+ProjectiveConstraintSet<DataTypes>::~ProjectiveConstraintSet()
+{
+}
 
-} // namespace component
+template <class DataTypes>
+void ProjectiveConstraintSet<DataTypes>::init()
+{
+    Inherit::init();
+}
 
-} // namespace sofa
+template <class DataTypes>
+void ProjectiveConstraintSet<DataTypes>::reinit()
+{
+}
 
 
-#endif // PLUGINEXAMPLE_MYBEHAVIORMODEL_H
+
+}	//constraint
+
+}	//component
+
+}	//sofa

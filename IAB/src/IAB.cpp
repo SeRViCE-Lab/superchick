@@ -114,7 +114,7 @@ void addGUIParameters(ArgumentParser* argumentParser)
 
 int main(int argc, char** argv)
 {
-    auto SofaBuildPath = std::string(TOSTRING(SOFA)) + "/build";
+    auto SofaBuildPath = std::string(TOSTRING(SOFA));
     std::string IAB_PATH = std::string(TOSTRING(IAB_ROOT));
 
     OUTT("SofaBuildPath: ", SofaBuildPath);

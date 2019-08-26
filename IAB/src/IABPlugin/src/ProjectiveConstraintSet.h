@@ -19,8 +19,14 @@
 *                                                                             *
 * Contact information: contact@sofa-framework.org                             *
 ******************************************************************************/
+#ifndef IABPLUGIN_PROJECTIVECONSTRAINTSET_H
+#define IABPLUGIN_PROJECTIVECONSTRAINTSET_H
 
-#include "MyProjectiveConstraintSet.h"
+#include <config.h>
+
+#include <sofa/core/behavior/ProjectiveConstraintSet.h>
+#include <sofa/defaulttype/RigidTypes.h>
+#include <sofa/defaulttype/VecTypes.h>
 
 
 namespace sofa
@@ -33,34 +39,40 @@ namespace projectiveconstraintset
 {
 
 
-
 template <class DataTypes>
-MyProjectiveConstraintSet<DataTypes>::MyProjectiveConstraintSet()
-    :core::behavior::ProjectiveConstraintSet<DataTypes>(NULL)
+class ProjectiveConstraintSet: public core::behavior::ProjectiveConstraintSet<DataTypes>
 {
-}
+public:
+    SOFA_CLASS(SOFA_TEMPLATE(ProjectiveConstraintSet, DataTypes), SOFA_TEMPLATE(core::behavior::ProjectiveConstraintSet, DataTypes));
+    typedef core::behavior::ProjectiveConstraintSet<DataTypes> Inherit;
+    typedef typename Inherit::DataVecCoord DataVecCoord;
+    typedef typename Inherit::DataVecDeriv DataVecDeriv;
+    typedef typename Inherit::DataMatrixDeriv DataMatrixDeriv;
+    typedef typename DataTypes::VecDeriv VecDeriv;
+    typedef typename DataTypes::MatrixDeriv MatrixDeriv;
+    typedef typename DataTypes::MatrixDeriv::RowType MatrixDerivRowType;
+    typedef typename DataTypes::VecCoord VecCoord;
+
+protected:
+    ProjectiveConstraintSet();
+    ~ProjectiveConstraintSet();
+
+public:
+    void init();
+
+    void reinit();
+
+    void projectResponse(const core::MechanicalParams* /* mparams */, DataVecDeriv& /* dx */) {};
+    void projectVelocity(const core::MechanicalParams* /* mparams */, DataVecDeriv& /* v */) {};
+    void projectPosition(const core::MechanicalParams* /* mparams */, DataVecCoord& /* x */) {};
+    void projectJacobianMatrix(const core::MechanicalParams* /* mparams */, DataMatrixDeriv& /* cData */) {};
+};
 
 
-template <class DataTypes>
-MyProjectiveConstraintSet<DataTypes>::~MyProjectiveConstraintSet()
-{
-}
+} // namespace projectiveconstraintset
 
-template <class DataTypes>
-void MyProjectiveConstraintSet<DataTypes>::init()
-{
-    Inherit::init();
-}
+} // namespace component
 
-template <class DataTypes>
-void MyProjectiveConstraintSet<DataTypes>::reinit()
-{
-}
+} // namespace sofa
 
-
-
-}	//constraint
-
-}	//component
-
-}	//sofa
+#endif // IABPLUGIN_MYPROJECTIVECONSTRAINTSET_H

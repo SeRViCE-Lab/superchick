@@ -1,15 +1,14 @@
 cmake_minimum_required(VERSION 3.1)
 project(IAB)
 
-add_definitions(-std=c++14)
-
-find_package(Boost COMPONENTS filesystem system REQUIRED)
+add_compile_options(-std=c++14)
 
  # best to read SOFA_ROOTfrom cmd line due to different requirements
  if("${SOFA_ROOT}" STREQUAL "")
  	# see if it can be retrieved from ENV VAR
 	if($ENV{SOFA_ROOT} STREQUAL "")
-	 	message(FATAL_ERROR "\nYou must explicitly provide the path to sofa root\n"
+	 	message(FATAL_ERROR "\nYou must explicitly provide the path to sofa root build directory if"
+		 					"you have not set the SOFA_ROOT envionment name"
 		 					"e.g. cmake -DSOFA_ROOT=/sofa /path/to/CMakeLists.txt")
 	else()
 		set(SOFA_ROOT "$ENV{SOFA_ROOT}")
@@ -17,17 +16,17 @@ find_package(Boost COMPONENTS filesystem system REQUIRED)
 	endif()
 endif()
 
+set(CONFIG_PATHS "${SOFA_ROOT}/cmake")  # prevent conflict with system libraries
+list(APPEND CMAKE_MODULE_PATH "${SOFA_ROOT}/cmake")
+set(RUN_SOFA_ROOT "${SOFA_ROOT}/../applications/projects/runSofa")
 
 if(APPLE)
-	list(APPEND CMAKE_MODULE_PATH "${SOFA_ROOT}/cmake")
 	list(APPEND CMAKE_PREFIX_PATH "${SOFA_ROOT}/cmake")
-	set(RC_FILES "${RUN_SOFA_ROOT}/runSofa.icns")
-	set(RUN_SOFA_ROOT "${SOFA_ROOT}/../applications/projects/runSofa")
+	#set(RC_FILES "${RUN_SOFA_ROOT}/runSofa.icns")
 elseif(UNIX AND NOT APPLE)
-	list(APPEND CMAKE_MODULE_PATH "${SOFA_ROOT}/cmake")
 	list(APPEND CMAKE_PREFIX_PATH "${SOFA_ROOT}/install/lib/cmake")
-	set(RC_FILES "${RUN_SOFA_ROOT}/runSofa.rc")
-	set(RUN_SOFA_ROOT "${SOFA_ROOT}/../applications/projects/runSofa")
+	#set(RC_FILES "${RUN_SOFA_ROOT}/runSofa.rc")
+	# set(RUN_SOFA_ROOT "${SOFA_ROOT}/../applications/projects/runSofa")
 else()
     message(STATUS "Windows not supported -- yet.")
 endif()
@@ -43,27 +42,20 @@ message(STATUS "CMAKE_MODULE_PATH: ${CMAKE_MODULE_PATH}")
 
 
 set(CMAKE_INSTALL_PREFIX "${SOFA_ROOT}/build/install;${SOFA_ROOT}/cmake")
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib")
 
-find_package(SofaBase REQUIRED )
-find_package(SofaFramework REQUIRED NO_DEFAULT_PATH)
-find_package(SofaSimulation REQUIRED NO_DEFAULT_PATH)
-find_package(SofaGui REQUIRED )
-find_package(SofaMiscCollision REQUIRED )
-find_package(SofaPython REQUIRED )
-find_package(Qt5 REQUIRED COMPONENTS  Charts PATHS "${SOFA_ROOT}/install/lib")
-
-# find_package(SofaComponentAdvanced)
-# find_package(SofaComponentMisc)
+find_package(SofaBase REQUIRED PATHS "${CONFIG_PATHS}")
+find_package(SofaFramework REQUIRED PATHS "${CONFIG_PATHS}")
+find_package(SofaSimulation REQUIRED PATHS "${CONFIG_PATHS}")
+find_package(SofaGui REQUIRED PATHS "${CONFIG_PATHS}")
+find_package(SofaMiscCollision REQUIRED PATHS "${CONFIG_PATHS}")
+find_package(SofaPython REQUIRED PATHS "${CONFIG_PATHS}")
+find_package(Qt5 REQUIRED COMPONENTS Core Charts)
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/macros.cmake)
-
-
 # add iab plugin
-iab_add_plugin(src/IABPlugin IAB)
-
-if(Boost_FOUND)
-  include_directories(${Boost_INCLUDE_DIRS})
-endif()
+# iab_add_plugin(src/IABPlugin IAB)  # work on this post-icra/ra-l deadline
+add_subdirectory(src/IABPlugin)
 
 include_directories("${CMAKE_INSTALL_PREFIX}/include")
 set(SOFA_LIBS_DIR "${CMAKE_INSTALL_PREFIX}/lib")
@@ -75,12 +67,7 @@ set(SOFA_LIBS SofaComponentAdvanced
 							SofaGuiMain
 							SofaMiscCollision
 							SofaPython
-							# SofaSparseSolver
-							# SofaPreconditioner
 							)
 
 add_executable(${PROJECT_NAME} src/IAB.cpp)
-# target_link_libraries(${PROJECT_NAME} SofaComponentAdvanced SofaComponentMisc)
-# target_link_libraries(${PROJECT_NAME} SofaSimulationGraph)
-# target_link_libraries(${PROJECT_NAME} SofaGuiMain)
-target_link_libraries(${PROJECT_NAME} ${SOFA_LIBS}											${Boost_FILESYSTEM_LIBRARY})
+target_link_libraries(${PROJECT_NAME} ${SOFA_LIBS})

@@ -19,50 +19,65 @@
 *                                                                             *
 * Contact information: contact@sofa-framework.org                             *
 ******************************************************************************/
-#include "MyBehaviorModel.h"
+#ifndef DATAWIDGETUNSIGNED_H
+#define DATAWIDGETUNSIGNED_H
 
-#include <sofa/core/ObjectFactory.h>
+#include <config.h>
+
+#include <sofa/gui/qt/DataWidget.h>
+
+#include <QLabel>
+#include <QVBoxLayout>
+#include <QSlider>
+#include <QString>
 
 
 namespace sofa
 {
 
-namespace component
+namespace gui
 {
 
-namespace behaviormodel
+namespace qt
 {
 
 
-MyBehaviorModel::MyBehaviorModel():
-    customUnsignedData(initData(&customUnsignedData, (unsigned)1,"Custom Unsigned Data","Example of unsigned data with custom widget")),
-    regularUnsignedData(initData(&regularUnsignedData, (unsigned)1,"Unsigned Data","Example of unsigned data with standard widget"))
+/**
+ * \brief Customization of the representation of Data<unsigned> types
+ * in the gui. In the .cpp file this widget is registered to represent
+ * myData from BehaviorModel in the gui.
+ **/
+class DataWidgetUnsigned : public TDataWidget<unsigned>
 {
-    customUnsignedData.setWidget("widget_myData");
-}
+    Q_OBJECT
+public :
+    // The class constructor takes a TData<unsigned> since it creates
+    // a widget for a that particular data type.
+    DataWidgetUnsigned(QWidget* parent, const char* name, core::objectmodel::Data<unsigned> *data):
+        TDataWidget<unsigned>(parent, name,data) {};
+
+    // In this method we  create the widgets and perform the signal / slots
+    // connections.
+    virtual bool createWidgets();
+    virtual void setDataReadOnly(bool readOnly);
+protected slots:
+    void change();
+protected:
+    ///Implements how update the widgets knowing the data value.
+    virtual void readFromData();
+    ///Implements how to update the data, knowing the widget value.
+    virtual void writeToData();
+    QSlider *qslider;
+    QLabel *label1;
+    QLabel *label2;
+};
 
 
-MyBehaviorModel::~MyBehaviorModel()
-{
-}
+} // namespace qt
 
-void MyBehaviorModel::init()
-{
-}
-
-void MyBehaviorModel::reinit()
-{
-}
-
-void MyBehaviorModel::updatePosition(double /*dt*/)
-{
-}
-
-int MyBehaviorModelClass = core::RegisterObject("Dummy component with a custom widget.").add< MyBehaviorModel >();
-
-
-} // namespace behaviormodel
-
-} // namespace component
+} // namespace gui
 
 } // namespace sofa
+
+
+#endif // DATAWIDGETUNSIGNED_H

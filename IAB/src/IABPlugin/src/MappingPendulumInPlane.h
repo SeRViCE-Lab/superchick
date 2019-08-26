@@ -19,8 +19,8 @@
 *                                                                             *
 * Contact information: contact@sofa-framework.org                             *
 ******************************************************************************/
-#ifndef PLUGINEXAMPLE_MYMAPPINGPENDULUMINPLANE_H
-#define PLUGINEXAMPLE_MYMAPPINGPENDULUMINPLANE_H
+#ifndef IABPLUGIN_MAPPINGPENDULUMINPLANE_H
+#define IABPLUGIN_MAPPINGPENDULUMINPLANE_H
 
 #include <sofa/core/Mapping.h>
 #include <sofa/defaulttype/Vec.h>
@@ -40,10 +40,10 @@ using defaulttype::Vec;
 /** input: pendulum angle; output: coordinates of the endpoint of the pendulum
  */
 template <class TIn, class TOut>
-class MyMappingPendulumInPlane: public core::Mapping<TIn, TOut>
+class MappingPendulumInPlane: public core::Mapping<TIn, TOut>
 {
 public:
-    SOFA_CLASS(SOFA_TEMPLATE2(MyMappingPendulumInPlane, TIn, TOut), SOFA_TEMPLATE2(core::Mapping, TIn, TOut));
+    SOFA_CLASS(SOFA_TEMPLATE2(MappingPendulumInPlane, TIn, TOut), SOFA_TEMPLATE2(core::Mapping, TIn, TOut));
     typedef core::Mapping<TIn, TOut> Inherit;
     typedef TIn In;
     typedef TOut Out;
@@ -67,8 +67,8 @@ public:
     typedef Data<MatrixOutDeriv> OutDataMatrixDeriv;
 
 protected:
-    MyMappingPendulumInPlane();
-    ~MyMappingPendulumInPlane();
+    MappingPendulumInPlane();
+    ~MappingPendulumInPlane();
 
 public:
     Data<vector<OutReal> > f_length; ///< distances from the fixed point to the end of the pendulum
@@ -91,4 +91,4 @@ protected:
 } // namespace component
 } // namespace sofa
 
-#endif // PLUGINEXAMPLE_MYMAPPINGPENDULUMINPLANE_H
+#endif // IABPLUGIN_MAPPINGPENDULUMINPLANE_H

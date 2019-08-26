@@ -19,39 +19,38 @@
 *                                                                             *
 * Contact information: contact@sofa-framework.org                             *
 ******************************************************************************/
-#include "MyMappingPendulumInPlane.inl"
+#include <config.h>
 
-#include <sofa/core/Mapping.inl>
-#include <sofa/core/ObjectFactory.h>
-#include <sofa/defaulttype/VecTypes.h>
-#include <sofa/defaulttype/VecTypes.h>
+extern "C" {
 
-
-namespace sofa
+SOFA_IABPLUGIN_API void initExternalModule()
 {
+    // Nothing to initialize
+}
 
-namespace component
+SOFA_IABPLUGIN_API const char* getModuleName()
 {
+    return "IABPlugin";
+}
 
-namespace mapping
+SOFA_IABPLUGIN_API const char* getModuleVersion()
 {
+    return "0.0";
+}
 
-using namespace sofa::defaulttype;
+SOFA_IABPLUGIN_API const char* getModuleLicense()
+{
+    return "MIT";
+}
 
+SOFA_IABPLUGIN_API const char* getModuleDescription()
+{
+    return "IAB Plugin";
+}
 
-int MyMappingPendulumInPlaneClass = core::RegisterObject("Mapping from an angle to a point in 2D")
-    .add< MyMappingPendulumInPlane<Vec1Types, Vec3Types> >()
-    .add< MyMappingPendulumInPlane<Vec1Types, Vec2Types> >()
+SOFA_IABPLUGIN_API const char* getModuleComponentList()
+{
+    return "BehaviorModel, MappingPendulumInPlane, ProjectiveConstraintSet";
+}
 
-    ;
-
-template class MyMappingPendulumInPlane<Vec1Types, Vec3Types>;
-template class MyMappingPendulumInPlane<Vec1Types, Vec2Types>;
-
-
-
-}	//mapping
-
-}	//component
-
-}	//sofa
+}

@@ -19,15 +19,37 @@
 *                                                                             *
 * Contact information: contact@sofa-framework.org                             *
 ******************************************************************************/
-#ifndef PLUGINEXAMPLE_CONFIG_H
-#define PLUGINEXAMPLE_CONFIG_H
+#include "ProjectiveConstraintSet.inl"
 
-#include <sofa/helper/system/config.h>
+#include <sofa/core/ObjectFactory.h>
 
-#ifdef SOFA_BUILD_PLUGINEXAMPLE
-#  define SOFA_PLUGINEXAMPLE_API SOFA_EXPORT_DYNAMIC_LIBRARY
-#else
-#  define SOFA_PLUGINEXAMPLE_API SOFA_IMPORT_DYNAMIC_LIBRARY
-#endif
 
-#endif
+namespace sofa
+{
+
+namespace component
+{
+
+namespace projectiveconstraintset
+{
+
+using namespace sofa::defaulttype;
+
+
+int ProjectiveConstraintSetClass = core::RegisterObject("just an example of templated component")
+    .add< ProjectiveConstraintSet<Vec3Types> >()
+    .add< ProjectiveConstraintSet<Vec1Types> >()
+    .add< ProjectiveConstraintSet<Rigid3Types> >()
+
+    ;
+
+template class ProjectiveConstraintSet<Rigid3Types>;
+template class ProjectiveConstraintSet<Vec3Types>;
+
+
+
+} // namespace projectiveconstraintset
+
+} // namespace component
+
+} // namespace sofa

@@ -19,40 +19,15 @@
 *                                                                             *
 * Contact information: contact@sofa-framework.org                             *
 ******************************************************************************/
-#include <PluginExample/config.h>
+#ifndef CONFIG_H
+#define CONFIG_H
 
-extern "C" {
+#include <sofa/helper/system/config.h>
 
-SOFA_PLUGINEXAMPLE_API void initExternalModule()
-{
-    // Nothing to initialize
-}
+#ifdef SOFA_BUILD_IABPLUGIN
+#  define SOFA_IABPLUGIN_API SOFA_EXPORT_DYNAMIC_LIBRARY
+#else
+#  define SOFA_IABPLUGIN_API SOFA_IMPORT_DYNAMIC_LIBRARY
+#endif
 
-SOFA_PLUGINEXAMPLE_API const char* getModuleName()
-{
-    return "PluginExample";
-}
-
-SOFA_PLUGINEXAMPLE_API const char* getModuleVersion()
-{
-    return "0.2";
-}
-
-SOFA_PLUGINEXAMPLE_API const char* getModuleLicense()
-{
-    return "LGPL";
-}
-
-SOFA_PLUGINEXAMPLE_API const char* getModuleDescription()
-{
-    return "Simple example of a Sofa plugin";
-}
-
-SOFA_PLUGINEXAMPLE_API const char* getModuleComponentList()
-{
-    return "MyBehaviorModel, MyMappingPendulumInPlane, MyProjectiveConstraintSet";
-}
-
-}
-
-
+#endif
