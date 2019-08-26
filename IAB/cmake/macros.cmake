@@ -67,3 +67,9 @@ function(iab_generate_package)
     sofa_install_targets("${ARG_NAME}" "${ARG_TARGETS}" "${include_install_dir}" "${ARG_INCLUDE_SOURCE_DIR}" "${ARG_EXAMPLE_INSTALL_DIR}" "${ARG_RELOCATABLE}")
     sofa_write_package_config_files("${ARG_NAME}" "${ARG_VERSION}")
 endfunction()
+
+
+macro(iab_add_plugin directory plugin_name)
+    iab_add_generic( ${directory} ${plugin_name} "Plugin" ${ARGV2} )
+    message(STATUS "Added ${plugin_name} at path: ${directory} to list of plugins")
+endmacro()
