@@ -57,7 +57,6 @@ find_package(Qt5 REQUIRED COMPONENTS  Charts PATHS "${SOFA_ROOT}/install/lib")
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/macros.cmake)
 
-
 # add iab plugin
 iab_add_plugin(src/IABPlugin IAB)
 
