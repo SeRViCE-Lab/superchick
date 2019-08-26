@@ -54,6 +54,14 @@ find_package(Qt5 REQUIRED COMPONENTS  Charts)
 # find_package(SofaComponentAdvanced)
 # find_package(SofaComponentMisc)
 
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/macros.cmake)
+
+macro(iab_add_plugin directory plugin_name)
+    iab_add_generic( ${directory} ${plugin_name} "Plugin" ${ARGV2} )
+endmacro()
+
+# add iab plugin
+iab_add_plugin(src/IABPlugin IAB)
 
 if(Boost_FOUND)
   include_directories(${Boost_INCLUDE_DIRS})

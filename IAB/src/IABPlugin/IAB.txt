@@ -1,18 +1,18 @@
 
 ************************************
-*         PluginExample.txt        *
+*         IABPlugin.txt        *
 ************************************
 
 
 
 AUTHOR :
- - Michael Adam
+ - Lekan Ogunmolu
 
 
 
 
 LICENCE :
- - None
+ - BSD
 
 
 
