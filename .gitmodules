@@ -1,0 +1,6 @@
+[submodule "Hexapod"]
+	path = Hexapod
+	url = git@github.com:lakehanne/Hexapod.git
+[submodule "ros/Hexapod"]
+	path = ros/Hexapod
+	url = git@github.com:lakehanne/Hexapod.git

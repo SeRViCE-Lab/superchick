@@ -52,10 +52,6 @@ find_package(SofaMiscCollision REQUIRED PATHS "${CONFIG_PATHS}")
 find_package(SofaPython REQUIRED PATHS "${CONFIG_PATHS}") # why are we using this?
 find_package(Qt5 REQUIRED COMPONENTS Core Charts)
 
-<<<<<<< HEAD:IAB/CMakeLists.txt
-# add iab plugin
-iab_add_plugin(src/IABPlugin IAB)
-=======
 include(${CMAKE_CURRENT_SOURCE_DIR}/src/cmake/macros.cmake)
  # work on this post-icra/ra-l deadline
 # iab_add_plugin(plugins/IABPlugin IAB)
@@ -63,7 +59,6 @@ add_subdirectory(plugins/IABPlugin)
 
 include_directories("${CMAKE_INSTALL_PREFIX}/include")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/plugins/")
->>>>>>> 26ecabd66dd102cd876bd7c7fc4e6267c95862f4:sofa/CMakeLists.txt
 
 
 set(SOFA_LIBS_DIR "${CMAKE_INSTALL_PREFIX}/lib")

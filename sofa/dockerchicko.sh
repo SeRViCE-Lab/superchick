@@ -15,7 +15,7 @@ elif [[ "$(uname -s)" == 'Darwin' ]]; then
   export ip=$(ifconfig en1 | grep inet | awk '$1=="inet" {print $2}')
   # echo -e "ip: ${ip}"
   xhost + $ip
-  docker run --privileged -it --rm -e DISPLAY=${ip}:0 -v /tmp/.X11-unix:/tmp/.X11-unix \
+  docker run --privileged -it --rm -e DISPLAY=${ip}:1 -v /tmp/.X11-unix:/tmp/.X11-unix \
         -v ~/Documents/superchicko:/root/superchicko lakehanne/sofa:IAB
   # docker run --privileged -it --rm -e DISPLAY=${ip}:0 -v /tmp/.X11-unix:/tmp/.X11-unix \
   #       -v ~/Documents/superchicko:/root/superchicko jess/firefox
