@@ -53,12 +53,14 @@ find_package(SofaPython REQUIRED PATHS "${CONFIG_PATHS}") # why are we using thi
 find_package(Qt5 REQUIRED COMPONENTS Core Charts)
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/src/cmake/macros.cmake)
+include_directories("${CMAKE_INSTALL_PREFIX}/include")
+# include_directories("${CMAKE_CURRENT_SOURCE_DIR}/plugins/${PROJECT_NAME}Plugin2/include")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/plugins")
  # work on this post-icra/ra-l deadline
 # iab_add_plugin(plugins/IABPlugin IAB)
-add_subdirectory(plugins/IABPlugin)
+# add_subdirectory(plugins/IABPlugin)
+add_subdirectory(plugins/IABPlugin2)
 
-include_directories("${CMAKE_INSTALL_PREFIX}/include")
-include_directories("${CMAKE_CURRENT_SOURCE_DIR}/plugins/")
 
 
 set(SOFA_LIBS_DIR "${CMAKE_INSTALL_PREFIX}/lib")
@@ -74,3 +76,7 @@ set(SOFA_LIBS SofaComponentAdvanced
 
 add_executable(${PROJECT_NAME} src/IAB.cpp)
 target_link_libraries(${PROJECT_NAME} ${SOFA_LIBS} IABPlugin)
+
+install(DIRECTORY "lib/" DESTINATION "$ENV{SOFA_ROOT}/lib"
+				FILES_MATCHING PATTERN "*.so")
+#
