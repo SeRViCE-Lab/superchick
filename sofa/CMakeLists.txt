@@ -18,15 +18,13 @@ endif()
 
 set(CONFIG_PATHS "${SOFA_ROOT}/cmake")  # prevent conflict with system libraries
 list(APPEND CMAKE_MODULE_PATH "${SOFA_ROOT}/cmake")
+list(APPEND CMAKE_PREFIX_PATH "${SOFA_ROOT}/install/lib/cmake")
 set(RUN_SOFA_ROOT "${SOFA_ROOT}/../applications/projects/runSofa")
 
 if(APPLE)
-	list(APPEND CMAKE_PREFIX_PATH "${SOFA_ROOT}/cmake")
-	#set(RC_FILES "${RUN_SOFA_ROOT}/runSofa.icns")
+	set(RC_FILES "${RUN_SOFA_ROOT}/runSofa.icns")
 elseif(UNIX AND NOT APPLE)
-	list(APPEND CMAKE_PREFIX_PATH "${SOFA_ROOT}/install/lib/cmake")
-	#set(RC_FILES "${RUN_SOFA_ROOT}/runSofa.rc")
-	# set(RUN_SOFA_ROOT "${SOFA_ROOT}/../applications/projects/runSofa")
+	set(RC_FILES "${RUN_SOFA_ROOT}/runSofa.rc")
 else()
     message(STATUS "Windows not supported -- yet.")
 endif()
@@ -44,8 +42,8 @@ message(STATUS "CMAKE_MODULE_PATH: ${CMAKE_MODULE_PATH}")
 set(CMAKE_INSTALL_PREFIX "${SOFA_ROOT}/build/install;${SOFA_ROOT}/cmake")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib")
 
-find_package(SofaBase REQUIRED PATHS "${CONFIG_PATHS}")
 find_package(SofaFramework REQUIRED PATHS "${CONFIG_PATHS}")
+find_package(SofaBase REQUIRED PATHS "${CONFIG_PATHS}")
 find_package(SofaSimulation REQUIRED PATHS "${CONFIG_PATHS}")
 find_package(SofaGui REQUIRED PATHS "${CONFIG_PATHS}")
 find_package(SofaMiscCollision REQUIRED PATHS "${CONFIG_PATHS}")
@@ -54,12 +52,11 @@ find_package(Qt5 REQUIRED COMPONENTS Core Charts)
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/src/cmake/macros.cmake)
 include_directories("${CMAKE_INSTALL_PREFIX}/include")
-# include_directories("${CMAKE_CURRENT_SOURCE_DIR}/plugins/${PROJECT_NAME}Plugin2/include")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/plugins")
  # work on this post-icra/ra-l deadline
 # iab_add_plugin(plugins/IABPlugin IAB)
 # add_subdirectory(plugins/IABPlugin)
-add_subdirectory(plugins/IABPlugin2)
+add_subdirectory(plugins/IABPlugin ${CMAKE_CURRENT_BINARY_DIR}/build/libs)
 
 
 
