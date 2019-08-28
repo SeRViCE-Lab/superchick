@@ -51,8 +51,12 @@ find_package(SofaPython REQUIRED PATHS "${CONFIG_PATHS}") # why are we using thi
 find_package(Qt5 REQUIRED COMPONENTS Core Charts)
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/src/cmake/macros.cmake)
-include_directories("${CMAKE_INSTALL_PREFIX}/include")
-include_directories("${CMAKE_CURRENT_SOURCE_DIR}/plugins")
+INCLUDE_DIRECTORIES("${CMAKE_INSTALL_PREFIX}/include")
+INCLUDE_DIRECTORIES(IABPLUGIN_INCLUDE "${CMAKE_CURRENT_SOURCE_DIR}/plugins")
+
+set(IABPLUGIN_INCLUDE "${CMAKE_CURRENT_SOURCE_DIR}/plugins/IABPlugin/include")
+
+INCLUDE_DIRECTORIES("${IABPLUGIN_INCLUDE}")
  # work on this post-icra/ra-l deadline
 # iab_add_plugin(plugins/IABPlugin IAB)
 # add_subdirectory(plugins/IABPlugin)

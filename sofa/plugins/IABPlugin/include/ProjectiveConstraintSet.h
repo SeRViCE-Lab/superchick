@@ -22,7 +22,7 @@
 #ifndef IABPLUGIN_PROJECTIVECONSTRAINTSET_H
 #define IABPLUGIN_PROJECTIVECONSTRAINTSET_H
 
-#include <config.h>
+// #include <config.h>
 
 #include <sofa/core/behavior/ProjectiveConstraintSet.h>
 #include <sofa/defaulttype/RigidTypes.h>

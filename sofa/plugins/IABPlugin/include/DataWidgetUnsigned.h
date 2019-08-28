@@ -22,7 +22,7 @@
 #ifndef DATAWIDGETUNSIGNED_H
 #define DATAWIDGETUNSIGNED_H
 
-#include <config.h>
+// #include <config.h>
 
 #include <sofa/gui/qt/DataWidget.h>
 

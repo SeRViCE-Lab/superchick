@@ -22,7 +22,7 @@
 #ifndef IABPLUGIN_BEHAVIORMODEL_H
 #define IABPLUGIN_BEHAVIORMODEL_H
 
-#include <config.h>
+// #include <config.h>
 #include <sofa/core/BehaviorModel.h>
 
 
