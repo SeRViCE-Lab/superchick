@@ -9,7 +9,7 @@ if [[ "$(uname -s)" == 'Linux'  ]]; then
     echo -e "OS: Linux. Running docker on $IMAGE\n"
     docker run -ti --rm -v /tmp/.X11-unix:/tmp/.X11-unix:ro \
       -e DISPLAY=$DISPLAY \
-      -v ~/Documents/superchicko:/root/superchicko:rw \
+      -v ~/catkin_ws/src/superchicko:/root/superchicko:rw \
       $IMAGE
       # -v ~/Documents/superchicko:/opt/ros2_ws/src/superchicko:rw \
 elif [[ "$(uname -s)" == 'Darwin' ]]; then
