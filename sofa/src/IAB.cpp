@@ -156,8 +156,8 @@ int main(int argc, char** argv)
     string colorsStatus = "unset";
     string messageHandler = "auto";
     bool enableInteraction = false ;
-    int width = 600;
-    int height = 600;
+    int width = 1280;
+    int height = 1024;
 
     ArgumentParser* argParser = new ArgumentParser(argc, argv);
     argParser->addArgument(po::value<std::vector<std::string>>(&plugins), "load,l", "load given plugins");
@@ -203,12 +203,11 @@ int main(int argc, char** argv)
 
     for (unsigned int i=0; i<plugins.size(); i++)
     {
-      // if(!PluginManager::getInstance().loadPluginByPath(SofaBuildPath + "/lib/" + plugins[i]));
-      // try current build path
+      // provide full path to IAB plugin in cmd line
       PluginManager::getInstance().loadPluginByPath(IABBuildPATH + "/lib/" + plugins[i]);
     }
 
-    std::string configPluginPath =  IAB_PATH + "/patient/plugins.conf";
+    std::string configPluginPath =  IAB_PATH + "/plugins/plugins.conf";
 
     if (PluginRepository.findFile(configPluginPath, "", nullptr))
     {

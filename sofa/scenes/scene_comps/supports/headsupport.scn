@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<Node name="head-support">
+  <EulerImplicitSolver rayleighStiffness="0.01"  rayleighMass="0.1" />
+  <CGLinearSolver template="GraphScattered" iterations="25" tolerance="1e-12"  threshold="1e-18"  />
+  <MeshSTLLoader name="head-support-loader"
+    filename="../../../../ros/srs_traj_opt/couch_description/meshes/headsupport.stl" scale="5e-6"/>
+  <!-- <Mesh name="head-support-mesh" src="@head-support-loader"/> -->
+  <MechanicalObject name="head-support-states" src="@head-support-loader" />
+   <!-- template="Vec3d"
+     externalForce="0 0 0"  restScale="1"  translation="0 0 0"  scale3d=".1 .1 .1" /> -->
+   <UniformMass totalMass="30" />
+   <UncoupledConstraintCorrection template="Vec3d" name="uncoupledConstraintCorrectionHead" />
+   <TetrahedronSetTopologyContainer name="headsupportTetra" src="@head-support-loader" />
+   <TetrahedronSetGeometryAlgorithms name="headsupportAlgos" template="Vec3d"  drawTetrahedra="1"/>
+
+   <Node name="headsupportVisu" >
+       <OglModel name="head-supportVisual" src="@../head-support-loader" translation="0 0 0" color="0.3 0.3 0.3" />
+   </Node>
+
+  <Node 	 name="headsupportCollis"  >
+    <MeshObjLoader name="head-support-collis-loader"  filename="../../../../ros/srs_traj_opt/couch_description/meshes/headsupport.obj" />
+    <MeshTopology name="meshTopology"   />
+    <MechanicalObject template="Vec3d" name="head-support-collis-states"  position="0 0 0"  velocity="0 0 0"  force="0 0 0"  externalForce="0 0 0"  restScale="1" />
+  </Node>
+</Node>

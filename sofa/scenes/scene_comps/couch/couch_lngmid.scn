@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<Node name="couch-mid">
+  <EulerImplicitSolver rayleighStiffness="0.01"  rayleighMass="0.1" />
+  <CGLinearSolver template="GraphScattered" iterations="25" tolerance="1e-12"  threshold="1e-18"  />
+  <MeshSTLLoader name="couch-mid-loader"
+    filename="../../../../ros/srs_traj_opt/couch_description/meshes/truebeam/CouchLngMid.stl" scale="5e-6"/>
+  <!-- <Mesh name="couch-mid-mesh" src="@couch-mid-loader"/> -->
+  <MechanicalObject name="couch-mid-states" src="@couch-mid-loader" />
+   <!-- template="Vec3d"
+     externalForce="0 0 0"  restScale="1"  translation="0 0 0"  scale3d=".1 .1 .1" /> -->
+   <UniformMass totalMass="12" />
+   <UncoupledConstraintCorrection template="Vec3d" name="uncoupledConstraintCorrectionHead" />
+   <TetrahedronSetTopologyContainer name="CouchMidTetra" src="@couch-mid-loader" />
+   <TetrahedronSetGeometryAlgorithms name="CouchMidAlgos" template="Vec3d"  drawTetrahedra="1"/>
+
+   <Node name="CouchMidVisu" >
+       <OglModel name="couch-midVisual" src="@../couch-mid-loader" translation="0 0 0" color="0.3 0.3 0.3" />
+   </Node>
+
+  <Node 	 name="CouchMidCollis"  >
+    <MeshObjLoader name="couch-mid-collis-loader"  filename="../../../../ros/srs_traj_opt/couch_description/meshes/truebeam/CouchLngMid.obj" />
+    <MeshTopology name="meshTopology"   />
+    <MechanicalObject template="Vec3d" name="couch-mid-collis-states"  position="0 0 0"  velocity="0 0 0"  force="0 0 0"  externalForce="0 0 0"  restScale="1" />
+  </Node>
+</Node>

@@ -1,10 +1,13 @@
-<?xml version="5" ?>
-<!-- <APIVersion="19.06"> -->
-<Node name="IMRT" gravity="0 -1000 0" dt="0.04">
+<?xml version="1.0" ?>
+<Node name="Stereotactic Radiosurgery" gravity="0 -1000 0" dt="0.04">
+  <APIVersion level="19.06" />
   <RequiredPlugin name="SofaOpenglVisual"/>
   <RequiredPlugin pluginName="CImgPlugin"/>
   <RequiredPlugin pluginName="IABPlugin"/>
   <VisualStyle displayFlags="showVisual showBehavior showCollision hideOptions showMapping" />
+  <!-- Lights -->
+  <LightManager ambient="4 8.5 10"/>
+  <!-- <SpotLight name="light01" color="1 0 0" cutoff="1" exponent="1" drawSource="true" position="4 8.5 10"/> -->
   <LCPConstraintSolver tolerance="1e-3" maxIt="1000" initial_guess="false" build_lcp="false"  printLog="0" mu="0.2"/>
   <FreeMotionAnimationLoop />
 
@@ -16,51 +19,56 @@
 	<DefaultContactManager name="Response"  response="FrictionContact" />
   <!-- <CompositingVisualLoop name="compositingVisualLoop3" /> -->  <!-- PLUGINIZED since SOFA v19.06 -->
 
+  <Node name="Patient">
+    <include href="scene_comps/patients/patient_rigid_whole.scn" dy="195" dz="90" scale="40" color="brown" rx="-90" />
+  </Node>
+
   <Node name="IABChains">
     <!-- Note that dy is now dz due to the -90 of cushions and human rotation -->
     <Node name="BaseChain">
-      <include name="RearHeadLeft" href="scene_comps/sphere.scn" dx="-15" dy="190" dz="40" />
-      <include name="RearHeadRight" href="scene_comps/sphere.scn" dx="15" dy="190" dz="40" />
-      <include name="NeckLeft" href="scene_comps/sphere.scn" dx="-14" dy="190" dz="62" />
-      <include name="NeckRight" href="scene_comps/sphere.scn" dx="14" dy="190" dz="62" />
+      <include name="RearHeadLeft" href="scene_comps/IABs/sphere.scn" dx="-15" dy="190" dz="40" />
+      <include name="RearHeadRight" href="scene_comps/IABs/sphere.scn" dx="15" dy="190" dz="40" />
+      <include name="NeckLeft" href="scene_comps/IABs/sphere.scn" dx="-14" dy="190" dz="62" />
+      <include name="NeckRight" href="scene_comps/IABs/sphere.scn" dx="14" dy="190" dz="62" />
     </Node>
 
     <Node name="SideChains">
-      <include name="TempleLeft" href="scene_comps/sphere.scn" dx="-16" dy="210" dz="40" />
-      <include name="TempleRight" href="scene_comps/sphere.scn" dx="16" dy="210" dz="40"  />
-      <include name="ChinLeft" href="scene_comps/sphere.scn" dx="-14" dy="210" dz="62"/>
-      <include name="ChinRight" href="scene_comps/sphere.scn" dx="14" dy="210" dz="62"/>
+      <include name="TempleLeft" href="scene_comps/IABs/sphere.scn" dx="-16" dy="210" dz="40" />
+      <include name="TempleRight" href="scene_comps/IABs/sphere.scn" dx="16" dy="210" dz="40"  />
+      <include name="ChinLeft" href="scene_comps/IABs/sphere.scn" dx="-14" dy="210" dz="62"/>
+      <include name="ChinRight" href="scene_comps/IABs/sphere.scn" dx="14" dy="210" dz="62"/>
     </Node>
   </Node>
 
-    <Node name="Human">
-      <include href="scene_comps/human.scn" dy="195" dz="90" scale="40" color="brown" rx="-90" />
+    <Node name="GantryCouch" >
+      <include href="scene_comps/gantry/gantry.scn" name="gantry" color="0.3 0.6 0.7" dy="50" dz="20" rx="90" scale="1" />
+      <include href="scene_comps/gantry/turntable.scn" name="turntable" color="0.3 0.6 0.7"   dy="50" dz="20" rx="90" scale="1" />
+      <include href="scene_comps/couch/couch_foot.scn" name="couch_foot" color="0.3 0.6 0.7" dy="50" dz="20" rx="90" scale="1" />
+      <include href="scene_comps/couch/couch_latbase.scn" name="couch_latbase" color="magenta" dy="50" dz="20" rx="90" scale="1" /> <!-- Dark Grey Color -->
+      <include href="scene_comps/couch/couch_main.scn" name="couch_main" color="cyan" dy="50" dz="20" rx="90" scale="1" /> <!-- Dark Grey Color -->
+      <include href="scene_comps/couch/couch_lnginner.scn" name="couch_lnginner" color="cyan" dy="50" dz="20" rx="90" scale="1" /> <!-- Dark Grey Color -->
+      <include href="scene_comps/couch/couch_lngmid.scn" name="couch_mid" color="cyan" dy="50" dz="20" rx="90" scale="1" /> <!-- Dark Grey Color -->
+      <include href="scene_comps/couch/couch_top.scn" name="couch_top" color="cyan" dy="50" dz="20" rx="90" scale="1" /> <!-- Dark Grey Color -->
     </Node>
 
-    <Node name="Linac_Collimator" >
-      <include href="scene_comps/linac.scn" name="linac-and-collimator" color="brown" />
+    <Node name="HeadCouchSupport">
+      <include href="scene_comps/supports/headsupport.scn" name="head_support" color="0.3 0.6 0.7" dy="50" dz="20" rx="90" scale="1" />
+      <include href="scene_comps/supports/couch_pad.scn" name="couch_pad" color="0.3 0.6 0.7" dy="50" dz="20" rx="90" scale="1" />
     </Node>
 
-    <Node name="TableCushions">
-       <!-- Note that dy is now dz due to the -90 rotation -->
-      <include href="scene_comps/table_cushion.scn" name="Cushion-1" translation="-10 -10 0"
-               scale=".1" dx="95" dy="0" dz="15" ry="-90" color="brown" />
-      <include href="scene_comps/table_cushion.scn" name="Cushion-2" translation="-10 -10 0"
-          scale=".1" dx="95" dy="30" dz="15" ry="-90" color="brown" />
-      <include href="scene_comps/table_cushion.scn" name="Cushion-3" translation="-10 -10 0"
-            scale=".1" dx="95" dy="60" dz="15" ry="-90" color="brown" />
-      <include href="scene_comps/table_cushion.scn" name="Cushion-4" translation="-10 -10 0"
-            scale=".1" dx="95" dy="60" dz="15" ry="-90" color="brown" />
-      <include href="scene_comps/table_cushion.scn" name="Cushion-5" translation="-10 -10 0"
-            scale=".1" dx="95" dy="90" dz="15" ry="-90" color="brown" />
-      <include href="scene_comps/table_cushion.scn" name="Cushion-6" translation="-10 -10 0"
-            scale=".1" dx="95" dy="120" dz="15" ry="-90" color="brown" />
-      <include href="scene_comps/table_cushion.scn" name="Cushion-7" translation="-10 -10 0"
-            scale=".1" dx="95" dy="150" dz="15" ry="-90" color="brown" />
-    </Node>
+    <!-- <Node name="Cushions">
+      <include href="scene_comps/supports/cushion.scn" name="Cushion-1" translation="0 0 0" scale=".5" dy="-50" dz="-40" rx="180" color="brown" />
+      <include href="scene_comps/supports/cushion.scn" name="Cushion-2" translation="0 0 0" scale=".5" dy="-50" dz="-40" rx="180" color="brown" />
+      <include href="scene_comps/supports/cushion.scn" name="Cushion-3" translation="0 0 0" scale=".5" dy="-50" dz="-40" rx="180" color="brown" />
+      <include href="scene_comps/supports/cushion.scn" name="Cushion-4" translation="0 0 0" scale=".5" dy="-50" dz="-40" rx="180" color="brown" />
+      <include href="scene_comps/supports/cushion.scn" name="Cushion-5" translation="0 0 0" scale=".5" dy="-50" dz="-40" rx="180" color="brown" />
+      <include href="scene_comps/supports/cushion.scn" name="Cushion-6" translation="0 0 0" scale=".5" dy="-50" dz="-40" rx="180" color="brown" />
+      <include href="scene_comps/supports/cushion.scn" name="Cushion-7" translation="0 0 0" scale=".5" dy="-50" dz="-40" rx="180" color="brown" />
+    </Node> -->
+
   <!-- TODO: This is not yet revealed in ogl -->
   <Node name="SpringConnections">
-    <include name="necks-connector" href="scene_comps/springs.scn" scale="5" dx="-13" dy="30" dz="-10" />
+    <include name="necks-connector" href="scene_comps/supports/springs.scn" scale="5" dx="-13" dy="30" dz="-10" />
   </Node>
 
 </Node>
