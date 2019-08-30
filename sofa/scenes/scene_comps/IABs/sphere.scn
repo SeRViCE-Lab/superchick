@@ -15,7 +15,7 @@
     <!-- <BarycentricMapping input="@.." output="@SphereVisual" /> -->
   </Node>
 <Node 	 name="SphereCollis"  >
-  <MeshObjLoader name="sphere-collis-loader"  filename="../../../../ros/srs_traj_opt/patient_description/meshes/sphere/sphere.obj" />
+  <MeshObjLoader name="sphere-collis-loader"  filename="../../../../ros/srs_traj_opt/patient_description/meshes/sphere/sphere.obj"  scale="1.5"/>
   <MeshTopology name="meshTopology"  />
   <!-- scale="1.0" -->
   <MechanicalObject template="Vec3d" name="sphere-collis-states"  velocity="0 0 0"  force="0 0 0"  externalForce="0 0 0" />

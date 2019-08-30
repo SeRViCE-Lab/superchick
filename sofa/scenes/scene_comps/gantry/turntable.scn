@@ -14,7 +14,7 @@
    <TetrahedronSetGeometryAlgorithms name="TurnTableAlgos" template="Vec3d"  drawTetrahedra="1"/>
 
    <Node name="TurnTableVisu" >
-       <OglModel name="turntableVisual" src="@../turntable-loader" translation="0 0 0" color="grey" />
+       <OglModel name="turntableVisual" src="@../turntable-loader" translation="0 0 0" rotation="180 0 0" color="grey" />
    </Node>
 
   <Node 	 name="TurnTableCollis"  >
