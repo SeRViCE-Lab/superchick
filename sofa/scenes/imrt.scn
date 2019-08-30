@@ -26,17 +26,17 @@
   <Node name="IABChains">
     <!-- Note that dy is now dz due to the -90 of cushions and human rotation -->
     <Node name="BaseChain">
-      <include name="RearHeadLeft" href="scene_comps/IABs/sphere.scn" dx="-300" dy="25" dz="-50" color="yellow" />
-      <include name="RearHeadRight" href="scene_comps/IABs/sphere.scn" dx="300" dy="25" dz="-50" color="yellow" />
-      <include name="NeckLeft" href="scene_comps/IABs/sphere.scn" dx="-14" dy="25" dz="62" />
-      <include name="NeckRight" href="scene_comps/IABs/sphere.scn" dx="14" dy="25" dz="62" />
+      <include name="SkullLeft" href="scene_comps/IABs/sphere.scn" dx="10" dy="-50" dz="55" color="magenta" scale="1.8"/>
+      <include name="SkullRight" href="scene_comps/IABs/sphere.scn" dx="-10" dy="-50" dz="-115" color="magenta" scale="1.8"/>
+      <include name="NeckLeft" href="scene_comps/IABs/sphere.scn" dx="-135" dy="-50" dz="55" color="magenta" scale="1.8"/>
+      <include name="NeckRight" href="scene_comps/IABs/sphere.scn" dx="-135" dy="-50" dz="-115" color="magenta" scale="1.8"/>
     </Node>
 
     <Node name="SideChains">
-      <include name="TempleLeft" href="scene_comps/IABs/sphere.scn" dx="-16" dy="30" dz="40" />
-      <include name="TempleRight" href="scene_comps/IABs/sphere.scn" dx="16" dy="30" dz="40"  />
-      <include name="ChinLeft" href="scene_comps/IABs/sphere.scn" dx="-14" dy="30" dz="62"/>
-      <include name="ChinRight" href="scene_comps/IABs/sphere.scn" dx="14" dy="30" dz="62"/>
+      <include name="ForeLeft" href="scene_comps/IABs/sphere.scn" dx="-20" dy="100" dz="95" color="0.3 0.65 0.6" scale="1.8"/>
+      <include name="ForeRight" href="scene_comps/IABs/sphere.scn" dx="-20" dy="100" dz="-180" color="0.3 0.65 0.6" scale="1.8"/>
+      <include name="ChinRight" href="scene_comps/IABs/sphere.scn" dx="-150" dy="100" dz="75" color="0.3 0.65 0.6" scale="1.8"/>
+      <include name="ChinLeft" href="scene_comps/IABs/sphere.scn" dx="-150" dy="100" dz="-160" color="0.3 0.65 0.6" scale="1.8"/>
     </Node>
   </Node>
 
