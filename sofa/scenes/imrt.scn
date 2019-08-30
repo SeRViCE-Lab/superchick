@@ -20,35 +20,35 @@
   <!-- <CompositingVisualLoop name="compositingVisualLoop3" /> -->  <!-- PLUGINIZED since SOFA v19.06 -->
 
   <Node name="Patient">
-    <include href="scene_comps/patients/patient_rigid_whole.scn" dy="195" dz="90" scale="40" color="brown" rx="-90" />
+    <include href="scene_comps/patients/patient_rigid_whole.scn" dy="25" dx="-300" dz="-50" scale="250" color="grey" rx="-90" ry="-90"/>
   </Node>
 
   <Node name="IABChains">
     <!-- Note that dy is now dz due to the -90 of cushions and human rotation -->
     <Node name="BaseChain">
-      <include name="RearHeadLeft" href="scene_comps/IABs/sphere.scn" dx="-15" dy="190" dz="40" />
-      <include name="RearHeadRight" href="scene_comps/IABs/sphere.scn" dx="15" dy="190" dz="40" />
-      <include name="NeckLeft" href="scene_comps/IABs/sphere.scn" dx="-14" dy="190" dz="62" />
-      <include name="NeckRight" href="scene_comps/IABs/sphere.scn" dx="14" dy="190" dz="62" />
+      <include name="RearHeadLeft" href="scene_comps/IABs/sphere.scn" dx="-300" dy="25" dz="-50" color="yellow" />
+      <include name="RearHeadRight" href="scene_comps/IABs/sphere.scn" dx="300" dy="25" dz="-50" color="yellow" />
+      <include name="NeckLeft" href="scene_comps/IABs/sphere.scn" dx="-14" dy="25" dz="62" />
+      <include name="NeckRight" href="scene_comps/IABs/sphere.scn" dx="14" dy="25" dz="62" />
     </Node>
 
     <Node name="SideChains">
-      <include name="TempleLeft" href="scene_comps/IABs/sphere.scn" dx="-16" dy="210" dz="40" />
-      <include name="TempleRight" href="scene_comps/IABs/sphere.scn" dx="16" dy="210" dz="40"  />
-      <include name="ChinLeft" href="scene_comps/IABs/sphere.scn" dx="-14" dy="210" dz="62"/>
-      <include name="ChinRight" href="scene_comps/IABs/sphere.scn" dx="14" dy="210" dz="62"/>
+      <include name="TempleLeft" href="scene_comps/IABs/sphere.scn" dx="-16" dy="30" dz="40" />
+      <include name="TempleRight" href="scene_comps/IABs/sphere.scn" dx="16" dy="30" dz="40"  />
+      <include name="ChinLeft" href="scene_comps/IABs/sphere.scn" dx="-14" dy="30" dz="62"/>
+      <include name="ChinRight" href="scene_comps/IABs/sphere.scn" dx="14" dy="30" dz="62"/>
     </Node>
   </Node>
 
     <Node name="GantryCouch" >
-      <include href="scene_comps/gantry/gantry.scn" name="gantry" color="0.3 0.6 0.7" dy="50" dz="20" rx="90" scale="1" />
-      <include href="scene_comps/gantry/turntable.scn" name="turntable" color="0.3 0.6 0.7"   dy="50" dz="20" rx="90" scale="1" />
-      <include href="scene_comps/couch/couch_foot.scn" name="couch_foot" color="0.3 0.6 0.7" dy="50" dz="20" rx="90" scale="1" />
-      <include href="scene_comps/couch/couch_latbase.scn" name="couch_latbase" color="magenta" dy="50" dz="20" rx="90" scale="1" /> <!-- Dark Grey Color -->
-      <include href="scene_comps/couch/couch_main.scn" name="couch_main" color="cyan" dy="50" dz="20" rx="90" scale="1" /> <!-- Dark Grey Color -->
-      <include href="scene_comps/couch/couch_lnginner.scn" name="couch_lnginner" color="cyan" dy="50" dz="20" rx="90" scale="1" /> <!-- Dark Grey Color -->
-      <include href="scene_comps/couch/couch_lngmid.scn" name="couch_mid" color="cyan" dy="50" dz="20" rx="90" scale="1" /> <!-- Dark Grey Color -->
-      <include href="scene_comps/couch/couch_top.scn" name="couch_top" color="cyan" dy="50" dz="20" rx="90" scale="1" /> <!-- Dark Grey Color -->
+      <include href="scene_comps/gantry/gantry.scn" name="gantry" color="0.3 0.6 0.7" dy="50" dz="20" rx="90"  scale=".91" />
+      <include href="scene_comps/gantry/turntable.scn" name="turntable" color="0.3 0.6 0.7"   dy="50" dz="20" rx="90" scale=".91" />
+      <include href="scene_comps/couch/couch_foot.scn" name="couch_foot" color="0.3 0.6 0.7" dy="50" dz="20" rx="90" scale=".91" />
+      <include href="scene_comps/couch/couch_latbase.scn" name="couch_latbase" color="magenta" dy="50" dz="20" rx="90" scale=".91" /> <!-- Dark Grey Color -->
+      <include href="scene_comps/couch/couch_main.scn" name="couch_main" color="cyan" dy="50" dz="20" rx="90" scale=".91" /> <!-- Dark Grey Color -->
+      <include href="scene_comps/couch/couch_lnginner.scn" name="couch_lnginner" color="cyan" dy="50" dz="20" rx="90" scale=".91" /> <!-- Dark Grey Color -->
+      <include href="scene_comps/couch/couch_lngmid.scn" name="couch_mid" color="cyan" dy="50" dz="20" rx="90" scale=".91" /> <!-- Dark Grey Color -->
+      <include href="scene_comps/couch/couch_top.scn" name="couch_top" color="cyan" dy="50" dz="20" rx="90" scale=".91" /> <!-- Dark Grey Color -->
     </Node>
 
     <Node name="HeadCouchSupport">
