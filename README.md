@@ -8,7 +8,7 @@ Example screenshots are presented below:
 
 ![Full scene file](sofa/scenes/data/setup.png)
 
-![Head and Soft Robots only](/sofa/patient/data/Head-Soros.png)
+![Head and Soft Robots only](/sofa/scenes/data/Head-Soros.png)
 
 Source codes (c++ and xml model) for this scene are in
 
