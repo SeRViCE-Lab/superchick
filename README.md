@@ -8,10 +8,7 @@ Example screenshots are presented below:
 
 ![Full scene file](sofa/scenes/data/setup.png)
 
-
-        <div class="fig figcenter fighighlight">
-          <img src="/sofa/scenes/data/Head-Soros.png" height="75%" width="70%" align="middle" style="border-left: 1px solid black;" />
-        </div>
+![Head and Soft Robots only](/sofa/scenes/data/Head-Soros.png)
 
 Source codes (c++ and xml model) for this scene are in
 
