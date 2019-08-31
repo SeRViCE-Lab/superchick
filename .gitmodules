@@ -1,0 +1,3 @@
+[submodule "ros/srs_traj_opt"]
+	path = ros/srs_traj_opt
+	url = git@github.com:lakehanne/srs_traj_opt

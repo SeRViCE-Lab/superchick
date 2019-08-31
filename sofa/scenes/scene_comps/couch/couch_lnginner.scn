@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<Node name="couch-lnginner">
+  <EulerImplicitSolver rayleighStiffness="0.01"  rayleighMass="0.1" />
+  <CGLinearSolver template="GraphScattered" iterations="25" tolerance="1e-12"  threshold="1e-18"  />
+  <MeshSTLLoader name="couch-lnginner-loader"
+    filename="../../../../ros/srs_traj_opt/couch_description/meshes/truebeam/CouchLngInner.stl" scale="5e-6"/>
+  <!-- <Mesh name="couch-lnginner-mesh" src="@couch-lnginner-loader"/> -->
+  <MechanicalObject name="couch-lnginner-states" src="@couch-lnginner-loader" />
+   <!-- template="Vec3d"
+     externalForce="0 0 0"  restScale="1"  translation="0 0 0"  scale3d=".1 .1 .1" /> -->
+   <UniformMass totalMass="15" />
+   <UncoupledConstraintCorrection template="Vec3d" name="uncoupledConstraintCorrectionHead" />
+   <TetrahedronSetTopologyContainer name="CouchLngInnerTetra" src="@couch-lnginner-loader" />
+   <TetrahedronSetGeometryAlgorithms name="CouchLngInnerAlgos" template="Vec3d"  drawTetrahedra="1"/>
+
+   <Node name="CouchLngInnerVisu" >
+       <OglModel name="couch-lnginnerVisual" src="@../couch-lnginner-loader" translation="0 0 0" color="0.3 0.3 0.3" />
+   </Node>
+
+  <Node 	 name="CouchLngInnerCollis"  >
+    <MeshObjLoader name="couch-lnginner-collis-loader"  filename="../../../../ros/srs_traj_opt/couch_description/meshes/truebeam/CouchLngInner.obj" />
+    <MeshTopology name="meshTopology"   />
+    <MechanicalObject template="Vec3d" name="couch-lnginner-collis-states"  position="0 0 0"  velocity="0 0 0"  force="0 0 0"  externalForce="0 0 0"  restScale="1" />
+  </Node>
+</Node>

@@ -1,0 +1,11 @@
+-I/sofa/build/build/install
+-I/sofa/build/cmake/include
+-I/root/superchicko/sofa/IABPLUGIN_INCLUDE
+-I/root/superchicko/sofa/plugins
+-I/root/superchicko/sofa/plugins/IABPlugin/include
+-I/root/superchicko/sofa/plugins/IABPlugin/include
+-DSOFA_ROOT=/sofa/build
+-DIAB_ROOT=/root/superchicko/sofa
+-o
+/root/superchicko/sofa/build/build/libs/include/moc_DataWidgetUnsigned.cpp
+/root/superchicko/sofa/plugins/IABPlugin/include/DataWidgetUnsigned.h

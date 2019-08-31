@@ -1,0 +1,2 @@
+# Hashes of file build rules.
+6e1bbaac501a7d4d435539befa5c9b4a build/libs/include/moc_DataWidgetUnsigned.cpp
