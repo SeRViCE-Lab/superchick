@@ -1,6 +1,3 @@
-[submodule "Hexapod"]
-	path = Hexapod
-	url = git@github.com:lakehanne/Hexapod.git
-[submodule "ros/Hexapod"]
-	path = ros/Hexapod
-	url = git@github.com:lakehanne/Hexapod.git
+[submodule "ros/srs_traj_opt"]
+	path = ros/srs_traj_opt
+	url = git@github.com:lakehanne/srs_traj_opt.git
