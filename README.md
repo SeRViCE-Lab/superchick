@@ -6,11 +6,11 @@ There is now a SOFA scene file. Here, we arranged three soft robot kinematic cha
 
 Example screenshots are presented below:
 
-![Full scene file](sofa/scenes/data/Full-scene.png)
+![Full scene file](sofa/scenes/data/setup.png)
 
 ![Head and Soft Robots only](/sofa/patient/data/Head-Soros.png)
 
-Source codes for this scene file are in
+Source codes (c++ and xml model) for this scene are in
 
 + [CPP Source File](/sofa/src/IAB.cpp)  and
 
