@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<Node name="Cushion">
+  <EulerImplicitSolver rayleighStiffness="0.01"  rayleighMass="0.1" />
+	<CGLinearSolver template="GraphScattered" iterations="25" tolerance="1e-12"  threshold="1e-18"  />
+
+  <MeshSTLLoader name="table-cushion-loader" filename="../../../../ros/srs_traj_opt/couch_description/meshes/truebeam/CouchLatBase.stl"/>
+  <!-- <MeshObjLoader name="table-cushion-loader" filename="../../../../ros/srs_traj_opt/couch_description/meshes/cushions.obj"/> -->
+
+  <!-- <Mesh name="table-cushion-mesh" src="@table-cushion-loader"/> -->
+  <MechanicalObject name="table-cushion-states" src="@table-cushion-loader" template="Vec3d"
+     externalForce="0 0 0"  restScale="1"  translation="0 0 0"  scale3d="1 1 1" />
+  <UniformMass totalMass="25" />
+  <TetrahedronSetTopologyContainer name="tableStandTetra" src="@table-cushion-loader" />
+  <TetrahedronSetGeometryAlgorithms name="tableStandAlgos" template="Vec3d"  drawTetrahedra="1"/>
+
+  <Node name="TableCushVisu">
+    <OglModel name="BaseVisu"  src="@../table-cushion-loader" translation="0 -110 0" scale=".91" color="1.0 0.4 0.0" />
+  </Node>
+
+  <Node 	 name="CushCollis"  >
+    <MeshObjLoader name="cushion-collis-loader"  filename="../../../../ros/srs_traj_opt/couch_description/meshes/truebeam/CouchLatBase.obj" />
+    <MeshTopology name="meshTopology"  />
+    <MechanicalObject template="Vec3d" name="cushion-collis-states"  position="0 0 0"  velocity="0 0 0"  force="0 0 0"  externalForce="0 0 0"  restScale="1" />
+  </Node>
+</Node>

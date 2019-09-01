@@ -6,15 +6,15 @@ There is now a SOFA scene file. Here, we arranged three soft robot kinematic cha
 
 Example screenshots are presented below:
 
-![Full scene file](/IAB/patient/data/Full-scene.png)
+![Full scene file](sofa/scenes/data/setup.png)
 
-![Head and Soft Robots only](/IAB/patient/data/Head-Soros.png)
+![Head and Soft Robots only](/sofa/scenes/data/Head-Soros.png)
 
-Source codes for this scene file are in
+Source codes (c++ and xml model) for this scene are in
 
-+ [CPP Source File](/IAB8/src/IAB.cpp)  and
++ [CPP Source File](/sofa/src/IAB.cpp)  and
 
-+ [Scene Main File](/IAB8/scenes/imrt.scn)
++ [Scene Main File](/sofa/scenes/imrt.scn)
 
 ### MUJOCO Plugin
 
@@ -25,14 +25,6 @@ Source codes for this scene file are in
 3. Compile the mujoco model viewer with catkin: `catkin build`
 
 4. Visualize the model: `rosrun superchick chick_viewer`.
-
-	Below is an example of the scene in mjpro150:
-
-	<!-- ![mjpro_model](/superchick/config/mjmodel.jpg) -->
-
-	<div class="fig figcenter fighighlight">
-	  <img src="ros_sofa/superchick/config/mjmodel.jpg" height="75%" width="70%" align="middle" style="border-left: 1px solid black;" />
-	</div>
 
 ### Superchicko Rviz Plugin
 

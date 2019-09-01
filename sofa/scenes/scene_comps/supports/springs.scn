@@ -1,0 +1,24 @@
+<?xml version="1.0" ?>
+<Node name="SpringNode">
+  <EulerImplicitSolver rayleighStiffness="0.01"  rayleighMass="0.1" />
+	<CGLinearSolver iterations="25" threshold="0.00000001" tolerance="1e-05" />
+
+  <MeshSTLLoader name="spring_loader" filename="../../../../ros/srs_traj_opt/patient_description/meshes/springs.stl"/>
+  <MechanicalObject name="spring-states" src="@spring_loader" template="Vec3d" externalForce="0 0 0"  restScale="1"  translation="0 0 0"  scale3d="1 1 1" />
+
+  <UniformMass totalMass="5" />
+  <TetrahedronSetTopologyContainer name="SpringTetra" src="@spring_loader" />
+  <TetrahedronSetGeometryAlgorithms name="SpringAlgos" template="Vec3d"  drawTetrahedra="1"/>
+
+  <Node name="SpringVisu">
+    <OglModel name="SpringVisual" src="@../spring_loader" translation="0 0 0"  color="white"
+       dx="0" dy="0" dz="0" rx="0" ry="0" rz="0" scale="1.0"/>
+    <BarycentricMapping input="@.." output="@SpringVisual" />
+  </Node>
+
+  <Node 	 name="SpringCollis"  >
+    <MeshSTLLoader name="spring-collis-loader"  filename="../../../../ros/srs_traj_opt/patient_description/meshes/springs.stl" />
+    <MeshTopology name="meshTopology"  />
+    <MechanicalObject template="Vec3d" name="spring-collis-states"  position="0 0 0"  velocity="0 0 0"  force="0 0 0"  externalForce="0 0 0"  restScale="1" />
+  </Node>
+</Node>
