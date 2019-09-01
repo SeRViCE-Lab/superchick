@@ -119,10 +119,6 @@ int main(int argc, char** argv)
     std::string IAB_PATH = std::string(TOSTRING(IAB_ROOT));
     std::string IABBuildPATH = IAB_PATH + "/build";
 
-
-    // OUTT("SofaBuildPath: ", SofaBuildPath);
-    // OUTT("IAB_PATH: ", IAB_PATH);
-
     std::string dir = SofaBuildPath + "/install/share/sofa/gui/qt/";
     dir = SetDirectory::GetRelativeFromProcess(dir.c_str());
     if(FileSystem::isDirectory(dir))

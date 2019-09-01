@@ -5,15 +5,18 @@
   <!-- use stl here cause the obj file is cumbersome -->
   <MeshObjLoader name="patient_loader"
     filename="../../../../ros/srs_traj_opt/patient_description/meshes/patient.obj" />
-  <MechanicalObject name="patient-states" src="@patient_loader" />
+  <MechanicalObject name="patient-states" src="@patient_loader"/>
+  <RigidRigidMapping template="Rigid,Rigid" name="default35" initialPoints=""/>
+  <JointSpringForceField template="Rigid" name="HeadMotionSpringModel"
+      spring="BEGIN_SPRING  113 114  FREE_AXIS 0 0 0 1 1 0  KS_T 10 100000  KS_R 1000 10000  KD 0.1  END_SPRING&#x0A;" />
 
-  <!-- <UniformMass totalMass="95" /> -->
+  <UniformMass totalMass="95" />
   <UncoupledConstraintCorrection template="Vec3d" name="uncoupledConstraintCorrectionHead" />
   <TetrahedronSetTopologyContainer name="PatientTetra" src="@patient_loader" />
   <TetrahedronSetGeometryAlgorithms name="PatientAlgos" template="Vec3d"  drawTetrahedra="1"/>
 
   <Node name="PatientVisu" >
-    <OglModel name="PatientVisual" src="@../patient_loader" translation="0 0 0" dx="0" dy="0" dz="0" rx="0" ry="0" rz="0" scale="1.0" color="brown" />
+    <OglModel name="PatientVisual" src="@../patient_loader" translation="0 0 0" rx="0" ry="0" rz="0" scale="1.0" />
   </Node>
 
   <Node name="PatientCollis"  >

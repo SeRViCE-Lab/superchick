@@ -3,7 +3,7 @@
   <APIVersion level="19.06" />
   <RequiredPlugin name="SofaOpenglVisual"/>
   <RequiredPlugin pluginName="CImgPlugin"/>
-  <RequiredPlugin pluginName="IABPlugin"/>
+  <!-- <RequiredPlugin pluginName="IABPlugin"/> -->
   <VisualStyle displayFlags="showVisual showBehavior showCollision hideOptions showMapping" />
   <!-- Lights -->
   <LightManager ambient="4 8.5 10"/>
@@ -11,7 +11,7 @@
   <LCPConstraintSolver tolerance="1e-3" maxIt="1000" initial_guess="false" build_lcp="false"  printLog="0" mu="0.2"/>
   <FreeMotionAnimationLoop />
 
-  <DefaultPipeline verbose="0" draw="0" depth="15" />
+  <DefaultPipeline verbose="1" draw="1" depth="15" />
   <BruteForceDetection name="ForceDetection" />
   <MinProximityIntersection name="Proximity" alarmDistance="0.02" contactDistance="0.02" />
 
@@ -20,23 +20,23 @@
   <!-- <CompositingVisualLoop name="compositingVisualLoop3" /> -->  <!-- PLUGINIZED since SOFA v19.06 -->
 
   <Node name="Patient">
-    <include href="scene_comps/patients/patient_rigid_whole.scn" dy="25" dx="-300" dz="-50" scale="250" color="grey" rx="-90" ry="-90"/>
-  </Node>
+    <include href="scene_comps/patients/patient_rigid_whole.scn" translation="-300 25 -50" scale="250" rx="-90" ry="-90" color="yellow" />
 
-  <Node name="IABChains">
-    <!-- Note that dy is now dz due to the -90 of cushions and human rotation -->
-    <Node name="BaseChain">
-      <include name="SkullLeft" href="scene_comps/IABs/sphere.scn" dx="20" dy="-50" dz="55" color="magenta" scale="1.8"/>
-      <include name="SkullRight" href="scene_comps/IABs/sphere.scn" dx="20" dy="-50" dz="-115" color="magenta" scale="1.8"/>
-      <include name="NeckLeft" href="scene_comps/IABs/sphere.scn" dx="-135" dy="-50" dz="55" color="magenta" scale="1.8"/>
-      <include name="NeckRight" href="scene_comps/IABs/sphere.scn" dx="-135" dy="-50" dz="-115" color="magenta" scale="1.8"/>
-    </Node>
+    <Node name="IABChains">
+      <!-- Making chains children of patient since they control head and neck motion -->
+      <Node name="BaseChain">
+        <include name="SkullLeft" href="scene_comps/IABs/sphere.scn" dx="20" dy="-50" dz="55" color="magenta" scale="1.8"/>
+        <include name="SkullRight" href="scene_comps/IABs/sphere.scn" dx="20" dy="-50" dz="-115" color="magenta" scale="1.8"/>
+        <include name="NeckLeft" href="scene_comps/IABs/sphere.scn" dx="-135" dy="-50" dz="55" color="magenta" scale="1.8"/>
+        <include name="NeckRight" href="scene_comps/IABs/sphere.scn" dx="-135" dy="-50" dz="-115" color="magenta" scale="1.8"/>
+      </Node>
 
-    <Node name="SideChains">
-      <include name="ForeLeft" href="scene_comps/IABs/sphere.scn" dx="20" dy="100" dz="95" color="0.3 0.65 0.6" scale="1.8"/>
-      <include name="ForeRight" href="scene_comps/IABs/sphere.scn" dx="20" dy="100" dz="-180" color="0.3 0.65 0.6" scale="1.8"/>
-      <include name="ChinRight" href="scene_comps/IABs/sphere.scn" dx="-150" dy="100" dz="75" color="0.3 0.65 0.6" scale="1.8"/>
-      <include name="ChinLeft" href="scene_comps/IABs/sphere.scn" dx="-150" dy="100" dz="-160" color="0.3 0.65 0.6" scale="1.8"/>
+      <Node name="SideChains">
+        <include name="ForeLeft" href="scene_comps/IABs/sphere.scn" dx="20" dy="100" dz="95" color="0.3 0.65 0.6" scale="1.8"/>
+        <include name="ForeRight" href="scene_comps/IABs/sphere.scn" dx="20" dy="100" dz="-180" color="0.3 0.65 0.6" scale="1.8"/>
+        <include name="ChinRight" href="scene_comps/IABs/sphere.scn" dx="-150" dy="100" dz="75" color="0.3 0.65 0.6" scale="1.8"/>
+        <include name="ChinLeft" href="scene_comps/IABs/sphere.scn" dx="-150" dy="100" dz="-160" color="0.3 0.65 0.6" scale="1.8"/>
+      </Node>
     </Node>
   </Node>
 
@@ -60,8 +60,8 @@
       <include href="scene_comps/supports/cushion.scn" name="Cushion-1" />
       <include href="scene_comps/supports/cushion.scn" name="Cushion-2" translation="0 -220 0"/>
       <include href="scene_comps/supports/cushion.scn" name="Cushion-3" translation="0 -330 0"/>
-      <include href="scene_comps/supports/cushion.scn" name="Cushion-3" translation="0 -440 0"/>
-      <include href="scene_comps/supports/cushion.scn" name="Cushion-3" translation="0 -550 0"/>
+      <include href="scene_comps/supports/cushion.scn" name="Cushion-4" translation="0 -440 0"/>
+      <include href="scene_comps/supports/cushion.scn" name="Cushion-5" translation="0 -550 0"/>
     </Node>
 
   <!-- TODO: This is not yet revealed in ogl -->

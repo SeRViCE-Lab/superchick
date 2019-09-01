@@ -1,3 +1,15 @@
 #! /bin/bash
-rm -rf *; cmake ..; make -j$nproc; ./IAB --load libIABPlugin.so
- 
+echo -e "Clean current directory? [yn]"
+read res
+
+if [ res=='y' ]; then
+  rm -rf *;
+fi
+
+cmake ..; make -j$nproc;
+
+if [ uname=="Linux" ]; then
+  ./IAB --load libIABPlugin.so
+elif [ name=="Darwin" ]; then
+  ./IAB --load libIABPlugin.dylib
+fi
