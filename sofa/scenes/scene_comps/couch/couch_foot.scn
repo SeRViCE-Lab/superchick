@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <Node name="couch-foot">
-  <EulerImplicitSolver rayleighStiffness="0.01"  rayleighMass="0.1" />
+  <EulerExplicitSolver name="couchFootSolver" />
   <CGLinearSolver template="GraphScattered" iterations="25" tolerance="1e-12"  threshold="1e-18"  />
   <MeshSTLLoader name="couch-foot-loader"
     filename="../../../../ros/srs_traj_opt/couch_description/meshes/truebeam/Assembly4/CouchFoot.stl" scale="5e-6"/>
@@ -8,10 +8,10 @@
   <MechanicalObject name="couch-foot-states" src="@couch-foot-loader" />
    <!-- template="Vec3d"
      externalForce="0 0 0"  restScale="1"  translation="0 0 0"  scale3d=".1 .1 .1" /> -->
-   <UniformMass totalMass="30" />
+   <UniformMass totalMass="50" />  <!-- doesn't need topology container -->
    <UncoupledConstraintCorrection template="Vec3d" name="uncoupledConstraintCorrectionHead" />
-   <TetrahedronSetTopologyContainer name="CouchFootTetra" src="@couch-foot-loader" />
-   <TetrahedronSetGeometryAlgorithms name="CouchFootAlgos" template="Vec3d"  drawTetrahedra="1"/>
+   <!-- <TetrahedronSetTopologyContainer name="CouchFootTetra" src="@couch-foot-loader" />
+   <TetrahedronSetGeometryAlgorithms name="CouchFootAlgos" template="Vec3d"  drawTetrahedra="1"/> -->
 
    <Node name="CouchFootVisu" >
        <OglModel name="couch-footVisual" src="@../couch-foot-loader" translation="0 0 0" color="grey" />

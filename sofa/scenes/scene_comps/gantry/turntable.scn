@@ -8,10 +8,10 @@
   <MechanicalObject name="turntable-states" src="@turntable-loader" />
    <!-- template="Vec3d"
      externalForce="0 0 0"  restScale="1"  translation="0 0 0"  scale3d=".1 .1 .1" /> -->
-   <UniformMass totalMass="40" />
+   <UniformMass totalMass="30" />
    <UncoupledConstraintCorrection template="Vec3d" name="uncoupledConstraintCorrectionHead" />
-   <TetrahedronSetTopologyContainer name="TurnTableTetra" src="@turntable-loader" />
-   <TetrahedronSetGeometryAlgorithms name="TurnTableAlgos" template="Vec3d"  drawTetrahedra="1"/>
+   <!-- <TetrahedronSetTopologyContainer name="TurnTableTetra" src="@turntable-loader" />
+   <TetrahedronSetGeometryAlgorithms name="TurnTableAlgos" template="Vec3d"  drawTetrahedra="1"/> -->
 
    <Node name="TurnTableVisu" >
        <OglModel name="turntableVisual" src="@../turntable-loader" translation="0 0 0" rotation="180 0 0" color="grey" />

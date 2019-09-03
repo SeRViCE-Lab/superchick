@@ -1,18 +1,16 @@
 <?xml version="1.0"?>
 <Node name="SphereNode">
 	<EulerImplicitSolver rayleighStiffness="0.01"  rayleighMass="0.1" />
-	<CGLinearSolver template="GraphScattered" iterations="25" tolerance="1e-12"  threshold="1e-18"  />
-    <!-- Above from TORUS FEM -->
+	<CGLinearSolver template="GraphScattered" iterations="100" tolerance="1e-5"  threshold="1e-5"  />
+		<!-- see examples/Components/mass/MeshMatrixMass.scn &
+						 https://www.sofa-framework.org/community/doc/using-sofa/components/masses/meshmatrixmass/ -->
   <MeshSTLLoader name="sphere_loader" filename="../../../../ros/srs_traj_opt/patient_description/meshes/sphere/sphere.stl"/>
   <MechanicalObject name="spherical-states" src="@sphere_loader" template="Vec3d" externalForce="0 0 0"  restScale="1"  translation="0 0 0"  scale3d="1 1 1" scale="1" />
-	<!--
-     externalForce="0 0 0"  restScale="1"  translation="0 0 0"  scale3d="1 1 1"  -->
-
-	<UniformMass totalMass="100" />
+	<CGLinearSolver iterations="100" tolerance="1e-5" threshold="1e-5"/>
+	<MatrixMass defaultValue="75" />
+	<MeshSpringForceField name="Springs" stiffness="100" damping="10" />
   <Node name="SphereVisu" >
     <OglModel name="SphereVisual"  src="@../sphere_loader" translation="0 0 0" dx="-50" dy="0" dz="0" color="0.3 0.65 0.6" scale="1.5"/>
-		 <!-- dx="-15" dy="190" dz="40"  -->
-    <!-- <BarycentricMapping input="@.." output="@SphereVisual" /> -->
   </Node>
 <Node 	 name="SphereCollis"  >
   <MeshObjLoader name="sphere-collis-loader"  filename="../../../../ros/srs_traj_opt/patient_description/meshes/sphere/sphere.obj"  scale="1.5"/>
