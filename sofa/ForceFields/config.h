@@ -19,40 +19,9 @@
 *                                                                             *
 * Contact information: contact@sofa-framework.org                             *
 ******************************************************************************/
-#define SOFA_COMPONENT_FORCEFIELD_TEMPLATEFORCEFIELD_CPP
+#ifndef SOFAGENERALOBJECTINTERACTION_CONFIG_H
+#define SOFAGENERALOBJECTINTERACTION_CONFIG_H
 
-namespace sofa
-{
+#include <SofaGeneral/config.h>
 
-namespace component
-{
-
-namespace forcefield
-{
-
-using namespace sofa::defaulttype;
-
-
-// Give a description of your class
-// and declare the DataTypes on which the ForceField is instantiated
-
-int TemplateForceFieldClass = core::RegisterObject("Description here of the physics of your ForceField")
-        .add< TemplateForceFieldClass<Vec3Types> >()
-        .add< TemplateForceFieldClass<Vec2Types> >()
-        .add< TemplateForceFieldClass<Vec1Types> >()
-        .add< TemplateForceFieldClass<Vec6Types> >()
-
-        ;
-
-template class TemplateForceField<Vec3Types>;
-template class TemplateForceField<Vec2Types>;
-template class TemplateForceField<Vec1Types>;
-template class TemplateForceField<Vec6Types>;
-
-
-
-} // namespace forcefield
-
-} // namespace component
-
-} // namespace sofa
+#endif

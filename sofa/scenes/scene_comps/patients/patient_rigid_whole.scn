@@ -16,7 +16,7 @@
   <UncoupledConstraintCorrection template="Vec3d" name="uncoupledConstraintCorrectionHead" />
 
   <Node name="PatientVisu" >
-    <OglModel name="PatientVisual" src="@../patient_loader" translation="0 0 0" rx="0" ry="0" rz="0" scale="1.0" />
+    <OglModel name="PatientVisual" src="@../patient_loader" translation="0 0 0" rx="0" ry="0" rz="0" scale="1.0" color="" />
   </Node>
 
   <Node name="PatientCollis"  >
