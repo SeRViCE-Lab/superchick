@@ -62,10 +62,10 @@ INCLUDE_DIRECTORIES("${IABPLUGIN_INCLUDE}")
 # add_subdirectory(plugins/IABPlugin)
 add_subdirectory(plugins/IABPlugin ${CMAKE_CURRENT_BINARY_DIR}/build/libs)
 
-
-
 set(SOFA_LIBS_DIR "${CMAKE_INSTALL_PREFIX}/lib")
 link_directories(${SOFA_LIBS_DIR} "${CMAKE_BINARY_DIR}/lib")
+
+add_library(integral src/integration.cxx) # my local integrator
 
 set(SOFA_LIBS SofaComponentAdvanced
 							SofaComponentMisc

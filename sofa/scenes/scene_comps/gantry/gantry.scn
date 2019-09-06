@@ -16,7 +16,7 @@
 
    <Node name="GantryVisu" >
       <!-- Note the 180 deg rotation about x here due to Erik's set up inconsistency with clinical viability -->
-       <OglModel name="gantryVisual" src="@../gantry-loader" translation="0 0 0" rotation="180 0 0" color="grey" />
+       <OglModel name="gantryVisual" src="@../gantry-loader" translation="0 0 0" rotation="180 0 0" color="" />
    </Node>
 
   <Node 	 name="GantryCollis"  >
