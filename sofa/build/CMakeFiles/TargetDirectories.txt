@@ -1,0 +1,14 @@
+/root/superchicko/sofa/build/CMakeFiles/install/strip.dir
+/root/superchicko/sofa/build/CMakeFiles/edit_cache.dir
+/root/superchicko/sofa/build/CMakeFiles/install.dir
+/root/superchicko/sofa/build/CMakeFiles/rebuild_cache.dir
+/root/superchicko/sofa/build/CMakeFiles/list_install_components.dir
+/root/superchicko/sofa/build/CMakeFiles/IAB.dir
+/root/superchicko/sofa/build/CMakeFiles/install/local.dir
+/root/superchicko/sofa/build/build/libs/CMakeFiles/install/strip.dir
+/root/superchicko/sofa/build/build/libs/CMakeFiles/edit_cache.dir
+/root/superchicko/sofa/build/build/libs/CMakeFiles/IABPlugin.dir
+/root/superchicko/sofa/build/build/libs/CMakeFiles/list_install_components.dir
+/root/superchicko/sofa/build/build/libs/CMakeFiles/install/local.dir
+/root/superchicko/sofa/build/build/libs/CMakeFiles/rebuild_cache.dir
+/root/superchicko/sofa/build/build/libs/CMakeFiles/install.dir
