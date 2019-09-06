@@ -22,6 +22,7 @@
 #ifndef SOFA_COMPONENT_FORCEFIELD_ISOCHORICFORCEFIELD_INL
 #define SOFA_COMPONENT_FORCEFIELD_ISOCHORICFORCEFIELD_INL
 
+#include "integration.h"
 #include <ForceFields/IsochoricForceField.h>
 #include <sofa/core/visual/VisualParams.h>
 #include <sofa/defaulttype/RGBAColor.h>
@@ -87,9 +88,13 @@ void IsochoricForceField<DataTypes>::addForce(const core::MechanicalParams* /*pa
     helper::ReadAccessor< DataVecDeriv1 >  v1 = datav1;
 
     // calculate ro
-    double ro = std::pow(std::pow(Ro, 3) + std::pow(ri, 3) - std::pow(Ri, 3), (1/3));
-    // evaluate the definite stress integrap in eq 25
-    float radial_stress = 
+    double inner_ro = std::pow(Ro, 3) + std::pow(ri, 3) - std::pow(Ri, 3);
+    double ro = std::pow(inner_ro, (1/3));
+    // evaluate the definite stress integrap in eq 25 of continuum1
+    float radial_stress_t1, radial_stress_t2, radial_stress, R;
+    // evaluate the definite integratral in (25) from Ri to R0
+    radial_stress_t1 = 2 * C1 *((1/ro) - R^6/ro^7) - 2* C2(R^6/ro^7 - r0/R^2)
+    integral(cos, 0, M_PI / 2, 10);
 }
 
 

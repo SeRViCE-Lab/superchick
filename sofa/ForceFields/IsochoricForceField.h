@@ -22,7 +22,7 @@
 #ifndef SOFA_COMPONENT_FORCEFIELD_ISOCHORICFORCEFIELD_H
 #define SOFA_COMPONENT_FORCEFIELD_ISOCHORICFORCEFIELD_H
 
-#include "config.h"
+#include "ForceFields/config.h"
 #include <sofa/core/behavior/ForceField.h>
 
 #include <sofa/core/behavior/MechanicalState.h>
