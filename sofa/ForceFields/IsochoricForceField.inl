@@ -22,8 +22,8 @@
 #ifndef SOFA_COMPONENT_FORCEFIELD_ISOCHORICFORCEFIELD_INL
 #define SOFA_COMPONENT_FORCEFIELD_ISOCHORICFORCEFIELD_INL
 
-#include "integration.h"
-#include <ForceFields/IsochoricForceField.h>
+#include "ForceFields/integrand.h"
+#include "ForceFields/IsochoricForceField.h"
 #include <sofa/core/visual/VisualParams.h>
 #include <sofa/defaulttype/RGBAColor.h>
 #include <sofa/helper/system/config.h>

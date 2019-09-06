@@ -55,6 +55,7 @@ INCLUDE_DIRECTORIES("${CMAKE_INSTALL_PREFIX}/include")
 INCLUDE_DIRECTORIES(IABPLUGIN_INCLUDE "${CMAKE_CURRENT_SOURCE_DIR}/plugins")
 
 set(IABPLUGIN_INCLUDE "${CMAKE_CURRENT_SOURCE_DIR}/plugins/IABPlugin/include")
+set(ForceFields_INCLUDE "${CMAKE_CURRENT_SOURCE_DIR}/plugins/ForceFields")
 
 INCLUDE_DIRECTORIES("${IABPLUGIN_INCLUDE}")
  # work on this post-icra/ra-l deadline
@@ -65,7 +66,7 @@ add_subdirectory(plugins/IABPlugin ${CMAKE_CURRENT_BINARY_DIR}/build/libs)
 set(SOFA_LIBS_DIR "${CMAKE_INSTALL_PREFIX}/lib")
 link_directories(${SOFA_LIBS_DIR} "${CMAKE_BINARY_DIR}/lib")
 
-add_library(integral src/integration.cxx) # my local integrator
+add_library(integral "SHARED" src/integrand.cxx) # my local integrator
 
 set(SOFA_LIBS SofaComponentAdvanced
 							SofaComponentMisc
