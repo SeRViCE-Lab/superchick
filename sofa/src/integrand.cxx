@@ -9,8 +9,8 @@
 template<typename value_type, typename function_type>
 inline value_type integrator(const value_type a,
                              const value_type b,
-                             const value_type atol,
-                             const value_type reltol,
+                             const value_type atol = 1e-2,
+                             const value_type reltol=1e-5,
                              function_type func)
 {
   unsigned n = 1U;
@@ -69,8 +69,8 @@ class radial_stress_c2r{
     {
       //return the integrand expression
       const value_type& r = get_r();
-      return 2*C1_*(1/r - std::pow(R, 6)/std::pow(r, 7)) \
-            -2*C2_*(std::pow(R, 4)/std::pow(r, 5)-r/std::pow(R, 2));
+      return -1*(2*C1_*(1/r - std::pow(R, 6)/std::pow(r, 7)) \
+            -2*C2_*(std::pow(R, 4)/std::pow(r, 5)-r/std::pow(R, 2)));
     }
 
   inline value_type get_r()
@@ -110,8 +110,8 @@ class radial_stress_r2c{
     {
       //return the integrand expression
       const value_type& R = get_R();
-      return 2*C1_*(r/std::pow(R, 2) - std::pow(R, 4)/std::pow(r, 5)) \
-            +2*C2_*(std::pow(r, 3)/std::pow(R, 4)-std::pow(R, 2)/std::pow(r, 3));
+      return -1*(2*C1_*(r/std::pow(R, 2) - std::pow(R, 4)/std::pow(r, 5)) \
+            +2*C2_*(std::pow(r, 3)/std::pow(R, 4)-std::pow(R, 2)/std::pow(r, 3)));
     }
 
   inline value_type get_R()

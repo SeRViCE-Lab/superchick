@@ -22,6 +22,7 @@
 #ifndef SOFA_COMPONENT_FORCEFIELD_ISOCHORICFORCEFIELD_INL
 #define SOFA_COMPONENT_FORCEFIELD_ISOCHORICFORCEFIELD_INL
 
+#include "include/debuggers.h"
 #include "ForceFields/integrand.h"
 #include "ForceFields/IsochoricForceField.h"
 #include <sofa/core/visual/VisualParams.h>
@@ -31,6 +32,7 @@
 #include <cassert>
 #include <iostream>
 
+// see SoftRobots/model/SurfacePressureModel
 namespace sofa
 {
 
@@ -39,18 +41,22 @@ namespace component
 
 namespace forcefield
 {
-
-
 // Constructor of the class IsochoricForceField
 // initializing data with their default value (here d_inputForTheUser=20)
 template<class DataTypes>
 IsochoricForceField<DataTypes>::IsochoricForceField()
-    : d_inputForTheUser(initData(&d_inputForTheUser, (int) 20, "inputForTheUser", "Description of the data inputForTheUser")),
-    // d_inputForTheUser(initData(&d_inputForTheUser, (float) 0.1, "Ri", "Internal IAB Radius in Reference Configuration"))
-    Ri(Ri), Ro(Ro), C1(C1), C2(C2), rho(rho), nu(nu), mode(mode)
-
+    : indices(initData(&indices, "indices", "index of nodes controlled by the isochoric deformations")),
+    Ri(initData(&Ri, "Ri", "internal radius in the reference configuration")),
+    Ro(initData(&Ro, "Ro", "external radius in the reference configuration")),
+    C1(initData(&C1, "C1", "material elasticity of the internal IAB wall")),
+    C2(initData(&C2, "C2", "material elasticity of the outer IAB wall")),
+    rho(initData(&rho, "rho", "mass density of the system")),
+    nu(initData(&nu, "nu", "Poisson ratio of the IAB materials" )),
+    color(initData(&color,sofa::defaulttype::Vec4f(0.0,.7, .8,1.0), "color","color"))
+    mode(initData(&mode, "mode", "mode of deformation: <expansion> or <compression>"))
 {
   //default Constructor
+  init()
 }
 
 
@@ -63,9 +69,21 @@ IsochoricForceField<DataTypes>::~IsochoricForceField()
 template<class DataTypes>
 void IsochoricForceField<DataTypes>::init()
 {
+    // ripped off angularSpringForceField
+    core::behavior::ForceField<DataTypes>::init();
+
     // Initialization of your ForceField class and variables
     // perhaps initialize all spheres with a default internal and external radius in reference configuration for now
+    C1 = 1.1e4F;
+    C2 = 2.2e4F;
+    abstol = 1e-2F;
+    reltol = 1e-5F;
 
+    mState = dynamic_cast<core::behavior::MechanicalState<DataTypes> *> (this->getContext()->getMechanicalState());
+    if (!mState) {
+		msg_error("IsochoricForceField") << "MechanicalStateFilter has no binding MechanicalState" << "\n";
+    }
+    matS.resize(mState->getMatrixSize(), mState->getMatrixSize());
 }
 
 
@@ -77,24 +95,39 @@ void IsochoricForceField<DataTypes>::reinit()
 
 template<class DataTypes>
 void IsochoricForceField<DataTypes>::addForce(const core::MechanicalParams* /*params*/,
-                                             DataVecDeriv& vecDer,
-                                             const DataVecCoord& p,
+                                             DataVecDeriv& f,
+                                             const DataVecCoord& x,
                                              const DataVecDeriv& datav1)
 {
+    if(!mState) {
+    msg_info("IsochoricForceField") << "No Mechanical State found, no force will be computed..." << "\n";
+        return;
+    }
     // Compute the forces f from the current DOFs p; here i am using the derived stress from eq 25v in paper 1
-    helper::WriteAccessor< DataVecDeriv1 > f = vecDer;
-
-    helper::ReadAccessor< DataVecCoord1 >  p1 = p;
+    helper::WriteAccessor< DataVecDeriv1 > f1 = f;
+    helper::ReadAccessor< DataVecCoord1 >  p1 = x;
     helper::ReadAccessor< DataVecDeriv1 >  v1 = datav1;
 
-    // calculate ro
-    double inner_ro = std::pow(Ro, 3) + std::pow(ri, 3) - std::pow(Ri, 3);
-    double ro = std::pow(inner_ro, (1/3));
-    // evaluate the definite stress integrap in eq 25 of continuum1
-    float radial_stress_t1, radial_stress_t2, radial_stress, R;
-    // evaluate the definite integratral in (25) from Ri to R0
-    radial_stress_t1 = 2 * C1 *((1/ro) - R^6/ro^7) - 2* C2(R^6/ro^7 - r0/R^2)
-    integral(cos, 0, M_PI / 2, 10);
+    f1.resize(p1.size());
+
+    // radii to take IAB into in the current configuration
+    double ri = Ri;
+    double ro = Ro;
+
+    // calculate the stress and pressure needed to go from a reference configuartion to a current configuration
+    double radial_stress_n = integrator<float>(Ri, Ro, abstol, reltol,
+                                                C1, C2, radial_stress_r2c<float>\
+                                                (ri=ri, ro=ro,
+                                                  Ri=Ri, C1, C2));
+    double internal_pressure = integrator<float>(Ri, Ro, abstol, reltol,
+                                                C1, C2, radial_stress_r2c<float>(ri=ri, \
+                                                  ro=ro,
+                                                  Ri=Ri, // infer Ro from Ri
+                                                  C1, C2));
+    OUT_INFO("Calculated pressure based on given parameters:\n\t [C1, C2, Ri, Ro, ri, ro]: [%.2f, %.2f, %.2f, %.2f, %.2f, %.2f] is \n\t P=%.4f N/m^2" <<
+              C1, C2, Ri, Ro, ri, ro, internal_pressure);
+    printf("Calculated normal stress based on given parameters:\n\t [C1, C2, Ri, Ro, ri, ro]: [%.2f, %.2f, %.2f, %.2f, %.2f, %.2f] is \n\t Sigma=%.4f " <<
+              C1, C2, Ri, Ro, ri, ro, radial_stress_n);
 }
 
 

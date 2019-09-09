@@ -29,6 +29,7 @@
 #include <sofa/core/objectmodel/Data.h>
 #include <sofa/defaulttype/RigidTypes.h>
 #include <sofa/core/MechanicalParams.h>
+#include <SofaEigen2Solver/EigenSparseMatrix.h>
 
 #include <sofa/defaulttype/RGBAColor.h>
 
@@ -52,10 +53,13 @@ public:
 
     /// Declare here the data and their type, you want the user to have access to
     Data< float > Ri, Ro; // referencce configuration radius
+    Data< float > ri, ro; // current configuration radius
     Data< float > C1, C2; // material elasticity of iab walls
     Data< float > rho, nu; // iab material densities as well as Poisson ratio of elastic wall
     Data< std::string > mode; // mode tells whether we are expanding or compressing the IABs; accepts "compress" or "expand"
-    Data<defaulttype::RGBAColor> color; ///< isochoric spherical forcefield color. (default=[0.0,0.5,1.0,1.0])
+    Data< defaulttype::RGBAColor> color; ///< isochoric spherical forcefield color. (default=[0.0,0.5,1.0,1.0])
+    Data< float > atol; // amount of tolerance for integral solver (see integrand.cxx)
+    Data< helper::vector< unsigned int > > indices; ///< index of nodes controlled by the isochoric fields
 
     enum { N=DataTypes::spatial_dimensions };
     using DeformationGrad = defaulttype::Mat<N,N,Real1>;  // defines the dimension of the deformation tensor
@@ -89,11 +93,17 @@ public:
 
     SReal getPotentialEnergy(const core::MechanicalParams* params, const DataVecCoord& x) const override;
 
+    linearsolver::EigenBaseSparseMatrix<typename DataTypes::Real> matS;
+
 protected:
 
     IsochoricForceField();
     ~IsochoricForceField();
 
+  MechanicalState<DataTypes> *mState;
+
+  float C1, C2; //1.1e4F, 2.2e4F,
+  float abstol, reltol;
 };
 
 

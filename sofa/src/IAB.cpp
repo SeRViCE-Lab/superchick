@@ -8,6 +8,7 @@ using std::string;
 #include <vector>
 using std::vector;
 
+#include "include/debuggers.h"
 #include <IABPlugin/include/initIABPlugin.h>
 #include <sofa/helper/ArgumentParser.h>
 #include <SofaSimulationCommon/common.h>
@@ -81,10 +82,6 @@ using sofa::helper::system::PluginManager;
 // imported from cmakelists
 #define SOFA SOFA_ROOT
 // #define IAB_ROOT IAB_ROOT
-
-// easy debugging preprocessors
-#define OUT_INFO(__X__) (std::cout << __X__ <<std::endl)
-#define OUTT(__X__, __Y__) (std::cout << __X__ << __Y__ << std::endl)
 
 void loadVerificationData(std::string& directory, std::string& filename, Node* node)
 {
