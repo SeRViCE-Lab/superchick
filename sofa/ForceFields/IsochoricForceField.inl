@@ -48,12 +48,14 @@ IsochoricForceField<DataTypes>::IsochoricForceField()
     : indices(initData(&indices, "indices", "index of nodes controlled by the isochoric deformations")),
     Ri(initData(&Ri, "Ri", "internal radius in the reference configuration")),
     Ro(initData(&Ro, "Ro", "external radius in the reference configuration")),
-    C1(initData(&C1, "C1", "material elasticity of the internal IAB wall")),
-    C2(initData(&C2, "C2", "material elasticity of the outer IAB wall")),
-    rho(initData(&rho, "rho", "mass density of the system")),
-    nu(initData(&nu, "nu", "Poisson ratio of the IAB materials" )),
+    Ro(initData(&ri, "0", "internal radius in the current configuration")),
+    Ro(initData(&ro, "0", "external radius in the current configuration")),
+    C1(initData(&C1, "0", "material elasticity of the internal IAB wall")),
+    C2(initData(&C2, "0", "material elasticity of the outer IAB wall")),
+    rho(initData(&rho, "0.0984", "mass density of the system")),
+    nu(initData(&nu, "0.45", "Poisson ratio of the IAB materials" )),
     color(initData(&color,sofa::defaulttype::Vec4f(0.0,.7, .8,1.0), "color","color"))
-    mode(initData(&mode, "mode", "mode of deformation: <expansion> or <compression>"))
+    mode(initData(&mode, "expand", "mode of deformation: <expansion> or <compression>"))
 {
   //default Constructor
   init()
@@ -72,10 +74,15 @@ void IsochoricForceField<DataTypes>::init()
     // ripped off angularSpringForceField
     core::behavior::ForceField<DataTypes>::init();
 
+    if((ri==0) || (ro==0))
+    {
+      std::cout << "Understand that these ri and ro values are bonkers" << std::endl;
+      std::terminate();
+    }
     // Initialization of your ForceField class and variables
     // perhaps initialize all spheres with a default internal and external radius in reference configuration for now
-    C1 = 1.1e4F;
-    C2 = 2.2e4F;
+    // C1 = 1.1e4F;
+    // C2 = 2.2e4F;
     abstol = 1e-2F;
     reltol = 1e-5F;
 
@@ -112,7 +119,7 @@ void IsochoricForceField<DataTypes>::addForce(const core::MechanicalParams* /*pa
 
     // radii to take IAB into in the current configuration
     double ri = Ri;
-    double ro = Ro;
+    double ro = std::cbrt(std::pow(Ro, 3) - std::pow(Ri, 3)) + std::pow(ri, 3);
 
     // calculate the stress and pressure needed to go from a reference configuartion to a current configuration
     double radial_stress_n = integrator<float>(Ri, Ro, abstol, reltol,

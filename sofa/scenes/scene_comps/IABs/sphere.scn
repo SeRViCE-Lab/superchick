@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
 <Node name="SphereNode">
+	<RequiredPlugin pluginName="IABPlugin"/>
 	<EulerImplicitSolver rayleighStiffness="0.01"  rayleighMass="0.1" />
 	<CGLinearSolver template="GraphScattered" iterations="100" tolerance="1e-5"  threshold="1e-5"  />
 		<!-- see examples/Components/mass/MeshMatrixMass.scn &

@@ -3,7 +3,6 @@
   <APIVersion level="19.06" />
   <RequiredPlugin name="SofaOpenglVisual"/>
   <RequiredPlugin pluginName="CImgPlugin"/>
-  <!-- <RequiredPlugin pluginName="IABPlugin"/> -->
   <VisualStyle displayFlags="showVisual showBehavior showCollision hideOptions showMapping" />
   <LightManager ambient="4 8.5 10"/>
   <LCPConstraintSolver tolerance="1e-3" maxIt="1000" initial_guess="false" build_lcp="false"  printLog="0" mu="0.2"/>
@@ -24,10 +23,14 @@
     <Node name="IABChains">
       <!-- Making chains children of patient since they control head and neck motion -->
       <Node name="BaseChain">
-        <include name="SkullLeft" href="scene_comps/IABs/sphere.scn" dx="20" dy="-50" dz="55" color="magenta" scale="1.8"/>
-        <include name="SkullRight" href="scene_comps/IABs/sphere.scn" dx="20" dy="-50" dz="-115" color="magenta" scale="1.8"/>
-        <include name="NeckLeft" href="scene_comps/IABs/sphere.scn" dx="-135" dy="-50" dz="55" color="magenta" scale="1.8"/>
-        <include name="NeckRight" href="scene_comps/IABs/sphere.scn" dx="-135" dy="-50" dz="-115" color="magenta" scale="1.8"/>
+        <include name="SkullLeft" href="scene_comps/IABs/sphere.scn"  Ri="10" Ro="15" ri=".13" 
+                C1="1.1e4" C2="2.2e4" dx="20" dy="-50" dz="55" color="magenta" scale="1.8"/>
+        <include name="SkullRight" href="scene_comps/IABs/sphere.scn"  Ri="10" Ro="15" ri=".13"
+                C1="1.1e4" C2="2.2e4" dx="20" dy="-50" dz="-115" color="magenta" scale="1.8"/>
+        <include name="NeckLeft" href="scene_comps/IABs/sphere.scn"  Ri="10" Ro="15" ri=".13"
+                C1="1.1e4" C2="2.2e4" dx="-135" dy="-50" dz="55" color="magenta" scale="1.8"/>
+        <include name="NeckRight" href="scene_comps/IABs/sphere.scn"  Ri="10" Ro="15" ri=".13"
+                C1="1.1e4" C2="2.2e4" dx="-135" dy="-50" dz="-115" color="magenta" scale="1.8"/>
       </Node>
 
       <Node name="SideChains">

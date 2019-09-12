@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.1)
-project(IAB)
+project(IAB 	VERSION 1.0)
 
 add_compile_options(-std=c++14)
 
