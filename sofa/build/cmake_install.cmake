@@ -1,8 +1,8 @@
-# Install script for directory: /root/superchicko/sofa
+# Install script for directory: /Users/olalekanogunmolu/ros2_ws/src/superchicko/sofa
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "/sofa/build/build/install;/sofa/build/cmake")
+  set(CMAKE_INSTALL_PREFIX "/Users/olalekanogunmolu/sofa/v19.06/build/build/install;/Users/olalekanogunmolu/sofa/v19.06/build/cmake")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
@@ -27,11 +27,6 @@ if(NOT CMAKE_INSTALL_COMPONENT)
   endif()
 endif()
 
-# Install shared libraries without execute permission?
-if(NOT DEFINED CMAKE_INSTALL_SO_NO_EXE)
-  set(CMAKE_INSTALL_SO_NO_EXE "1")
-endif()
-
 # Is this installation the result of a crosscompile?
 if(NOT DEFINED CMAKE_CROSSCOMPILING)
   set(CMAKE_CROSSCOMPILING "FALSE")
@@ -39,19 +34,20 @@ endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
   list(APPEND CMAKE_ABSOLUTE_DESTINATION_FILES
-   "/sofa/build/lib/")
+   "/Users/olalekanogunmolu/sofa/v19.06/build/lib/")
   if(CMAKE_WARN_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(WARNING "ABSOLUTE path INSTALL DESTINATION : ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
   if(CMAKE_ERROR_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(FATAL_ERROR "ABSOLUTE path INSTALL DESTINATION forbidden (by caller): ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
-file(INSTALL DESTINATION "/sofa/build/lib" TYPE DIRECTORY FILES "/root/superchicko/sofa/lib/" FILES_MATCHING REGEX "/[^/]*\\.so$")
+file(INSTALL DESTINATION "/Users/olalekanogunmolu/sofa/v19.06/build/lib" TYPE DIRECTORY FILES "/Users/olalekanogunmolu/ros2_ws/src/superchicko/sofa/lib/" FILES_MATCHING REGEX "/[^/]*\\.so$")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  include("/root/superchicko/sofa/build/build/libs/cmake_install.cmake")
+  include("/Users/olalekanogunmolu/ros2_ws/src/superchicko/sofa/build/build/libs/cmake_install.cmake")
+  include("/Users/olalekanogunmolu/ros2_ws/src/superchicko/sofa/build/SoftRobots/cmake_install.cmake")
 
 endif()
 
@@ -63,5 +59,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/root/superchicko/sofa/build/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/Users/olalekanogunmolu/ros2_ws/src/superchicko/sofa/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

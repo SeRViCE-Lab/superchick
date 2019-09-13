@@ -7,7 +7,7 @@ file(REMOVE_RECURSE
   "CMakeFiles/IABPlugin.dir/src/MappingPendulumInPlane.cpp.o"
   "CMakeFiles/IABPlugin.dir/src/ProjectiveConstraintSet.cpp.o"
   "../../lib/libIABPlugin.pdb"
-  "../../lib/libIABPlugin.so"
+  "../../lib/libIABPlugin.dylib"
 )
 
 # Per-language clean rules from dependency scanning.

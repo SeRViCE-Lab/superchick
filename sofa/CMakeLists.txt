@@ -53,15 +53,18 @@ find_package(Qt5 REQUIRED COMPONENTS Core Charts)
 include(${CMAKE_CURRENT_SOURCE_DIR}/src/cmake/macros.cmake)
 INCLUDE_DIRECTORIES("${CMAKE_INSTALL_PREFIX}/include")
 INCLUDE_DIRECTORIES(IABPLUGIN_INCLUDE "${CMAKE_CURRENT_SOURCE_DIR}/plugins")
+INCLUDE_DIRECTORIES(FORCEFIELDS_INCLUDE "${CMAKE_CURRENT_SOURCE_DIR}/ForceFields")
 
 set(IABPLUGIN_INCLUDE "${CMAKE_CURRENT_SOURCE_DIR}/plugins/IABPlugin/include")
-set(ForceFields_INCLUDE "${CMAKE_CURRENT_SOURCE_DIR}/plugins/ForceFields")
+set(ForceFields_Headers "${CMAKE_CURRENT_SOURCE_DIR}/ForceFields")
 
 INCLUDE_DIRECTORIES("${IABPLUGIN_INCLUDE}")
+INCLUDE_DIRECTORIES("${ForceFields_Headers}")
  # work on this post-icra/ra-l deadline
 # iab_add_plugin(plugins/IABPlugin IAB)
 # add_subdirectory(plugins/IABPlugin)
 add_subdirectory(plugins/IABPlugin ${CMAKE_CURRENT_BINARY_DIR}/build/libs)
+add_subdirectory(SoftRobots)
 
 set(SOFA_LIBS_DIR "${CMAKE_INSTALL_PREFIX}/lib")
 link_directories(${SOFA_LIBS_DIR} "${CMAKE_BINARY_DIR}/lib")
