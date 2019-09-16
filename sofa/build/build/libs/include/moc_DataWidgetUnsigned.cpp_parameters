@@ -1,5 +1,4 @@
--I/Users/olalekanogunmolu/sofa/v19.06/build/build/install
--I/Users/olalekanogunmolu/sofa/v19.06/build/cmake/include
+-I/Users/olalekanogunmolu/ros2_ws/src/superchicko/sofa/include
 -I/Users/olalekanogunmolu/ros2_ws/src/superchicko/sofa/IABPLUGIN_INCLUDE
 -I/Users/olalekanogunmolu/ros2_ws/src/superchicko/sofa/plugins
 -I/Users/olalekanogunmolu/ros2_ws/src/superchicko/sofa/FORCEFIELDS_INCLUDE

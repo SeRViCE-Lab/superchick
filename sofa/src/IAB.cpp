@@ -8,7 +8,7 @@ using std::string;
 #include <vector>
 using std::vector;
 
-#include "include/debuggers.h"
+#include "debuggers.h"
 #include <IABPlugin/include/initIABPlugin.h>
 #include <sofa/helper/ArgumentParser.h>
 #include <SofaSimulationCommon/common.h>

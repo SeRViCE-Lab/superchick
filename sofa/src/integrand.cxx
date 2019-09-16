@@ -57,14 +57,17 @@ inline value_type integrator(const value_type a,
   * \tparam C1 material elasticity of inner IAB wall
   * \tparam C2 material elasticity of outer IAB wall
   */
+
 template<typename value_type>
-class radial_stress_c2r::radial_stress_c2r(const value_type& Ri, const value_type& Ro,
+radial_stress_c2r<value_type>::radial_stress_c2r(const value_type& Ri, const value_type& Ro,
                           const value_type& ri,
                           const value_type& C1, const value_type& C2)
                           : Ri_(Ri), Ro_(Ro), ri_(ri), C1_(C1), C2_(C2)
-                          { }
+                          {
+                          }
+
 template<typename value_type>
-value_type radial_stress_c2r::operator() (const value_type& R) const // see equation 25 in ContinuumI paper
+value_type radial_stress_c2r<value_type>::operator() (const value_type& R) const // see equation 25 in ContinuumI paper
 {
   //return the integrand expression
   const value_type& r = get_r();
@@ -73,7 +76,7 @@ value_type radial_stress_c2r::operator() (const value_type& R) const // see equa
 }
 
 template<typename value_type>
-inline value_type radial_stress_c2r::get_r()
+inline value_type radial_stress_c2r<value_type>::get_r()
 {
   return std::cbrt(std::pow(Ro_, 3) + std::pow(ri_, 3) - std::pow(Ri_, 3));
 }
@@ -90,15 +93,17 @@ inline value_type radial_stress_c2r::get_r()
   * \tparam C1 material elasticity of inner IAB wall
   * \tparam C2 material elasticity of outer IAB wall
   */
+
 template<typename value_type>
-class radial_stress_r2c::radial_stress_r2c(const value_type& ri, const value_type& ro,
+radial_stress_r2c<value_type>::radial_stress_r2c(const value_type& ri, const value_type& ro,
                           const value_type& Ri,
                           const value_type& C1, const value_type& C2)
                           : ri_(ri), ro_(ro), Ri_(Ri), C1_(C1), C2_(C2)
                           { }
 
+
 template<typename value_type>
-value_type radial_stress_r2c::operator() (const value_type& r) const // see equation 25 in ContinuumI paper
+value_type radial_stress_r2c<value_type>::operator() (const value_type& r) const // see equation 25 in ContinuumI paper
 {
   //return the integrand expression
   const value_type& R = get_R();
@@ -107,7 +112,7 @@ value_type radial_stress_r2c::operator() (const value_type& r) const // see equa
 }
 
 template<typename value_type>
-inline value_type radial_stress_r2c::get_R()
+inline value_type radial_stress_r2c<value_type>::get_R()
 {
   return std::cbrt(std::pow(ro_, 3) - std::pow(ri_, 3) + std::pow(Ri_, 3));
 }
@@ -124,15 +129,16 @@ inline value_type radial_stress_r2c::get_R()
   * \tparam C1 material elasticity of inner IAB wall
   * \tparam C2 material elasticity of outer IAB wall
   */
+
 template<typename value_type>
-class pressure_r2c::pressure_r2c(const value_type& ri, const value_type& ro,
+pressure_r2c<value_type>::pressure_r2c(const value_type& ri, const value_type& ro,
                           const value_type& Ri,
                           const value_type& C1, const value_type& C2)
                           : ri_(ri), ro_(ro), Ri_(Ri), C1_(C1), C2_(C2)
                           { }
 
 template<typename value_type>
-value_type pressure_r2c::operator() (const value_type& r) const // see equation 25 in ContinuumI paper
+value_type pressure_r2c<value_type>::operator() (const value_type& r) const // see equation 25 in ContinuumI paper
 {
   //return the integrand expression
   const value_type& R = get_R();
@@ -141,8 +147,7 @@ value_type pressure_r2c::operator() (const value_type& r) const // see equation 
 }
 
 template<typename value_type>
-
-inline value_type pressure_r2c::get_R()
+inline value_type pressure_r2c<value_type>::get_R()
 {
   return std::cbrt(std::pow(ro_, 3) - std::pow(ri_, 3) + std::pow(Ri_, 3));
 }
@@ -160,14 +165,14 @@ inline value_type pressure_r2c::get_R()
   * \tparam C2 material elasticity of outer IAB wall
   */
 template<typename value_type>
-class pressure_c2r::pressure_c2r(const value_type& Ri, const value_type& Ro,
+pressure_c2r<value_type>::pressure_c2r(const value_type& Ri, const value_type& Ro,
                           const value_type& ri,
                           const value_type& C1, const value_type& C2)
                           : Ri_(Ri), Ro_(Ro), ri_(ri), C1_(C1), C2_(C2)
                           { }
 
 template<typename value_type>
-value_type pressure_c2r::operator() (const value_type& R) const // see equation 25 in ContinuumI paper
+value_type pressure_c2r<value_type>::operator() (const value_type& R) const // see equation 25 in ContinuumI paper
 {
   //return the integrand expression
   const value_type& r = get_r();
@@ -176,7 +181,7 @@ value_type pressure_c2r::operator() (const value_type& R) const // see equation 
 }
 
 template<typename value_type>
-inline value_type pressure_c2r::get_r()
+inline value_type pressure_c2r<value_type>::get_r()
 {
   return std::cbrt(std::pow(Ro_, 3) + std::pow(ri_, 3) - std::pow(Ri_, 3));
 }
