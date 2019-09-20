@@ -1,4 +1,4 @@
-// #include "integrand.h"
+#include "integrand.h"
 
 /**
 * This function evaluates the definite integrals presented in the model paper

@@ -22,10 +22,9 @@
 #ifndef SOFA_COMPONENT_FORCEFIELD_ISOCHORICFORCEFIELD_INL
 #define SOFA_COMPONENT_FORCEFIELD_ISOCHORICFORCEFIELD_INL
 
-#include "integrand.h"
-#include "integrand.inl"
 #include <cassert>
 #include <iostream>
+#include "integrand.inl"  // will help with our integrations
 #include <sofa/helper/rmath.h>
 #include <include/IsochoricForceField.h>
 #include <sofa/core/visual/VisualParams.h>

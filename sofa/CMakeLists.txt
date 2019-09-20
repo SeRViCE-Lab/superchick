@@ -4,7 +4,6 @@ project(IAB 	VERSION 1.0)
 
 add_compile_options(-std=c++14)
 
-
  # best to read SOFA_ROOTfrom cmd line due to different requirements
  if("${SOFA_ROOT}" STREQUAL "")
  	# see if it can be retrieved from ENV VAR
@@ -40,7 +39,6 @@ add_definitions(-DIAB_ROOT=${CMAKE_SOURCE_DIR})
 message(STATUS "SOFA_ROOT: ${SOFA_ROOT}")
 message(STATUS "CMAKE_MODULE_PATH: ${CMAKE_MODULE_PATH}")
 
-
 set(CMAKE_INSTALL_PREFIX "${SOFA_ROOT}/install;${SOFA_ROOT}/cmake")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib")
 
@@ -52,43 +50,48 @@ find_package(SofaMiscCollision REQUIRED PATHS "${CONFIG_PATHS}")
 find_package(SofaPython REQUIRED PATHS "${CONFIG_PATHS}") # why are we using this?
 find_package(Qt5 REQUIRED COMPONENTS Core Charts)
 
+set(PLUGINS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/plugins")
+
 include(${CMAKE_CURRENT_SOURCE_DIR}/src/cmake/macros.cmake)
 INCLUDE_DIRECTORIES("${CMAKE_CURRENT_SOURCE_DIR}/include")
-INCLUDE_DIRECTORIES(IABPLUGIN_INCLUDE "${CMAKE_CURRENT_SOURCE_DIR}/plugins")
-INCLUDE_DIRECTORIES(FORCEFIELDS_INCLUDE "${CMAKE_CURRENT_SOURCE_DIR}/ForceFields")
+INCLUDE_DIRECTORIES(FORCEFIELDS_INCLUDE "${PLUGINS_DIR}/ForceFields")
+INCLUDE_DIRECTORIES(FORCEFIELDS_INCLUDE "${PLUGINS_DIR}/IABPlugin")
 
+set(IABPLUGIN_INCLUDES  "${PLUGINS_DIR}/IABPlugin/include/initIABPlugin.h"
+												"${PLUGINS_DIR}/ForceFields/include/config.h"
+												"${PLUGINS_DIR}/ForceFields/include/integrand.inl"
+												"${PLUGINS_DIR}/ForceFields/include/IsochoricForceField.h"
+												"${PLUGINS_DIR}/ForceFields/include/IsochoricForceField.inl")
 
-set(IABPLUGIN_INCLUDE "${CMAKE_CURRENT_SOURCE_DIR}/plugins/IABPlugin/include")
-set(ForceFields_Headers "${CMAKE_CURRENT_SOURCE_DIR}/ForceFields")
+set(SOURCE_FILES
+		${PLUGINS_DIR}/IABPlugin/src/InitIABPlugin.cpp
+		${PLUGINS_DIR}/ForceFields/src/IsochoricForceField.cpp
+		)
 
-INCLUDE_DIRECTORIES("${IABPLUGIN_INCLUDE}")
-INCLUDE_DIRECTORIES("${ForceFields_Headers}")
-#add_subdirectory(plugins/IABPlugin)
-#add_subdirectory(plugins/IABPlugin ${CMAKE_CURRENT_BINARY_DIR}/build/libs)
-add_subdirectory(SoftRobots)
+INCLUDE_DIRECTORIES("${IABPLUGIN_INCLUDES}")
 
+# [Qt] Create moc code.
+qt5_wrap_cpp(MOCCED_HEADER_FILES ${HEADER_FILES_TO_MOC})
 
-set(SOFA_LIBS_DIR "${CMAKE_INSTALL_PREFIX}/lib")
-message(STATUS "SOFA_LIBS_DIR: $${CMAKE_BINARY_DIR}/lib")
-link_directories("${CMAKE_BINARY_DIR}/lib")
+# Create the plugin library.
+add_library(${PROJECT_NAME} SHARED ${HEADER_FILES_TO_MOC}
+																		${MOCCED_HEADER_FILES}
+																		${IABPLUGIN_INCLUDES}
+																		${SOURCE_FILES})
+target_link_libraries(${PROJECT_NAME} SofaGuiQt)
 
-#add_library(INTEGRATOR "SHARED" src/integrand.cxx) # my local integrator
-
-# this has to succeed the build of integrator since we link them
-add_subdirectory(ForceFields)
 
 set(SOFA_LIBS SofaComponentAdvanced
 							SofaComponentMisc
 							SofaSimulationGraph
 							SofaGuiMain
-							# SofaMiscCollision
-							# SofaPython
 							)
 
-add_executable(${PROJECT_NAME} src/IAB.cpp)
-target_link_libraries(${PROJECT_NAME} ${SOFA_LIBS})
-#target_link_libraries(${PROJECT_NAME} ${SOFA_LIBS} IABPlugin)
+add_executable("${PROJECT_NAME}_Launcher" src/IAB.cpp)
+target_link_libraries("${PROJECT_NAME}_Launcher" ${SOFA_LIBS})
+install(TARGETS ${PROJECT_NAME}
+        LIBRARY DESTINATION "$ENV{SOFA_ROOT}/lib")
 
-install(DIRECTORY "lib/" DESTINATION "$ENV{SOFA_ROOT}/lib"
-				FILES_MATCHING PATTERN "*.so")
+# install(DIRECTORY "$ENV{SOFA_ROOT}/lib/" DESTINATION "$ENV{SOFA_ROOT}/lib"
+# 				FILES_MATCHING PATTERN "*.so;*.dylib")
 #

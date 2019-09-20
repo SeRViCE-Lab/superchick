@@ -94,24 +94,13 @@ install/fast: preinstall/fast
 
 # Special rule for the target list_install_components
 list_install_components:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Available install components are: \"Unspecified\" \"applications\" \"headers\" \"libraries\""
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Available install components are: \"Unspecified\""
 .PHONY : list_install_components
 
 # Special rule for the target list_install_components
 list_install_components/fast: list_install_components
 
 .PHONY : list_install_components/fast
-
-# Special rule for the target package_source
-package_source:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Run CPack packaging tool for source..."
-	/usr/local/Cellar/cmake/3.13.3/bin/cpack --config ./CPackSourceConfig.cmake /Users/olalekanogunmolu/ros2_ws/src/superchicko/sofa/build/CPackSourceConfig.cmake
-.PHONY : package_source
-
-# Special rule for the target package_source
-package_source/fast: package_source
-
-.PHONY : package_source/fast
 
 # Special rule for the target rebuild_cache
 rebuild_cache:
@@ -134,17 +123,6 @@ edit_cache:
 edit_cache/fast: edit_cache
 
 .PHONY : edit_cache/fast
-
-# Special rule for the target package
-package: preinstall
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Run CPack packaging tool..."
-	/usr/local/Cellar/cmake/3.13.3/bin/cpack --config ./CPackConfig.cmake
-.PHONY : package
-
-# Special rule for the target package
-package/fast: package
-
-.PHONY : package/fast
 
 # The main all target
 all: cmake_check_build_system
@@ -179,6 +157,19 @@ depend:
 .PHONY : depend
 
 #=============================================================================
+# Target rules for targets named IAB_Launcher
+
+# Build rule for target.
+IAB_Launcher: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 IAB_Launcher
+.PHONY : IAB_Launcher
+
+# fast build rule for target.
+IAB_Launcher/fast:
+	$(MAKE) -f CMakeFiles/IAB_Launcher.dir/build.make CMakeFiles/IAB_Launcher.dir/build
+.PHONY : IAB_Launcher/fast
+
+#=============================================================================
 # Target rules for targets named IAB
 
 # Build rule for target.
@@ -191,31 +182,59 @@ IAB/fast:
 	$(MAKE) -f CMakeFiles/IAB.dir/build.make CMakeFiles/IAB.dir/build
 .PHONY : IAB/fast
 
-#=============================================================================
-# Target rules for targets named SoftRobots
+plugins/ForceFields/src/IsochoricForceField.o: plugins/ForceFields/src/IsochoricForceField.cpp.o
 
-# Build rule for target.
-SoftRobots: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 SoftRobots
-.PHONY : SoftRobots
+.PHONY : plugins/ForceFields/src/IsochoricForceField.o
 
-# fast build rule for target.
-SoftRobots/fast:
-	$(MAKE) -f SoftRobots/CMakeFiles/SoftRobots.dir/build.make SoftRobots/CMakeFiles/SoftRobots.dir/build
-.PHONY : SoftRobots/fast
+# target to build an object file
+plugins/ForceFields/src/IsochoricForceField.cpp.o:
+	$(MAKE) -f CMakeFiles/IAB.dir/build.make CMakeFiles/IAB.dir/plugins/ForceFields/src/IsochoricForceField.cpp.o
+.PHONY : plugins/ForceFields/src/IsochoricForceField.cpp.o
 
-#=============================================================================
-# Target rules for targets named IsochoricForceField
+plugins/ForceFields/src/IsochoricForceField.i: plugins/ForceFields/src/IsochoricForceField.cpp.i
 
-# Build rule for target.
-IsochoricForceField: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 IsochoricForceField
-.PHONY : IsochoricForceField
+.PHONY : plugins/ForceFields/src/IsochoricForceField.i
 
-# fast build rule for target.
-IsochoricForceField/fast:
-	$(MAKE) -f ForceFields/CMakeFiles/IsochoricForceField.dir/build.make ForceFields/CMakeFiles/IsochoricForceField.dir/build
-.PHONY : IsochoricForceField/fast
+# target to preprocess a source file
+plugins/ForceFields/src/IsochoricForceField.cpp.i:
+	$(MAKE) -f CMakeFiles/IAB.dir/build.make CMakeFiles/IAB.dir/plugins/ForceFields/src/IsochoricForceField.cpp.i
+.PHONY : plugins/ForceFields/src/IsochoricForceField.cpp.i
+
+plugins/ForceFields/src/IsochoricForceField.s: plugins/ForceFields/src/IsochoricForceField.cpp.s
+
+.PHONY : plugins/ForceFields/src/IsochoricForceField.s
+
+# target to generate assembly for a file
+plugins/ForceFields/src/IsochoricForceField.cpp.s:
+	$(MAKE) -f CMakeFiles/IAB.dir/build.make CMakeFiles/IAB.dir/plugins/ForceFields/src/IsochoricForceField.cpp.s
+.PHONY : plugins/ForceFields/src/IsochoricForceField.cpp.s
+
+plugins/IABPlugin/src/InitIABPlugin.o: plugins/IABPlugin/src/InitIABPlugin.cpp.o
+
+.PHONY : plugins/IABPlugin/src/InitIABPlugin.o
+
+# target to build an object file
+plugins/IABPlugin/src/InitIABPlugin.cpp.o:
+	$(MAKE) -f CMakeFiles/IAB.dir/build.make CMakeFiles/IAB.dir/plugins/IABPlugin/src/InitIABPlugin.cpp.o
+.PHONY : plugins/IABPlugin/src/InitIABPlugin.cpp.o
+
+plugins/IABPlugin/src/InitIABPlugin.i: plugins/IABPlugin/src/InitIABPlugin.cpp.i
+
+.PHONY : plugins/IABPlugin/src/InitIABPlugin.i
+
+# target to preprocess a source file
+plugins/IABPlugin/src/InitIABPlugin.cpp.i:
+	$(MAKE) -f CMakeFiles/IAB.dir/build.make CMakeFiles/IAB.dir/plugins/IABPlugin/src/InitIABPlugin.cpp.i
+.PHONY : plugins/IABPlugin/src/InitIABPlugin.cpp.i
+
+plugins/IABPlugin/src/InitIABPlugin.s: plugins/IABPlugin/src/InitIABPlugin.cpp.s
+
+.PHONY : plugins/IABPlugin/src/InitIABPlugin.s
+
+# target to generate assembly for a file
+plugins/IABPlugin/src/InitIABPlugin.cpp.s:
+	$(MAKE) -f CMakeFiles/IAB.dir/build.make CMakeFiles/IAB.dir/plugins/IABPlugin/src/InitIABPlugin.cpp.s
+.PHONY : plugins/IABPlugin/src/InitIABPlugin.cpp.s
 
 src/IAB.o: src/IAB.cpp.o
 
@@ -223,7 +242,7 @@ src/IAB.o: src/IAB.cpp.o
 
 # target to build an object file
 src/IAB.cpp.o:
-	$(MAKE) -f CMakeFiles/IAB.dir/build.make CMakeFiles/IAB.dir/src/IAB.cpp.o
+	$(MAKE) -f CMakeFiles/IAB_Launcher.dir/build.make CMakeFiles/IAB_Launcher.dir/src/IAB.cpp.o
 .PHONY : src/IAB.cpp.o
 
 src/IAB.i: src/IAB.cpp.i
@@ -232,7 +251,7 @@ src/IAB.i: src/IAB.cpp.i
 
 # target to preprocess a source file
 src/IAB.cpp.i:
-	$(MAKE) -f CMakeFiles/IAB.dir/build.make CMakeFiles/IAB.dir/src/IAB.cpp.i
+	$(MAKE) -f CMakeFiles/IAB_Launcher.dir/build.make CMakeFiles/IAB_Launcher.dir/src/IAB.cpp.i
 .PHONY : src/IAB.cpp.i
 
 src/IAB.s: src/IAB.cpp.s
@@ -241,7 +260,7 @@ src/IAB.s: src/IAB.cpp.s
 
 # target to generate assembly for a file
 src/IAB.cpp.s:
-	$(MAKE) -f CMakeFiles/IAB.dir/build.make CMakeFiles/IAB.dir/src/IAB.cpp.s
+	$(MAKE) -f CMakeFiles/IAB_Launcher.dir/build.make CMakeFiles/IAB_Launcher.dir/src/IAB.cpp.s
 .PHONY : src/IAB.cpp.s
 
 # Help Target
@@ -254,13 +273,16 @@ help:
 	@echo "... install/strip"
 	@echo "... install"
 	@echo "... list_install_components"
-	@echo "... package_source"
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
-	@echo "... package"
+	@echo "... IAB_Launcher"
 	@echo "... IAB"
-	@echo "... SoftRobots"
-	@echo "... IsochoricForceField"
+	@echo "... plugins/ForceFields/src/IsochoricForceField.o"
+	@echo "... plugins/ForceFields/src/IsochoricForceField.i"
+	@echo "... plugins/ForceFields/src/IsochoricForceField.s"
+	@echo "... plugins/IABPlugin/src/InitIABPlugin.o"
+	@echo "... plugins/IABPlugin/src/InitIABPlugin.i"
+	@echo "... plugins/IABPlugin/src/InitIABPlugin.s"
 	@echo "... src/IAB.o"
 	@echo "... src/IAB.i"
 	@echo "... src/IAB.s"

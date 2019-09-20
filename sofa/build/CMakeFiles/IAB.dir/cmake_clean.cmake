@@ -1,7 +1,8 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/IAB.dir/src/IAB.cpp.o"
-  "IAB.pdb"
-  "IAB"
+  "CMakeFiles/IAB.dir/plugins/IABPlugin/src/InitIABPlugin.cpp.o"
+  "CMakeFiles/IAB.dir/plugins/ForceFields/src/IsochoricForceField.cpp.o"
+  "lib/libIAB.pdb"
+  "lib/libIAB.dylib"
 )
 
 # Per-language clean rules from dependency scanning.

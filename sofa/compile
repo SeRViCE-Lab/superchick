@@ -16,22 +16,13 @@ is_no() {
         fi
         }
 
-if [ $is_yes $res ]; then
+if [ $res $is_yes ]; then
    echo -e "cleaning up cwd"
    rm -rf *;
-else [ $is_no $res ]; then
+else
    echo "Proceeding with compilation"
 fi
 
-cmake ..; make -j8;
+cmake ..; make -j8; make install
 
-cp lib/libIABPlugin.* "$SOFA_ROOT/lib"
-cp lib/SoftRobots.* "$SOFA_ROOT/lib"
-
-if [ uname=="Linux" ]; then
-  ./IAB --load libIABPlugin.so libSoftRobots.so
-elif [ name=="Darwin" ]; then
-  ./IAB --load libIABPlugin.dylib libSoftRobots.dylib
-fi
-
-#./IAB
+IAB_Launcher

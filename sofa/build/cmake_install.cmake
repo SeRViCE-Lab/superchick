@@ -34,21 +34,26 @@ endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
   list(APPEND CMAKE_ABSOLUTE_DESTINATION_FILES
-   "/Users/olalekanogunmolu/sofa/v19.06/build/lib/")
+   "/Users/olalekanogunmolu/sofa/v19.06/build/lib/libIAB.dylib")
   if(CMAKE_WARN_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(WARNING "ABSOLUTE path INSTALL DESTINATION : ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
   if(CMAKE_ERROR_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(FATAL_ERROR "ABSOLUTE path INSTALL DESTINATION forbidden (by caller): ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
-file(INSTALL DESTINATION "/Users/olalekanogunmolu/sofa/v19.06/build/lib" TYPE DIRECTORY FILES "/Users/olalekanogunmolu/ros2_ws/src/superchicko/sofa/lib/" FILES_MATCHING REGEX "/[^/]*\\.so$")
+file(INSTALL DESTINATION "/Users/olalekanogunmolu/sofa/v19.06/build/lib" TYPE SHARED_LIBRARY FILES "/Users/olalekanogunmolu/ros2_ws/src/superchicko/sofa/build/lib/libIAB.dylib")
+  if(EXISTS "$ENV{DESTDIR}/Users/olalekanogunmolu/sofa/v19.06/build/lib/libIAB.dylib" AND
+     NOT IS_SYMLINK "$ENV{DESTDIR}/Users/olalekanogunmolu/sofa/v19.06/build/lib/libIAB.dylib")
+    execute_process(COMMAND /usr/bin/install_name_tool
+      -delete_rpath "/Users/olalekanogunmolu/sofa/v19.06/build/install/lib"
+      "$ENV{DESTDIR}/Users/olalekanogunmolu/sofa/v19.06/build/lib/libIAB.dylib")
+    if(CMAKE_INSTALL_DO_STRIP)
+      execute_process(COMMAND "/Library/Developer/CommandLineTools/usr/bin/strip" "$ENV{DESTDIR}/Users/olalekanogunmolu/sofa/v19.06/build/lib/libIAB.dylib")
+    endif()
+  endif()
 endif()
 
-if(NOT CMAKE_INSTALL_LOCAL_ONLY)
-  # Include the install script for each subdirectory.
-  include("/Users/olalekanogunmolu/ros2_ws/src/superchicko/sofa/build/SoftRobots/cmake_install.cmake")
-  include("/Users/olalekanogunmolu/ros2_ws/src/superchicko/sofa/build/ForceFields/cmake_install.cmake")
-
+if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
 endif()
 
 if(CMAKE_INSTALL_COMPONENT)
