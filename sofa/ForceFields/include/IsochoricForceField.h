@@ -22,7 +22,9 @@
 #ifndef SOFA_COMPONENT_FORCEFIELD_ISOCHORICFORCEFIELD_H
 #define SOFA_COMPONENT_FORCEFIELD_ISOCHORICFORCEFIELD_H
 
-#include "ForceFields/config.h"
+#include "config.h"
+// #include "integrand.h"
+#include "debuggers.h"  // this from global project include
 #include <sofa/core/behavior/ForceField.h>
 
 #include <sofa/core/behavior/MechanicalState.h>
@@ -39,47 +41,50 @@ namespace sofa
 namespace component
 {
 
-namespace isochoricforcefield
+namespace forcefield
 {
 
 /// Apply constant forces to given degrees of freedom.
-template<class DataTypes>
+template<typename DataTypes>
 class IsochoricForceField : public core::behavior::ForceField<DataTypes>
 {
-
 public:
-
     SOFA_CLASS(SOFA_TEMPLATE(IsochoricForceField, DataTypes), SOFA_TEMPLATE(core::behavior::ForceField, DataTypes));
+    using Real = typename DataTypes::Real;
+    using VecCoord = typename DataTypes::VecCoord;
+    using VecDeriv = typename DataTypes::VecDeriv;
+    using DataVecCoord = Data<VecCoord>;
+    using DataVecDeriv = Data<VecDeriv>;
 
     /// Declare here the data and their type, you want the user to have access to
     Data< float > Ri, Ro; // referencce configuration radius
     Data< float > ri, ro; // current configuration radius
     Data< float > C1, C2; // material elasticity of iab walls
-    Data< float > rho, nu; // iab material densities as well as Poisson ratio of elastic wall
+    // Data< float > rho, nu; // iab material densities as well as Poisson ratio of elastic wall
     Data< std::string > mode; // mode tells whether we are expanding or compressing the IABs; accepts "compress" or "expand"
-    Data< defaulttype::RGBAColor> color; ///< isochoric spherical forcefield color. (default=[0.0,0.5,1.0,1.0])
-    Data< float > atol; // amount of tolerance for integral solver (see integrand.cxx)
+    // Data< defaulttype::RGBAColor> color; ///< isochoric spherical forcefield color. (default=[0.0,0.5,1.0,1.0])
+    // Data< float > atol; // amount of tolerance for integral solver (see integrand.cxx)
     Data< helper::vector< unsigned int > > indices; ///< index of nodes controlled by the isochoric fields
 
     enum { N=DataTypes::spatial_dimensions };
-    using DeformationGrad = defaulttype::Mat<N,N,Real1>;  // defines the dimension of the deformation tensor
+    using DeformationGrad = defaulttype::Mat<N,N,Real>;  // defines the dimension of the deformation tensor
 
-
+public:
     /// Function responsible for the initialization of the component
     void init() override;
 
     /// Add the explicit forces (right hand side)
-    void addForce (const core::MechanicalParams* params, DataVecDeriv& f, const DataVecCoord& x, const DataVecDeriv& v) override;
+    virtual void addForce(const core::MechanicalParams* params, DataVecDeriv& f, const DataVecCoord& x, const DataVecDeriv& v) override;
 
     /// Add the explicit derivatives of the forces (contributing to the right hand side vector b)
     /// IF iterative solver: add the implicit derivatives of the forces (contributing to the left hand side matrix A)
-    void addDForce(const core::MechanicalParams* mparams, DataVecDeriv& d_df , const DataVecDeriv& d_dx) override;
+    virtual void addDForce(const core::MechanicalParams* mparams, DataVecDeriv& d_df , const DataVecDeriv& d_dx) override;
 
     // for when the bladder is being radially inflated
-    void addPressure(const sofa::core::MechanicalParams* mparams, DataVecDeriv1& P, DataVecDeriv2& Patm, \
-                      const DataVecCoord1& x1, const DataVecCoord2& x2, const DataVecDeriv1& v1, const DataVecDeriv2& v2) override;
+    void addPressure(const sofa::core::MechanicalParams* mparams, DataVecDeriv& P, DataVecDeriv& Patm, \
+                      const DataVecCoord& x1, const DataVecCoord& x2, const DataVecDeriv& v1, const DataVecDeriv& v2);
 
-    void reinit() override;
+    virtual void reinit() override;
 
     void draw(const core::visual::VisualParams* vparams) override;
 
@@ -100,9 +105,8 @@ protected:
     IsochoricForceField();
     ~IsochoricForceField();
 
-  MechanicalState<DataTypes> *mState;
+  core::behavior::MechanicalState<DataTypes> *mState;
 
-  float C1, C2; //1.1e4F, 2.2e4F,
   float abstol, reltol;
 };
 

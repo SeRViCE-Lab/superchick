@@ -19,7 +19,6 @@ set(CMAKE_TARGET_DEFINITIONS_CXX
   "QT_WIDGETS_LIB"
   "QT_XML_LIB"
   "SOFAGUIQT_HAS_QTCHARTS"
-  "SOFA_HAVE_SOFAPYTHON"
   "SOFA_ROOT=/Users/olalekanogunmolu/sofa/v19.06/build"
   "USING_DOUBLE"
   "use_namespace"
@@ -62,13 +61,10 @@ set(CMAKE_CXX_TARGET_INCLUDE_PATH
   "/Users/olalekanogunmolu/sofa/v19.06/build/install/include/extlibs/QGLViewer"
   "/usr/local/opt/qt/lib/QtXml.framework"
   "/usr/local/opt/qt/lib/QtXml.framework/Headers"
-  "/Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk/usr/include/python2.7"
-  "/Users/olalekanogunmolu/sofa/v19.06/build/install/plugins/SofaPython/include"
   )
 
 # Targets to which this target links.
 set(CMAKE_TARGET_LINKED_INFO_FILES
-  "/Users/olalekanogunmolu/ros2_ws/src/superchicko/sofa/build/build/libs/CMakeFiles/IABPlugin.dir/DependInfo.cmake"
   )
 
 # Fortran module output directory.

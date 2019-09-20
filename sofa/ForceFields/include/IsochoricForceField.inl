@@ -22,15 +22,15 @@
 #ifndef SOFA_COMPONENT_FORCEFIELD_ISOCHORICFORCEFIELD_INL
 #define SOFA_COMPONENT_FORCEFIELD_ISOCHORICFORCEFIELD_INL
 
-#include "include/debuggers.h"
-#include "ForceFields/integrand.h"
-#include "ForceFields/IsochoricForceField.h"
+#include "integrand.h"
+#include "integrand.inl"
+#include <cassert>
+#include <iostream>
+#include <sofa/helper/rmath.h>
+#include <include/IsochoricForceField.h>
 #include <sofa/core/visual/VisualParams.h>
 #include <sofa/defaulttype/RGBAColor.h>
 #include <sofa/helper/system/config.h>
-#include <sofa/helper/rmath.h>
-#include <cassert>
-#include <iostream>
 
 // see SoftRobots/model/SurfacePressureModel
 namespace sofa
@@ -43,46 +43,40 @@ namespace forcefield
 {
 // Constructor of the class IsochoricForceField
 // initializing data with their default value (here d_inputForTheUser=20)
-template<class DataTypes>
+template<typename DataTypes>
 IsochoricForceField<DataTypes>::IsochoricForceField()
     : indices(initData(&indices, "indices", "index of nodes controlled by the isochoric deformations")),
-    Ri(initData(&Ri, "Ri", "internal radius in the reference configuration")),
-    Ro(initData(&Ro, "Ro", "external radius in the reference configuration")),
-    Ro(initData(&ri, "0", "internal radius in the current configuration")),
-    Ro(initData(&ro, "0", "external radius in the current configuration")),
-    C1(initData(&C1, "0", "material elasticity of the internal IAB wall")),
-    C2(initData(&C2, "0", "material elasticity of the outer IAB wall")),
-    rho(initData(&rho, "0.0984", "mass density of the system")),
-    nu(initData(&nu, "0.45", "Poisson ratio of the IAB materials" )),
-    color(initData(&color,sofa::defaulttype::Vec4f(0.0,.7, .8,1.0), "color","color"))
-    mode(initData(&mode, "expand", "mode of deformation: <expansion> or <compression>"))
+    Ri(initData(&Ri, "0", "Ri", "internal radius in the reference configuration")),
+    Ro(initData(&Ro, "0", "Ro", "external radius in the reference configuration")),
+    ri(initData(&ri, "0", "ri", "internal radius in the current configuration")),
+    ro(initData(&ro, "0", "ro", "external radius in the current configuration")),
+    C1(initData(&C1, "0", "C1", "material elasticity of the internal IAB wall")),
+    C2(initData(&C2, "0", "C2", "material elasticity of the outer IAB wall")),
+    mode(initData(&mode, "expand", "mode", "mode of deformation: <expansion> or <compression>"))
 {
   //default Constructor
-  init()
+  init();
 }
 
 
-template<class DataTypes>
+template<typename DataTypes>
 IsochoricForceField<DataTypes>::~IsochoricForceField()
 {
 }
 
 
-template<class DataTypes>
+template<typename DataTypes>
 void IsochoricForceField<DataTypes>::init()
 {
     // ripped off angularSpringForceField
     core::behavior::ForceField<DataTypes>::init();
 
-    if((ri==0) || (ro==0))
+    if((ri==0) && (ro==0))
     {
-      std::cout << "Understand that these ri and ro values are bonkers" << std::endl;
+      std::cout << "Understand that these ri and ro values cannot be both zero" << std::endl;
       std::terminate();
     }
-    // Initialization of your ForceField class and variables
-    // perhaps initialize all spheres with a default internal and external radius in reference configuration for now
-    // C1 = 1.1e4F;
-    // C2 = 2.2e4F;
+
     abstol = 1e-2F;
     reltol = 1e-5F;
 
@@ -94,13 +88,13 @@ void IsochoricForceField<DataTypes>::init()
 }
 
 
-template<class DataTypes>
+template<typename DataTypes>
 void IsochoricForceField<DataTypes>::reinit()
 {
   // not yet implemented
 }
 
-template<class DataTypes>
+template<typename DataTypes>
 void IsochoricForceField<DataTypes>::addForce(const core::MechanicalParams* /*params*/,
                                              DataVecDeriv& f,
                                              const DataVecCoord& x,
@@ -111,34 +105,35 @@ void IsochoricForceField<DataTypes>::addForce(const core::MechanicalParams* /*pa
         return;
     }
     // Compute the forces f from the current DOFs p; here i am using the derived stress from eq 25v in paper 1
-    helper::WriteAccessor< DataVecDeriv1 > f1 = f;
-    helper::ReadAccessor< DataVecCoord1 >  p1 = x;
-    helper::ReadAccessor< DataVecDeriv1 >  v1 = datav1;
+    helper::WriteAccessor< DataVecDeriv > f1 = f;
+    helper::ReadAccessor< DataVecCoord >  p1 = x;
+    helper::ReadAccessor< DataVecDeriv >  v1 = datav1;
 
     f1.resize(p1.size());
 
     // radii to take IAB into in the current configuration
-    double ri = Ri;
-    double ro = std::cbrt(std::pow(Ro, 3) - std::pow(Ri, 3)) + std::pow(ri, 3);
+   ro = std::cbrt(std::pow(Ro.getValue(), 3) - std::pow(Ri.getValue(), 3) + std::pow(ri.getValue(), 3));
 
     // calculate the stress and pressure needed to go from a reference configuartion to a current configuration
-    double radial_stress_n = integrator<float>(Ri, Ro, abstol, reltol,
-                                                C1, C2, radial_stress_r2c<float>\
-                                                (ri=ri, ro=ro,
-                                                  Ri=Ri, C1, C2));
-    double internal_pressure = integrator<float>(Ri, Ro, abstol, reltol,
-                                                C1, C2, radial_stress_r2c<float>(ri=ri, \
-                                                  ro=ro,
-                                                  Ri=Ri, // infer Ro from Ri
-                                                  C1, C2));
-    OUT_INFO("Calculated pressure based on given parameters:\n\t [C1, C2, Ri, Ro, ri, ro]: [%.2f, %.2f, %.2f, %.2f, %.2f, %.2f] is \n\t P=%.4f N/m^2" <<
-              C1, C2, Ri, Ro, ri, ro, internal_pressure);
-    printf("Calculated normal stress based on given parameters:\n\t [C1, C2, Ri, Ro, ri, ro]: [%.2f, %.2f, %.2f, %.2f, %.2f, %.2f] is \n\t Sigma=%.4f " <<
-              C1, C2, Ri, Ro, ri, ro, radial_stress_n);
+    auto ext_radius_current = radial_stress_r2c<float>(ri.getValue(), ro.getValue(), \
+                                                        Ri.getValue(), C1.getValue(), C2.getValue());
+    auto PressureFunc = pressure_r2c<float>(ri.getValue(),  ro.getValue(),
+                                          Ri.getValue(), C1.getValue(),
+                                          C2.getValue());
+    const float radial_stress_n = integrator<float, radial_stress_r2c<float>>(Ri.getValue(), Ro.getValue(), abstol, reltol,
+                                              ext_radius_current);
+    // const float internal_pressure = integrator<float, pressure_r2c<float>>(Ri.getValue(), Ro.getValue(), abstol, reltol,
+    //                                           PressureFunc);
+    // OUT_INFO("Calculated pressure based on given parameters:\n\t [C1, C2, Ri, Ro, ri, ro]: [%.2f, %.2f, %.2f, %.2f, %.2f, %.2f] is \n\t P=%.4f N/m^2" <<
+    //           C1, C2, Ri, Ro, ri, ro, internal_pressure);
+    std::cout << "Calculated normal stress based on given parameters:\n\t" <<
+      " [C1, C2, Ri, Ro, ri, ro]: [%.2f, %.2f, %.2f, %.2f, %.2f, %.2f] is \n\t"<<
+      " Sigma=%.4f " <<
+              C1  << C2 << Ri << Ro << ri << ro << radial_stress_n;
 }
 
 
-template<class DataTypes>
+template<typename DataTypes>
 void IsochoricForceField<DataTypes>::addDForce(const core::MechanicalParams* mparams,
                                               DataVecDeriv& d_df , const DataVecDeriv& d_dx)
 {
@@ -146,15 +141,20 @@ void IsochoricForceField<DataTypes>::addDForce(const core::MechanicalParams* mpa
 }
 
 
-template<class DataTypes>
+template<typename DataTypes>
 void IsochoricForceField<DataTypes>::addKToMatrix(sofa::defaulttype::BaseMatrix * /* mat */,
                                                  SReal /* k */, unsigned int & /* offset */)
 {
     // Compute the force derivative d_df from the current and store the resulting matrix
 }
 
+template<typename DataTypes>
+void IsochoricForceField<DataTypes>::draw(const core::visual::VisualParams* vparams)
+{
+  // nothing to do here
+};
 
-template<class DataTypes>
+template<typename DataTypes>
 void IsochoricForceField<DataTypes>::addKToMatrix(const sofa::core::behavior::MultiMatrixAccessor* /*matrix*/,
                                                  SReal /*kFact*/)
 {
@@ -163,11 +163,11 @@ void IsochoricForceField<DataTypes>::addKToMatrix(const sofa::core::behavior::Mu
 }
 
 
-template <class DataTypes>
+template <typename DataTypes>
 SReal IsochoricForceField<DataTypes>::getPotentialEnergy(const core::MechanicalParams* /*params*/,
                                                         const DataVecCoord& x) const
 {
-    // Compute the potential energy associated to the force f
+    return 0.0; // dummy retun for now
 }
 
 

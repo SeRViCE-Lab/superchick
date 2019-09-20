@@ -13,7 +13,7 @@ Compilation of the C compiler identification source "CMakeCCompilerId.c" produce
 The C compiler identification is AppleClang, found in "/Users/olalekanogunmolu/ros2_ws/src/superchicko/sofa/build/CMakeFiles/3.13.3/CompilerIdC/a.out"
 
 Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" succeeded.
-Compiler: /Library/Developer/CommandLineTools/usr/bin/c++ 
+Compiler: /usr/bin/clang++ 
 Build flags: 
 Id flags:  
 
@@ -28,36 +28,35 @@ The CXX compiler identification is AppleClang, found in "/Users/olalekanogunmolu
 Determining if the C compiler works passed with the following output:
 Change Dir: /Users/olalekanogunmolu/ros2_ws/src/superchicko/sofa/build/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/make" "cmTC_a52ab/fast"
-/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_a52ab.dir/build.make CMakeFiles/cmTC_a52ab.dir/build
-Building C object CMakeFiles/cmTC_a52ab.dir/testCCompiler.c.o
-/Library/Developer/CommandLineTools/usr/bin/cc   -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk   -o CMakeFiles/cmTC_a52ab.dir/testCCompiler.c.o   -c /Users/olalekanogunmolu/ros2_ws/src/superchicko/sofa/build/CMakeFiles/CMakeTmp/testCCompiler.c
-Linking C executable cmTC_a52ab
-/usr/local/Cellar/cmake/3.13.3/bin/cmake -E cmake_link_script CMakeFiles/cmTC_a52ab.dir/link.txt --verbose=1
-/Library/Developer/CommandLineTools/usr/bin/cc   -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names -L/usr/local/opt/gettext/lib:-L/usr/local/opt/openssl/lib  CMakeFiles/cmTC_a52ab.dir/testCCompiler.c.o  -o cmTC_a52ab 
-ld: warning: directory not found for option '-L/usr/local/opt/gettext/lib:-L/usr/local/opt/openssl/lib'
+Run Build Command:"/usr/bin/make" "cmTC_48294/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_48294.dir/build.make CMakeFiles/cmTC_48294.dir/build
+Building C object CMakeFiles/cmTC_48294.dir/testCCompiler.c.o
+/Library/Developer/CommandLineTools/usr/bin/cc   -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk   -o CMakeFiles/cmTC_48294.dir/testCCompiler.c.o   -c /Users/olalekanogunmolu/ros2_ws/src/superchicko/sofa/build/CMakeFiles/CMakeTmp/testCCompiler.c
+Linking C executable cmTC_48294
+/usr/local/Cellar/cmake/3.13.3/bin/cmake -E cmake_link_script CMakeFiles/cmTC_48294.dir/link.txt --verbose=1
+/Library/Developer/CommandLineTools/usr/bin/cc   -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names -L/usr/local/opt/openssl@1.1/lib  CMakeFiles/cmTC_48294.dir/testCCompiler.c.o  -o cmTC_48294 
 
 
 Detecting C compiler ABI info compiled with the following output:
 Change Dir: /Users/olalekanogunmolu/ros2_ws/src/superchicko/sofa/build/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/make" "cmTC_eecb0/fast"
-/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_eecb0.dir/build.make CMakeFiles/cmTC_eecb0.dir/build
-Building C object CMakeFiles/cmTC_eecb0.dir/CMakeCCompilerABI.c.o
-/Library/Developer/CommandLineTools/usr/bin/cc   -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk   -o CMakeFiles/cmTC_eecb0.dir/CMakeCCompilerABI.c.o   -c /usr/local/Cellar/cmake/3.13.3/share/cmake/Modules/CMakeCCompilerABI.c
-Linking C executable cmTC_eecb0
-/usr/local/Cellar/cmake/3.13.3/bin/cmake -E cmake_link_script CMakeFiles/cmTC_eecb0.dir/link.txt --verbose=1
-/Library/Developer/CommandLineTools/usr/bin/cc   -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names -L/usr/local/opt/gettext/lib:-L/usr/local/opt/openssl/lib -v -Wl,-v CMakeFiles/cmTC_eecb0.dir/CMakeCCompilerABI.c.o  -o cmTC_eecb0 
+Run Build Command:"/usr/bin/make" "cmTC_e85ce/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_e85ce.dir/build.make CMakeFiles/cmTC_e85ce.dir/build
+Building C object CMakeFiles/cmTC_e85ce.dir/CMakeCCompilerABI.c.o
+/Library/Developer/CommandLineTools/usr/bin/cc   -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk   -o CMakeFiles/cmTC_e85ce.dir/CMakeCCompilerABI.c.o   -c /usr/local/Cellar/cmake/3.13.3/share/cmake/Modules/CMakeCCompilerABI.c
+Linking C executable cmTC_e85ce
+/usr/local/Cellar/cmake/3.13.3/bin/cmake -E cmake_link_script CMakeFiles/cmTC_e85ce.dir/link.txt --verbose=1
+/Library/Developer/CommandLineTools/usr/bin/cc   -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names -L/usr/local/opt/openssl@1.1/lib -v -Wl,-v CMakeFiles/cmTC_e85ce.dir/CMakeCCompilerABI.c.o  -o cmTC_e85ce 
 Apple LLVM version 10.0.1 (clang-1001.0.46.4)
 Target: x86_64-apple-darwin18.7.0
 Thread model: posix
 InstalledDir: /Library/Developer/CommandLineTools/usr/bin
- "/Library/Developer/CommandLineTools/usr/bin/ld" -demangle -lto_library /Library/Developer/CommandLineTools/usr/lib/libLTO.dylib -dynamic -arch x86_64 -macosx_version_min 10.14.0 -syslibroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk -o cmTC_eecb0 -L/usr/local/opt/gettext/lib:-L/usr/local/opt/openssl/lib -search_paths_first -headerpad_max_install_names -v CMakeFiles/cmTC_eecb0.dir/CMakeCCompilerABI.c.o -lSystem /Library/Developer/CommandLineTools/usr/lib/clang/10.0.1/lib/darwin/libclang_rt.osx.a
+ "/Library/Developer/CommandLineTools/usr/bin/ld" -demangle -lto_library /Library/Developer/CommandLineTools/usr/lib/libLTO.dylib -dynamic -arch x86_64 -macosx_version_min 10.14.0 -syslibroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk -o cmTC_e85ce -L/usr/local/opt/openssl@1.1/lib -search_paths_first -headerpad_max_install_names -v CMakeFiles/cmTC_e85ce.dir/CMakeCCompilerABI.c.o -lSystem /Library/Developer/CommandLineTools/usr/lib/clang/10.0.1/lib/darwin/libclang_rt.osx.a
 @(#)PROGRAM:ld  PROJECT:ld64-450.3
 BUILD 18:16:53 Apr  5 2019
 configured to support archs: armv6 armv7 armv7s arm64 arm64e arm64_32 i386 x86_64 x86_64h armv6m armv7k armv7m armv7em
-ld: warning: directory not found for option '-L/usr/local/opt/gettext/lib:-L/usr/local/opt/openssl/lib'
 Library search paths:
+	/usr/local/opt/openssl@1.1/lib
 	/Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk/usr/lib
 Framework search paths:
 	/Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk/System/Library/Frameworks/
@@ -67,18 +66,18 @@ Parsed C implicit link information from above output:
   link line regex: [^( *|.*[/\])(ld|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\]+-)?ld|collect2)[^/\]*( |$)]
   ignore line: [Change Dir: /Users/olalekanogunmolu/ros2_ws/src/superchicko/sofa/build/CMakeFiles/CMakeTmp]
   ignore line: []
-  ignore line: [Run Build Command:"/usr/bin/make" "cmTC_eecb0/fast"]
-  ignore line: [/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_eecb0.dir/build.make CMakeFiles/cmTC_eecb0.dir/build]
-  ignore line: [Building C object CMakeFiles/cmTC_eecb0.dir/CMakeCCompilerABI.c.o]
-  ignore line: [/Library/Developer/CommandLineTools/usr/bin/cc   -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk   -o CMakeFiles/cmTC_eecb0.dir/CMakeCCompilerABI.c.o   -c /usr/local/Cellar/cmake/3.13.3/share/cmake/Modules/CMakeCCompilerABI.c]
-  ignore line: [Linking C executable cmTC_eecb0]
-  ignore line: [/usr/local/Cellar/cmake/3.13.3/bin/cmake -E cmake_link_script CMakeFiles/cmTC_eecb0.dir/link.txt --verbose=1]
-  ignore line: [/Library/Developer/CommandLineTools/usr/bin/cc   -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names -L/usr/local/opt/gettext/lib:-L/usr/local/opt/openssl/lib -v -Wl,-v CMakeFiles/cmTC_eecb0.dir/CMakeCCompilerABI.c.o  -o cmTC_eecb0 ]
+  ignore line: [Run Build Command:"/usr/bin/make" "cmTC_e85ce/fast"]
+  ignore line: [/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_e85ce.dir/build.make CMakeFiles/cmTC_e85ce.dir/build]
+  ignore line: [Building C object CMakeFiles/cmTC_e85ce.dir/CMakeCCompilerABI.c.o]
+  ignore line: [/Library/Developer/CommandLineTools/usr/bin/cc   -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk   -o CMakeFiles/cmTC_e85ce.dir/CMakeCCompilerABI.c.o   -c /usr/local/Cellar/cmake/3.13.3/share/cmake/Modules/CMakeCCompilerABI.c]
+  ignore line: [Linking C executable cmTC_e85ce]
+  ignore line: [/usr/local/Cellar/cmake/3.13.3/bin/cmake -E cmake_link_script CMakeFiles/cmTC_e85ce.dir/link.txt --verbose=1]
+  ignore line: [/Library/Developer/CommandLineTools/usr/bin/cc   -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names -L/usr/local/opt/openssl@1.1/lib -v -Wl,-v CMakeFiles/cmTC_e85ce.dir/CMakeCCompilerABI.c.o  -o cmTC_e85ce ]
   ignore line: [Apple LLVM version 10.0.1 (clang-1001.0.46.4)]
   ignore line: [Target: x86_64-apple-darwin18.7.0]
   ignore line: [Thread model: posix]
   ignore line: [InstalledDir: /Library/Developer/CommandLineTools/usr/bin]
-  link line: [ "/Library/Developer/CommandLineTools/usr/bin/ld" -demangle -lto_library /Library/Developer/CommandLineTools/usr/lib/libLTO.dylib -dynamic -arch x86_64 -macosx_version_min 10.14.0 -syslibroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk -o cmTC_eecb0 -L/usr/local/opt/gettext/lib:-L/usr/local/opt/openssl/lib -search_paths_first -headerpad_max_install_names -v CMakeFiles/cmTC_eecb0.dir/CMakeCCompilerABI.c.o -lSystem /Library/Developer/CommandLineTools/usr/lib/clang/10.0.1/lib/darwin/libclang_rt.osx.a]
+  link line: [ "/Library/Developer/CommandLineTools/usr/bin/ld" -demangle -lto_library /Library/Developer/CommandLineTools/usr/lib/libLTO.dylib -dynamic -arch x86_64 -macosx_version_min 10.14.0 -syslibroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk -o cmTC_e85ce -L/usr/local/opt/openssl@1.1/lib -search_paths_first -headerpad_max_install_names -v CMakeFiles/cmTC_e85ce.dir/CMakeCCompilerABI.c.o -lSystem /Library/Developer/CommandLineTools/usr/lib/clang/10.0.1/lib/darwin/libclang_rt.osx.a]
     arg [/Library/Developer/CommandLineTools/usr/bin/ld] ==> ignore
     arg [-demangle] ==> ignore
     arg [-lto_library] ==> ignore, skip following value
@@ -91,23 +90,24 @@ Parsed C implicit link information from above output:
     arg [-syslibroot] ==> ignore
     arg [/Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk] ==> ignore
     arg [-o] ==> ignore
-    arg [cmTC_eecb0] ==> ignore
-    arg [-L/usr/local/opt/gettext/lib:-L/usr/local/opt/openssl/lib] ==> dir [/usr/local/opt/gettext/lib:-L/usr/local/opt/openssl/lib]
+    arg [cmTC_e85ce] ==> ignore
+    arg [-L/usr/local/opt/openssl@1.1/lib] ==> dir [/usr/local/opt/openssl@1.1/lib]
     arg [-search_paths_first] ==> ignore
     arg [-headerpad_max_install_names] ==> ignore
     arg [-v] ==> ignore
-    arg [CMakeFiles/cmTC_eecb0.dir/CMakeCCompilerABI.c.o] ==> ignore
+    arg [CMakeFiles/cmTC_e85ce.dir/CMakeCCompilerABI.c.o] ==> ignore
     arg [-lSystem] ==> lib [System]
     arg [/Library/Developer/CommandLineTools/usr/lib/clang/10.0.1/lib/darwin/libclang_rt.osx.a] ==> lib [/Library/Developer/CommandLineTools/usr/lib/clang/10.0.1/lib/darwin/libclang_rt.osx.a]
-  Library search paths: [;/Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk/usr/lib]
+  Library search paths: [;/usr/local/opt/openssl@1.1/lib;/Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk/usr/lib]
   Framework search paths: [;/Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk/System/Library/Frameworks/]
   remove lib [System]
   remove lib [/Library/Developer/CommandLineTools/usr/lib/clang/10.0.1/lib/darwin/libclang_rt.osx.a]
-  collapse library dir [/usr/local/opt/gettext/lib:-L/usr/local/opt/openssl/lib] ==> [/usr/local/opt/gettext/lib:-L/usr/local/opt/openssl/lib]
+  collapse library dir [/usr/local/opt/openssl@1.1/lib] ==> [/usr/local/opt/openssl@1.1/lib]
+  collapse library dir [/usr/local/opt/openssl@1.1/lib] ==> [/usr/local/opt/openssl@1.1/lib]
   collapse library dir [/Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk/usr/lib] ==> [/Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk/usr/lib]
   collapse framework dir [/Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk/System/Library/Frameworks/] ==> [/Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk/System/Library/Frameworks]
   implicit libs: []
-  implicit dirs: [/usr/local/opt/gettext/lib:-L/usr/local/opt/openssl/lib;/Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk/usr/lib]
+  implicit dirs: [/usr/local/opt/openssl@1.1/lib;/Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk/usr/lib]
   implicit fwks: [/Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk/System/Library/Frameworks]
 
 
@@ -116,14 +116,13 @@ Parsed C implicit link information from above output:
 Detecting C [-std=c11] compiler features compiled with the following output:
 Change Dir: /Users/olalekanogunmolu/ros2_ws/src/superchicko/sofa/build/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/make" "cmTC_3f4a3/fast"
-/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_3f4a3.dir/build.make CMakeFiles/cmTC_3f4a3.dir/build
-Building C object CMakeFiles/cmTC_3f4a3.dir/feature_tests.c.o
-/Library/Developer/CommandLineTools/usr/bin/cc   -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk   -std=c11 -o CMakeFiles/cmTC_3f4a3.dir/feature_tests.c.o   -c /Users/olalekanogunmolu/ros2_ws/src/superchicko/sofa/build/CMakeFiles/feature_tests.c
-Linking C executable cmTC_3f4a3
-/usr/local/Cellar/cmake/3.13.3/bin/cmake -E cmake_link_script CMakeFiles/cmTC_3f4a3.dir/link.txt --verbose=1
-/Library/Developer/CommandLineTools/usr/bin/cc   -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names -L/usr/local/opt/gettext/lib:-L/usr/local/opt/openssl/lib  CMakeFiles/cmTC_3f4a3.dir/feature_tests.c.o  -o cmTC_3f4a3 
-ld: warning: directory not found for option '-L/usr/local/opt/gettext/lib:-L/usr/local/opt/openssl/lib'
+Run Build Command:"/usr/bin/make" "cmTC_350cb/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_350cb.dir/build.make CMakeFiles/cmTC_350cb.dir/build
+Building C object CMakeFiles/cmTC_350cb.dir/feature_tests.c.o
+/Library/Developer/CommandLineTools/usr/bin/cc   -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk   -std=c11 -o CMakeFiles/cmTC_350cb.dir/feature_tests.c.o   -c /Users/olalekanogunmolu/ros2_ws/src/superchicko/sofa/build/CMakeFiles/feature_tests.c
+Linking C executable cmTC_350cb
+/usr/local/Cellar/cmake/3.13.3/bin/cmake -E cmake_link_script CMakeFiles/cmTC_350cb.dir/link.txt --verbose=1
+/Library/Developer/CommandLineTools/usr/bin/cc   -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names -L/usr/local/opt/openssl@1.1/lib  CMakeFiles/cmTC_350cb.dir/feature_tests.c.o  -o cmTC_350cb 
 
 
     Feature record: C_FEATURE:1c_function_prototypes
@@ -135,14 +134,13 @@ ld: warning: directory not found for option '-L/usr/local/opt/gettext/lib:-L/usr
 Detecting C [-std=c99] compiler features compiled with the following output:
 Change Dir: /Users/olalekanogunmolu/ros2_ws/src/superchicko/sofa/build/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/make" "cmTC_0cc06/fast"
-/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_0cc06.dir/build.make CMakeFiles/cmTC_0cc06.dir/build
-Building C object CMakeFiles/cmTC_0cc06.dir/feature_tests.c.o
-/Library/Developer/CommandLineTools/usr/bin/cc   -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk   -std=c99 -o CMakeFiles/cmTC_0cc06.dir/feature_tests.c.o   -c /Users/olalekanogunmolu/ros2_ws/src/superchicko/sofa/build/CMakeFiles/feature_tests.c
-Linking C executable cmTC_0cc06
-/usr/local/Cellar/cmake/3.13.3/bin/cmake -E cmake_link_script CMakeFiles/cmTC_0cc06.dir/link.txt --verbose=1
-/Library/Developer/CommandLineTools/usr/bin/cc   -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names -L/usr/local/opt/gettext/lib:-L/usr/local/opt/openssl/lib  CMakeFiles/cmTC_0cc06.dir/feature_tests.c.o  -o cmTC_0cc06 
-ld: warning: directory not found for option '-L/usr/local/opt/gettext/lib:-L/usr/local/opt/openssl/lib'
+Run Build Command:"/usr/bin/make" "cmTC_423e4/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_423e4.dir/build.make CMakeFiles/cmTC_423e4.dir/build
+Building C object CMakeFiles/cmTC_423e4.dir/feature_tests.c.o
+/Library/Developer/CommandLineTools/usr/bin/cc   -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk   -std=c99 -o CMakeFiles/cmTC_423e4.dir/feature_tests.c.o   -c /Users/olalekanogunmolu/ros2_ws/src/superchicko/sofa/build/CMakeFiles/feature_tests.c
+Linking C executable cmTC_423e4
+/usr/local/Cellar/cmake/3.13.3/bin/cmake -E cmake_link_script CMakeFiles/cmTC_423e4.dir/link.txt --verbose=1
+/Library/Developer/CommandLineTools/usr/bin/cc   -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names -L/usr/local/opt/openssl@1.1/lib  CMakeFiles/cmTC_423e4.dir/feature_tests.c.o  -o cmTC_423e4 
 
 
     Feature record: C_FEATURE:1c_function_prototypes
@@ -154,14 +152,13 @@ ld: warning: directory not found for option '-L/usr/local/opt/gettext/lib:-L/usr
 Detecting C [-std=c90] compiler features compiled with the following output:
 Change Dir: /Users/olalekanogunmolu/ros2_ws/src/superchicko/sofa/build/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/make" "cmTC_55570/fast"
-/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_55570.dir/build.make CMakeFiles/cmTC_55570.dir/build
-Building C object CMakeFiles/cmTC_55570.dir/feature_tests.c.o
-/Library/Developer/CommandLineTools/usr/bin/cc   -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk   -std=c90 -o CMakeFiles/cmTC_55570.dir/feature_tests.c.o   -c /Users/olalekanogunmolu/ros2_ws/src/superchicko/sofa/build/CMakeFiles/feature_tests.c
-Linking C executable cmTC_55570
-/usr/local/Cellar/cmake/3.13.3/bin/cmake -E cmake_link_script CMakeFiles/cmTC_55570.dir/link.txt --verbose=1
-/Library/Developer/CommandLineTools/usr/bin/cc   -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names -L/usr/local/opt/gettext/lib:-L/usr/local/opt/openssl/lib  CMakeFiles/cmTC_55570.dir/feature_tests.c.o  -o cmTC_55570 
-ld: warning: directory not found for option '-L/usr/local/opt/gettext/lib:-L/usr/local/opt/openssl/lib'
+Run Build Command:"/usr/bin/make" "cmTC_34fbb/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_34fbb.dir/build.make CMakeFiles/cmTC_34fbb.dir/build
+Building C object CMakeFiles/cmTC_34fbb.dir/feature_tests.c.o
+/Library/Developer/CommandLineTools/usr/bin/cc   -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk   -std=c90 -o CMakeFiles/cmTC_34fbb.dir/feature_tests.c.o   -c /Users/olalekanogunmolu/ros2_ws/src/superchicko/sofa/build/CMakeFiles/feature_tests.c
+Linking C executable cmTC_34fbb
+/usr/local/Cellar/cmake/3.13.3/bin/cmake -E cmake_link_script CMakeFiles/cmTC_34fbb.dir/link.txt --verbose=1
+/Library/Developer/CommandLineTools/usr/bin/cc   -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names -L/usr/local/opt/openssl@1.1/lib  CMakeFiles/cmTC_34fbb.dir/feature_tests.c.o  -o cmTC_34fbb 
 
 
     Feature record: C_FEATURE:1c_function_prototypes
@@ -171,36 +168,35 @@ ld: warning: directory not found for option '-L/usr/local/opt/gettext/lib:-L/usr
 Determining if the CXX compiler works passed with the following output:
 Change Dir: /Users/olalekanogunmolu/ros2_ws/src/superchicko/sofa/build/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/make" "cmTC_6f06a/fast"
-/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_6f06a.dir/build.make CMakeFiles/cmTC_6f06a.dir/build
-Building CXX object CMakeFiles/cmTC_6f06a.dir/testCXXCompiler.cxx.o
-/Library/Developer/CommandLineTools/usr/bin/c++    -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk   -o CMakeFiles/cmTC_6f06a.dir/testCXXCompiler.cxx.o -c /Users/olalekanogunmolu/ros2_ws/src/superchicko/sofa/build/CMakeFiles/CMakeTmp/testCXXCompiler.cxx
-Linking CXX executable cmTC_6f06a
-/usr/local/Cellar/cmake/3.13.3/bin/cmake -E cmake_link_script CMakeFiles/cmTC_6f06a.dir/link.txt --verbose=1
-/Library/Developer/CommandLineTools/usr/bin/c++    -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names -L/usr/local/opt/gettext/lib:-L/usr/local/opt/openssl/lib  CMakeFiles/cmTC_6f06a.dir/testCXXCompiler.cxx.o  -o cmTC_6f06a 
-ld: warning: directory not found for option '-L/usr/local/opt/gettext/lib:-L/usr/local/opt/openssl/lib'
+Run Build Command:"/usr/bin/make" "cmTC_7a3d2/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_7a3d2.dir/build.make CMakeFiles/cmTC_7a3d2.dir/build
+Building CXX object CMakeFiles/cmTC_7a3d2.dir/testCXXCompiler.cxx.o
+/usr/bin/clang++    -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk   -o CMakeFiles/cmTC_7a3d2.dir/testCXXCompiler.cxx.o -c /Users/olalekanogunmolu/ros2_ws/src/superchicko/sofa/build/CMakeFiles/CMakeTmp/testCXXCompiler.cxx
+Linking CXX executable cmTC_7a3d2
+/usr/local/Cellar/cmake/3.13.3/bin/cmake -E cmake_link_script CMakeFiles/cmTC_7a3d2.dir/link.txt --verbose=1
+/usr/bin/clang++    -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names -L/usr/local/opt/openssl@1.1/lib  CMakeFiles/cmTC_7a3d2.dir/testCXXCompiler.cxx.o  -o cmTC_7a3d2 
 
 
 Detecting CXX compiler ABI info compiled with the following output:
 Change Dir: /Users/olalekanogunmolu/ros2_ws/src/superchicko/sofa/build/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/make" "cmTC_a83d0/fast"
-/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_a83d0.dir/build.make CMakeFiles/cmTC_a83d0.dir/build
-Building CXX object CMakeFiles/cmTC_a83d0.dir/CMakeCXXCompilerABI.cpp.o
-/Library/Developer/CommandLineTools/usr/bin/c++    -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk   -o CMakeFiles/cmTC_a83d0.dir/CMakeCXXCompilerABI.cpp.o -c /usr/local/Cellar/cmake/3.13.3/share/cmake/Modules/CMakeCXXCompilerABI.cpp
-Linking CXX executable cmTC_a83d0
-/usr/local/Cellar/cmake/3.13.3/bin/cmake -E cmake_link_script CMakeFiles/cmTC_a83d0.dir/link.txt --verbose=1
-/Library/Developer/CommandLineTools/usr/bin/c++    -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names -L/usr/local/opt/gettext/lib:-L/usr/local/opt/openssl/lib -v -Wl,-v CMakeFiles/cmTC_a83d0.dir/CMakeCXXCompilerABI.cpp.o  -o cmTC_a83d0 
+Run Build Command:"/usr/bin/make" "cmTC_da284/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_da284.dir/build.make CMakeFiles/cmTC_da284.dir/build
+Building CXX object CMakeFiles/cmTC_da284.dir/CMakeCXXCompilerABI.cpp.o
+/usr/bin/clang++    -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk   -o CMakeFiles/cmTC_da284.dir/CMakeCXXCompilerABI.cpp.o -c /usr/local/Cellar/cmake/3.13.3/share/cmake/Modules/CMakeCXXCompilerABI.cpp
+Linking CXX executable cmTC_da284
+/usr/local/Cellar/cmake/3.13.3/bin/cmake -E cmake_link_script CMakeFiles/cmTC_da284.dir/link.txt --verbose=1
+/usr/bin/clang++    -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names -L/usr/local/opt/openssl@1.1/lib -v -Wl,-v CMakeFiles/cmTC_da284.dir/CMakeCXXCompilerABI.cpp.o  -o cmTC_da284 
 Apple LLVM version 10.0.1 (clang-1001.0.46.4)
 Target: x86_64-apple-darwin18.7.0
 Thread model: posix
 InstalledDir: /Library/Developer/CommandLineTools/usr/bin
- "/Library/Developer/CommandLineTools/usr/bin/ld" -demangle -lto_library /Library/Developer/CommandLineTools/usr/lib/libLTO.dylib -dynamic -arch x86_64 -macosx_version_min 10.14.0 -syslibroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk -o cmTC_a83d0 -L/usr/local/opt/gettext/lib:-L/usr/local/opt/openssl/lib -search_paths_first -headerpad_max_install_names -v CMakeFiles/cmTC_a83d0.dir/CMakeCXXCompilerABI.cpp.o -lc++ -lSystem /Library/Developer/CommandLineTools/usr/lib/clang/10.0.1/lib/darwin/libclang_rt.osx.a
+ "/Library/Developer/CommandLineTools/usr/bin/ld" -demangle -lto_library /Library/Developer/CommandLineTools/usr/lib/libLTO.dylib -dynamic -arch x86_64 -macosx_version_min 10.14.0 -syslibroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk -o cmTC_da284 -L/usr/local/opt/openssl@1.1/lib -search_paths_first -headerpad_max_install_names -v CMakeFiles/cmTC_da284.dir/CMakeCXXCompilerABI.cpp.o -lc++ -lSystem /Library/Developer/CommandLineTools/usr/lib/clang/10.0.1/lib/darwin/libclang_rt.osx.a
 @(#)PROGRAM:ld  PROJECT:ld64-450.3
 BUILD 18:16:53 Apr  5 2019
 configured to support archs: armv6 armv7 armv7s arm64 arm64e arm64_32 i386 x86_64 x86_64h armv6m armv7k armv7m armv7em
-ld: warning: directory not found for option '-L/usr/local/opt/gettext/lib:-L/usr/local/opt/openssl/lib'
 Library search paths:
+	/usr/local/opt/openssl@1.1/lib
 	/Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk/usr/lib
 Framework search paths:
 	/Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk/System/Library/Frameworks/
@@ -210,18 +206,18 @@ Parsed CXX implicit link information from above output:
   link line regex: [^( *|.*[/\])(ld|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\]+-)?ld|collect2)[^/\]*( |$)]
   ignore line: [Change Dir: /Users/olalekanogunmolu/ros2_ws/src/superchicko/sofa/build/CMakeFiles/CMakeTmp]
   ignore line: []
-  ignore line: [Run Build Command:"/usr/bin/make" "cmTC_a83d0/fast"]
-  ignore line: [/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_a83d0.dir/build.make CMakeFiles/cmTC_a83d0.dir/build]
-  ignore line: [Building CXX object CMakeFiles/cmTC_a83d0.dir/CMakeCXXCompilerABI.cpp.o]
-  ignore line: [/Library/Developer/CommandLineTools/usr/bin/c++    -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk   -o CMakeFiles/cmTC_a83d0.dir/CMakeCXXCompilerABI.cpp.o -c /usr/local/Cellar/cmake/3.13.3/share/cmake/Modules/CMakeCXXCompilerABI.cpp]
-  ignore line: [Linking CXX executable cmTC_a83d0]
-  ignore line: [/usr/local/Cellar/cmake/3.13.3/bin/cmake -E cmake_link_script CMakeFiles/cmTC_a83d0.dir/link.txt --verbose=1]
-  ignore line: [/Library/Developer/CommandLineTools/usr/bin/c++    -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names -L/usr/local/opt/gettext/lib:-L/usr/local/opt/openssl/lib -v -Wl,-v CMakeFiles/cmTC_a83d0.dir/CMakeCXXCompilerABI.cpp.o  -o cmTC_a83d0 ]
+  ignore line: [Run Build Command:"/usr/bin/make" "cmTC_da284/fast"]
+  ignore line: [/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_da284.dir/build.make CMakeFiles/cmTC_da284.dir/build]
+  ignore line: [Building CXX object CMakeFiles/cmTC_da284.dir/CMakeCXXCompilerABI.cpp.o]
+  ignore line: [/usr/bin/clang++    -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk   -o CMakeFiles/cmTC_da284.dir/CMakeCXXCompilerABI.cpp.o -c /usr/local/Cellar/cmake/3.13.3/share/cmake/Modules/CMakeCXXCompilerABI.cpp]
+  ignore line: [Linking CXX executable cmTC_da284]
+  ignore line: [/usr/local/Cellar/cmake/3.13.3/bin/cmake -E cmake_link_script CMakeFiles/cmTC_da284.dir/link.txt --verbose=1]
+  ignore line: [/usr/bin/clang++    -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names -L/usr/local/opt/openssl@1.1/lib -v -Wl,-v CMakeFiles/cmTC_da284.dir/CMakeCXXCompilerABI.cpp.o  -o cmTC_da284 ]
   ignore line: [Apple LLVM version 10.0.1 (clang-1001.0.46.4)]
   ignore line: [Target: x86_64-apple-darwin18.7.0]
   ignore line: [Thread model: posix]
   ignore line: [InstalledDir: /Library/Developer/CommandLineTools/usr/bin]
-  link line: [ "/Library/Developer/CommandLineTools/usr/bin/ld" -demangle -lto_library /Library/Developer/CommandLineTools/usr/lib/libLTO.dylib -dynamic -arch x86_64 -macosx_version_min 10.14.0 -syslibroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk -o cmTC_a83d0 -L/usr/local/opt/gettext/lib:-L/usr/local/opt/openssl/lib -search_paths_first -headerpad_max_install_names -v CMakeFiles/cmTC_a83d0.dir/CMakeCXXCompilerABI.cpp.o -lc++ -lSystem /Library/Developer/CommandLineTools/usr/lib/clang/10.0.1/lib/darwin/libclang_rt.osx.a]
+  link line: [ "/Library/Developer/CommandLineTools/usr/bin/ld" -demangle -lto_library /Library/Developer/CommandLineTools/usr/lib/libLTO.dylib -dynamic -arch x86_64 -macosx_version_min 10.14.0 -syslibroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk -o cmTC_da284 -L/usr/local/opt/openssl@1.1/lib -search_paths_first -headerpad_max_install_names -v CMakeFiles/cmTC_da284.dir/CMakeCXXCompilerABI.cpp.o -lc++ -lSystem /Library/Developer/CommandLineTools/usr/lib/clang/10.0.1/lib/darwin/libclang_rt.osx.a]
     arg [/Library/Developer/CommandLineTools/usr/bin/ld] ==> ignore
     arg [-demangle] ==> ignore
     arg [-lto_library] ==> ignore, skip following value
@@ -234,24 +230,25 @@ Parsed CXX implicit link information from above output:
     arg [-syslibroot] ==> ignore
     arg [/Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk] ==> ignore
     arg [-o] ==> ignore
-    arg [cmTC_a83d0] ==> ignore
-    arg [-L/usr/local/opt/gettext/lib:-L/usr/local/opt/openssl/lib] ==> dir [/usr/local/opt/gettext/lib:-L/usr/local/opt/openssl/lib]
+    arg [cmTC_da284] ==> ignore
+    arg [-L/usr/local/opt/openssl@1.1/lib] ==> dir [/usr/local/opt/openssl@1.1/lib]
     arg [-search_paths_first] ==> ignore
     arg [-headerpad_max_install_names] ==> ignore
     arg [-v] ==> ignore
-    arg [CMakeFiles/cmTC_a83d0.dir/CMakeCXXCompilerABI.cpp.o] ==> ignore
+    arg [CMakeFiles/cmTC_da284.dir/CMakeCXXCompilerABI.cpp.o] ==> ignore
     arg [-lc++] ==> lib [c++]
     arg [-lSystem] ==> lib [System]
     arg [/Library/Developer/CommandLineTools/usr/lib/clang/10.0.1/lib/darwin/libclang_rt.osx.a] ==> lib [/Library/Developer/CommandLineTools/usr/lib/clang/10.0.1/lib/darwin/libclang_rt.osx.a]
-  Library search paths: [;/Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk/usr/lib]
+  Library search paths: [;/usr/local/opt/openssl@1.1/lib;/Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk/usr/lib]
   Framework search paths: [;/Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk/System/Library/Frameworks/]
   remove lib [System]
   remove lib [/Library/Developer/CommandLineTools/usr/lib/clang/10.0.1/lib/darwin/libclang_rt.osx.a]
-  collapse library dir [/usr/local/opt/gettext/lib:-L/usr/local/opt/openssl/lib] ==> [/usr/local/opt/gettext/lib:-L/usr/local/opt/openssl/lib]
+  collapse library dir [/usr/local/opt/openssl@1.1/lib] ==> [/usr/local/opt/openssl@1.1/lib]
+  collapse library dir [/usr/local/opt/openssl@1.1/lib] ==> [/usr/local/opt/openssl@1.1/lib]
   collapse library dir [/Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk/usr/lib] ==> [/Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk/usr/lib]
   collapse framework dir [/Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk/System/Library/Frameworks/] ==> [/Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk/System/Library/Frameworks]
   implicit libs: [c++]
-  implicit dirs: [/usr/local/opt/gettext/lib:-L/usr/local/opt/openssl/lib;/Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk/usr/lib]
+  implicit dirs: [/usr/local/opt/openssl@1.1/lib;/Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk/usr/lib]
   implicit fwks: [/Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk/System/Library/Frameworks]
 
 
@@ -260,14 +257,13 @@ Parsed CXX implicit link information from above output:
 Detecting CXX [-std=c++1z] compiler features compiled with the following output:
 Change Dir: /Users/olalekanogunmolu/ros2_ws/src/superchicko/sofa/build/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/make" "cmTC_e7ec4/fast"
-/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_e7ec4.dir/build.make CMakeFiles/cmTC_e7ec4.dir/build
-Building CXX object CMakeFiles/cmTC_e7ec4.dir/feature_tests.cxx.o
-/Library/Developer/CommandLineTools/usr/bin/c++    -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk   -std=c++1z -o CMakeFiles/cmTC_e7ec4.dir/feature_tests.cxx.o -c /Users/olalekanogunmolu/ros2_ws/src/superchicko/sofa/build/CMakeFiles/feature_tests.cxx
-Linking CXX executable cmTC_e7ec4
-/usr/local/Cellar/cmake/3.13.3/bin/cmake -E cmake_link_script CMakeFiles/cmTC_e7ec4.dir/link.txt --verbose=1
-/Library/Developer/CommandLineTools/usr/bin/c++    -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names -L/usr/local/opt/gettext/lib:-L/usr/local/opt/openssl/lib  CMakeFiles/cmTC_e7ec4.dir/feature_tests.cxx.o  -o cmTC_e7ec4 
-ld: warning: directory not found for option '-L/usr/local/opt/gettext/lib:-L/usr/local/opt/openssl/lib'
+Run Build Command:"/usr/bin/make" "cmTC_a906a/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_a906a.dir/build.make CMakeFiles/cmTC_a906a.dir/build
+Building CXX object CMakeFiles/cmTC_a906a.dir/feature_tests.cxx.o
+/usr/bin/clang++    -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk   -std=c++1z -o CMakeFiles/cmTC_a906a.dir/feature_tests.cxx.o -c /Users/olalekanogunmolu/ros2_ws/src/superchicko/sofa/build/CMakeFiles/feature_tests.cxx
+Linking CXX executable cmTC_a906a
+/usr/local/Cellar/cmake/3.13.3/bin/cmake -E cmake_link_script CMakeFiles/cmTC_a906a.dir/link.txt --verbose=1
+/usr/bin/clang++    -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names -L/usr/local/opt/openssl@1.1/lib  CMakeFiles/cmTC_a906a.dir/feature_tests.cxx.o  -o cmTC_a906a 
 
 
     Feature record: CXX_FEATURE:1cxx_aggregate_default_initializers
@@ -332,14 +328,13 @@ ld: warning: directory not found for option '-L/usr/local/opt/gettext/lib:-L/usr
 Detecting CXX [-std=c++14] compiler features compiled with the following output:
 Change Dir: /Users/olalekanogunmolu/ros2_ws/src/superchicko/sofa/build/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/make" "cmTC_fc2ab/fast"
-/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_fc2ab.dir/build.make CMakeFiles/cmTC_fc2ab.dir/build
-Building CXX object CMakeFiles/cmTC_fc2ab.dir/feature_tests.cxx.o
-/Library/Developer/CommandLineTools/usr/bin/c++    -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk   -std=c++14 -o CMakeFiles/cmTC_fc2ab.dir/feature_tests.cxx.o -c /Users/olalekanogunmolu/ros2_ws/src/superchicko/sofa/build/CMakeFiles/feature_tests.cxx
-Linking CXX executable cmTC_fc2ab
-/usr/local/Cellar/cmake/3.13.3/bin/cmake -E cmake_link_script CMakeFiles/cmTC_fc2ab.dir/link.txt --verbose=1
-/Library/Developer/CommandLineTools/usr/bin/c++    -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names -L/usr/local/opt/gettext/lib:-L/usr/local/opt/openssl/lib  CMakeFiles/cmTC_fc2ab.dir/feature_tests.cxx.o  -o cmTC_fc2ab 
-ld: warning: directory not found for option '-L/usr/local/opt/gettext/lib:-L/usr/local/opt/openssl/lib'
+Run Build Command:"/usr/bin/make" "cmTC_b6fc5/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_b6fc5.dir/build.make CMakeFiles/cmTC_b6fc5.dir/build
+Building CXX object CMakeFiles/cmTC_b6fc5.dir/feature_tests.cxx.o
+/usr/bin/clang++    -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk   -std=c++14 -o CMakeFiles/cmTC_b6fc5.dir/feature_tests.cxx.o -c /Users/olalekanogunmolu/ros2_ws/src/superchicko/sofa/build/CMakeFiles/feature_tests.cxx
+Linking CXX executable cmTC_b6fc5
+/usr/local/Cellar/cmake/3.13.3/bin/cmake -E cmake_link_script CMakeFiles/cmTC_b6fc5.dir/link.txt --verbose=1
+/usr/bin/clang++    -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names -L/usr/local/opt/openssl@1.1/lib  CMakeFiles/cmTC_b6fc5.dir/feature_tests.cxx.o  -o cmTC_b6fc5 
 
 
     Feature record: CXX_FEATURE:1cxx_aggregate_default_initializers
@@ -404,14 +399,13 @@ ld: warning: directory not found for option '-L/usr/local/opt/gettext/lib:-L/usr
 Detecting CXX [-std=c++11] compiler features compiled with the following output:
 Change Dir: /Users/olalekanogunmolu/ros2_ws/src/superchicko/sofa/build/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/make" "cmTC_5f517/fast"
-/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_5f517.dir/build.make CMakeFiles/cmTC_5f517.dir/build
-Building CXX object CMakeFiles/cmTC_5f517.dir/feature_tests.cxx.o
-/Library/Developer/CommandLineTools/usr/bin/c++    -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk   -std=c++11 -o CMakeFiles/cmTC_5f517.dir/feature_tests.cxx.o -c /Users/olalekanogunmolu/ros2_ws/src/superchicko/sofa/build/CMakeFiles/feature_tests.cxx
-Linking CXX executable cmTC_5f517
-/usr/local/Cellar/cmake/3.13.3/bin/cmake -E cmake_link_script CMakeFiles/cmTC_5f517.dir/link.txt --verbose=1
-/Library/Developer/CommandLineTools/usr/bin/c++    -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names -L/usr/local/opt/gettext/lib:-L/usr/local/opt/openssl/lib  CMakeFiles/cmTC_5f517.dir/feature_tests.cxx.o  -o cmTC_5f517 
-ld: warning: directory not found for option '-L/usr/local/opt/gettext/lib:-L/usr/local/opt/openssl/lib'
+Run Build Command:"/usr/bin/make" "cmTC_e1c2c/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_e1c2c.dir/build.make CMakeFiles/cmTC_e1c2c.dir/build
+Building CXX object CMakeFiles/cmTC_e1c2c.dir/feature_tests.cxx.o
+/usr/bin/clang++    -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk   -std=c++11 -o CMakeFiles/cmTC_e1c2c.dir/feature_tests.cxx.o -c /Users/olalekanogunmolu/ros2_ws/src/superchicko/sofa/build/CMakeFiles/feature_tests.cxx
+Linking CXX executable cmTC_e1c2c
+/usr/local/Cellar/cmake/3.13.3/bin/cmake -E cmake_link_script CMakeFiles/cmTC_e1c2c.dir/link.txt --verbose=1
+/usr/bin/clang++    -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names -L/usr/local/opt/openssl@1.1/lib  CMakeFiles/cmTC_e1c2c.dir/feature_tests.cxx.o  -o cmTC_e1c2c 
 
 
     Feature record: CXX_FEATURE:0cxx_aggregate_default_initializers
@@ -476,14 +470,13 @@ ld: warning: directory not found for option '-L/usr/local/opt/gettext/lib:-L/usr
 Detecting CXX [-std=c++98] compiler features compiled with the following output:
 Change Dir: /Users/olalekanogunmolu/ros2_ws/src/superchicko/sofa/build/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/make" "cmTC_248aa/fast"
-/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_248aa.dir/build.make CMakeFiles/cmTC_248aa.dir/build
-Building CXX object CMakeFiles/cmTC_248aa.dir/feature_tests.cxx.o
-/Library/Developer/CommandLineTools/usr/bin/c++    -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk   -std=c++98 -o CMakeFiles/cmTC_248aa.dir/feature_tests.cxx.o -c /Users/olalekanogunmolu/ros2_ws/src/superchicko/sofa/build/CMakeFiles/feature_tests.cxx
-Linking CXX executable cmTC_248aa
-/usr/local/Cellar/cmake/3.13.3/bin/cmake -E cmake_link_script CMakeFiles/cmTC_248aa.dir/link.txt --verbose=1
-/Library/Developer/CommandLineTools/usr/bin/c++    -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names -L/usr/local/opt/gettext/lib:-L/usr/local/opt/openssl/lib  CMakeFiles/cmTC_248aa.dir/feature_tests.cxx.o  -o cmTC_248aa 
-ld: warning: directory not found for option '-L/usr/local/opt/gettext/lib:-L/usr/local/opt/openssl/lib'
+Run Build Command:"/usr/bin/make" "cmTC_ddcf5/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_ddcf5.dir/build.make CMakeFiles/cmTC_ddcf5.dir/build
+Building CXX object CMakeFiles/cmTC_ddcf5.dir/feature_tests.cxx.o
+/usr/bin/clang++    -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk   -std=c++98 -o CMakeFiles/cmTC_ddcf5.dir/feature_tests.cxx.o -c /Users/olalekanogunmolu/ros2_ws/src/superchicko/sofa/build/CMakeFiles/feature_tests.cxx
+Linking CXX executable cmTC_ddcf5
+/usr/local/Cellar/cmake/3.13.3/bin/cmake -E cmake_link_script CMakeFiles/cmTC_ddcf5.dir/link.txt --verbose=1
+/usr/bin/clang++    -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names -L/usr/local/opt/openssl@1.1/lib  CMakeFiles/cmTC_ddcf5.dir/feature_tests.cxx.o  -o cmTC_ddcf5 
 
 
     Feature record: CXX_FEATURE:0cxx_aggregate_default_initializers
@@ -546,27 +539,25 @@ ld: warning: directory not found for option '-L/usr/local/opt/gettext/lib:-L/usr
 Determining if the include file pthread.h exists passed with the following output:
 Change Dir: /Users/olalekanogunmolu/ros2_ws/src/superchicko/sofa/build/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/make" "cmTC_83db1/fast"
-/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_83db1.dir/build.make CMakeFiles/cmTC_83db1.dir/build
-Building C object CMakeFiles/cmTC_83db1.dir/CheckIncludeFile.c.o
-/Library/Developer/CommandLineTools/usr/bin/cc   -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk   -o CMakeFiles/cmTC_83db1.dir/CheckIncludeFile.c.o   -c /Users/olalekanogunmolu/ros2_ws/src/superchicko/sofa/build/CMakeFiles/CMakeTmp/CheckIncludeFile.c
-Linking C executable cmTC_83db1
-/usr/local/Cellar/cmake/3.13.3/bin/cmake -E cmake_link_script CMakeFiles/cmTC_83db1.dir/link.txt --verbose=1
-/Library/Developer/CommandLineTools/usr/bin/cc   -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names -L/usr/local/opt/gettext/lib:-L/usr/local/opt/openssl/lib  CMakeFiles/cmTC_83db1.dir/CheckIncludeFile.c.o  -o cmTC_83db1 
-ld: warning: directory not found for option '-L/usr/local/opt/gettext/lib:-L/usr/local/opt/openssl/lib'
+Run Build Command:"/usr/bin/make" "cmTC_54335/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_54335.dir/build.make CMakeFiles/cmTC_54335.dir/build
+Building C object CMakeFiles/cmTC_54335.dir/CheckIncludeFile.c.o
+/Library/Developer/CommandLineTools/usr/bin/cc   -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk   -o CMakeFiles/cmTC_54335.dir/CheckIncludeFile.c.o   -c /Users/olalekanogunmolu/ros2_ws/src/superchicko/sofa/build/CMakeFiles/CMakeTmp/CheckIncludeFile.c
+Linking C executable cmTC_54335
+/usr/local/Cellar/cmake/3.13.3/bin/cmake -E cmake_link_script CMakeFiles/cmTC_54335.dir/link.txt --verbose=1
+/Library/Developer/CommandLineTools/usr/bin/cc   -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names -L/usr/local/opt/openssl@1.1/lib  CMakeFiles/cmTC_54335.dir/CheckIncludeFile.c.o  -o cmTC_54335 
 
 
 Determining if the pthread_create exist passed with the following output:
 Change Dir: /Users/olalekanogunmolu/ros2_ws/src/superchicko/sofa/build/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/make" "cmTC_55bc1/fast"
-/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_55bc1.dir/build.make CMakeFiles/cmTC_55bc1.dir/build
-Building C object CMakeFiles/cmTC_55bc1.dir/CheckSymbolExists.c.o
-/Library/Developer/CommandLineTools/usr/bin/cc   -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk   -o CMakeFiles/cmTC_55bc1.dir/CheckSymbolExists.c.o   -c /Users/olalekanogunmolu/ros2_ws/src/superchicko/sofa/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c
-Linking C executable cmTC_55bc1
-/usr/local/Cellar/cmake/3.13.3/bin/cmake -E cmake_link_script CMakeFiles/cmTC_55bc1.dir/link.txt --verbose=1
-/Library/Developer/CommandLineTools/usr/bin/cc   -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names -L/usr/local/opt/gettext/lib:-L/usr/local/opt/openssl/lib  CMakeFiles/cmTC_55bc1.dir/CheckSymbolExists.c.o  -o cmTC_55bc1 
-ld: warning: directory not found for option '-L/usr/local/opt/gettext/lib:-L/usr/local/opt/openssl/lib'
+Run Build Command:"/usr/bin/make" "cmTC_ad1f4/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_ad1f4.dir/build.make CMakeFiles/cmTC_ad1f4.dir/build
+Building C object CMakeFiles/cmTC_ad1f4.dir/CheckSymbolExists.c.o
+/Library/Developer/CommandLineTools/usr/bin/cc   -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk   -o CMakeFiles/cmTC_ad1f4.dir/CheckSymbolExists.c.o   -c /Users/olalekanogunmolu/ros2_ws/src/superchicko/sofa/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c
+Linking C executable cmTC_ad1f4
+/usr/local/Cellar/cmake/3.13.3/bin/cmake -E cmake_link_script CMakeFiles/cmTC_ad1f4.dir/link.txt --verbose=1
+/Library/Developer/CommandLineTools/usr/bin/cc   -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names -L/usr/local/opt/openssl@1.1/lib  CMakeFiles/cmTC_ad1f4.dir/CheckSymbolExists.c.o  -o cmTC_ad1f4 
 
 File /Users/olalekanogunmolu/ros2_ws/src/superchicko/sofa/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c:
 /* */

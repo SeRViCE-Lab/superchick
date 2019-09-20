@@ -2,7 +2,7 @@
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "/Users/olalekanogunmolu/sofa/v19.06/build/build/install;/Users/olalekanogunmolu/sofa/v19.06/build/cmake")
+  set(CMAKE_INSTALL_PREFIX "/Users/olalekanogunmolu/sofa/v19.06/build/install;/Users/olalekanogunmolu/sofa/v19.06/build/cmake")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
@@ -46,8 +46,8 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  include("/Users/olalekanogunmolu/ros2_ws/src/superchicko/sofa/build/build/libs/cmake_install.cmake")
   include("/Users/olalekanogunmolu/ros2_ws/src/superchicko/sofa/build/SoftRobots/cmake_install.cmake")
+  include("/Users/olalekanogunmolu/ros2_ws/src/superchicko/sofa/build/ForceFields/cmake_install.cmake")
 
 endif()
 

@@ -66,7 +66,6 @@ using sofa::gui::BaseGUI;
 #include <sofa/helper/AdvancedTimer.h>
 #include <sofa/helper/logging/Messaging.h>
 
-
 #include <sofa/gui/GuiDataRepository.h>
 using sofa::gui::GuiDataRepository ;
 
@@ -149,8 +148,8 @@ int main(int argc, char** argv)
     string colorsStatus = "unset";
     string messageHandler = "auto";
     bool enableInteraction = false ;
-    int width = 1280;
-    int height = 1024;
+    int width = 800; //1280;
+    int height = 600; //1024;
 
     ArgumentParser* argParser = new ArgumentParser(argc, argv);
     argParser->addArgument(po::value<std::vector<std::string>>(&plugins), "load,l", "load given plugins");
@@ -197,6 +196,7 @@ int main(int argc, char** argv)
     for (unsigned int i=0; i<plugins.size(); i++)
     {
       // provide full path to IAB plugin in cmd line
+      msg_info("IAB") << "Loading " << IABBuildPATH + "/lib/" + plugins[i];
       PluginManager::getInstance().loadPluginByPath(IABBuildPATH + "/lib/" + plugins[i]);
     }
 

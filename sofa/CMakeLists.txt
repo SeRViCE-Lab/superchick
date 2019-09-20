@@ -1,7 +1,9 @@
 cmake_minimum_required(VERSION 3.1)
+set(CMAKE_CXX_COMPILER "/usr/bin/clang++")
 project(IAB 	VERSION 1.0)
 
 add_compile_options(-std=c++14)
+
 
  # best to read SOFA_ROOTfrom cmd line due to different requirements
  if("${SOFA_ROOT}" STREQUAL "")
@@ -39,7 +41,7 @@ message(STATUS "SOFA_ROOT: ${SOFA_ROOT}")
 message(STATUS "CMAKE_MODULE_PATH: ${CMAKE_MODULE_PATH}")
 
 
-set(CMAKE_INSTALL_PREFIX "${SOFA_ROOT}/build/install;${SOFA_ROOT}/cmake")
+set(CMAKE_INSTALL_PREFIX "${SOFA_ROOT}/install;${SOFA_ROOT}/cmake")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib")
 
 find_package(SofaFramework REQUIRED PATHS "${CONFIG_PATHS}")
@@ -61,28 +63,31 @@ set(ForceFields_Headers "${CMAKE_CURRENT_SOURCE_DIR}/ForceFields")
 
 INCLUDE_DIRECTORIES("${IABPLUGIN_INCLUDE}")
 INCLUDE_DIRECTORIES("${ForceFields_Headers}")
- # work on this post-icra/ra-l deadline
-# iab_add_plugin(plugins/IABPlugin IAB)
-# add_subdirectory(plugins/IABPlugin)
-add_subdirectory(plugins/IABPlugin ${CMAKE_CURRENT_BINARY_DIR}/build/libs)
+#add_subdirectory(plugins/IABPlugin)
+#add_subdirectory(plugins/IABPlugin ${CMAKE_CURRENT_BINARY_DIR}/build/libs)
 add_subdirectory(SoftRobots)
 
 
 set(SOFA_LIBS_DIR "${CMAKE_INSTALL_PREFIX}/lib")
-link_directories(${SOFA_LIBS_DIR} "${CMAKE_BINARY_DIR}/lib")
+message(STATUS "SOFA_LIBS_DIR: $${CMAKE_BINARY_DIR}/lib")
+link_directories("${CMAKE_BINARY_DIR}/lib")
 
-add_library(integral "SHARED" src/integrand.cxx) # my local integrator
+#add_library(INTEGRATOR "SHARED" src/integrand.cxx) # my local integrator
+
+# this has to succeed the build of integrator since we link them
+add_subdirectory(ForceFields)
 
 set(SOFA_LIBS SofaComponentAdvanced
 							SofaComponentMisc
 							SofaSimulationGraph
 							SofaGuiMain
-							SofaMiscCollision
-							SofaPython
+							# SofaMiscCollision
+							# SofaPython
 							)
 
 add_executable(${PROJECT_NAME} src/IAB.cpp)
-target_link_libraries(${PROJECT_NAME} ${SOFA_LIBS} IABPlugin)
+target_link_libraries(${PROJECT_NAME} ${SOFA_LIBS})
+#target_link_libraries(${PROJECT_NAME} ${SOFA_LIBS} IABPlugin)
 
 install(DIRECTORY "lib/" DESTINATION "$ENV{SOFA_ROOT}/lib"
 				FILES_MATCHING PATTERN "*.so")

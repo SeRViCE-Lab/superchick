@@ -37,16 +37,19 @@ class radial_stress_r2c
 {
   public:
     radial_stress_r2c(const value_type& ri,
-                                             const value_type& ro,
-                                             const value_type& Ri,
-                                             const value_type& C1,
-                                             const value_type& C2);
-// Destructor
-virtual ~radial_stress_r2c();
-inline value_type get_R();
-value_type operator() (const value_type& r) const; // see equation 25 in ContinuumI paper
+                       const value_type& ro,
+                       const value_type& Ri,
+                       const value_type& C1,
+                       const value_type& C2);
+    // Destructor
+    virtual ~radial_stress_r2c();
+
+    inline value_type get_R() const;
+
+    value_type operator() (const value_type& r) const; // see equation 25 in ContinuumI paper
+
 private:
-  const value_type ri_, ro_, Ri_, Ro_, C1_, C2_;
+  const value_type ri_, ro_, Ri_, C1_, C2_;
 };
 
 template<typename value_type>

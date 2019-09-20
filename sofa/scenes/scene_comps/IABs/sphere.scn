@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <Node name="SphereNode">
 	<RequiredPlugin pluginName="IABPlugin"/>
+	<RequiredPlugin pluginName="SoftRobots"/>
 	<EulerImplicitSolver rayleighStiffness="0.01"  rayleighMass="0.1" />
 	<CGLinearSolver template="GraphScattered" iterations="100" tolerance="1e-5"  threshold="1e-5"  />
 		<!-- see examples/Components/mass/MeshMatrixMass.scn &
@@ -19,6 +20,5 @@
   <!-- scale="1.0" -->
   <MechanicalObject template="Vec3d" name="sphere-collis-states"  velocity="0 0 0"  force="0 0 0"  externalForce="0 0 0" />
 
-	<!-- <BarycentricMapping /> -->
 </Node>
 </Node>

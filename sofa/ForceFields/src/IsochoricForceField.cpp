@@ -19,7 +19,12 @@
 *                                                                             *
 * Contact information: contact@sofa-framework.org                             *
 ******************************************************************************/
-#define SOFA_COMPONENT_FORCEFIELD_TEMPLATEFORCEFIELD_CPP
+#define SOFA_COMPONENT_FORCEFIELD_ISOCHORICFORCEFIELD_CPP
+// below from /modules/sofageneralobjectinteraction/interactionforcefield.cpp
+#include <include/IsochoricForceField.inl>
+#include <sofa/defaulttype/VecTypes.h>
+#include <sofa/defaulttype/RigidTypes.h>
+#include <sofa/core/ObjectFactory.h>
 
 namespace sofa
 {
@@ -36,18 +41,18 @@ using namespace sofa::defaulttype;
 // Give a description of your class
 // and declare the DataTypes on which the ForceField is instantiated
 
-int TemplateForceFieldClass = core::RegisterObject("IAB ForceField")
-        .add< TemplateForceFieldClass<Vec3Types> >()
-        .add< TemplateForceFieldClass<Vec2Types> >()
-        .add< TemplateForceFieldClass<Vec1Types> >()
-        .add< TemplateForceFieldClass<Vec6Types> >()
+int IsochoricForceFieldClass = core::RegisterObject("IAB Isochoric ForceField applied to the boundary and interior")
+        .add< IsochoricForceField<Vec3Types> >(true)
+        // .add< IsochoricForceField<Vec2Types> >()
+        // .add< IsochoricForceField<Vec1Types> >()
+        // .add< IsochoricForceField<Vec6Types> >()
 
         ;
 
-template class TemplateForceField<Vec3Types>;
-template class TemplateForceField<Vec2Types>;
-template class TemplateForceField<Vec1Types>;
-template class TemplateForceField<Vec6Types>;
+template class IsochoricForceField<Vec3Types>;
+// template class IsochoricForceField<Vec2Types>;
+// template class IsochoricForceField<Vec1Types>;
+// template class IsochoricForceField<Vec6Types>;
 
 
 

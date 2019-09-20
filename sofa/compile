@@ -2,14 +2,36 @@
 echo -e "Clean current directory? [yn]"
 read res
 
-if [ res=='y' ]; then
-  rm -rf *;
+is_yes() {
+        yesses={y,Y,yes,Yes,YES}
+        if [[ $yesses =~ $1 ]]; then
+                echo 1
+        fi
+        }
+
+is_no() {
+        noses={n,N,no,No,No}
+        if [[ $noses =~ $1 ]]; then
+                echo 1
+        fi
+        }
+
+if [ $is_yes $res ]; then
+   echo -e "cleaning up cwd"
+   rm -rf *;
+else [ $is_no $res ]; then
+   echo "Proceeding with compilation"
 fi
 
-cmake ..; make -j$nproc;
+cmake ..; make -j8;
+
+cp lib/libIABPlugin.* "$SOFA_ROOT/lib"
+cp lib/SoftRobots.* "$SOFA_ROOT/lib"
 
 if [ uname=="Linux" ]; then
-  ./IAB --load libIABPlugin.so
+  ./IAB --load libIABPlugin.so libSoftRobots.so
 elif [ name=="Darwin" ]; then
-  ./IAB --load libIABPlugin.dylib
+  ./IAB --load libIABPlugin.dylib libSoftRobots.dylib
 fi
+
+#./IAB
