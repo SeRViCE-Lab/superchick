@@ -1,23 +1,21 @@
 <?xml version="1.0"?>
 <Node name="SphereNode">
-	<RequiredPlugin pluginName="IAB"/>
-	<EulerImplicitSolver rayleighStiffness="0.01"  rayleighMass="0.1" />
-	<CGLinearSolver template="GraphScattered" iterations="100" tolerance="1e-5"  threshold="1e-5"  />
+	<!-- <EulerImplicitSolver rayleighStiffness="0.01"  rayleighMass="0.1" />
+	<CGLinearSolver template="GraphScattered" iterations="100" tolerance="1e-5"  threshold="1e-5"  /> -->
 		<!-- see examples/Components/mass/MeshMatrixMass.scn &
 						 https://www.sofa-framework.org/community/doc/using-sofa/components/masses/meshmatrixmass/ -->
-  <MeshSTLLoader name="sphere_loader" filename="../../../../ros/srs_traj_opt/patient_description/meshes/sphere/sphere.stl"/>
+	<MeshSTLLoader name="sphere_loader" filename="../../../../ros/srs_traj_opt/patient_description/meshes/sphere/sphere.stl"/>
   <MechanicalObject name="spherical-states" src="@sphere_loader" template="Vec3d" externalForce="0 0 0"  restScale="1"  translation="0 0 0"  scale3d="1 1 1" scale="1" />
-	<CGLinearSolver iterations="100" tolerance="1e-5" threshold="1e-5"/>
+	<!-- <CGLinearSolver iterations="100" tolerance="1e-5" threshold="1e-5"/> -->
 	<MatrixMass defaultValue="75" />
 	<MeshSpringForceField name="Springs" stiffness="100" damping="10" />
+	<IsochoricForceField ri="15" /> <!-- templates="Vec3d"  -->
   <Node name="SphereVisu" >
     <OglModel name="SphereVisual"  src="@../sphere_loader" translation="0 0 0" dx="-50" dy="0" dz="0" color="0.3 0.65 0.6" scale="1.5"/>
   </Node>
 <Node 	 name="SphereCollis"  >
   <MeshObjLoader name="sphere-collis-loader"  filename="../../../../ros/srs_traj_opt/patient_description/meshes/sphere/sphere.obj"  scale="1.5"/>
   <MeshTopology name="meshTopology"  />
-  <!-- scale="1.0" -->
   <MechanicalObject template="Vec3d" name="sphere-collis-states"  velocity="0 0 0"  force="0 0 0"  externalForce="0 0 0" />
-
 </Node>
 </Node>

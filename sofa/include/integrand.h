@@ -20,7 +20,7 @@ inline value_type integrator(const value_type a,
  //Destructor
  virtual ~radial_stress_c2r();
 
- inline value_type get_r();
+ inline value_type get_r() const;
  value_type operator() (const value_type& R) const; // see equation 25 in ContinuumI paper
 
 
@@ -62,7 +62,7 @@ class pressure_r2c
 //Destructor
 virtual ~pressure_r2c();
 value_type operator() (const value_type& r) const; // see equation 25 in ContinuumI paper
-inline value_type get_R();
+inline value_type get_R() const;
 
   private:
     const value_type ri_; // internal radius in current configuration
@@ -82,7 +82,7 @@ class pressure_c2r
   // Destructor
   virtual ~pressure_c2r();
   value_type operator() (const value_type& R) const; // see equation 25 in ContinuumI paper
-  inline value_type get_r();
+  inline value_type get_r() const;
 
   private:
     const value_type Ri_; // internal radius in current configuration

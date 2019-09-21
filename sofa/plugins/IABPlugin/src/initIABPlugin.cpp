@@ -10,7 +10,7 @@ void initExternalModule()
 
 const char* getModuleName()
 {
-  return "IABPlugin";
+  return "IAB";
 }
 
 const char* getModuleVersion()

@@ -16,7 +16,7 @@ is_no() {
         fi
         }
 
-if [ $res $is_yes ]; then
+if [ $(is_yes $res) ]; then
    echo -e "cleaning up cwd"
    rm -rf *;
 else

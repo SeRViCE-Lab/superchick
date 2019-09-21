@@ -45,13 +45,13 @@ namespace forcefield
 template<typename DataTypes>
 IsochoricForceField<DataTypes>::IsochoricForceField()
     : indices(initData(&indices, "indices", "index of nodes controlled by the isochoric deformations")),
-    Ri(initData(&Ri, "0", "Ri", "internal radius in the reference configuration")),
-    Ro(initData(&Ro, "0", "Ro", "external radius in the reference configuration")),
-    ri(initData(&ri, "0", "ri", "internal radius in the current configuration")),
-    ro(initData(&ro, "0", "ro", "external radius in the current configuration")),
-    C1(initData(&C1, "0", "C1", "material elasticity of the internal IAB wall")),
-    C2(initData(&C2, "0", "C2", "material elasticity of the outer IAB wall")),
-    mode(initData(&mode, "expand", "mode", "mode of deformation: <expansion> or <compression>"))
+    d_Ri(initData(&d_Ri, "12", "Ri", "internal radius in the reference configuration")),
+    d_Ro(initData(&d_Ro, "15", "Ro", "external radius in the reference configuration")),
+    d_ri(initData(&d_ri, " ", "ri", "internal radius in the current configuration")),
+    d_ro(initData(&d_ro, " ", "ro", "external radius in the current configuration")),
+    d_C1(initData(&d_C1, "1.1e6", "C1", "material elasticity of the internal IAB wall")),
+    d_C2(initData(&d_C2, "2.2e6", "C2", "material elasticity of the outer IAB wall")),
+    d_mode(initData(&d_mode, "expand", "mode", "mode of deformation: <expansion> or <compression>"))
 {
   //default Constructor
   init();
@@ -70,20 +70,20 @@ void IsochoricForceField<DataTypes>::init()
     // ripped off angularSpringForceField
     core::behavior::ForceField<DataTypes>::init();
 
-    if((ri==0) && (ro==0))
+    if((d_ri.getValue()==0) && (d_ro.getValue()==0))
     {
-      std::cout << "Understand that these ri and ro values cannot be both zero" << std::endl;
-      std::terminate();
+      std::cerr << "Understand that these ri and ro values cannot be both zero" << std::endl;
+      // std::terminate();
     }
 
     abstol = 1e-2F;
     reltol = 1e-5F;
 
-    mState = dynamic_cast<core::behavior::MechanicalState<DataTypes> *> (this->getContext()->getMechanicalState());
-    if (!mState) {
-		msg_error("IsochoricForceField") << "MechanicalStateFilter has no binding MechanicalState" << "\n";
-    }
-    matS.resize(mState->getMatrixSize(), mState->getMatrixSize());
+    // mState = dynamic_cast<core::behavior::MechanicalState<DataTypes> *> (this->getContext()->getMechanicalState());
+    // if (!mState) {
+		// msg_error("IsochoricForceField") << "MechanicalStateFilter has no binding MechanicalState" << "\n";
+    // }
+    // matS.resize(mState->getMatrixSize(), mState->getMatrixSize());
 }
 
 
@@ -111,24 +111,25 @@ void IsochoricForceField<DataTypes>::addForce(const core::MechanicalParams* /*pa
     f1.resize(p1.size());
 
     // radii to take IAB into in the current configuration
-   ro = std::cbrt(std::pow(Ro.getValue(), 3) - std::pow(Ri.getValue(), 3) + std::pow(ri.getValue(), 3));
+   // d_ro.setValue() = std::cbrt(std::pow(d_Ro.getValue(), 3) - std::pow(d_Ri.getValue(), 3) + std::pow(d_ri.getValue(), 3));
 
     // calculate the stress and pressure needed to go from a reference configuartion to a current configuration
-    auto ext_radius_current = radial_stress_r2c<float>(ri.getValue(), ro.getValue(), \
-                                                        Ri.getValue(), C1.getValue(), C2.getValue());
-    auto PressureFunc = pressure_r2c<float>(ri.getValue(),  ro.getValue(),
-                                          Ri.getValue(), C1.getValue(),
-                                          C2.getValue());
-    const float radial_stress_n = integrator<float, radial_stress_r2c<float>>(Ri.getValue(), Ro.getValue(), abstol, reltol,
+    auto ext_radius_current = radial_stress_r2c<float>(d_ri.getValue(), d_ro.getValue(), \
+                                                        d_Ri.getValue(), d_C1.getValue(), d_C2.getValue());
+    auto PressureFunc = pressure_r2c<float>(d_ri.getValue(),  d_ro.getValue(),
+                                          d_Ri.getValue(), d_C1.getValue(),
+                                          d_C2.getValue());
+    const float radial_stress_n = integrator<float, radial_stress_r2c<float>>(d_Ri.getValue(), d_Ro.getValue(), abstol, reltol,
                                               ext_radius_current);
-    // const float internal_pressure = integrator<float, pressure_r2c<float>>(Ri.getValue(), Ro.getValue(), abstol, reltol,
-    //                                           PressureFunc);
+    const float internal_pressure = integrator<float, pressure_r2c<float>>(d_Ri.getValue(), d_Ro.getValue(), abstol, reltol,
+                                              PressureFunc);
     // OUT_INFO("Calculated pressure based on given parameters:\n\t [C1, C2, Ri, Ro, ri, ro]: [%.2f, %.2f, %.2f, %.2f, %.2f, %.2f] is \n\t P=%.4f N/m^2" <<
     //           C1, C2, Ri, Ro, ri, ro, internal_pressure);
     std::cout << "Calculated normal stress based on given parameters:\n\t" <<
       " [C1, C2, Ri, Ro, ri, ro]: [%.2f, %.2f, %.2f, %.2f, %.2f, %.2f] is \n\t"<<
       " Sigma=%.4f " <<
-              C1  << C2 << Ri << Ro << ri << ro << radial_stress_n;
+              d_C1.getValue()  << d_C2.getValue() << d_Ri.getValue() << d_Ro.getValue() <<
+              d_ri.getValue() << d_ro.getValue() << radial_stress_n;
 }
 
 

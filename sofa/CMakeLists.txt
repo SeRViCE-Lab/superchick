@@ -92,6 +92,5 @@ target_link_libraries("${PROJECT_NAME}_Launcher" ${SOFA_LIBS})
 install(TARGETS ${PROJECT_NAME}
         LIBRARY DESTINATION "$ENV{SOFA_ROOT}/lib")
 
-# install(DIRECTORY "$ENV{SOFA_ROOT}/lib/" DESTINATION "$ENV{SOFA_ROOT}/lib"
-# 				FILES_MATCHING PATTERN "*.so;*.dylib")
-#
+install(DIRECTORY "$ENV{SOFA_ROOT}/lib/" DESTINATION "$ENV{SOFA_ROOT}/lib"
+				FILES_MATCHING PATTERN "*.so;*.dylib")

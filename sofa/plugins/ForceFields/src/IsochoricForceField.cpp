@@ -42,17 +42,17 @@ using namespace sofa::defaulttype;
 // and declare the DataTypes on which the ForceField is instantiated
 
 int IsochoricForceFieldClass = core::RegisterObject("IAB Isochoric ForceField applied to the boundary and interior")
-        .add< IsochoricForceField<Vec3Types> >(true)
-        // .add< IsochoricForceField<Vec2Types> >()
-        // .add< IsochoricForceField<Vec1Types> >()
-        // .add< IsochoricForceField<Vec6Types> >()
+        .add< IsochoricForceField<Vec3Types> >()
+        .add< IsochoricForceField<Vec2Types> >()
+        .add< IsochoricForceField<Vec1Types> >()
+        .add< IsochoricForceField<Vec6Types> >()
 
         ;
 
 template class IsochoricForceField<Vec3Types>;
-// template class IsochoricForceField<Vec2Types>;
-// template class IsochoricForceField<Vec1Types>;
-// template class IsochoricForceField<Vec6Types>;
+template class IsochoricForceField<Vec2Types>;
+template class IsochoricForceField<Vec1Types>;
+template class IsochoricForceField<Vec6Types>;
 
 
 
