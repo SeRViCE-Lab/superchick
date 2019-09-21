@@ -45,12 +45,12 @@ namespace forcefield
 template<typename DataTypes>
 IsochoricForceField<DataTypes>::IsochoricForceField()
     : indices(initData(&indices, "indices", "index of nodes controlled by the isochoric deformations")),
-    d_Ri(initData(&d_Ri, "12", "Ri", "internal radius in the reference configuration")),
-    d_Ro(initData(&d_Ro, "15", "Ro", "external radius in the reference configuration")),
-    d_ri(initData(&d_ri, " ", "ri", "internal radius in the current configuration")),
-    d_ro(initData(&d_ro, " ", "ro", "external radius in the current configuration")),
-    d_C1(initData(&d_C1, "1.1e6", "C1", "material elasticity of the internal IAB wall")),
-    d_C2(initData(&d_C2, "2.2e6", "C2", "material elasticity of the outer IAB wall")),
+    d_Ri(initData(&d_Ri, Real(12), "Ri", "internal radius in the reference configuration")),
+    d_Ro(initData(&d_Ro, Real(15), "Ro", "external radius in the reference configuration")),
+    d_ri(initData(&d_ri, Real(20), "ri", "internal radius in the current configuration")),
+    d_ro(initData(&d_ro, Real(25), "ro", "external radius in the current configuration")),
+    d_C1(initData(&d_C1, Real(1.e6), "C1", "material elasticity of the internal IAB wall")),
+    d_C2(initData(&d_C2, Real(2.2e6), "C2", "material elasticity of the outer IAB wall")),
     d_mode(initData(&d_mode, "expand", "mode", "mode of deformation: <expansion> or <compression>"))
 {
   //default Constructor

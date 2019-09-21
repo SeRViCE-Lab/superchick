@@ -9,7 +9,7 @@
 	<!-- <CGLinearSolver iterations="100" tolerance="1e-5" threshold="1e-5"/> -->
 	<MatrixMass defaultValue="75" />
 	<MeshSpringForceField name="Springs" stiffness="100" damping="10" />
-	<IsochoricForceField ri="15" /> <!-- templates="Vec3d"  -->
+	<IsochoricForceField ri="40" /> <!-- templates="Vec3d"  -->
   <Node name="SphereVisu" >
     <OglModel name="SphereVisual"  src="@../sphere_loader" translation="0 0 0" dx="-50" dy="0" dz="0" color="0.3 0.65 0.6" scale="1.5"/>
   </Node>

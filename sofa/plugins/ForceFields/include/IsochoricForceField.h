@@ -57,13 +57,13 @@ public:
     using DataVecDeriv = Data<VecDeriv>;
 
     /// Declare here the data and their type, you want the user to have access to
-    Data< float > d_Ri, d_Ro; // referencce configuration radius
-    Data< float > d_ri, d_ro; // current configuration radius
-    Data< float > d_C1, d_C2; // material elasticity of iab walls
-    // Data< float > rho, nu; // iab material densities as well as Poisson ratio of elastic wall
+    Data< Real > d_Ri, d_Ro; // referencce configuration radius
+    Data< Real > d_ri, d_ro; // current configuration radius
+    Data< Real > d_C1, d_C2; // material elasticity of iab walls
+    // Data< Real > rho, nu; // iab material densities as well as Poisson ratio of elastic wall
     Data< std::string > d_mode; // mode tells whether we are expanding or compressing the IABs; accepts "compress" or "expand"
     // Data< defaulttype::RGBAColor> color; ///< isochoric spherical forcefield color. (default=[0.0,0.5,1.0,1.0])
-    // Data< float > atol; // amount of tolerance for integral solver (see integrand.cxx)
+    // Data< Real > atol; // amount of tolerance for integral solver (see integrand.cxx)
     Data< helper::vector< unsigned int > > indices; ///< index of nodes controlled by the isochoric fields
 
     enum { N=DataTypes::spatial_dimensions };
@@ -107,7 +107,7 @@ protected:
 
   core::behavior::MechanicalState<DataTypes> *mState;
 
-  float abstol, reltol;
+  Real abstol, reltol;
 };
 
 
