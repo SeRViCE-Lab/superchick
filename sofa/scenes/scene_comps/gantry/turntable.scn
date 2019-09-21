@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <Node name="turntable">
-  <EulerImplicitSolver rayleighStiffness="0.01"  rayleighMass="0.1" />
+  <!-- <EulerImplicitSolver rayleighStiffness="0.01"  rayleighMass="0.1" /> -->
   <CGLinearSolver template="GraphScattered" iterations="25" tolerance="1e-12"  threshold="1e-18"  />
   <MeshSTLLoader name="turntable-loader"
     filename="../../../../ros/srs_traj_opt/couch_description/meshes/truebeam/Assembly4/TurnTable.stl" scale="5e-6"/>

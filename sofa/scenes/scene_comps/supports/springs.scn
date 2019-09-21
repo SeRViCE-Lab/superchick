@@ -1,13 +1,13 @@
 <?xml version="1.0" ?>
 <Node name="SpringNode">
-  <EulerImplicitSolver rayleighStiffness="0.01"  rayleighMass="0.1" />
+  <!-- <EulerImplicitSolver rayleighStiffness="0.01"  rayleighMass="0.1" /> -->
 	<CGLinearSolver iterations="25" threshold="0.00000001" tolerance="1e-05" />
 
   <MeshSTLLoader name="spring_loader" filename="../../../../ros/srs_traj_opt/patient_description/meshes/springs.stl"/>
   <MechanicalObject name="spring-states" src="@spring_loader" template="Vec3d" externalForce="0 0 0"  restScale="1"  translation="0 0 0"  scale3d="1 1 1" />
 
   <!-- <MatrixMass totalMass="15" /> -->
-  <UniformMass totalMass="15" />
+  <!-- <UniformMass totalMass="15" /> -->
   <TetrahedronSetTopologyContainer name="SpringTetra" src="@spring_loader" />
   <TetrahedronSetGeometryAlgorithms name="SpringAlgos" template="Vec3d"  drawTetrahedra="1"/>
 

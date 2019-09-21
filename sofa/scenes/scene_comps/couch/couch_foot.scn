@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <Node name="couch-foot">
-  <EulerExplicitSolver name="couchFootSolver" />
+  <!-- <EulerExplicitSolver name="couchFootSolver" /> -->
   <CGLinearSolver template="GraphScattered" iterations="25" tolerance="1e-12"  threshold="1e-18"  />
   <MeshSTLLoader name="couch-foot-loader"
     filename="../../../../ros/srs_traj_opt/couch_description/meshes/truebeam/Assembly4/CouchFoot.stl" scale="5e-6"/>
