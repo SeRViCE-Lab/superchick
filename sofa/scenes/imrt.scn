@@ -24,21 +24,25 @@
     <Node name="IABChains">
       <!-- Making chains children of patient since they control head and neck motion -->
       <Node name="BaseChain">
-        <include name="SkullLeft" href="scene_comps/IABs/sphere.scn"  Ri="10" Ro="15" ri=".13"
+        <include name="SkullLeft" href="scene_comps/IABs/sphere.scn"  Ri="10" Ro="15" ri="13"
                 C1="1.1e4" C2="2.2e4" dx="20" dy="-50" dz="55" color="magenta" scale="1.8"/>
-        <include name="SkullRight" href="scene_comps/IABs/sphere.scn"  Ri="10" Ro="15" ri=".13"
+        <include name="SkullRight" href="scene_comps/IABs/sphere.scn"  Ri="10" Ro="15" ri="13"
                 C1="1.1e4" C2="2.2e4" dx="20" dy="-50" dz="-115" color="magenta" scale="1.8"/>
-        <include name="NeckLeft" href="scene_comps/IABs/sphere.scn"  Ri="10" Ro="15" ri=".13"
+        <include name="NeckLeft" href="scene_comps/IABs/sphere.scn"  Ri="10" Ro="15" ri="13"
                 C1="1.1e4" C2="2.2e4" dx="-135" dy="-50" dz="55" color="magenta" scale="1.8"/>
-        <include name="NeckRight" href="scene_comps/IABs/sphere.scn"  Ri="10" Ro="15" ri=".13"
+        <include name="NeckRight" href="scene_comps/IABs/sphere.scn"  Ri="10" Ro="15" ri="13"
                 C1="1.1e4" C2="2.2e4" dx="-135" dy="-50" dz="-115" color="magenta" scale="1.8"/>
       </Node>
 
       <Node name="SideChains">
-        <include name="ForeLeft" href="scene_comps/IABs/sphere.scn" dx="20" dy="100" dz="95" color="0.3 0.65 0.6" scale="1.8"/>
-        <include name="ForeRight" href="scene_comps/IABs/sphere.scn" dx="20" dy="100" dz="-180" color="0.3 0.65 0.6" scale="1.8"/>
-        <include name="ChinRight" href="scene_comps/IABs/sphere.scn" dx="-150" dy="100" dz="75" color="0.3 0.65 0.6" scale="1.8"/>
-        <include name="ChinLeft" href="scene_comps/IABs/sphere.scn" dx="-150" dy="100" dz="-160" color="0.3 0.65 0.6" scale="1.8"/>
+        <include name="ForeLeft" href="scene_comps/IABs/sphere.scn" Ri="10" Ro="15" ri="13"
+                C1="1.1e4" C2="2.2e4" dx="20" dy="100" dz="95" color="0.3 0.65 0.6" scale="1.8"/>
+        <include name="ForeRight" href="scene_comps/IABs/sphere.scn" Ri="10" Ro="15" ri="13"
+                C1="1.1e4" C2="2.2e4" dx="20" dy="100" dz="-180" color="0.3 0.65 0.6" scale="1.8"/>
+        <include name="ChinRight" href="scene_comps/IABs/sphere.scn" Ri="10" Ro="15" ri="13"
+                C1="1.1e4" C2="2.2e4" dx="-150" dy="100" dz="75" color="0.3 0.65 0.6" scale="1.8"/>
+        <include name="ChinLeft" href="scene_comps/IABs/sphere.scn" Ri="10" Ro="15" ri="13"
+                C1="1.1e4" C2="2.2e4" dx="-150" dy="100" dz="-160" color="0.3 0.65 0.6" scale="1.8"/>
       </Node>
     </Node>
   </Node>

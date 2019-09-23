@@ -54,14 +54,22 @@ set(PLUGINS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/plugins")
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/src/cmake/macros.cmake)
 INCLUDE_DIRECTORIES("${CMAKE_CURRENT_SOURCE_DIR}/include")
-INCLUDE_DIRECTORIES("${PLUGINS_DIR}")
+#INCLUDE_DIRECTORIES(FORCEFIELDS_INCLUDE "${PLUGINS_DIR}/IABPlugin/ForceFields")
+
+set(IABPLUGIN_INCLUDES  "${PLUGINS_DIR}/IABPlugin/include/initIABPlugin.h")
+set(IAB_FORCEFIELDS_INCLUDE
+					"${PLUGINS_DIR}/IABPlugin/ForceFields/include/config.h"
+					"${PLUGINS_DIR}/IABPlugin/ForceFields/include/integrand.inl"
+					"${PLUGINS_DIR}/IABPlugin/ForceFields/include/IsochoricForceField.h"
+					"${PLUGINS_DIR}/IABPlugin/ForceFields/include/IsochoricForceField.inl")
 
 set(SOURCE_FILES
 		"${PLUGINS_DIR}/IABPlugin/src/InitIABPlugin.cpp"
 		"${PLUGINS_DIR}/IABPlugin/ForceFields/src/IsochoricForceField.cpp"
-		"${PLUGINS_DIR}/IABPlugin/behavior/IABConstraint.cpp"
-		"${PLUGINS_DIR}/IABPlugin/behavior/IABBaseConstraint.cpp"
 		)
+
+INCLUDE_DIRECTORIES("${IABPLUGIN_INCLUDES}"
+										"${IAB_FORCEFIELDS_INCLUDE}")
 
 # [Qt] Create moc code.
 qt5_wrap_cpp(MOCCED_HEADER_FILES ${HEADER_FILES_TO_MOC})
@@ -69,6 +77,8 @@ qt5_wrap_cpp(MOCCED_HEADER_FILES ${HEADER_FILES_TO_MOC})
 # Create the plugin library.
 add_library(${PROJECT_NAME} SHARED ${HEADER_FILES_TO_MOC}
 																		${MOCCED_HEADER_FILES}
+																		${IABPLUGIN_INCLUDES}
+																		${IAB_FORCEFIELDS_INCLUDE}
 																		${SOURCE_FILES})
 target_link_libraries(${PROJECT_NAME} SofaGuiQt)
 

@@ -1,4 +1,4 @@
-#include "integrand.h"
+#include "IABPlugin/include/integrand.h"
 
 /**
 * This function evaluates the definite integrals presented in the model paper
@@ -95,10 +95,10 @@ inline value_type radial_stress_c2r<value_type>::get_r() const
   */
 
 template<typename value_type>
-radial_stress_r2c<value_type>::radial_stress_r2c(const value_type& ri, const value_type& ro,
-                          const value_type& Ri,
+radial_stress_r2c<value_type>::radial_stress_r2c(const value_type& Ri, const value_type& Ro,
+                          const value_type& ri,
                           const value_type& C1, const value_type& C2)
-                          : ri_(ri), ro_(ro), Ri_(Ri), C1_(C1), C2_(C2)
+                          : Ri_(Ri), Ro_(Ro), ri_(ri), C1_(C1), C2_(C2)
                           { }
 
 template<typename value_type>
@@ -107,19 +107,12 @@ radial_stress_r2c<value_type>::~radial_stress_r2c()
 // destructor implementation
 };
 
+  //I have used 24|b R is the unknown variable being integrated from ri to ro
 template<typename value_type>
 value_type radial_stress_r2c<value_type>::operator() (const value_type& r)  const // see equation 25 in ContinuumI paper
 {
-  //return the integrand expression
-  value_type R = get_R();
-  return -1*(2*C1_*(r/std::pow(R, 2) - std::pow(R, 4)/std::pow(r, 5)) \
-        +2*C2_*(std::pow(r, 3)/std::pow(R, 4)-std::pow(R, 2)/std::pow(r, 3)));
-}
-
-template<typename value_type>
-inline value_type radial_stress_r2c<value_type>::get_R() const
-{
-  return std::cbrt(std::pow(ro_, 3) - std::pow(ri_, 3) + std::pow(Ri_, 3));
+  return -1*(2*C1_*(r/std::pow(Ro_, 2) - std::pow(Ro_, 4)/std::pow(r, 5)) \
+        +2*C2_*(std::pow(r, 3)/std::pow(Ro_, 4)-std::pow(Ro_, 2)/std::pow(r, 3)));
 }
 
 /**
@@ -136,10 +129,10 @@ inline value_type radial_stress_r2c<value_type>::get_R() const
   */
 
 template<typename value_type>
-pressure_r2c<value_type>::pressure_r2c(const value_type& ri, const value_type& ro,
-                          const value_type& Ri,
+pressure_r2c<value_type>::pressure_r2c(const value_type& Ri, const value_type& Ro,
+                          const value_type& ri,
                           const value_type& C1, const value_type& C2)
-                          : ri_(ri), ro_(ro), Ri_(Ri), C1_(C1), C2_(C2)
+                          : Ri_(Ri), Ro_(Ro), ri_(ri), C1_(C1), C2_(C2)
                           { }
 
 template<typename value_type>
@@ -148,20 +141,21 @@ pressure_r2c<value_type>::~pressure_r2c()
   // destructor implementation
 };
 
+//I have used 26|a R is the unknown variable being integrated from ri to ro
 template<typename value_type>
 value_type pressure_r2c<value_type>::operator() (const value_type& r) const // see equation 25 in ContinuumI paper
 {
   //return the integrand expression
-  value_type R = get_R();
-  return 2*C1_*(r/std::pow(R, 2) - std::pow(R, 4)/std::pow(r, 5)) \
-        +2*C2_*(std::pow(r, 3)/std::pow(R, 4)-std::pow(R, 2)/std::pow(r, 3));
+  // value_type R = get_R();
+  return 2*C1_*(r/std::pow(Ro_, 2) - std::pow(Ro_, 4)/std::pow(r, 5)) \
+        +2*C2_*(std::pow(r, 3)/std::pow(Ro_, 4)-std::pow(Ro_, 2)/std::pow(r, 3));
 }
 
-template<typename value_type>
-inline value_type pressure_r2c<value_type>::get_R() const
-{
-  return std::cbrt(std::pow(ro_, 3) - std::pow(ri_, 3) + std::pow(Ri_, 3));
-}
+// template<typename value_type>
+// inline value_type pressure_r2c<value_type>::get_R() const
+// {
+//   return std::cbrt(std::pow(ro_, 3) - std::pow(ri_, 3) + std::pow(Ri_, 3));
+// }
 
 /**
   *see equation 28 in ContinuumI paper

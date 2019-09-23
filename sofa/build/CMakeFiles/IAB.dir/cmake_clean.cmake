@@ -1,6 +1,8 @@
 file(REMOVE_RECURSE
   "CMakeFiles/IAB.dir/plugins/IABPlugin/src/InitIABPlugin.cpp.o"
-  "CMakeFiles/IAB.dir/plugins/ForceFields/src/IsochoricForceField.cpp.o"
+  "CMakeFiles/IAB.dir/plugins/IABPlugin/ForceFields/src/IsochoricForceField.cpp.o"
+  "CMakeFiles/IAB.dir/plugins/IABPlugin/behavior/IABConstraint.cpp.o"
+  "CMakeFiles/IAB.dir/plugins/IABPlugin/behavior/IABBaseConstraint.cpp.o"
   "lib/libIAB.pdb"
   "lib/libIAB.dylib"
 )

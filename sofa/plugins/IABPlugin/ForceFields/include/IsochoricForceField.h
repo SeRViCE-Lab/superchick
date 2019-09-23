@@ -22,9 +22,8 @@
 #ifndef SOFA_COMPONENT_FORCEFIELD_ISOCHORICFORCEFIELD_H
 #define SOFA_COMPONENT_FORCEFIELD_ISOCHORICFORCEFIELD_H
 
-#include "config.h"
-// #include "integrand.h"
-#include "debuggers.h"  // this from global project include
+#include "IABPlugin/include/debuggers.h"  // this from global project include
+#include "IABPlugin/ForceFields/include/config.h"
 #include <sofa/core/behavior/ForceField.h>
 
 #include <sofa/core/behavior/MechanicalState.h>
@@ -60,11 +59,11 @@ public:
     Data< Real > d_Ri, d_Ro; // referencce configuration radius
     Data< Real > d_ri, d_ro; // current configuration radius
     Data< Real > d_C1, d_C2; // material elasticity of iab walls
-    // Data< Real > rho, nu; // iab material densities as well as Poisson ratio of elastic wall
     Data< std::string > d_mode; // mode tells whether we are expanding or compressing the IABs; accepts "compress" or "expand"
     // Data< defaulttype::RGBAColor> color; ///< isochoric spherical forcefield color. (default=[0.0,0.5,1.0,1.0])
-    // Data< Real > atol; // amount of tolerance for integral solver (see integrand.cxx)
     Data< helper::vector< unsigned int > > indices; ///< index of nodes controlled by the isochoric fields
+
+    Real m_Ri, m_Ro, m_ri, m_ro, m_C1, m_C2;  // local for internal data usage
 
     enum { N=DataTypes::spatial_dimensions };
     using DeformationGrad = defaulttype::Mat<N,N,Real>;  // defines the dimension of the deformation tensor
@@ -73,22 +72,20 @@ public:
     /// Function responsible for the initialization of the component
     void init() override;
 
+    virtual void reinit() override;
+
     /// Add the explicit forces (right hand side)
     virtual void addForce(const core::MechanicalParams* params, DataVecDeriv& f, const DataVecCoord& x, const DataVecDeriv& v) override;
+
+    // for when the bladder is being radially inflated
+    virtual void addPressure(const sofa::core::MechanicalParams* mparams, DataVecDeriv& P, DataVecDeriv& Patm, \
+                      const DataVecCoord& x1, const DataVecDeriv& v1);
 
     /// Add the explicit derivatives of the forces (contributing to the right hand side vector b)
     /// IF iterative solver: add the implicit derivatives of the forces (contributing to the left hand side matrix A)
     virtual void addDForce(const core::MechanicalParams* mparams, DataVecDeriv& d_df , const DataVecDeriv& d_dx) override;
 
-    // for when the bladder is being radially inflated
-    void addPressure(const sofa::core::MechanicalParams* mparams, DataVecDeriv& P, DataVecDeriv& Patm, \
-                      const DataVecCoord& x1, const DataVecCoord& x2, const DataVecDeriv& v1, const DataVecDeriv& v2);
-
-    virtual void reinit() override;
-
     void draw(const core::visual::VisualParams* vparams) override;
-
-
 
     /// IF direct solver: add the implicit derivatives of the forces (contributing to the left hand side matrix A)
     void addKToMatrix(sofa::defaulttype::BaseMatrix *m, SReal kFactor, unsigned int &offset) override;

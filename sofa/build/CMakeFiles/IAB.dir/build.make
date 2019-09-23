@@ -70,29 +70,59 @@ CMakeFiles/IAB.dir/plugins/IABPlugin/src/InitIABPlugin.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/IAB.dir/plugins/IABPlugin/src/InitIABPlugin.cpp.s"
 	/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/olalekanogunmolu/ros2_ws/src/superchicko/sofa/plugins/IABPlugin/src/InitIABPlugin.cpp -o CMakeFiles/IAB.dir/plugins/IABPlugin/src/InitIABPlugin.cpp.s
 
-CMakeFiles/IAB.dir/plugins/ForceFields/src/IsochoricForceField.cpp.o: CMakeFiles/IAB.dir/flags.make
-CMakeFiles/IAB.dir/plugins/ForceFields/src/IsochoricForceField.cpp.o: ../plugins/ForceFields/src/IsochoricForceField.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/olalekanogunmolu/ros2_ws/src/superchicko/sofa/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/IAB.dir/plugins/ForceFields/src/IsochoricForceField.cpp.o"
-	/usr/bin/clang++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/IAB.dir/plugins/ForceFields/src/IsochoricForceField.cpp.o -c /Users/olalekanogunmolu/ros2_ws/src/superchicko/sofa/plugins/ForceFields/src/IsochoricForceField.cpp
+CMakeFiles/IAB.dir/plugins/IABPlugin/ForceFields/src/IsochoricForceField.cpp.o: CMakeFiles/IAB.dir/flags.make
+CMakeFiles/IAB.dir/plugins/IABPlugin/ForceFields/src/IsochoricForceField.cpp.o: ../plugins/IABPlugin/ForceFields/src/IsochoricForceField.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/olalekanogunmolu/ros2_ws/src/superchicko/sofa/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/IAB.dir/plugins/IABPlugin/ForceFields/src/IsochoricForceField.cpp.o"
+	/usr/bin/clang++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/IAB.dir/plugins/IABPlugin/ForceFields/src/IsochoricForceField.cpp.o -c /Users/olalekanogunmolu/ros2_ws/src/superchicko/sofa/plugins/IABPlugin/ForceFields/src/IsochoricForceField.cpp
 
-CMakeFiles/IAB.dir/plugins/ForceFields/src/IsochoricForceField.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/IAB.dir/plugins/ForceFields/src/IsochoricForceField.cpp.i"
-	/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/olalekanogunmolu/ros2_ws/src/superchicko/sofa/plugins/ForceFields/src/IsochoricForceField.cpp > CMakeFiles/IAB.dir/plugins/ForceFields/src/IsochoricForceField.cpp.i
+CMakeFiles/IAB.dir/plugins/IABPlugin/ForceFields/src/IsochoricForceField.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/IAB.dir/plugins/IABPlugin/ForceFields/src/IsochoricForceField.cpp.i"
+	/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/olalekanogunmolu/ros2_ws/src/superchicko/sofa/plugins/IABPlugin/ForceFields/src/IsochoricForceField.cpp > CMakeFiles/IAB.dir/plugins/IABPlugin/ForceFields/src/IsochoricForceField.cpp.i
 
-CMakeFiles/IAB.dir/plugins/ForceFields/src/IsochoricForceField.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/IAB.dir/plugins/ForceFields/src/IsochoricForceField.cpp.s"
-	/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/olalekanogunmolu/ros2_ws/src/superchicko/sofa/plugins/ForceFields/src/IsochoricForceField.cpp -o CMakeFiles/IAB.dir/plugins/ForceFields/src/IsochoricForceField.cpp.s
+CMakeFiles/IAB.dir/plugins/IABPlugin/ForceFields/src/IsochoricForceField.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/IAB.dir/plugins/IABPlugin/ForceFields/src/IsochoricForceField.cpp.s"
+	/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/olalekanogunmolu/ros2_ws/src/superchicko/sofa/plugins/IABPlugin/ForceFields/src/IsochoricForceField.cpp -o CMakeFiles/IAB.dir/plugins/IABPlugin/ForceFields/src/IsochoricForceField.cpp.s
+
+CMakeFiles/IAB.dir/plugins/IABPlugin/behavior/IABConstraint.cpp.o: CMakeFiles/IAB.dir/flags.make
+CMakeFiles/IAB.dir/plugins/IABPlugin/behavior/IABConstraint.cpp.o: ../plugins/IABPlugin/behavior/IABConstraint.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/olalekanogunmolu/ros2_ws/src/superchicko/sofa/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/IAB.dir/plugins/IABPlugin/behavior/IABConstraint.cpp.o"
+	/usr/bin/clang++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/IAB.dir/plugins/IABPlugin/behavior/IABConstraint.cpp.o -c /Users/olalekanogunmolu/ros2_ws/src/superchicko/sofa/plugins/IABPlugin/behavior/IABConstraint.cpp
+
+CMakeFiles/IAB.dir/plugins/IABPlugin/behavior/IABConstraint.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/IAB.dir/plugins/IABPlugin/behavior/IABConstraint.cpp.i"
+	/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/olalekanogunmolu/ros2_ws/src/superchicko/sofa/plugins/IABPlugin/behavior/IABConstraint.cpp > CMakeFiles/IAB.dir/plugins/IABPlugin/behavior/IABConstraint.cpp.i
+
+CMakeFiles/IAB.dir/plugins/IABPlugin/behavior/IABConstraint.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/IAB.dir/plugins/IABPlugin/behavior/IABConstraint.cpp.s"
+	/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/olalekanogunmolu/ros2_ws/src/superchicko/sofa/plugins/IABPlugin/behavior/IABConstraint.cpp -o CMakeFiles/IAB.dir/plugins/IABPlugin/behavior/IABConstraint.cpp.s
+
+CMakeFiles/IAB.dir/plugins/IABPlugin/behavior/IABBaseConstraint.cpp.o: CMakeFiles/IAB.dir/flags.make
+CMakeFiles/IAB.dir/plugins/IABPlugin/behavior/IABBaseConstraint.cpp.o: ../plugins/IABPlugin/behavior/IABBaseConstraint.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/olalekanogunmolu/ros2_ws/src/superchicko/sofa/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/IAB.dir/plugins/IABPlugin/behavior/IABBaseConstraint.cpp.o"
+	/usr/bin/clang++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/IAB.dir/plugins/IABPlugin/behavior/IABBaseConstraint.cpp.o -c /Users/olalekanogunmolu/ros2_ws/src/superchicko/sofa/plugins/IABPlugin/behavior/IABBaseConstraint.cpp
+
+CMakeFiles/IAB.dir/plugins/IABPlugin/behavior/IABBaseConstraint.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/IAB.dir/plugins/IABPlugin/behavior/IABBaseConstraint.cpp.i"
+	/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/olalekanogunmolu/ros2_ws/src/superchicko/sofa/plugins/IABPlugin/behavior/IABBaseConstraint.cpp > CMakeFiles/IAB.dir/plugins/IABPlugin/behavior/IABBaseConstraint.cpp.i
+
+CMakeFiles/IAB.dir/plugins/IABPlugin/behavior/IABBaseConstraint.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/IAB.dir/plugins/IABPlugin/behavior/IABBaseConstraint.cpp.s"
+	/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/olalekanogunmolu/ros2_ws/src/superchicko/sofa/plugins/IABPlugin/behavior/IABBaseConstraint.cpp -o CMakeFiles/IAB.dir/plugins/IABPlugin/behavior/IABBaseConstraint.cpp.s
 
 # Object files for target IAB
 IAB_OBJECTS = \
 "CMakeFiles/IAB.dir/plugins/IABPlugin/src/InitIABPlugin.cpp.o" \
-"CMakeFiles/IAB.dir/plugins/ForceFields/src/IsochoricForceField.cpp.o"
+"CMakeFiles/IAB.dir/plugins/IABPlugin/ForceFields/src/IsochoricForceField.cpp.o" \
+"CMakeFiles/IAB.dir/plugins/IABPlugin/behavior/IABConstraint.cpp.o" \
+"CMakeFiles/IAB.dir/plugins/IABPlugin/behavior/IABBaseConstraint.cpp.o"
 
 # External object files for target IAB
 IAB_EXTERNAL_OBJECTS =
 
 lib/libIAB.dylib: CMakeFiles/IAB.dir/plugins/IABPlugin/src/InitIABPlugin.cpp.o
-lib/libIAB.dylib: CMakeFiles/IAB.dir/plugins/ForceFields/src/IsochoricForceField.cpp.o
+lib/libIAB.dylib: CMakeFiles/IAB.dir/plugins/IABPlugin/ForceFields/src/IsochoricForceField.cpp.o
+lib/libIAB.dylib: CMakeFiles/IAB.dir/plugins/IABPlugin/behavior/IABConstraint.cpp.o
+lib/libIAB.dylib: CMakeFiles/IAB.dir/plugins/IABPlugin/behavior/IABBaseConstraint.cpp.o
 lib/libIAB.dylib: CMakeFiles/IAB.dir/build.make
 lib/libIAB.dylib: /Users/olalekanogunmolu/sofa/v19.06/build/install/lib/libSofaGuiQt.19.06.99.dylib
 lib/libIAB.dylib: /Users/olalekanogunmolu/sofa/v19.06/build/install/lib/libSofaGuiCommon.19.06.99.dylib
@@ -171,7 +201,7 @@ lib/libIAB.dylib: /usr/local/opt/qt/lib/QtGui.framework/QtGui
 lib/libIAB.dylib: /usr/local/opt/qt/lib/QtXml.framework/QtXml
 lib/libIAB.dylib: /usr/local/opt/qt/lib/QtCore.framework/QtCore
 lib/libIAB.dylib: CMakeFiles/IAB.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/Users/olalekanogunmolu/ros2_ws/src/superchicko/sofa/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Linking CXX shared library lib/libIAB.dylib"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/Users/olalekanogunmolu/ros2_ws/src/superchicko/sofa/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Linking CXX shared library lib/libIAB.dylib"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/IAB.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

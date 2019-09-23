@@ -36,40 +36,36 @@ template<typename value_type>
 class radial_stress_r2c
 {
   public:
-    radial_stress_r2c(const value_type& ri,
-                       const value_type& ro,
-                       const value_type& Ri,
+    radial_stress_r2c(const value_type& Ri,
+                       const value_type& Ro,
+                       const value_type& ri,
                        const value_type& C1,
                        const value_type& C2);
     // Destructor
     virtual ~radial_stress_r2c();
 
-    inline value_type get_R() const;
+    // inline value_type get_r() const;
 
     value_type operator() (const value_type& r) const; // see equation 25 in ContinuumI paper
 
 private:
-  const value_type ri_, ro_, Ri_, C1_, C2_;
+  const value_type Ro_, Ri_, ri_, C1_, C2_;
 };
 
 template<typename value_type>
 class pressure_r2c
 {
   public:
-    pressure_r2c(const value_type& ri, const value_type& ro,
-                                 const value_type& Ri, const value_type& C1,
-                                 const value_type& C2);
+    pressure_r2c(const value_type& Ri, const value_type& Ro,
+                const value_type& ri, const value_type& C1,
+                const value_type& C2);
 //Destructor
 virtual ~pressure_r2c();
 value_type operator() (const value_type& r) const; // see equation 25 in ContinuumI paper
-inline value_type get_R() const;
+// inline value_type get_R() const;
 
   private:
-    const value_type ri_; // internal radius in current configuration
-    const value_type ro_; // external radius in current configuration
-    const value_type Ri_; // internal radius in reference configuration
-    const value_type C1_; // young's modulus of internal IAB wall
-    const value_type C2_; // young's modulus of internal IAB wall
+    const value_type Ro_, Ri_, ri_, C1_, C2_;
 };
 
 template<typename value_type>
