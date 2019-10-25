@@ -1,6 +1,10 @@
 cmake_minimum_required(VERSION 3.1)
-set(CMAKE_CXX_COMPILER "/usr/bin/clang++")
-project(IAB 	VERSION 1.0)
+if(APPLE)
+	set(CMAKE_CXX_COMPILER "/usr/bin/clang++")
+elseif(UNIX AND NOT APPLE)
+	set(CMAKE_CXX_COMPILER "/usr/bin/g++")
+endif()
+project(IAB VERSION 1.0)
 
 add_compile_options(-std=c++14)
 

@@ -1,8 +1,0 @@
-/Users/olalekanogunmolu/ros2_ws/src/superchicko/sofa/build/CMakeFiles/install/local.dir
-/Users/olalekanogunmolu/ros2_ws/src/superchicko/sofa/build/CMakeFiles/install/strip.dir
-/Users/olalekanogunmolu/ros2_ws/src/superchicko/sofa/build/CMakeFiles/install.dir
-/Users/olalekanogunmolu/ros2_ws/src/superchicko/sofa/build/CMakeFiles/list_install_components.dir
-/Users/olalekanogunmolu/ros2_ws/src/superchicko/sofa/build/CMakeFiles/rebuild_cache.dir
-/Users/olalekanogunmolu/ros2_ws/src/superchicko/sofa/build/CMakeFiles/edit_cache.dir
-/Users/olalekanogunmolu/ros2_ws/src/superchicko/sofa/build/CMakeFiles/IAB_Launcher.dir
-/Users/olalekanogunmolu/ros2_ws/src/superchicko/sofa/build/CMakeFiles/IAB.dir
