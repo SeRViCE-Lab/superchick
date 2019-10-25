@@ -1,5 +1,6 @@
 #include "IABPlugin/include/initIABPlugin.h"
 
+// Ref sofa/v19.06/applications/plugins/SoftRobots/src/SoftRobots/component/initSoftRobots.cpp
 
 extern "C" {
 
@@ -25,11 +26,12 @@ const char* getModuleLicense()
 
 const char* getModuleDescription()
 {
-  return "Dummy Description";
+  return "IAB Isochoric Plugin";
 }
 
 const char* getModuleComponentList()
 {
+  // see /home/lex/sofa/v19.06/applications/plugins/SoftRobots/src/SoftRobots/component/initSoftRobots.cpp
   return "None for now";
 }
 

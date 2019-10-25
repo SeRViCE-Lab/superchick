@@ -23,6 +23,16 @@ else
    echo "Proceeding with compilation"
 fi
 
-cmake ..; make -j8; make install
+cmake ..;
 
-IAB_Launcher
+if [ -f "$SOFA_ROOT/lib/libIAB.so" ]; then
+  echo "removing \"$SOFA_ROOT/lib/libIAB.so\" "
+  rm "$SOFA_ROOT/lib/libIAB.so"
+elif [ -f "$SOFA_ROOT/lib/libIAB.dylib" ]; then
+  echo "removing \"$SOFA_ROOT/lib/libIAB.dylib\" "
+  rm "$SOFA_ROOT/lib/libIAB.dylib"
+fi
+
+make DESTDIR="$SOFA_ROOT/lib" -j8; make install
+
+./IAB_Launcher

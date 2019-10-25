@@ -61,17 +61,17 @@ INCLUDE_DIRECTORIES("${CMAKE_CURRENT_SOURCE_DIR}/include")
 INCLUDE_DIRECTORIES("${PLUGINS_DIR}")
 
 set(SOURCE_FILES
-		"${PLUGINS_DIR}/IABPlugin/src/InitIABPlugin.cpp"
+		"${PLUGINS_DIR}/IABPlugin/src/initIABPlugin.cpp"
 		"${PLUGINS_DIR}/IABPlugin/ForceFields/src/IsochoricForceField.cpp"
 		"${PLUGINS_DIR}/IABPlugin/behavior/IABConstraint.cpp"
 		"${PLUGINS_DIR}/IABPlugin/behavior/IABBaseConstraint.cpp"
 		)
-
 # [Qt] Create moc code.
 qt5_wrap_cpp(MOCCED_HEADER_FILES ${HEADER_FILES_TO_MOC})
 
 # Create the plugin library.
-add_library(${PROJECT_NAME} SHARED ${HEADER_FILES_TO_MOC}
+add_library(${PROJECT_NAME} SHARED  #${HEADER_FILES}
+																		${HEADER_FILES_TO_MOC}
 																		${MOCCED_HEADER_FILES}
 																		${SOURCE_FILES})
 target_link_libraries(${PROJECT_NAME} SofaGuiQt)
@@ -85,8 +85,12 @@ set(SOFA_LIBS SofaComponentAdvanced
 
 add_executable("${PROJECT_NAME}_Launcher" src/IAB.cpp)
 target_link_libraries("${PROJECT_NAME}_Launcher" ${SOFA_LIBS})
+
+add_executable(SingleIAB src/SingleIAB.cpp)
+target_link_libraries(SingleIAB ${SOFA_LIBS})
+
 install(TARGETS ${PROJECT_NAME}
         LIBRARY DESTINATION "$ENV{SOFA_ROOT}/lib")
 
 install(DIRECTORY "$ENV{SOFA_ROOT}/lib/" DESTINATION "$ENV{SOFA_ROOT}/lib"
-				FILES_MATCHING PATTERN "*.so;*.dylib")
+				FILES_MATCHING PATTERN "*.so")
