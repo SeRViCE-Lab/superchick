@@ -5,16 +5,17 @@
 <RequiredPlugin pluginName="CImgPlugin"/>
 <RequiredPlugin name="IAB" pluginName="IAB"/>
 <EulerImplicitSolver rayleighStiffness="0.01"  rayleighMass="0.1" />
+<!--  Presumably handles Lagrange Constraint multipliers https://www.sofa-framework.org/community/doc/using-sofa/components/animationloop/multistepanimationloop/-->
+<DefaultAnimationLoop />
 	<CGLinearSolver template="GraphScattered" iterations="100" tolerance="1e-5"  threshold="1e-5"  /> -->
 		<!-- see examples/Components/mass/MeshMatrixMass.scn &
 						 https://www.sofa-framework.org/community/doc/using-sofa/components/masses/meshmatrixmass/ -->
 	<MeshSTLLoader name="sphere_loader" filename="../../../../ros/srs_traj_opt/patient_description/meshes/sphere/sphere.stl"/>
   <MechanicalObject name="spherical-states" src="@sphere_loader" template="Vec6d" />
-	<!-- externalForce="0 0 0"  restScale="1"  translation="0 0 0"  scale3d="1 1 1" scale="1" /> -->
-	<!-- <CGLinearSolver iterations="100" tolerance="1e-5" threshold="1e-5"/> -->
-	<MatrixMass defaultValue="75" />
-	<MeshSpringForceField name="Springs" stiffness="100" damping="10" />
-	<IsochoricForceField ri="40" /> <!-- templates="Vec3d"  -->
+	<!-- Note that Vec6D is not available from MatrixMass and MeshSpringForceField -->
+	<!-- <MatrixMass defaultValue="75" template="Vec3d"/> -->
+	<!-- <MeshSpringForceField name="Springs" stiffness="100" damping="10" template="Vec3d"/> -->
+	<IsochoricForceField ri="40" templates="Vec3d" />
   <Node name="SphereVisu" >
     <OglModel name="SphereVisual"  src="@../sphere_loader" translation="0 0 0" dx="-50" dy="0" dz="0" color="0.3 0.65 0.6" scale="1.5"/>
   </Node>

@@ -1,6 +1,40 @@
 #! /bin/bash
-echo -e "Clean current directory? [yn]"
-read res
+# see https://stackoverflow.com/questions/192249/how-do-i-parse-command-line-arguments-in-bash
+POSITIONAL=()
+while [[ $# -gt 0 ]]
+do key="$1"
+
+case $key in
+  -c|--clean) #  clean current working directory
+  res="$2"
+  shift # past argument
+  shift # past value
+  ;;
+  -l|--launch)  # launch iab executable?
+  launch="$2"
+  shift # past arg
+  shift # past value
+  ;;
+  -s|--soro)  # launch iab executable?
+  soro="$2"
+  shift # past arg
+  shift # past value
+  ;;
+  *) # unknown option
+  POSITIONAL+=("$1") # save in array for later use
+  shift # past arg
+  ;;
+esac
+done
+set -- "${POSITION[@]}" # restore positional parameters
+
+if [[ -z "$res" ]]; then
+  echo -e "usage: `basename $0` [-c] [-l] [-s]\n\t-c clean current build directory\n\t-l launch IAB exec after building\n\t-s launch soro exec after building?"
+  exit 1
+fi
+
+# echo -e "Clean current directory? [yn]"
+# read res
 
 is_yes() {
         yesses={y,Y,yes,Yes,YES}
@@ -16,7 +50,7 @@ is_no() {
         fi
         }
 
-if [ $(is_yes $res) ]; then
+if [[ $(is_yes $res) ]]; then
    echo -e "cleaning up cwd"
    rm -rf *;
 else
@@ -25,14 +59,21 @@ fi
 
 cmake ..;
 
-if [ -f "$SOFA_ROOT/lib/libIAB.so" ]; then
+if [[ -f "$SOFA_ROOT/lib/libIAB.so" ]]; then
   echo "removing \"$SOFA_ROOT/lib/libIAB.so\" "
   rm "$SOFA_ROOT/lib/libIAB.so"
-elif [ -f "$SOFA_ROOT/lib/libIAB.dylib" ]; then
+elif [[ -f "$SOFA_ROOT/lib/libIAB.dylib" ]]; then
   echo "removing \"$SOFA_ROOT/lib/libIAB.dylib\" "
   rm "$SOFA_ROOT/lib/libIAB.dylib"
 fi
 
 make DESTDIR="$SOFA_ROOT/lib" -j8; make install
 
-./IAB_Launcher
+if [ $(is_yes $launch) ]; then
+  ./IAB_Launcher
+elif [[ $(is_yes $soro) ]]; then
+  #echo -e "Run SingleIAB with GUI? "
+  ./SingleIAB -g true
+else
+  exit 0
+fi

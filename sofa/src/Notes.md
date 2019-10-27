@@ -64,3 +64,9 @@ See sofa/v19.06/SofaKernel/modules/sofa/frameworkextra/frameworkextra_test/simul
 
  + We can also `printDOF`, `printDOFWithElapsedTime`, `initGnuplot`, `exportGnuplot`
      - see `/sofa/v19.06/SofaKernel/framework/sofa/core/behavior/BaseMechanicalState.cpp`
+
+
+#### Run Debug Info      
+Currently, simulating a single IAB returns no mechanical state in simulation
+`[INFO]    [IsochoricForceField] No Mechanical State found, no force will be computed...
+`

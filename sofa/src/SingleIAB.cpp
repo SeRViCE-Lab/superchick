@@ -134,8 +134,9 @@ int main(int argc, char** argv)
 
     // string fileName ;
     bool noSceneCheck, temporaryFile = false;
+    bool guiViz = false;  // run the gui scene
     unsigned int nbMSSASamples = 1;
-    unsigned int computationTimeSampling=30; ///< Frequency of display of the computation time statistics, in number of animation steps. 0 means never.
+    unsigned int computationTimeSampling=1; ///< Frequency of display of the computation time statistics, in number of animation steps. 0 means never.
     string    computationTimeOutputType="stdout";
     string gui,  verif = "";
     string simulationType = "dag";
@@ -158,6 +159,7 @@ int main(int argc, char** argv)
     argParser->addArgument(po::value<std::string>(&colorsStatus)->default_value("unset", "auto")->implicit_value("yes"),"colors,c", "use colors on stdout and stderr (yes, no, auto)");
     argParser->addArgument(po::value<std::string>(&messageHandler)->default_value("auto"), "formatting,f","select the message formatting to use (auto, clang, sofa, rich, test)");
     argParser->addArgument(po::value<bool>(&enableInteraction)->default_value(false)->implicit_value(true),"interactive,i", "enable interactive mode for the GUI which includes idle and mouse events (EXPERIMENTAL)");
+    argParser->addArgument(po::value<bool>(&guiViz)->default_value(false)->implicit_value(true),"visualize,g", "display gui window at startup");
     argParser->addArgument(po::value<std::vector<std::string> >()->multitoken(), "argv","forward extra args to the python interpreter");
 
 #ifdef SOFA_SMP
@@ -261,26 +263,27 @@ int main(int argc, char** argv)
     groot->setAnimate(true);
     // test expansion and deformation here for a single soro
 
-    // if( computationTimeSampling>0 )
-    // {
-    //     sofa::helper::AdvancedTimer::setEnabled("Animate", true);
-    //     sofa::helper::AdvancedTimer::setInterval("Animate", computationTimeSampling);
-    //     sofa::helper::AdvancedTimer::setOutputType("Animate", computationTimeOutputType);
-    // }
-    //
-    // //=======================================
-    // // Run the main loop
-    // if (int err = GUIManager::MainLoop(groot,fileName.c_str()))
-    //     return err;
-    // groot = dynamic_cast<Node*>( GUIManager::CurrentSimulation() );
+    if( computationTimeSampling>0 )
+    {
+        sofa::helper::AdvancedTimer::setEnabled("Animate", true);
+        sofa::helper::AdvancedTimer::setInterval("Animate", computationTimeSampling);
+        sofa::helper::AdvancedTimer::setOutputType("Animate", computationTimeOutputType);
+    }
 
-
+    //=======================================
+    if(guiViz)
+    {
+      // Run the main loop
+      if (int err = GUIManager::MainLoop(groot,fileName.c_str()))
+          return err;
+      groot = dynamic_cast<Node*>( GUIManager::CurrentSimulation() );
+    }
 
     if (groot!=NULL)
         sofa::simulation::getSimulation()->unload(groot);
 
-
-    GUIManager::closeGUI();
+    if (guiViz)
+      GUIManager::closeGUI();
 
     sofa::simulation::common::cleanup();
     sofa::simulation::graph::cleanup();

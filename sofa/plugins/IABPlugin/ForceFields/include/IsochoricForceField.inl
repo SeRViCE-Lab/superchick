@@ -30,6 +30,7 @@
 #include <sofa/core/visual/VisualParams.h>
 #include <sofa/defaulttype/RGBAColor.h>
 #include <sofa/helper/system/config.h>
+#include <sofa/helper/logging/Messaging.h>
 
 // see SoftRobots/model/SurfacePressureModel
 namespace sofa
@@ -279,9 +280,9 @@ void IsochoricForceField<DataTypes>::addForce(const core::MechanicalParams* /*pa
     const float stress_rr = integrator<float, \
                                 radial_stress_r2c<float>>(m_ri, m_ro, \
                                       abstol, reltol, stressFunc);
-    std::cout << "Calculated normal stress based on given parameters:\n\t" <<
-      "[C1, C2, Ri, Ro, ri, ro]: [%.2f, %.2f, %.2f, %.2f, %.2f, %.2f] is \n\t"<<
-      "Sigma=%.4f " << m_C1  << m_C2 << m_Ri << m_Ro <<  m_ri << m_ro << stress_rr;
+    msg_info("IsochoricForceField") << "Calculated normal stress based on given parameters:" <<
+              "\n\tC1: " << m_C1 << " C2: " << m_C2 << " Ri: " <<  m_Ri  << " Ro: " <<  m_Ro <<
+              "\n\t ri: " <<  m_ri  <<  " ro: " << m_ro << " stress_rr: " << stress_rr <<"\n";
 }
 
 
