@@ -1,12 +1,16 @@
 <?xml version="1.0"?>
 <Node name="SphereNode">
-	<!-- <EulerImplicitSolver rayleighStiffness="0.01"  rayleighMass="0.1" />
+<APIVersion level="19.06" />
+<RequiredPlugin name="SofaOpenglVisual"/>
+<RequiredPlugin pluginName="CImgPlugin"/>
+<RequiredPlugin name="IAB" pluginName="IAB"/>
+<EulerImplicitSolver rayleighStiffness="0.01"  rayleighMass="0.1" />
 	<CGLinearSolver template="GraphScattered" iterations="100" tolerance="1e-5"  threshold="1e-5"  /> -->
 		<!-- see examples/Components/mass/MeshMatrixMass.scn &
 						 https://www.sofa-framework.org/community/doc/using-sofa/components/masses/meshmatrixmass/ -->
 	<MeshSTLLoader name="sphere_loader" filename="../../../../ros/srs_traj_opt/patient_description/meshes/sphere/sphere.stl"/>
-	<MechanicalObject name="spherical-states" src="@sphere_loader" template="Vec6d" />
-  <!-- <MechanicalObject name="spherical-states" src="@sphere_loader" template="Vec3d" externalForce="0 0 0"  restScale="1"  translation="0 0 0"  scale3d="1 1 1" scale="1" /> -->
+  <MechanicalObject name="spherical-states" src="@sphere_loader" template="Vec6d" />
+	<!-- externalForce="0 0 0"  restScale="1"  translation="0 0 0"  scale3d="1 1 1" scale="1" /> -->
 	<!-- <CGLinearSolver iterations="100" tolerance="1e-5" threshold="1e-5"/> -->
 	<MatrixMass defaultValue="75" />
 	<MeshSpringForceField name="Springs" stiffness="100" damping="10" />

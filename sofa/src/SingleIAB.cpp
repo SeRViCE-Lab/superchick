@@ -135,7 +135,7 @@ int main(int argc, char** argv)
     // string fileName ;
     bool noSceneCheck, temporaryFile = false;
     unsigned int nbMSSASamples = 1;
-    unsigned int computationTimeSampling=0; ///< Frequency of display of the computation time statistics, in number of animation steps. 0 means never.
+    unsigned int computationTimeSampling=30; ///< Frequency of display of the computation time statistics, in number of animation steps. 0 means never.
     string    computationTimeOutputType="stdout";
     string gui,  verif = "";
     string simulationType = "dag";
@@ -216,7 +216,7 @@ int main(int argc, char** argv)
         return err;
 
     // if (fileName.empty())
-    std::string fileName = DataRepository.getFile(SetDirectory::GetCurrentDir() + "/../scenes/scene_comps/IABs/sphere.scn");
+    std::string fileName = DataRepository.getFile(SetDirectory::GetCurrentDir() + "/../scenes/scene_comps/IABs/sphere_test.scn");
 
     if (int err=GUIManager::createGUI(nullptr))
         return err;
@@ -237,27 +237,44 @@ int main(int argc, char** argv)
     if (!verif.empty())
         loadVerificationData(verif, fileName, groot.get());
 
-    sofa::simulation::getSimulation()->init(groot.get());
+    sofa::simulation::getSimulation()->init(groot.get());  // similar: modules/SofaMiscForceField/SofaMiscForceField_test/MeshMatrixMass_test.cpp#L133*/
+    // see accessing node compos in v19.06/SofaKernel/framework/sofa/simulation/Node.cpp
+
     GUIManager::SetScene(groot,fileName.c_str(), temporaryFile);
-
-
+    // auto sphereNode = groot->getChild("SphereNode"); //root node has no children
+    // // get degrees of freedom
+    auto states = groot->getState();
+    // // get mechsnical degrees of freedom
+    auto mechStates = groot->getMechanicalState();
+    auto shader = groot->getShader();
+    groot->printComponents();
+    // msg_info("SphereDeform") << "states : " << states;
+    // msg_info("SphereDeform") << "mechStates : " << mechStates;
+    msg_info("SphereDeform") << "mechStates Dim: " << mechStates->getCoordDimension(); // specified by VecXd in scene file
+    msg_info("SphereDeform") << "mechStates DDim: " << mechStates->getDerivDimension();  // specified by VecXd in scene file
+    // print DOFs
+    // msg_info("SphereDeform") << mechStates->readPositions();
+    // we can get the indices of particles in the given bounding box:
+    // see /Users/olalekanogunmolu/sofa/v19.06/SofaKernel/framework/sofa/core/behavior/MechanicalState.h#L86
     //=======================================
     //Apply Options
     groot->setAnimate(true);
     // test expansion and deformation here for a single soro
 
-    if( computationTimeSampling>0 )
-    {
-        sofa::helper::AdvancedTimer::setEnabled("Animate", true);
-        sofa::helper::AdvancedTimer::setInterval("Animate", computationTimeSampling);
-        sofa::helper::AdvancedTimer::setOutputType("Animate", computationTimeOutputType);
-    }
+    // if( computationTimeSampling>0 )
+    // {
+    //     sofa::helper::AdvancedTimer::setEnabled("Animate", true);
+    //     sofa::helper::AdvancedTimer::setInterval("Animate", computationTimeSampling);
+    //     sofa::helper::AdvancedTimer::setOutputType("Animate", computationTimeOutputType);
+    // }
+    //
+    // //=======================================
+    // // Run the main loop
+    // if (int err = GUIManager::MainLoop(groot,fileName.c_str()))
+    //     return err;
+    // groot = dynamic_cast<Node*>( GUIManager::CurrentSimulation() );
 
-    //=======================================
-    // Run the main loop
-    if (int err = GUIManager::MainLoop(groot,fileName.c_str()))
-        return err;
-    groot = dynamic_cast<Node*>( GUIManager::CurrentSimulation() );
+
 
     if (groot!=NULL)
         sofa::simulation::getSimulation()->unload(groot);
