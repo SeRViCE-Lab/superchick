@@ -54,11 +54,18 @@ find_package(SofaMiscCollision REQUIRED PATHS "${CONFIG_PATHS}")
 find_package(SofaPython REQUIRED PATHS "${CONFIG_PATHS}") # why are we using this?
 find_package(Qt5 REQUIRED COMPONENTS Core Charts)
 
+# for boost ode OdeSolver
+find_package(Boost COMPONENTS #filesystem
+															#system
+															#serialization
+															thread REQUIRED)
+
 set(PLUGINS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/plugins")
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/src/cmake/macros.cmake)
-INCLUDE_DIRECTORIES("${CMAKE_CURRENT_SOURCE_DIR}/include")
-INCLUDE_DIRECTORIES("${PLUGINS_DIR}")
+INCLUDE_DIRECTORIES("${CMAKE_CURRENT_SOURCE_DIR}/include"
+										"${PLUGINS_DIR}"
+  									"${Boost_INCLUDE_DIRS}")
 
 set(SOURCE_FILES
 		"${PLUGINS_DIR}/IABPlugin/src/initIABPlugin.cpp"

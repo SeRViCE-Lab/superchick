@@ -62,6 +62,7 @@ public:
     Data< std::string > d_mode; // mode tells whether we are expanding or compressing the IABs; accepts "compress" or "expand"
     // Data< defaulttype::RGBAColor> color; ///< isochoric spherical forcefield color. (default=[0.0,0.5,1.0,1.0])
     Data< helper::vector< unsigned int > > indices; ///< index of nodes controlled by the isochoric fields
+    unsigned counter = 0;
 
     Real m_Ri, m_Ro, m_ri, m_ro, m_C1, m_C2;  // local for internal data usage
 

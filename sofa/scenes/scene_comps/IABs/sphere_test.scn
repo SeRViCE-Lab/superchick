@@ -15,7 +15,7 @@
 	<!-- Note that Vec6D is not available from MatrixMass and MeshSpringForceField -->
 	<!-- <MatrixMass defaultValue="75" template="Vec3d"/> -->
 	<!-- <MeshSpringForceField name="Springs" stiffness="100" damping="10" template="Vec3d"/> -->
-	<IsochoricForceField ri="40" templates="Vec3d" />
+	<IsochoricForceField ri="13" templates="Vec3d" />
   <Node name="SphereVisu" >
     <OglModel name="SphereVisual"  src="@../sphere_loader" translation="0 0 0" dx="-50" dy="0" dz="0" color="0.3 0.65 0.6" scale="1.5"/>
   </Node>

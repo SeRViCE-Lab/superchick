@@ -70,3 +70,5 @@ See sofa/v19.06/SofaKernel/modules/sofa/frameworkextra/frameworkextra_test/simul
 Currently, simulating a single IAB returns no mechanical state in simulation
 `[INFO]    [IsochoricForceField] No Mechanical State found, no force will be computed...
 `
+
++ computation of `ro` is correct. Pressure seems way off from matlab code.

@@ -1,5 +1,9 @@
 #include <cmath>
 
+#include <boost/numeric/odeint/stepper/runge_kutta4.hpp>
+#include <boost/numeric/odeint/stepper/runge_kutta_dopri5.hpp>
+#include <boost/numeric/odeint/algebra/vector_space_algebra.hpp>
+
 template<typename value_type, typename function_type>
 inline value_type integrator(const value_type a,
                              const value_type b,
@@ -87,3 +91,10 @@ class pressure_c2r
     const value_type C1_; // young's modulus of internal IAB wall
     const value_type C2_; // young's modulus of internal IAB wall
 };
+
+
+using namespace boost::numeric::odeint;
+using state = radial_stress_r2c<double>;
+// //use boost ode solver to P and Stress:: lot more stable than trapezoidal rule
+// runge_kutta_dopri5<state,double,state,double,vector_space_algebra> stepper;
+runge_kutta_dopri5() stepper;
