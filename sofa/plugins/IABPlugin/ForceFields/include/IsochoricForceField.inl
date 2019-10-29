@@ -32,6 +32,8 @@
 #include <sofa/helper/system/config.h>
 #include <sofa/helper/logging/Messaging.h>
 
+using namespace boost::numeric::odeint;
+
 // see SoftRobots/model/SurfacePressureModel
 namespace sofa
 {
@@ -46,9 +48,9 @@ namespace forcefield
 template<typename DataTypes>
 IsochoricForceField<DataTypes>::IsochoricForceField()
     : indices(initData(&indices, "indices", "index of nodes controlled by the isochoric deformations")),
-    d_Ri(initData(&d_Ri, Real(10), "Ri", "internal radius in the reference configuration")),
-    d_Ro(initData(&d_Ro, Real(15), "Ro", "external radius in the reference configuration")),
-    d_ri(initData(&d_ri, Real(13), "ri", "internal radius in the current configuration")),
+    d_Ri(initData(&d_Ri, Real(10.0), "Ri", "internal radius in the reference configuration")),
+    d_Ro(initData(&d_Ro, Real(15.0), "Ro", "external radius in the reference configuration")),
+    d_ri(initData(&d_ri, Real(13.0), "ri", "internal radius in the current configuration")),
     // d_ro(initData(&d_ro, Real(25), "ro", "external radius in the current configuration")),
     d_C1(initData(&d_C1, Real(1.1e4), "C1", "material elasticity of the internal IAB wall")),
     d_C2(initData(&d_C2, Real(2.2e4), "C2", "material elasticity of the outer IAB wall")),
@@ -108,8 +110,7 @@ void IsochoricForceField<DataTypes>::reinit()
 
 template<typename DataTypes>
 void IsochoricForceField<DataTypes>::addForce(const core::MechanicalParams* /*params*/,
-                                             DataVecDeriv& f,
-                                             const DataVecCoord& x,
+                                             DataVecDeriv& f, const DataVecCoord& x,
                                              const DataVecDeriv& v)
 {
     if(!mState) {
@@ -123,35 +124,35 @@ void IsochoricForceField<DataTypes>::addForce(const core::MechanicalParams* /*pa
 
     f1.resize(p1.size());
 
-    // // these from PREquivalentStiffnessForceField.inl
-    //     if(m_componentstate != ComponentState::Valid)
-    //         return ;
-
     SOFA_UNUSED(f);
     SOFA_UNUSED(x);
     SOFA_UNUSED(v);
 
     // calculate the stress and pressure needed to go from a reference configuartion to a current configuration
-    auto stressFunc = radial_stress_r2c<double>(m_Ri, m_Ro, m_ri, m_C1, m_C2);
-    // auto stress_rr = radial_stress_r2c<double>(m_Ri, m_Ro, m_ri, m_C1, m_C2);
-    // const float stress_rr = integrator<float, \
-    //                             radial_stress_r2c<float>>(m_ri, m_ro, \
-    //                                   abstol, reltol, stressFunc);
-    // using stress_rr = radial_stress_r2c<double>;
-    double stress_rr;
-  	// stepper.do_step([](const state& x, state & dxdt, const double t)->void{
-  	// 	dxdt = x;
-  	// }, stressFunc, counter, stress_rr, 0.01);
-    // ++counter;
-  	stepper.do_step_impl([](const state& x, state & dxdt, double& stateOut, const double t)->void{
-  		dxdt = x;
-  	}, stressFunc, counter, stress_rr, 0.01);
-    ++counter;
+    // auto stressFunc = radial_stress_r2c<double>(m_Ri, m_Ro, m_ri, m_C1, m_C2);
+    state_type stress_rr(1);
+    stress_rr[0] = m_Ro; // start at Ro
+    radial_stress_r2c<double> ref_2_cur(m_Ri, m_Ro, m_ri, m_C1, m_C2);
+
+    // // see https://www.boost.org/doc/libs/1_67_0/libs/numeric/odeint/doc/html/boost_numeric_odeint/odeint_in_detail/integrate_functions.html
+    // size_t steps = integrate(ref_2_cur, stress_rr, m_ri, m_ro, 1e-5 );
+
+    /*
+    From https://github.com/headmyshoulder/odeint-v2/blob/master/examples/harmonic_oscillator.cpp#L165-#L171
+    */
+        //[integrate_adapt_full
+    double abs_err = 1.0e-10 , rel_err = 1.0e-6 , a_x = 1.0 , a_dxdt = 1.0;
+    controlled_stepper_type controlled_stepper(
+        default_error_checker< double , range_algebra , default_operations >( abs_err , rel_err , a_x , a_dxdt ) );
+    integrate_adaptive( controlled_stepper , ref_2_cur , stress_rr , m_ri , m_ro , 0.01 );
+    //]
+       /* output */
     msg_info("IsochoricForceField") << "Calculated normal stress based on given parameters:" <<
-              "\n\tC1: " << m_C1 << " C2: " << m_C2 << " Ri: " <<  m_Ri  << " Ro: " <<  m_Ro <<
-              "\n\tri: " <<  m_ri  <<  " ro: " << m_ro << " stress_rr: " << stress_rr <<
-              "\n\tP: " << -1*stress_rr << "\n";
-}
+                    "\n\tC1: " << m_C1 << " C2: " << m_C2 << " Ri: " <<  m_Ri  << " Ro: " <<  m_Ro <<
+                    "\n\tri: " <<  m_ri  <<  " ro: " << m_ro << " stress_rr: " << stress_rr[0] <<
+                    "\n\tP: " << -1*stress_rr[0] << "\n";
+
+  }
 
 // for when the bladder is being radially inflated
 template<typename DataTypes>

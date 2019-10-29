@@ -1,8 +1,18 @@
 #include <cmath>
 
-#include <boost/numeric/odeint/stepper/runge_kutta4.hpp>
-#include <boost/numeric/odeint/stepper/runge_kutta_dopri5.hpp>
-#include <boost/numeric/odeint/algebra/vector_space_algebra.hpp>
+// https://www.boost.org/doc/libs/1_67_0/libs/numeric/odeint/doc/html/boost_numeric_odeint/getting_started/usage__compilation__headers.html
+#include <boost/numeric/odeint.hpp> // all steppers
+// #include <boost/numeric/odeint/algebra/XYZ.hpp> //all algebras
+// #include <boost/numeric/odeint/integrate/XYZ.hpp> // all integrate routines
+
+using namespace boost::numeric::odeint;
+// //use boost ode solver to P and Stress:: lot more stable than trapezoidal rule
+// runge_kutta_dopri5<state,double,state,double,vector_space_algebra> stepper;
+// runge_kutta_dopri5() stepper;
+
+// https://github.com/headmyshoulder/odeint-v2/blob/master/examples/harmonic_oscillator.cpp
+/* The type of container used to hold the state vector */
+typedef std::vector< double > state_type;
 
 template<typename value_type, typename function_type>
 inline value_type integrator(const value_type a,
@@ -48,13 +58,42 @@ class radial_stress_r2c
     // Destructor
     virtual ~radial_stress_r2c();
 
-    // inline value_type get_r() const;
+    // value_type operator() (const value_type& r) const; // see equation 25 in ContinuumI paper
+    void operator() (const state_type &x , state_type &dxdt , const double /* t */ ) // see equation 25 in ContinuumI paper
+    {
+      dxdt[0] = -1*(2*C1_*(x[0]/std::pow(Ro_, 2) - std::pow(Ro_, 4)/std::pow(x[0], 5)) \
+          +2*C2_*(std::pow(x[0], 3)/std::pow(Ro_, 4)-std::pow(Ro_, 2)/std::pow(x[0], 3)));
+    }
 
-    value_type operator() (const value_type& r) const; // see equation 25 in ContinuumI paper
 
 private:
   const value_type Ro_, Ri_, ri_, C1_, C2_;
 };
+
+//[ integrate_observer
+struct push_back_state_and_time
+{
+    std::vector< state_type >& m_states;
+    std::vector< double >& m_times;
+
+    push_back_state_and_time( std::vector< state_type > &states , std::vector< double > &times )
+    : m_states( states ) , m_times( times ) { }
+
+    void operator()( const state_type &x , double t )
+    {
+        m_states.push_back( x );
+        m_times.push_back( t );
+    }
+};
+
+struct write_state
+{
+    void operator()( const state_type &x ) const
+    {
+        std::cout << x[0] << "\t" << x[1] << "\n";
+    }
+};
+
 
 template<typename value_type>
 class pressure_r2c
@@ -92,9 +131,6 @@ class pressure_c2r
     const value_type C2_; // young's modulus of internal IAB wall
 };
 
-
-using namespace boost::numeric::odeint;
 using state = radial_stress_r2c<double>;
-// //use boost ode solver to P and Stress:: lot more stable than trapezoidal rule
-// runge_kutta_dopri5<state,double,state,double,vector_space_algebra> stepper;
-runge_kutta_dopri5() stepper;
+using error_stepper_type = runge_kutta_cash_karp54< state_type >;
+using controlled_stepper_type = controlled_runge_kutta< error_stepper_type >;

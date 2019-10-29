@@ -108,12 +108,12 @@ radial_stress_r2c<value_type>::~radial_stress_r2c()
 };
 
   //I have used 24|b R is the unknown variable being integrated from ri to ro
-template<typename value_type>
-value_type radial_stress_r2c<value_type>::operator() (const value_type& r)  const // see equation 25 in ContinuumI paper
-{
-  return -1*(2*C1_*(r/std::pow(Ro_, 2) - std::pow(Ro_, 4)/std::pow(r, 5)) \
-        +2*C2_*(std::pow(r, 3)/std::pow(Ro_, 4)-std::pow(Ro_, 2)/std::pow(r, 3)));
-}
+// template<typename value_type>
+// void radial_stress_r2c<value_type>::operator() (const state_type &x , state_type &dxdt , const double /* t */ ) // see equation 25 in ContinuumI paper
+// {
+//   dxdt[0] = -1*(2*C1_*(x[0]/std::pow(Ro_, 2) - std::pow(Ro_, 4)/std::pow(x[0], 5)) \
+//           +2*C2_*(std::pow(x[0], 3)/std::pow(Ro_, 4)-std::pow(Ro_, 2)/std::pow(x[0], 3)));
+// }
 
 /**
   *see equation 27 in ContinuumI paper
