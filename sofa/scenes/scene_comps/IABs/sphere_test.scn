@@ -16,8 +16,12 @@
 	<!-- <MatrixMass defaultValue="75" template="Vec3d"/> -->
 	<!-- <MeshSpringForceField name="Springs" stiffness="100" damping="10" template="Vec3d"/> -->
 	<!-- <IsochoricForceField ri="13" templates="Vec3d" /> -->
-	<IsochoricForceField ri="13" templates="Vec3d" />
-	
+	<!-- values in cm -->
+	<IsochoricForceField ri="13" Ri="10" Ro="15" C1="1.1e4" C2="2.2e4"
+				templates="Vec3d" />
+	<!-- <IsochoricForceField ri="26" Ri="13" Ro="15" C1="1.1e1" C2="2.2e1"
+				templates="Vec3d" /> -->
+
   <Node name="SphereVisu" >
     <OglModel name="SphereVisual"  src="@../sphere_loader" translation="0 0 0" dx="-50" dy="0" dz="0" color="0.3 0.65 0.6" scale="1.5"/>
   </Node>

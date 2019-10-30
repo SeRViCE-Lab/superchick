@@ -94,11 +94,6 @@ void IsochoricForceField<DataTypes>::init()
     m_ro = std::cbrt(std::pow(m_Ro, 3) - std::pow(m_Ri, 3) + \
             std::pow(m_ri, 3));
     d_ro.setValue(m_ro);
-    //  mState = dynamic_cast<core::behavior::MechanicalState<DataTypes> *> (this->getContext()->getMechanicalState());
-    // if (!mState) {
-		// msg_error("IsochoricForceField") << "MechanicalStateFilter has no binding MechanicalState" << "\n";
-    // }
-    // matS.resize(mState->getMatrixSize(), mState->getMatrixSize());
 }
 
 
@@ -113,8 +108,9 @@ void IsochoricForceField<DataTypes>::addForce(const core::MechanicalParams* /*pa
                                              DataVecDeriv& f, const DataVecCoord& x,
                                              const DataVecDeriv& v)
 {
-    if(!mState) {
-    msg_info("IsochoricForceField") << "No Mechanical State found, no force will be computed..." << "\n";
+    if(!mState)
+    {
+      msg_info("IsochoricForceField") << "No Mechanical State found, no force will be computed..." << "\n";
         return;
     }
     // Compute the forces f from the current DOFs p; here i am using the derived stress from eq 25v in paper 1
@@ -128,43 +124,19 @@ void IsochoricForceField<DataTypes>::addForce(const core::MechanicalParams* /*pa
     SOFA_UNUSED(x);
     SOFA_UNUSED(v);
 
-    // calculate the stress and pressure needed to go from a reference configuartion to a current configuration
-    // auto stressFunc = radial_stress_r2c<double>(m_Ri, m_Ro, m_ri, m_C1, m_C2);
-    state_type stress_rr(1);
-    stress_rr[0] = m_Ro; // start at Ro
-    radial_stress_r2c<double> ref_2_cur(m_Ri, m_Ro, m_ri, m_C1, m_C2);
+    // calculate the stress needed to go from a reference configuartion to a current configuration
+    radial_stress_r2c<double> sigma_r2c(m_Ri, m_Ro, m_ri, m_C1, m_C2);
+    auto stress_rr = integrator<double, radial_stress_r2c<double>>(m_ri, m_ro, abstol, reltol, sigma_r2c);
 
-    // // see https://www.boost.org/doc/libs/1_67_0/libs/numeric/odeint/doc/html/boost_numeric_odeint/odeint_in_detail/integrate_functions.html
-    // size_t steps = integrate(ref_2_cur, stress_rr, m_ri, m_ro, 1e-5 );
-
-    /*
-    From https://github.com/headmyshoulder/odeint-v2/blob/master/examples/harmonic_oscillator.cpp#L165-#L171
-    */
-        //[integrate_adapt_full
-    double abs_err = 1.0e-10 , rel_err = 1.0e-6 , a_x = 1.0 , a_dxdt = 1.0;
-    controlled_stepper_type controlled_stepper(
-        default_error_checker< double , range_algebra , default_operations >( abs_err , rel_err , a_x , a_dxdt ) );
-    integrate_adaptive( controlled_stepper , ref_2_cur , stress_rr , m_ri , m_ro , 0.01 );
-    //]
-       /* output */
+    // calculate the pressure needed to go from a reference configuartion to a current configuration
+    // pressure_r2c<double> P_r2c(m_Ri, m_Ro, m_ri, m_C1, m_C2);
+    // auto pressure = integrator<double, pressure_r2c<double>>(m_ri, m_ro, abstol, reltol, P_r2c);
+    auto pressure = -1*stress_rr;
     msg_info("IsochoricForceField") << "Calculated normal stress based on given parameters:" <<
                     "\n\tC1: " << m_C1 << " C2: " << m_C2 << " Ri: " <<  m_Ri  << " Ro: " <<  m_Ro <<
-                    "\n\tri: " <<  m_ri  <<  " ro: " << m_ro << " stress_rr: " << stress_rr[0] <<
-                    "\n\tP: " << -1*stress_rr[0] << "\n";
-
+                    "\n\tri: " <<  m_ri  <<  " ro: " << m_ro << " stress_rr: " << stress_rr <<
+                    "\n\tP: " << pressure << "\n";
   }
-
-// for when the bladder is being radially inflated
-template<typename DataTypes>
-void IsochoricForceField<DataTypes>::addPressure(const sofa::core::MechanicalParams* mparams, DataVecDeriv& P, DataVecDeriv& Patm, \
-                  const DataVecCoord& x1, const DataVecDeriv& v1)
-{
-  auto PressureFunc = pressure_r2c<float>(m_Ri, m_Ro, m_ri, m_C1, m_C2);
-  // integrate from ri to ro in r
-  const float int_pressure = integrator<float, \
-                              pressure_r2c<float>>(m_ri, m_ro, \
-                                    abstol, reltol, PressureFunc);
-}
 
 template<typename DataTypes>
 void IsochoricForceField<DataTypes>::addDForce(const core::MechanicalParams* mparams,

@@ -78,10 +78,6 @@ public:
     /// Add the explicit forces (right hand side)
     virtual void addForce(const core::MechanicalParams* params, DataVecDeriv& f, const DataVecCoord& x, const DataVecDeriv& v) override;
 
-    // for when the bladder is being radially inflated
-    virtual void addPressure(const sofa::core::MechanicalParams* mparams, DataVecDeriv& P, DataVecDeriv& Patm, \
-                      const DataVecCoord& x1, const DataVecDeriv& v1);
-
     /// Add the explicit derivatives of the forces (contributing to the right hand side vector b)
     /// IF iterative solver: add the implicit derivatives of the forces (contributing to the left hand side matrix A)
     virtual void addDForce(const core::MechanicalParams* mparams, DataVecDeriv& d_df , const DataVecDeriv& d_dx) override;

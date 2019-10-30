@@ -6,6 +6,7 @@
 * needed for a desired actuation of the IAB material
 */
 
+// see https://www.boost.org/doc/libs/1_66_0/libs/multiprecision/doc/html/boost_multiprecision/tut/floats/fp_eg/gi.html
 template<typename value_type, typename function_type>
 inline value_type integrator(const value_type a,
                              const value_type b,
@@ -37,6 +38,7 @@ inline value_type integrator(const value_type a,
 
      if((k > 1U) && (delta_abs < atol))
      {
+       std::cout << " Terminating @ delta_abs  " << delta_abs << " k " << k << "\n";
         break;
      }
 
@@ -46,17 +48,6 @@ inline value_type integrator(const value_type a,
   return I;
 }
 
-/**
-  * see equation 26 in ContinuumI paper
-  * \brief use this when you are in the current configuration and
-  * \brief trying to go back to the reference configuration
-  *
-  * \tparam Ro, Ri, are desired radii to transition to given by user
-  * \tparam R is the variable we are integrating in reference configuration
-  * \tparam r external radius in current configuration
-  * \tparam C1 material elasticity of inner IAB wall
-  * \tparam C2 material elasticity of outer IAB wall
-  */
 
 template<typename value_type>
 radial_stress_c2r<value_type>::radial_stress_c2r(const value_type& Ri, const value_type& Ro,
@@ -103,72 +94,18 @@ radial_stress_r2c<value_type>::radial_stress_r2c(const value_type& Ri, const val
 
 template<typename value_type>
 radial_stress_r2c<value_type>::~radial_stress_r2c()
-{
-// destructor implementation
-};
-
-  //I have used 24|b R is the unknown variable being integrated from ri to ro
-// template<typename value_type>
-// void radial_stress_r2c<value_type>::operator() (const state_type &x , state_type &dxdt , const double /* t */ ) // see equation 25 in ContinuumI paper
-// {
-//   dxdt[0] = -1*(2*C1_*(x[0]/std::pow(Ro_, 2) - std::pow(Ro_, 4)/std::pow(x[0], 5)) \
-//           +2*C2_*(std::pow(x[0], 3)/std::pow(Ro_, 4)-std::pow(Ro_, 2)/std::pow(x[0], 3)));
-// }
-
-/**
-  *see equation 27 in ContinuumI paper
-  * \brief use this to calculate pressure in going from
-  * \brief the reference configuration to the current configuration
-  *
-  * \tparam ri, ro, are desired current configuration
-  *         radii to transition to given by user
-  * \tparam R is the variable to be found in Reference configuration
-  * \tparam Ri internal radius in Reference configuration
-  * \tparam C1 material elasticity of inner IAB wall
-  * \tparam C2 material elasticity of outer IAB wall
-  */
+{ };
 
 template<typename value_type>
-pressure_r2c<value_type>::pressure_r2c(const value_type& Ri, const value_type& Ro,
-                          const value_type& ri,
-                          const value_type& C1, const value_type& C2)
-                          : Ri_(Ri), Ro_(Ro), ri_(ri), C1_(C1), C2_(C2)
-                          { }
-
-template<typename value_type>
-pressure_r2c<value_type>::~pressure_r2c()
+value_type radial_stress_r2c<value_type>::operator() (const value_type& r) const // see equation 25 in ContinuumI paper
 {
-  // destructor implementation
-};
-
-//I have used 26|a R is the unknown variable being integrated from ri to ro
-template<typename value_type>
-value_type pressure_r2c<value_type>::operator() (const value_type& r) const // see equation 25 in ContinuumI paper
-{
-  //return the integrand expression
-  // value_type R = get_R();
-  return 2*C1_*(r/std::pow(Ro_, 2) - std::pow(Ro_, 4)/std::pow(r, 5)) \
-        +2*C2_*(std::pow(r, 3)/std::pow(Ro_, 4)-std::pow(Ro_, 2)/std::pow(r, 3));
+  return -1*(2*C1_*(r/std::pow(Ro_, 2) \
+                -std::pow(Ro_, 4)/std::pow(r, 5)) \
+                +2*C2_*(std::pow(r, 3)/std::pow(Ro_, 4) \
+                - std::pow(Ro_, 2)/std::pow(r, 3)));
 }
 
-// template<typename value_type>
-// inline value_type pressure_r2c<value_type>::get_R() const
-// {
-//   return std::cbrt(std::pow(ro_, 3) - std::pow(ri_, 3) + std::pow(Ri_, 3));
-// }
 
-/**
-  *see equation 28 in ContinuumI paper
-  * \brief use this to calculate pressure in going from
-  * \brief the current configuration to the reference configuration
-  *
-  * \tparam ri, ro, are desired current configuration
-  *         radii to transition to given by user
-  * \tparam R is the variable to be found in Reference configuration
-  * \tparam Ri internal radius in Reference configuration
-  * \tparam C1 material elasticity of inner IAB wall
-  * \tparam C2 material elasticity of outer IAB wall
-  */
 template<typename value_type>
 pressure_c2r<value_type>::pressure_c2r(const value_type& Ri, const value_type& Ro,
                           const value_type& ri,

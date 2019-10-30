@@ -143,3 +143,100 @@
     //     m_K[n + start] = -R * m_K[n + start] * R.transposed() * coef; // modified : wasn't negated
     // }
     // f.endEdit();
+
+        /*
+        // see https://www.boost.org/doc/libs/1_67_0/libs/numeric/odeint/doc/html/boost_numeric_odeint/odeint_in_detail/integrate_functions.html
+        From https://github.com/headmyshoulder/odeint-v2/blob/master/examples/harmonic_oscillator.cpp#L165-#L171
+        */
+            /*[integrate_adapt_full
+            state_type stress_rr(1);
+            stress_rr[0] = m_Ro; // start at Ro
+        double abs_err = 1.0e-10 , rel_err = 1.0e-6 , a_x = 1.0 , a_dxdt = 1.0;
+        // controlled_stepper_type controlled_stepper(
+        //     default_error_checker< double , range_algebra , default_operations >( abs_err , rel_err , a_x , a_dxdt ) );
+            // integrate_adaptive( controlled_stepper , ref_2_cur , stress_rr , m_ri , m_ro , 0.01 );
+        controlled_stepper_type controlled_stepper;
+        integrate_adaptive( controlled_stepper , ref_2_cur , stress_rr , 0.0 , 10.0 , 0.01 );
+        */
+           /* output */
+// from integrand.inl
+
+  //I have used 24|b R is the unknown variable being integrated from ri to ro
+// template<typename value_type>
+// void radial_stress_r2c<value_type>::operator() (const state_type &x , state_type &dxdt , const double /* t */ ) // see equation 25 in ContinuumI paper
+// {
+//   dxdt[0] = -1*(2*C1_*(x[0]/std::pow(Ro_, 2) \
+//                 -std::pow(Ro_, 4)/std::pow(x[0], 5)) \
+//                 +2*C2_*(std::pow(x[0], 3)/std::pow(Ro_, 4) \
+//                 - std::pow(Ro_, 2)/std::pow(x[0], 3)));
+// }
+
+// from integrand.inl
+template<typename value_type>
+pressure_r2c<value_type>::pressure_r2c(const value_type& Ri, const value_type& Ro,
+                          const value_type& ri,
+                          const value_type& C1, const value_type& C2)
+                          : Ri_(Ri), Ro_(Ro), ri_(ri), C1_(C1), C2_(C2)
+                          { }
+
+template<typename value_type>
+pressure_r2c<value_type>::~pressure_r2c()
+{
+  // destructor implementation
+};
+
+//I have used 26|a R is the unknown variable being integrated from ri to ro
+template<typename value_type>
+value_type pressure_r2c<value_type>::operator() (const value_type& r) const // see equation 25 in ContinuumI paper
+{
+  return 2*C1_*(r/std::pow(Ro_, 2) \
+                -std::pow(Ro_, 4)/std::pow(r, 5)) \
+                +2*C2_*(std::pow(r, 3)/std::pow(Ro_, 4) \
+                - std::pow(Ro_, 2)/std::pow(r, 3));
+}
+
+//[ integrate_observer
+struct push_back_state_and_time
+{
+    std::vector< state_type >& m_states;
+    std::vector< double >& m_times;
+
+    push_back_state_and_time( std::vector< state_type > &states , std::vector< double > &times )
+    : m_states( states ) , m_times( times ) { }
+
+    void operator()( const state_type &x , double t )
+    {
+        m_states.push_back( x );
+        m_times.push_back( t );
+    }
+};
+
+struct write_state
+{
+    void operator()( const state_type &x ) const
+    {
+        std::cout << x[0]  << "\n";
+    }
+};
+
+
+template<typename value_type>
+class pressure_r2c
+{
+  public:
+    pressure_r2c(const value_type& Ri, const value_type& Ro,
+                const value_type& ri, const value_type& C1,
+                const value_type& C2);
+//Destructor
+virtual ~pressure_r2c();
+value_type operator() (const value_type& r) const; // see equation 25 in ContinuumI paper
+// inline value_type get_R() const;
+
+  private:
+    const value_type Ro_, Ri_, ri_, C1_, C2_;
+};
+
+
+using state = radial_stress_r2c<double>;
+using error_stepper_type = runge_kutta_cash_karp54< state_type >;
+using controlled_stepper_type = controlled_runge_kutta< error_stepper_type >;
