@@ -17,5 +17,11 @@
 Make your custom aliases and path commands there.
 
 
+### RUNNING
+
+In your docker environment, type `sup` into terminal. This should take you to the superchick directory. When there, `cd sofa/build` and run the `compile` bash script.
+
+That's all there is to it.
+
 FAQS:
 + Connecting a X on MAC to remote machine

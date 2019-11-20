@@ -192,9 +192,6 @@ int main(int argc, char** argv)
     sofa::gui::BaseGUI::setConfigDirectoryPath(SofaBuildPath + "/config", true);
     sofa::gui::BaseGUI::setScreenshotDirectoryPath(SetDirectory::GetCurrentDir() +  "/screenshots", true);
 
-    // if (!files.empty())
-    //     fileName = files[0];
-
     for (unsigned int i=0; i<plugins.size(); i++)
     {
       // provide full path to IAB plugin in cmd line

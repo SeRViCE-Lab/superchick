@@ -5,6 +5,11 @@ while [[ $# -gt 0 ]]
 do key="$1"
 
 case $key in
+  -b|--build) #  clean current working directory
+  build="$2"
+  shift # past argument
+  shift # past value
+  ;;
   -c|--clean) #  clean current working directory
   res="$2"
   shift # past argument
@@ -28,8 +33,10 @@ esac
 done
 set -- "${POSITION[@]}" # restore positional parameters
 
-if [[ -z "$res" ]]; then
-  echo -e "usage: `basename $0` [-c] [-l] [-s]\n\t-c clean current build directory\n\t-l launch IAB exec after building\n\t-s launch soro exec after building?"
+if [[ -z "$build" ]]; then
+  echo -e "usage: `basename $0` [-b] [-c] [-l] [-s]\n\t-c [build [clean current build directory]\n\t-l launch IAB exec after building\n\t-s launch soro exec after building?"
+  echo -e "\te.g. ../`basename $0` -b n -c n -l n -s y
+"
   exit 1
 fi
 
@@ -50,30 +57,33 @@ is_no() {
         fi
         }
 
-if [[ $(is_yes $res) ]]; then
-   echo -e "cleaning up cwd"
+if [[ $(is_yes $build) ]]; then
+   echo -e "re-building the executables and shared libraries"
    rm -rf *;
+  if [[ $(is_yes $res) ]]; then
+     echo -e "cleaning up cwd"
+     rm -rf *;
+  fi
+  cmake ..;
+
+  if [[ -f "$SOFA_ROOT/lib/libIAB.so" ]]; then
+    echo "removing \"$SOFA_ROOT/lib/libIAB.so\" "
+    rm "$SOFA_ROOT/lib/libIAB.so"
+  elif [[ -f "$SOFA_ROOT/lib/libIAB.dylib" ]]; then
+    echo "removing \"$SOFA_ROOT/lib/libIAB.dylib\" "
+    rm "$SOFA_ROOT/lib/libIAB.dylib"
+  fi
+
+  make DESTDIR="$SOFA_ROOT/lib" -j8; make install
 else
-   echo "Proceeding with compilation"
-fi
+   echo "Runing already build executable"
 
-cmake ..;
-
-if [[ -f "$SOFA_ROOT/lib/libIAB.so" ]]; then
-  echo "removing \"$SOFA_ROOT/lib/libIAB.so\" "
-  rm "$SOFA_ROOT/lib/libIAB.so"
-elif [[ -f "$SOFA_ROOT/lib/libIAB.dylib" ]]; then
-  echo "removing \"$SOFA_ROOT/lib/libIAB.dylib\" "
-  rm "$SOFA_ROOT/lib/libIAB.dylib"
-fi
-
-make DESTDIR="$SOFA_ROOT/lib" -j8; make install
-
-if [ $(is_yes $launch) ]; then
-  ./IAB_Launcher
-elif [[ $(is_yes $soro) ]]; then
-  #echo -e "Run SingleIAB with GUI? "
-  ./SingleIAB -g true
-else
-  exit 0
+    if [ $(is_yes $launch) ]; then
+      ./IAB_Launcher
+    elif [[ $(is_yes $soro) ]]; then
+      #echo -e "Run SingleIAB with GUI? "
+      ./SingleIAB -g true
+    else
+      exit 0
+    fi
 fi
