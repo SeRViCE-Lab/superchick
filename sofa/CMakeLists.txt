@@ -1,5 +1,9 @@
 cmake_minimum_required(VERSION 3.1)
 if(APPLE)
+	# homebrew installs both multithreaded and single-threaded boost
+	# in addition, due to an issue in boost 1.71's cmake support,
+	# Boost_USE_MULTITHREADED is not respected
+	option(Boost_NO_BOOST_CMAKE ON)
 	set(CMAKE_CXX_COMPILER "/usr/bin/clang++")
 elseif(UNIX AND NOT APPLE)
 	set(CMAKE_CXX_COMPILER "/usr/bin/g++")

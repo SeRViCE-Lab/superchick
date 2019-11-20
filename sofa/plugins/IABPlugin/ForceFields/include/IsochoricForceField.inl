@@ -126,7 +126,12 @@ void IsochoricForceField<DataTypes>::addForce(const core::MechanicalParams* /*pa
 
     // calculate the stress needed to go from a reference configuartion to a current configuration
     radial_stress_r2c<double> sigma_r2c(m_Ri, m_Ro, m_ri, m_C1, m_C2);
-    auto stress_rr = integrator<double, radial_stress_r2c<double>>(m_ri, m_ro, abstol, reltol, sigma_r2c);
+    // auto stress_rr = integrator<double, radial_stress_r2c<double>>(m_ri, m_ro, abstol, reltol, sigma_r2c);
+    auto stress_rr = integrator<double, radial_stress_r2c<double>>(m_ri,
+                            m_ro,
+                            abstol,
+                            reltol,
+                            radial_stress_r2c<double>(m_Ri, m_Ro, m_ri, m_C1, m_C2));
 
     // calculate the pressure needed to go from a reference configuartion to a current configuration
     // pressure_r2c<double> P_r2c(m_Ri, m_Ro, m_ri, m_C1, m_C2);

@@ -2,7 +2,7 @@
 
 /**
 * This function evaluates the definite integrals presented in the model paper
-* It solves for the radial normall stress, as well as internal pressurization
+* It solves for the radial normal stress, as well as internal pressurization
 * needed for a desired actuation of the IAB material
 */
 

@@ -64,7 +64,7 @@ if [[ $(is_yes $build) ]]; then
      echo -e "cleaning up cwd"
      rm -rf *;
   fi
-  cmake ..;
+  cmake -DBoost_NO_BOOST_CMAKE=ON ..;
 
   if [[ -f "$SOFA_ROOT/lib/libIAB.so" ]]; then
     echo "removing \"$SOFA_ROOT/lib/libIAB.so\" "
