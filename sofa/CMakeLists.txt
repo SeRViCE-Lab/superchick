@@ -54,6 +54,9 @@ find_package(SofaFramework REQUIRED PATHS "${CONFIG_PATHS}")
 find_package(SofaBase REQUIRED PATHS "${CONFIG_PATHS}")
 find_package(SofaSimulation REQUIRED PATHS "${CONFIG_PATHS}")
 find_package(SofaGui REQUIRED PATHS "${CONFIG_PATHS}")
+# find_package(SofaMisc REQUIRED)
+find_package(SceneCreator REQUIRED PATHS "${CONFIG_PATHS}")
+find_package(SofaTest REQUIRED PATHS "${CONFIG_PATHS}")
 find_package(SofaMiscCollision REQUIRED PATHS "${CONFIG_PATHS}")
 find_package(SofaPython REQUIRED PATHS "${CONFIG_PATHS}") # why are we using this?
 find_package(Qt5 REQUIRED COMPONENTS Core Charts)
@@ -99,6 +102,10 @@ target_link_libraries("${PROJECT_NAME}_Launcher" ${SOFA_LIBS})
 
 add_executable(SingleIAB src/SingleIAB.cpp)
 target_link_libraries(SingleIAB ${SOFA_LIBS})
+
+
+add_executable(deformable src/deformable.cpp)
+target_link_libraries(deformable ${SOFA_LIBS} SceneCreator)
 
 install(TARGETS ${PROJECT_NAME}
         LIBRARY DESTINATION "$ENV{SOFA_ROOT}/lib")

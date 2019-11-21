@@ -73,6 +73,13 @@ using sofa::helper::system::DataRepository;
 using sofa::helper::system::PluginRepository;
 using sofa::helper::system::PluginManager;
 
+
+// myne
+// #include <SofaComponentMass/.h>
+#include <SofaMiscForceField/MeshMatrixMass.h>
+
+using sofa::component::mass::MeshMatrixMass;
+
 // see http://www.decompile.com/cpp/faq/file_and_line_error_string.htm
 #define STRINGIFY(x) #x
 #define TOSTRING(x) STRINGIFY(x)
@@ -249,10 +256,15 @@ int main(int argc, char** argv)
     groot->printComponents();
     // msg_info("SphereDeform") << "states : " << states;
     // msg_info("SphereDeform") << "mechStates : " << mechStates;
+    msg_info("SphereDeform") << "states (DoFs): " << states; // get degrees of freedom
+    // msg_info("SphereDeform") << "mechStates values: " << mechStates->x.getValue(); // specified by VecXd in scene file
     msg_info("SphereDeform") << "mechStates Dim: " << mechStates->getCoordDimension(); // specified by VecXd in scene file
-    msg_info("SphereDeform") << "mechStates DDim: " << mechStates->getDerivDimension();  // specified by VecXd in scene file
-    // print DOFs
-    // msg_info("SphereDeform") << mechStates->readPositions();
+    msg_info("SphereDeform") << "mechStates Dim Derivs: " << mechStates->getDerivDimension();  // specified by VecXd in scene file
+    msg_info("SphereDeform") << "mechStates Template Name: " << mechStates->getTemplateName(); // returns sofa::core::behavior::BaseMechanicalState has no member named ‘readPositions’
+
+    // test random rotation and translation of scene:
+      // v19.06/modules/SofaGeneralDeformable/SofaGeneralDeformable_test/StiffSpringForceField_test.cpp#95
+    
     // we can get the indices of particles in the given bounding box:
     // see /Users/olalekanogunmolu/sofa/v19.06/SofaKernel/framework/sofa/core/behavior/MechanicalState.h#L86
     //=======================================

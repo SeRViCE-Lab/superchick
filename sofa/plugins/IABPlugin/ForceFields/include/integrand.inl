@@ -109,8 +109,13 @@ value_type radial_stress_r2c<value_type>::operator() (const value_type& r) const
 template<typename value_type>
 pressure_c2r<value_type>::pressure_c2r(const value_type& Ri, const value_type& Ro,
                           const value_type& ri,
-                          const value_type& C1, const value_type& C2)
-                          : Ri_(Ri), Ro_(Ro), ri_(ri), C1_(C1), C2_(C2)
+                          const value_type& C1,
+                          const value_type& C2)
+                          : Ri_(Ri), 
+                          Ro_(Ro),
+                          ri_(ri),
+                          C1_(C1),
+                          C2_(C2)
                           { }
 
 template<typename value_type>

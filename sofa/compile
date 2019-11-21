@@ -75,15 +75,15 @@ if [[ $(is_yes $build) ]]; then
   fi
 
   make DESTDIR="$SOFA_ROOT/lib" -j8; make install
-else
-   echo "Runing already build executable"
+fi
 
-    if [ $(is_yes $launch) ]; then
-      ./IAB_Launcher
-    elif [[ $(is_yes $soro) ]]; then
-      #echo -e "Run SingleIAB with GUI? "
-      ./SingleIAB -g true
-    else
-      exit 0
-    fi
+   # echo "Runing already build executable"
+
+if [ $(is_yes $launch) ]; then
+  ./IAB_Launcher -g true
+elif [[ $(is_yes $soro) ]]; then
+  #echo -e "Run SingleIAB with GUI? "
+  ./SingleIAB -g true
+else
+  exit 0
 fi
