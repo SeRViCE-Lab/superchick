@@ -21,7 +21,7 @@
 ******************************************************************************/
 #include <SofaDeformable/StiffSpringForceField.h>
 #include </sofa/applications/plugins/SofaTest/ForceField_test.h>
-// #include <SofaTest/ForceField_test.h>
+#include <SofaTest/ForceField_test.h>
 #include <sofa/defaulttype/RigidTypes.h>
 #include <SofaImplicitOdeSolver/EulerImplicitSolver.h>
 #include <SofaBaseLinearSolver/CGLinearSolver.h>

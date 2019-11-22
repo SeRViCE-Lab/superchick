@@ -3,7 +3,7 @@ if(APPLE)
 	# homebrew installs both multithreaded and single-threaded boost
 	# in addition, due to an issue in boost 1.71's cmake support,
 	# Boost_USE_MULTITHREADED is not respected
-	option(Boost_NO_BOOST_CMAKE ON)
+	option("Boost_NO_BOOST_CMAKE" ON)
 	set(CMAKE_CXX_COMPILER "/usr/bin/clang++")
 elseif(UNIX AND NOT APPLE)
 	set(CMAKE_CXX_COMPILER "/usr/bin/g++")
@@ -104,8 +104,10 @@ add_executable(SingleIAB src/SingleIAB.cpp)
 target_link_libraries(SingleIAB ${SOFA_LIBS})
 
 
-add_executable(deformable src/deformable.cpp)
-target_link_libraries(deformable ${SOFA_LIBS} SceneCreator)
+# add_executable(deformable src/oneParticle.cpp)
+# target_link_libraries(deformable ${SOFA_LIBS} SceneCreator)
+add_executable(oneParticle src/oneParticle.cpp)
+target_link_libraries(oneParticle ${SOFA_LIBS} SceneCreator)
 
 install(TARGETS ${PROJECT_NAME}
         LIBRARY DESTINATION "$ENV{SOFA_ROOT}/lib")
