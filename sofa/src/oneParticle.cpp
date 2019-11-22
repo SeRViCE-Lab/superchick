@@ -33,7 +33,7 @@
 #include <sofa/gui/Main.h>
 
 // #include <sofa/helper/system/glut.h>
-#include <glut.h>
+// #include <glut.h>
 #include <sofa/helper/accessor.h>
 
 #include <SofaComponentCommon/initComponentCommon.h>
@@ -42,7 +42,12 @@
 #include <SofaComponentAdvanced/initComponentAdvanced.h>
 #include <SofaComponentMisc/initComponentMisc.h>
 
-
+// using namespace sofa::modeling;
+using namespace sofa::component::container;
+using namespace sofa::core::behavior;
+// using sofa::component::mass;
+// using namespace sofa::simulation;
+using namespace sofa;
 
 using sofa::component::odesolver::EulerSolver;
 using namespace sofa::component::collision;
@@ -52,6 +57,10 @@ using sofa::helper::WriteAccessor;
 using sofa::core::VecId;
 using sofa::core::objectmodel::New;
 
+using Coord3=sofa::defaulttype::Vec3d;
+using Deriv3=sofa::defaulttype::Vec3Types::Deriv;
+using MechanicalObject3=sofa::component::container::MechanicalObject< sofa::defaulttype::Vec3Types >;
+// using UniformMass3=sofa::component::mass::UniformMass<sofa::defaulttype::Vec3Types, SReal> ;
 // ---------------------------------------------------------------------
 // ---
 // ---------------------------------------------------------------------
@@ -72,7 +81,7 @@ int main(int argc, char** argv)
     // The graph root node
     sofa::simulation::setSimulation(new sofa::simulation::graph::DAGSimulation());
     sofa::simulation::Node::SPtr groot = sofa::simulation::getSimulation()->createNewGraph("root");
-    groot->setGravity( Coord3(0,-10,0) );
+    groot->setGravity( defaulttype::Vec3(0,-10,0) );
 
     // One solver for all the graph
     EulerSolver::SPtr solver = sofa::core::objectmodel::New<EulerSolver>();
@@ -84,6 +93,7 @@ int main(int argc, char** argv)
     sofa::simulation::Node::SPtr particule_node = groot.get()->createChild("particle_node");
     // The particule, i.e, its degrees of freedom : a point with a velocity
     MechanicalObject3::SPtr dof = sofa::core::objectmodel::New<MechanicalObject3>();
+    // auto dof = sofa::core::objectmodel::New< sofa::component::container::MechanicalObject<sofa::defaulttype::::Vec<3, SReal>> >();
     dof->setName("particle");
     particule_node->addObject(dof);
     dof->resize(1);
@@ -98,10 +108,10 @@ int main(int argc, char** argv)
     dof->showObjectScale.setValue(10.);
 
     // Its properties, i.e, a simple mass node
-    UniformMass3::SPtr mass = sofa::core::objectmodel::New<UniformMass3>();
-    mass->setName("mass");
-    particule_node->addObject(mass);
-    mass->setMass( 1 );
+    // UniformMass3::SPtr mass = sofa::core::objectmodel::New<UniformMass3>();
+    // mass->setName("mass");
+    // particule_node->addObject(mass);
+    // mass->setMass( 1 );
 
     // this currently reveals a bug
 //    // attach a collision surface to the particle

@@ -264,7 +264,7 @@ int main(int argc, char** argv)
 
     // test random rotation and translation of scene:
       // v19.06/modules/SofaGeneralDeformable/SofaGeneralDeformable_test/StiffSpringForceField_test.cpp#95
-    
+
     // we can get the indices of particles in the given bounding box:
     // see /Users/olalekanogunmolu/sofa/v19.06/SofaKernel/framework/sofa/core/behavior/MechanicalState.h#L86
     //=======================================
@@ -298,3 +298,5 @@ int main(int argc, char** argv)
     sofa::simulation::graph::cleanup();
     return 0;
 }
+
+///applications/plugins/SofaTest/Elasticity_test.inl
