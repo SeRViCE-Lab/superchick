@@ -4,3 +4,6 @@
 [submodule "sofa/SoftRobots"]
 	path = sofa/SoftRobots
 	url = git@github.com:lakehanne/SoftRobots
+[submodule "srs_traj_opt"]
+	path = srs_traj_opt
+	url = git@github.com:lakehanne/srs_traj_opt
