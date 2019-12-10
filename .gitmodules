@@ -1,12 +1,14 @@
 [submodule "ros/srs_traj_opt"]
 	path = ros/srs_traj_opt
 	url = git@github.com:lakehanne/srs_traj_opt
+	branch = devel
 [submodule "sofa/SoftRobots"]
 	path = sofa/SoftRobots
 	url = git@github.com:lakehanne/SoftRobots
 [submodule "srs_traj_opt"]
 	path = srs_traj_opt
 	url = git@github.com:lakehanne/srs_traj_opt
+	branch = devel
 [submodule "ros/ros/srs_traj_opt"]
 	path = ros/ros/srs_traj_opt
 	url = git@github.com:lakehanne/srs_traj_opt
