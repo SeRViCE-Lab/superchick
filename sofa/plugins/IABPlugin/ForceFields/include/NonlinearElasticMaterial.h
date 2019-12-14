@@ -80,18 +80,18 @@ public:
   }
 
 	/** computes the transpose of the first Piola Kirchhoff stress tensor of the current configuration */
-    virtual Real PiolaKirchoffTensor(StrainInformation<DataTypes> *, const  MaterialParameters<DataTypes> &,MatrixSym &){
+    virtual Real PiolaKirchoffTensor(StrainInformation<DataTypes> *, const  MaterialParameters<DataTypes> &){
 	}
 	/** computes the Elasticity Tensor of the current configuration */
 
-    virtual void applyElasticityTensor(StrainInformation<DataTypes> *, const  MaterialParameters<DataTypes> &,const MatrixSym& , MatrixSym &)  {
-
-	}
-
-	virtual void ElasticityTensor(StrainInformation<DataTypes> *, const  MaterialParameters<DataTypes> &, Matrix6&) {;}
-
-
-};
+//     virtual void applyElasticityTensor(StrainInformation<DataTypes> *, const  MaterialParameters<DataTypes> &,const MatrixSym& , MatrixSym &)  {
+//
+// 	}
+//
+// 	virtual void ElasticityTensor(StrainInformation<DataTypes> *, const  MaterialParameters<DataTypes> &, Matrix6&) {;}
+//
+//
+// };
 
 /** structure that store the parameters required to that are necessary to compute the strain energy
 The material parameters might be constant in space (homogeneous material) or not */
