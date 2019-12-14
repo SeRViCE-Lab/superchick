@@ -54,7 +54,7 @@ find_package(SofaFramework REQUIRED PATHS "${CONFIG_PATHS}")
 find_package(SofaBase REQUIRED PATHS "${CONFIG_PATHS}")
 find_package(SofaSimulation REQUIRED PATHS "${CONFIG_PATHS}")
 find_package(SofaGui REQUIRED PATHS "${CONFIG_PATHS}")
-# find_package(SofaMisc REQUIRED)
+find_package(SofaMiscFEM REQUIRED) #for hyperelasticity
 find_package(SceneCreator REQUIRED PATHS "${CONFIG_PATHS}")
 find_package(SofaTest REQUIRED PATHS "${CONFIG_PATHS}")
 find_package(SofaMiscCollision REQUIRED PATHS "${CONFIG_PATHS}")
@@ -103,13 +103,8 @@ add_executable("${PROJECT_NAME}_Launcher" src/IAB.cpp)
 target_link_libraries("${PROJECT_NAME}_Launcher" ${SOFA_LIBS})
 
 add_executable(SingleIAB src/SingleIAB.cpp)
-target_link_libraries(SingleIAB ${SOFA_LIBS})
+target_link_libraries(SingleIAB ${SOFA_LIBS} SofaMiscFem)
 
-
-add_executable(deformable src/oneParticle.cpp)
-target_link_libraries(deformable ${SOFA_LIBS} SceneCreator)
-add_executable(oneParticle src/oneParticle.cpp)
-target_link_libraries(oneParticle ${SOFA_LIBS} SceneCreator)
 
 install(TARGETS ${PROJECT_NAME}
         LIBRARY DESTINATION "$ENV{SOFA_ROOT}/lib")
