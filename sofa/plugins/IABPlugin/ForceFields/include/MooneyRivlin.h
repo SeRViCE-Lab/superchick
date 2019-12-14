@@ -1,31 +1,6 @@
-/******************************************************************************
-*       SOFA, Simulation Open-Framework Architecture, development version     *
-*                (c) 2006-2019 INRIA, USTL, UJF, CNRS, MGH                    *
-*                                                                             *
-* This program is free software; you can redistribute it and/or modify it     *
-* under the terms of the GNU Lesser General Public License as published by    *
-* the Free Software Foundation; either version 2.1 of the License, or (at     *
-* your option) any later version.                                             *
-*                                                                             *
-* This program is distributed in the hope that it will be useful, but WITHOUT *
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or       *
-* FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License *
-* for more details.                                                           *
-*                                                                             *
-* You should have received a copy of the GNU Lesser General Public License    *
-* along with this program. If not, see <http://www.gnu.org/licenses/>.        *
-*******************************************************************************
-* Authors: The SOFA Team and external contributors (see Authors.txt)          *
-*                                                                             *
-* Contact information: contact@sofa-framework.org                             *
-******************************************************************************/
-// #ifndef SOFA_COMPONENT_FEM_MOONEYRIVLIN_H
-// #define SOFA_COMPONENT_FEM_MOONEYRIVLIN_H
-// #include "config.h"
-
-
+// Ripped off /home/lex/sofa/modules/SofaMiscFem/MooneyRivlin.h
 #include <SofaMiscFem/initMiscFEM.h>
-#include <SofaMiscFem/HyperelasticMaterial.h>
+#include <IABPlugin/ForceFields/include/NonlinearElasticMaterial.h>
 #include <sofa/defaulttype/Vec.h>
 #include <sofa/defaulttype/Mat.h>
 #include <string>
@@ -50,7 +25,7 @@ the determinant of the deformation gradient J and the right Cauchy Green deforma
 
 
 template<class DataTypes>
-class MooneyRivlin : public HyperelasticMaterial<DataTypes>{
+class MooneyRivlin : public NonlinearElasticMaterial<DataTypes>{
 
   typedef typename DataTypes::Coord::value_type Real;
   typedef defaulttype::Mat<3,3,Real> Matrix3;
@@ -58,34 +33,38 @@ class MooneyRivlin : public HyperelasticMaterial<DataTypes>{
   typedef defaulttype::MatSym<3,Real> MatrixSym;
 
   virtual Real getStrainEnergy(StrainInformation<DataTypes> *sinfo, const MaterialParameters<DataTypes> &param) {
-	  MatrixSym inversematrix;
-		MatrixSym C=sinfo->deformationTensor;
-		invertMatrix(inversematrix,C);
-		Real I1=sinfo->trC;
-		Real I1square=(Real)(C[0]*C[0] + C[2]*C[2]+ C[5]*C[5]+2*(C[1]*C[1] + C[3]*C[3] + C[4]*C[4]));
-		Real I2=(Real)((pow(I1,(Real)2)- I1square)/2);
-		Real c1=param.parameterArray[0];
-		Real c2=param.parameterArray[1];
-		Real k0=param.parameterArray[2];
-		return c1*(I1*pow(sinfo->J,(-2/3))-3)+c2*(I2*pow(sinfo->J,(-4/3)))+k0*log(sinfo->J)*log(sinfo->J)/2;
-
+	  MatrixSym Finv;
+		MatrixSym F=sinfo->deformationTensor;
+		invertMatrix(Finv,F);
+		Real I1=sinfo->trF; // or (Real) trace(F);
+		// Real I1square=(Real)(F[0]*F[0] + F[2]*F[2]+ F[5]*F[5]+2*(F[1]*F[1] + F[3]*F[3] + F[4]*F[4]));
+		// Real I2=(Real)((pow(I1,(Real)2)- I1square)/2);
+    Real I2=(Real)trace(Finv);
+		Real C1=param.parameterArray[0];
+		Real C2=param.parameterArray[1];
+		// Real k0=param.parameterArray[2];
+		// return C1*(I1*pow(sinfo->J,(-2/3))-3)+C2*(I2*pow(sinfo->J,(-4/3)))+k0*log(sinfo->J)*log(sinfo->J)/2;
+    return .5*C1*(I1-3) + .5*C2*(I2-3);
   }
 
-	 virtual void deriveSPKTensor(StrainInformation<DataTypes> *sinfo, const MaterialParameters<DataTypes> &param,MatrixSym &SPKTensorGeneral){
-		MatrixSym inversematrix;
-		MatrixSym C=sinfo->deformationTensor;
-		invertMatrix(inversematrix,C);
-		Real I1=sinfo->trC;
-		Real I1square=(Real)(C[0]*C[0] + C[2]*C[2]+ C[5]*C[5]+2*(C[1]*C[1] + C[3]*C[3] + C[4]*C[4]));
-		Real I2=(Real)((pow(I1,(Real)2)- I1square)/2);
-		Real c1=param.parameterArray[0];
-		Real c2=param.parameterArray[1];
-		Real k0=param.parameterArray[2];
-		MatrixSym ID;
-		ID.identity();
-		SPKTensorGeneral=(-1*inversematrix*I1/3+ID)*(2*c1*pow(sinfo->J,(Real)(-2.0/3.0)))+(-1*inversematrix*2*I2/3+ID*I1-C)*(2*c2*pow(sinfo->J,(Real)(-4.0/3.0)))+inversematrix*k0*log(sinfo->J);
-	}
+  virtual Real getStressTensor(StrainInformation<DataTypes> *sinfo, const  MaterialParameters<DataTypes> &param) {
 
+    Real C1=param.parameterArray[0];
+    Real C2=param.parameterArray[1];
+    Matrix3 identityMatrix = Identity();
+    MatrixSym rightCauchyInv;
+    invertMatrix(rightCauchyInv, sinfo->rightCauchy);
+    return C1*sinfo->leftCauchy-C2*rightCauchyInv-hydrostaticPressure*identityMatrix);
+  }
+
+  virtual Real PiolaKirchoffTensor(StrainInformation<DataTypes> *, const  MaterialParameters<DataTypes> &,MatrixSym &){
+      // S = J H^T \sigma
+      MatrixSym F=sinfo->deformationTensor;
+      MatrixSym Finv;
+      invertMatrix(Finv,F);
+      H = Finv.transposed();
+      Real J = determinant(F);
+  }
 
     virtual void applyElasticityTensor(StrainInformation<DataTypes> *sinfo, const MaterialParameters<DataTypes> &param,const MatrixSym& inputTensor, MatrixSym &outputTensor)  {
 		MatrixSym inversematrix;
