@@ -3,7 +3,7 @@
 xhost +local:root
 
 # export SOFA_ROOT=/sofa/build
-export IMAGE=lakehanne/sofa:IAB
+export IMAGE=lakehanne/sofa:python
 
 if [[ "$(uname -s)" == 'Linux'  ]]; then
     echo -e "OS: Linux. Running docker on $IMAGE\n"
