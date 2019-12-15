@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<Node name="DomeNode">
+	<!-- <EulerImplicitSolver rayleighStiffness="0.01"  rayleighMass="0.1" />
+	<CGLinearSolver template="GraphScattered" iterations="100" tolerance="1e-5"  threshold="1e-5"  /> -->
+		<!-- see examples/Components/mass/MeshMatrixMass.scn &
+						 https://www.sofa-framework.org/community/doc/using-sofa/components/masses/meshmatrixmass/ -->
+	<MeshSTLLoader name="dome_loader" filename="../../../../ros/srs_traj_opt/patient_description/meshes/dome/dome.stl"/>
+	<MechanicalObject name="dome-states" src="@dome_loader" template="Vec6d" />
+	<!-- <MatrixMass defaultValue="75" /> -->
+	<!-- <MeshSpringForceField name="Springs" stiffness="100" damping="10" /> -->
+  <Node name="DomeVisu" >
+    <OglModel name="DomeVisual"  src="@../dome_loader" translation="0 0 0" dx="0" dy="0" dz="0" color="magenta" scale="2"/>
+  </Node>
+<Node 	 name="DomeCollis"  >
+  <MeshObjLoader name="dome-collis-loader"  filename="../../../../ros/srs_traj_opt/patient_description/meshes/dome/dome.obj"  scale="1.5"/>
+  <MeshTopology name="meshTopology"  />
+  <MechanicalObject template="Vec3d" name="dome-collis-states"  velocity="0 0 0"  force="0 0 0"  externalForce="0 0 0" />
+</Node>
+
+<!-- Mesh base for dome == locks with cover -->
+<MeshSTLLoader name="dome_loader" filename="../../../../ros/srs_traj_opt/patient_description/meshes/dome/mesh_base.stl"/>
+<MechanicalObject name="dome-states" src="@dome_loader" template="Vec6d" />
+<!-- <MatrixMass defaultValue="75" /> -->
+<!-- <MeshSpringForceField name="Springs" stiffness="100" damping="10" /> -->
+<Node name="DomeVisu" >
+	<OglModel name="DomeVisual"  src="@../dome_loader" translation="0 0 0" dx="0" dy="0" dz="0" color="magenta" scale="2"/>
+</Node>
+<Node 	 name="DomeCollis"  >
+	<MeshObjLoader name="dome-collis-loader"  filename="../../../../ros/srs_traj_opt/patient_description/meshes/dome/mesh_base.obj"  scale="2"/>
+	<MeshTopology name="meshTopology"  />
+	<MechanicalObject template="Vec3d" name="dome-collis-states"  velocity="0 0 0"  force="0 0 0"  externalForce="0 0 0" />
+</Node>
+
+
+</Node>

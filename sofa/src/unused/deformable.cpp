@@ -20,8 +20,8 @@
 * Contact information: contact@sofa-framework.org                             *
 ******************************************************************************/
 #include <SofaDeformable/StiffSpringForceField.h>
-#include </sofa/applications/plugins/SofaTest/ForceField_test.h>
-#include <SofaTest/ForceField_test.h>
+// #include </sofa/applications/plugins/SofaTest/ForceField_test.h>
+// #include <SofaTest/ForceField_test.h>
 #include <sofa/defaulttype/RigidTypes.h>
 #include <SofaImplicitOdeSolver/EulerImplicitSolver.h>
 #include <SofaBaseLinearSolver/CGLinearSolver.h>
@@ -296,26 +296,26 @@ int main(int argc, char** argv)
   // sofa::component::interactionforcefield::StiffSpringForceField<sofa::defaulttype::Vec3Types>   // 3D
   // > TestTypes; //
   sofa::StiffSpringForceField_test<TestTypes>* ff_test = new sofa::StiffSpringForceField_test<TestTypes>();
-  // sofa::StiffSpringForceField_test ff_test; // = new sofa::StiffSpringForceField_test();
-  //
-  // SReal
-  //         k = 1.0,  // stiffness
-  //         d = 0.1,  // damping ratio
-  //         l0 = 1.0; // rest length
-  //
-  // typename TestFixture::Vec3
-  //         x0(0,0,0), // position of the first particle
-  //         v0(0,0,0), // velocity of the first particle
-  //         x1(2,0,0), // position of the second particle
-  //         v1(0,0,0), // velocity of the second particle
-  //         f0(1,0,0); // expected force on the first particle
-  //
-  // // // use the parent  class to automatically test the functions
-  // ff_test.test_2particles(k,d,l0, x0,v0, x1,v1, f0);
-  // velocity, no extension
-  // sofa::TYPED_TEST( sofa::StiffSpringForceField_test , viscosity );
-  // // extension, two particles in different nodes
-  // sofa::TYPED_TEST( StiffSpringForceField_test , extension_in_parent_and_child );
+  sofa::StiffSpringForceField_test ff_test; // = new sofa::StiffSpringForceField_test();
+
+  SReal
+          k = 1.0,  // stiffness
+          d = 0.1,  // damping ratio
+          l0 = 1.0; // rest length
+
+  typename TestFixture::Vec3
+          x0(0,0,0), // position of the first particle
+          v0(0,0,0), // velocity of the first particle
+          x1(2,0,0), // position of the second particle
+          v1(0,0,0), // velocity of the second particle
+          f0(1,0,0); // expected force on the first particle
+
+  // // use the parent  class to automatically test the functions
+  ff_test.test_2particles(k,d,l0, x0,v0, x1,v1, f0);
+  velocity, no extension
+  sofa::TYPED_TEST( sofa::StiffSpringForceField_test , viscosity );
+  // extension, two particles in different nodes
+  sofa::TYPED_TEST( StiffSpringForceField_test , extension_in_parent_and_child );
 
   return EXIT_SUCCESS;
 }

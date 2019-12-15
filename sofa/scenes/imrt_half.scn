@@ -33,7 +33,7 @@
         <include name="NeckRight" href="scene_comps/IABs/sphere.scn"  Ri="10" Ro="15" ri="13"
                 C1="1.1e4" C2="2.2e4" dx="-135" dy="-50" dz="-115" color="magenta" scale="1.8"/>
       </Node>
-      
+      <!--
       <Node name="SideChains">
         <include name="ForeLeft" href="scene_comps/IABs/sphere.scn" Ri="10" Ro="15" ri="13"
                 C1="1.1e4" C2="2.2e4" dx="20" dy="100" dz="95" color="0.3 0.65 0.6" scale="1.8"/>
@@ -44,7 +44,7 @@
         <include name="ChinLeft" href="scene_comps/IABs/sphere.scn" Ri="10" Ro="15" ri="13"
                 C1="1.1e4" C2="2.2e4" dx="-150" dy="100" dz="-160" color="0.3 0.65 0.6" scale="1.8"/>
       </Node>
-
+-->
     </Node>
   </Node>
 

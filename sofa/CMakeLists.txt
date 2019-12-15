@@ -14,7 +14,7 @@ add_compile_options(-std=c++14)
 
  # best to read SOFA_ROOTfrom cmd line due to different requirements
  if("${SOFA_ROOT}" STREQUAL "")
- 	# see if it can be retrieved from ENV VAR
+ # 	# see if it can be retrieved from ENV VAR
 	if($ENV{SOFA_ROOT} STREQUAL "")
 	 	message(FATAL_ERROR "\nYou must explicitly provide the path to sofa root build directory if"
 		 					"you have not set the SOFA_ROOT envionment name"
@@ -54,7 +54,7 @@ find_package(SofaFramework REQUIRED PATHS "${CONFIG_PATHS}")
 find_package(SofaBase REQUIRED PATHS "${CONFIG_PATHS}")
 find_package(SofaSimulation REQUIRED PATHS "${CONFIG_PATHS}")
 find_package(SofaGui REQUIRED PATHS "${CONFIG_PATHS}")
-# find_package(SofaMisc REQUIRED)
+find_package(SofaMiscFEM REQUIRED) #for hyperelasticity
 find_package(SceneCreator REQUIRED PATHS "${CONFIG_PATHS}")
 find_package(SofaTest REQUIRED PATHS "${CONFIG_PATHS}")
 find_package(SofaMiscCollision REQUIRED PATHS "${CONFIG_PATHS}")
@@ -63,8 +63,8 @@ find_package(Qt5 REQUIRED COMPONENTS Core Charts)
 
 # for boost ode OdeSolver
 find_package(Boost COMPONENTS #filesystem
-															#system
-															#serialization
+															system
+															serialization
 															thread REQUIRED)
 
 set(PLUGINS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/plugins")
@@ -90,6 +90,8 @@ add_library(${PROJECT_NAME} SHARED  #${HEADER_FILES}
 																		${SOURCE_FILES})
 target_link_libraries(${PROJECT_NAME} SofaGuiQt)
 
+# adding this because of GLEW conflicts
+link_directories($ENV{SOFA_ROOT}/install/lib/)
 
 set(SOFA_LIBS SofaComponentAdvanced
 							SofaComponentMisc
@@ -101,13 +103,8 @@ add_executable("${PROJECT_NAME}_Launcher" src/IAB.cpp)
 target_link_libraries("${PROJECT_NAME}_Launcher" ${SOFA_LIBS})
 
 add_executable(SingleIAB src/SingleIAB.cpp)
-target_link_libraries(SingleIAB ${SOFA_LIBS})
+target_link_libraries(SingleIAB ${SOFA_LIBS} SofaMiscFem)
 
-
-# add_executable(deformable src/oneParticle.cpp)
-# target_link_libraries(deformable ${SOFA_LIBS} SceneCreator)
-add_executable(oneParticle src/oneParticle.cpp)
-target_link_libraries(oneParticle ${SOFA_LIBS} SceneCreator)
 
 install(TARGETS ${PROJECT_NAME}
         LIBRARY DESTINATION "$ENV{SOFA_ROOT}/lib")

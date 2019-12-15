@@ -25,3 +25,14 @@ That's all there is to it.
 
 FAQS:
 + Connecting a X on MAC to remote machine
+
+### Problems
+
+Selecting default xcode to use for CMD Line Tools
+
+https://developer.apple.com/library/archive/technotes/tn2339/_index.html#//apple_ref/doc/uid/DTS40014588-CH1-HOW_DO_I_SELECT_THE_DEFAULT_VERSION_OF_XCODE_TO_USE_FOR_MY_COMMAND_LINE_TOOLS
+
+
+### Mooney-Rivlin Implementation is available here: /home/lex/sofa/modules/SofaMiscFem/MooneyRivlin.h
+
++ Mooney Rivlin ForceField Implemented Here: /home/lex/sofa/applications/plugins/Flexible/material/MooneyRivlinForceField.h_
