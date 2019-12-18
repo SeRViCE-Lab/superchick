@@ -1,24 +1,8 @@
-/******************************************************************************
-*       SOFA, Simulation Open-Framework Architecture, development version     *
-*                (c) 2006-2019 INRIA, USTL, UJF, CNRS, MGH                    *
-*                                                                             *
-* This program is free software; you can redistribute it and/or modify it     *
-* under the terms of the GNU Lesser General Public License as published by    *
-* the Free Software Foundation; either version 2.1 of the License, or (at     *
-* your option) any later version.                                             *
-*                                                                             *
-* This program is distributed in the hope that it will be useful, but WITHOUT *
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or       *
-* FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License *
-* for more details.                                                           *
-*                                                                             *
-* You should have received a copy of the GNU Lesser General Public License    *
-* along with this program. If not, see <http://www.gnu.org/licenses/>.        *
-*******************************************************************************
-* Authors: The SOFA Team and external contributors (see Authors.txt)          *
-*                                                                             *
-* Contact information: contact@sofa-framework.org                             *
-******************************************************************************/
+/*
+*  Ripped off sofa/modules/SofaMiscFem/HyperelasticMaterial.h
+*
+Author: Lekan Ogunmolux, December 18, 2019
+*/
 #ifndef SOFA_COMPONENT_FEM_NONLINEARELASTICMATERIAL_H
 #define SOFA_COMPONENT_FEM_NONLINEARELASTICMATERIAL_H
 #include "config.h"
@@ -40,7 +24,7 @@ namespace sofa
 namespace component
 {
 
-namespace fem
+namespace fem // finite elastic deformation namespace
 {
 
 template<typename Real>
@@ -59,15 +43,14 @@ class NonlinearElasticMaterial
 {
 public:
 
-  typedef typename DataTypes::Coord Coord;
-  typedef typename Coord::value_type Real;
-  typedef defaulttype::MatSym<3,Real> MatrixSym;
-  typedef defaulttype::Mat<3,3,Real> Matrix3;
-  typedef defaulttype::Mat<6,6,Real> Matrix6;
+  using Coord = typename DataTypes::Coord;
+  using Real = typename Coord::value_type;
+  using MatrixSym = defaulttype::MatSym<3,Real>;
+  using Matrix3 = defaulttype::Mat<3,3,Real>;
+  using Matrix6 = defaulttype::Mat<6,6,Real>;
 
    Real hydrostaticPressure=0; // should cancel out in equation anyway
    virtual ~NonlinearElasticMaterial(){}
-
 
 	/** returns the strain energy of the current configuration */
 	virtual Real getStrainEnergy(StrainInformation<DataTypes> *, const  MaterialParameters<DataTypes> &) {
@@ -76,29 +59,21 @@ public:
 
   /** returns the stress tensor of the current configuration */
   virtual MatrixSym getStressTensor(StrainInformation<DataTypes> *, const  MaterialParameters<DataTypes> &) {
-      return 0;
+      return MatSym(0, 0, 0, 0, 0, 0);
   }
 
 	/** computes the transpose of the first Piola Kirchhoff stress tensor of the current configuration */
-    virtual Real PiolaKirchoffTensor(StrainInformation<DataTypes> *, const  MaterialParameters<DataTypes> &,MatrixSym &){
+    virtual MatrixSym PiolaKirchoffTensor(StrainInformation<DataTypes> *, const  MaterialParameters<DataTypes> &,MatrixSym &){
+      return MatSym(0, 0, 0, 0, 0, 0);
 	}
-	/** computes the Elasticity Tensor of the current configuration */
-
-    virtual void applyElasticityTensor(StrainInformation<DataTypes> *, const  MaterialParameters<DataTypes> &,const MatrixSym& , MatrixSym &)  {
-
-	}
-
-	virtual void ElasticityTensor(StrainInformation<DataTypes> *, const  MaterialParameters<DataTypes> &, Matrix6&) {;}
-
-
 };
 
 /** structure that store the parameters required to that are necessary to compute the strain energy
 The material parameters might be constant in space (homogeneous material) or not */
 template<typename DataTypes>
 struct MaterialParameters {
-  typedef typename DataTypes::Coord Coord;
-  typedef typename Coord::value_type Real;
+  using Coord = typename DataTypes::Coord;
+  using Real = typename Coord::value_type;
 
   /** an array of Real values that correspond to the material parameters : the size depends on the material,
   e.g. 2 Lame coefficients for St-Venant Kirchhoff materials */
@@ -117,11 +92,11 @@ class StrainInformation
 public:
 
 
-  typedef typename DataTypes::Coord Coord;
-  typedef typename Coord::value_type Real;
-  typedef defaulttype::MatSym<3,Real> MatrixSym;
-  typedef typename Eigen::SelfAdjointEigenSolver<Eigen::Matrix<Real,3,3> >::MatrixType EigenMatrix;
-  typedef typename Eigen::SelfAdjointEigenSolver<Eigen::Matrix<Real,3,3> >::RealVectorType CoordEigen;
+  using Coord = typename DataTypes::Coord;
+  using Real = typename Coord::value_type;
+  using MatrixSym = defaulttype::MatSym<3,Real>;
+  using EigenMatrix = typename Eigen::SelfAdjointEigenSolver<Eigen::Matrix<Real,3,3> >::MatrixType;
+  using CoordEigen = typename Eigen::SelfAdjointEigenSolver<Eigen::Matrix<Real,3,3> >::RealVectorType;
   /// Trace of C = I1
   Real trF;
   Real J; // det (A)
