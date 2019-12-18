@@ -4,7 +4,6 @@ xhost +local:root
 
 # export SOFA_ROOT=/sofa/build
 export IMAGE=lakehanne/sofa:IAB
-#export IMAGE=lakehanne/sofa:python
 
 if [[ "$(uname -s)" == 'Linux'  ]]; then
     echo -e "OS: Linux. Running docker on $IMAGE\n"
@@ -25,13 +24,3 @@ elif [[ "$(uname -s)" == 'Darwin' ]]; then
 
 fi
 
-# remove x from access control list
-# xhost -local:root
-# xhost -$ip
-# QStandardPaths: XDG_RUNTIME_DIR not set, defaulting to '/tmp/runtime-root'
-# The constructor with a QGLFormat is deprecated, use the regular contructor instead.
-# libGL error: No matching fbConfigs or visuals found
-# libGL error: failed to load driver: swrast
-# QOpenGLWidget: Failed to create context
-# QOpenGLWidget: Failed to create context
-# QOpenGLWidget: Failed to create context

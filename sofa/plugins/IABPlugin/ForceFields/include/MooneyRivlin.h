@@ -64,6 +64,8 @@ class MooneyRivlin : public NonlinearElasticMaterial<DataTypes>{
       invertMatrix(Finv,F);
       H = Finv.transposed();
       Real J = determinant(F);
+      MatrixSym PiolaKirchoff = J * H.transposed() * this->getStressTensor(sinfo, params);
+      return PiolaKirchoff;
   }
 };
 
