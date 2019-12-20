@@ -59,29 +59,14 @@ public:
 
   /** returns the stress tensor of the current configuration */
   virtual MatrixSym getStressTensor(StrainInformation<DataTypes> *, const  MaterialParameters<DataTypes> &) {
-      return MatSym(0, 0, 0, 0, 0, 0);
+      return MatrixSym(0, 0, 0, 0, 0, 0);
   }
 
 	/** computes the transpose of the first Piola Kirchhoff stress tensor of the current configuration */
-<<<<<<< HEAD
     virtual MatrixSym PiolaKirchoffTensor(StrainInformation<DataTypes> *, const  MaterialParameters<DataTypes> &,MatrixSym &){
-      return MatSym(0, 0, 0, 0, 0, 0);
+      return MatrixSym(0, 0, 0, 0, 0, 0);
 	}
 };
-=======
-    virtual Real PiolaKirchoffTensor(StrainInformation<DataTypes> *, const  MaterialParameters<DataTypes> &){
-	}
-	/** computes the Elasticity Tensor of the current configuration */
-
-//     virtual void applyElasticityTensor(StrainInformation<DataTypes> *, const  MaterialParameters<DataTypes> &,const MatrixSym& , MatrixSym &)  {
-//
-// 	}
-//
-// 	virtual void ElasticityTensor(StrainInformation<DataTypes> *, const  MaterialParameters<DataTypes> &, Matrix6&) {;}
-//
-//
-// };
->>>>>>> e9810878c0594acb404e593c969cfc01b1bb4a94
 
 /** structure that store the parameters required to that are necessary to compute the strain energy
 The material parameters might be constant in space (homogeneous material) or not */

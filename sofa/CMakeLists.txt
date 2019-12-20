@@ -54,7 +54,6 @@ find_package(SofaFramework REQUIRED PATHS "${CONFIG_PATHS}")
 find_package(SofaBase REQUIRED PATHS "${CONFIG_PATHS}")
 find_package(SofaSimulation REQUIRED PATHS "${CONFIG_PATHS}")
 find_package(SofaGui REQUIRED PATHS "${CONFIG_PATHS}")
-find_package(SofaMiscFEM REQUIRED) #for hyperelasticity
 find_package(SceneCreator REQUIRED PATHS "${CONFIG_PATHS}")
 find_package(SofaTest REQUIRED PATHS "${CONFIG_PATHS}")
 find_package(SofaMiscCollision REQUIRED PATHS "${CONFIG_PATHS}")

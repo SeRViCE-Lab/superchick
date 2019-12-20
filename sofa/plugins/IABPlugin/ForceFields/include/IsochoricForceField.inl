@@ -56,7 +56,7 @@ IsochoricForceField<DataTypes>::IsochoricForceField()
     , d_anisotropySet(initData(&d_anisotropySet,"AnisotropyDirections","The global directions of anisotropy of the material"))
     , m_tetrahedronInfo(initData(&m_tetrahedronInfo, "tetrahedronInfo", "Internal tetrahedron data"))
     , m_edgeInfo(initData(&m_edgeInfo, "edgeInfo", "Internal edge data"))
-    , m_tetrahedronHandler(NULL)
+    , m_tetrahedronHandler(nullptr)
     /*
     indices(initData(&indices, "indices", "index of nodes controlled by the isochoric deformations")),
     d_Ri(initData(&d_Ri, Real(10.0), "Ri", "internal radius in the reference configuration")),
@@ -75,60 +75,6 @@ IsochoricForceField<DataTypes>::IsochoricForceField()
 }
 
 template<typename DataTypes>
-void IsochoricForceField<DataTypes>::TetrahedronHandler::applyCreateFunction(unsigned int tetrahedronIndex,
-                                                                            TetrahedronRestInformation &tinfo,
-                                                                            const Tetrahedron &,
-                                                                            const sofa::helper::vector<unsigned int> &,
-                                                                            const sofa::helper::vector<double> &)
-                                                                            const sofa::helper::vector<double> &)
-{
-  if (ff) {
-      const vector< Tetrahedron > &tetrahedronArray=ff->m_topology->getTetrahedra() ;
-      const std::vector< Edge> &edgeArray=ff->m_topology->getEdges() ;
-      unsigned int j;
-//      int k;
-      typename DataTypes::Real volume;
-      typename DataTypes::Coord point[4];
-      const typename DataTypes::VecCoord restPosition = ff->mstate->read(core::ConstVecCoordId::restPosition())->getValue();
-
-      ///describe the indices of the 4 tetrahedron vertices
-      const Tetrahedron &t= tetrahedronArray[tetrahedronIndex];
-      BaseMeshTopology::EdgesInTetrahedron te=ff->m_topology->getEdgesInTetrahedron(tetrahedronIndex);
-
-      // store the point position
-      for(j=0;j<4;++j)
-          point[j]=(restPosition)[t[j]];
-      /// compute 6 times the rest volume
-      volume=dot(cross(point[2]-point[0],point[3]-point[0]),point[1]-point[0]);
-      /// store the rest volume
-      tinfo.m_volScale =(Real)(1.0/volume);
-      tinfo.m_restVolume = std::fabs(volume/6);
-      // store shape vectors at the rest configuration
-      for(j=0;j<4;++j) {
-          if (!(j%2))
-              tinfo.m_shapeVector[j]=-cross(point[(j+2)%4] - point[(j+1)%4],point[(j+3)%4] - point[(j+1)%4])/ volume;
-          else
-              tinfo.m_shapeVector[j]=cross(point[(j+2)%4] - point[(j+1)%4],point[(j+3)%4] - point[(j+1)%4])/ volume;;
-      }
-
-
-      for(j=0;j<6;++j) {
-          Edge e=ff->m_topology->getLocalEdgesInTetrahedron(j);
-          int k=e[0];
-          //int l=e[1];
-          if (edgeArray[te[j]][0]!=t[k]) {
-              k=e[1];
-              //l=e[0];
-          }
-      }
-
-
-  }//end if(ff)
-
-}
-
-
-template<typename DataTypes>
 IsochoricForceField<DataTypes>::~IsochoricForceField()
 {
   if(m_tetrahedronHandler)
@@ -136,11 +82,12 @@ IsochoricForceField<DataTypes>::~IsochoricForceField()
 }
 
 
+
 template<typename DataTypes>
 void IsochoricForceField<DataTypes>::init()
 {
     if (this->f_printLog.getValue())
-        msg_info() << "initializing TetrahedronNonlinearElasticityFEMForceField";
+        msg_info() << "initializing IsochoricForceField";
 
     this->Inherited::init();
 
@@ -164,8 +111,8 @@ void IsochoricForceField<DataTypes>::init()
     string material = d_materialName.getValue();
     if (material=="MooneyRivlinIncompressible")
     {
-        sofa::component::fem::NonlinearElastic<DataTypes> *NonlinearElasticMaterial = new sofa::component::fem::NonlinearElastic<DataTypes>;
-        m_MRIncompMatlModel = NonlinearElasticMaterial;
+        sofa::component::fem::NonlinearElasticMaterial<DataTypes> *m_MRIncompMatlModel = new sofa::component::fem::NonlinearElasticMaterial<DataTypes>;
+        m_MRIncompMatlModel = NonlinearElasticMaterial; // InCompressible Material Model of Mooney and Rivlin
         if (this->f_printLog.getValue())
             msg_info()<<"The model is "<<material;
     }
@@ -177,16 +124,16 @@ void IsochoricForceField<DataTypes>::init()
 
     if (!m_topology->getNbTetrahedra())
     {
-        msg_error() << "ERROR(TetrahedronNonlinearElasticityFEMForceField): object must have a Tetrahedral Set Topology.\n";
+        msg_error() << "ERROR(IsochoricForceField): object must have a Tetrahedral Set Topology.\n";
         return;
     }
 
-    helper::vector<typename TetrahedronNonlinearElasticityFEMForceField<DataTypes>::TetrahedronRestInformation>& tetrahedronInf = *(m_tetrahedronInfo.beginEdit());
+    helper::vector<typename IsochoricForceField<DataTypes>::TetrahedronRestInformation>& tetrahedronInf = *(m_tetrahedronInfo.beginEdit());
 
     /// prepare to store info in the triangle array
     tetrahedronInf.resize(m_topology->getNbTetrahedra());
 
-    helper::vector<typename TetrahedronNonlinearElasticityFEMForceField<DataTypes>::EdgeInformation>& edgeInf = *(m_edgeInfo.beginEdit());
+    helper::vector<typename IsochoricForceField<DataTypes>::EdgeInformation>& edgeInf = *(m_edgeInfo.beginEdit());
 
     edgeInf.resize(m_topology->getNbEdges());
     m_edgeInfo.createTopologicalEngine(m_topology);
@@ -203,10 +150,10 @@ void IsochoricForceField<DataTypes>::init()
     }
 
     /// initialize the data structure associated with each tetrahedron
-    for (Topology::TetrahedronID i=0;i<m_topology->getNbTetrahedra();++i)
+    for (Topology::TetrahedronID tetID=0; tetID<m_topology->getNbTetrahedra(); ++tetID)
     {
-        m_tetrahedronHandler->applyCreateFunction(i, tetrahedronInf[i],
-                                                m_topology->getTetrahedron(i),  (const vector< unsigned int > )0,
+        m_tetrahedronHandler->applyCreateFunction(tetID, tetrahedronInf[tetID],
+                                                m_topology->getTetrahedron(tetID),  (const vector< unsigned int > )0,
                                                 (const vector< double >)0);
     }
 
@@ -419,6 +366,59 @@ SReal IsochoricForceField<DataTypes>::getPotentialEnergy(const core::MechanicalP
 
   return 0.0; // dummy retun for now
 }
+
+template<typename DataTypes>
+void IsochoricForceField<DataTypes>::TetrahedronHandler::applyCreateFunction(unsigned int tetrahedronIndex,
+                                                                            TetrahedronRestInformation &tinfo,
+                                                                            const Tetrahedron &,
+                                                                            const sofa::helper::vector<unsigned int> &,
+                                                                            const sofa::helper::vector<double> &)
+{
+  if (ff) {
+      const vector< Tetrahedron > &tetrahedronArray=ff->m_topology->getTetrahedra() ;
+      const std::vector< Edge> &edgeArray=ff->m_topology->getEdges() ;
+      unsigned int j;
+//      int k;
+      typename DataTypes::Real volume;
+      typename DataTypes::Coord point[4];
+      const typename DataTypes::VecCoord restPosition = ff->mstate->read(core::ConstVecCoordId::restPosition())->getValue();
+
+      ///describe the indices of the 4 tetrahedron vertices
+      const Tetrahedron &t= tetrahedronArray[tetrahedronIndex];
+      BaseMeshTopology::EdgesInTetrahedron te=ff->m_topology->getEdgesInTetrahedron(tetrahedronIndex);
+
+      // store the point position
+      for(j=0;j<4;++j)
+          point[j]=(restPosition)[t[j]];
+      /// compute 6 times the rest volume
+      volume=dot(cross(point[2]-point[0],point[3]-point[0]),point[1]-point[0]);
+      /// store the rest volume
+      tinfo.m_volScale =(Real)(1.0/volume);
+      tinfo.m_restVolume = std::fabs(volume/6);
+      // store shape vectors at the rest configuration
+      for(j=0;j<4;++j) {
+          if (!(j%2))
+              tinfo.m_shapeVector[j]=-cross(point[(j+2)%4] - point[(j+1)%4],point[(j+3)%4] - point[(j+1)%4])/ volume;
+          else
+              tinfo.m_shapeVector[j]=cross(point[(j+2)%4] - point[(j+1)%4],point[(j+3)%4] - point[(j+1)%4])/ volume;;
+      }
+
+
+      for(j=0;j<6;++j) {
+          Edge e=ff->m_topology->getLocalEdgesInTetrahedron(j);
+          int k=e[0];
+          //int l=e[1];
+          if (edgeArray[te[j]][0]!=t[k]) {
+              k=e[1];
+              //l=e[0];
+          }
+      }
+
+
+  }//end if(ff)
+
+}
+
 } // namespace forcefield
 } // namespace component
 } // namespace sofa
