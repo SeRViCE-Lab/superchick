@@ -56,12 +56,13 @@ class MooneyRivlinIncompressible : public NonlinearElasticMaterial<DataTypes>{
   typedef defaulttype::Mat<3,3,Real> Matrix3;
   typedef defaulttype::Mat<6,6,Real> Matrix6;
   typedef defaulttype::MatSym<3,Real> MatrixSym;
-  // Myne
-  Real trF;
+
   Real J; // det (A)
   Real lambda; // stretch ratios
   /// right Cauchy-Green deformation tensor C (gradPhi^T gradPhi)
   MatrixSym deformationTensor;
+  // Myne
+  Real trF;
   MatrixSym leftCauchy;
   MatrixSym rightCauchy;
 
@@ -200,19 +201,6 @@ class MooneyRivlinIncompressible : public NonlinearElasticMaterial<DataTypes>{
 		Real c1=param.parameterArray[0];
 		Real c2=param.parameterArray[1];
 		Real k0=param.parameterArray[2];
-	/*
-		// C-1:H
-		Real _trHC=inputTensor[0]*inversematrix[0]+inputTensor[2]*inversematrix[2]+inputTensor[5]*inversematrix[5]
-		+2*inputTensor[1]*inversematrix[1]+2*inputTensor[3]*inversematrix[3]+2*inputTensor[4]*inversematrix[4];
-		MatrixSym Firstmatrix;
-		//C-1HC-1 convert to sym matrix
-		Firstmatrix.Mat2Sym(inversematrix.SymMatMultiply(inputTensor.SymSymMultiply(inversematrix)),Firstmatrix);
-		//C:H
-		Real trHC=inputTensor[0]*C[0]+inputTensor[2]*C[2]+inputTensor[5]*C[5]
-		+2*inputTensor[1]*C[1]+2*inputTensor[3]*C[3]+2*inputTensor[4]*C[4];
-
-		//trH
-		Real trH=inputTensor[0]+inputTensor[2]+inputTensor[5];*/
 
 		outputTensor=(((trC_HC_*I1/(Real)3.0-trID_HC_)/(Real)3.0+C_H_C*I1/(Real)3.0-trC_HID/(Real)3.0)*(Real)2.0*c1*pow(sinfo->J,(Real)(-2.0/3.0))
 			+((trC_HC_*(Real)(-2.0)*I2/(Real)3.0+trID_HC_*I1-trCH_C)*(-2.0)/(Real)3.0+C_H_C*(Real)2.0*I2/(Real)3.0-(trC_HID*I1-trC_HC)*(Real)2.0/(Real)3.0+trIDHID-IDHID)*(Real)2.0*c2*pow(sinfo->J,(Real)(-4.0/3.0))

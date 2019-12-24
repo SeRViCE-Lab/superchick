@@ -25,6 +25,7 @@ Author: Lekan Ogunmolux, December 18, 2019
 #include <SofaBaseMechanics/MechanicalObject.h>
 #include "IABPlugin/ForceFields/include/integrand.inl"  // will help with our integrations
 #include "IABPlugin/ForceFields/include/NonlinearElasticMaterial.h"
+#include "IABPlugin/ForceFields/include/MooneyRivlinIncompressible.h"
 #include "IABPlugin/ForceFields/include/IsochoricForceField.h"
 
 using namespace boost::numeric::odeint;
@@ -442,6 +443,51 @@ SReal IsochoricForceField<DataTypes>::getPotentialEnergy(const core::MechanicalP
   SOFA_UNUSED(x);
 
   return 0.0; // dummy retun for now
+}
+
+template<class DataTypes>
+void IsochoricForceField<DataTypes>::saveMesh( const char *filename )
+{
+    VecCoord pos( this->mstate->read(core::ConstVecCoordId::position())->getValue());
+    core::topology::BaseMeshTopology::SeqTriangles triangles = m_topology->getTriangles();
+    FILE *file = fopen( filename, "wb" );
+
+    if (!file) return;
+
+    // write header
+    char header[81];
+
+    size_t errResult;
+    errResult = fwrite( (void*)&(header[0]),1, 80, file );
+    unsigned int numTriangles = triangles.size();
+    errResult = fwrite( &numTriangles, 4, 1, file );
+    // write poly data
+    float vertex[3][3];
+    float normal[3] = { 1,0,0 };
+    short stlSeperator = 0;
+
+    for (unsigned int triangleId=0; triangleId<triangles.size(); triangleId++)
+    {
+        if (m_topology->getTetrahedraAroundTriangle( triangleId ).size()==1)
+        {
+            // surface triangle, save it
+            unsigned int p0 = m_topology->getTriangle( triangleId )[0];
+            unsigned int p1 = m_topology->getTriangle( triangleId )[1];
+            unsigned int p2 = m_topology->getTriangle( triangleId )[2];
+            for (int d=0; d<3; d++)
+            {
+                    vertex[0][d] = (float)pos[p0][d];
+                    vertex[1][d] = (float)pos[p1][d];
+                    vertex[2][d] = (float)pos[p2][d];
+            }
+            errResult = fwrite( (void*)&(normal[0]), sizeof(float), 3, file );
+            errResult = fwrite( (void*)&(vertex[0][0]), sizeof(float), 9, file );
+            errResult = fwrite( (void*)&(stlSeperator), 2, 1, file );
+        }
+    }
+    errResult -= errResult; // ugly trick to avoid warnings
+
+	fclose( file );
 }
 
 } // namespace forcefield
