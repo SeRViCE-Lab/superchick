@@ -44,11 +44,13 @@ class NonlinearElasticMaterial
 {
 public:
 
-  typedef typename DataTypes::Coord Coord;
-  typedef typename Coord::value_type Real;
-  typedef defaulttype::MatSym<3,Real> MatrixSym;
-  typedef defaulttype::Mat<3,3,Real> Matrix3;
-  typedef defaulttype::Mat<6,6,Real> Matrix6;
+  using Coord = typename DataTypes::Coord;
+  using Real = typename Coord::value_type;
+  using MatrixSym = defaulttype::MatSym<3,Real>;
+  using Matrix3 = defaulttype::Mat<3,3,Real>;
+  using Matrix6 = defaulttype::Mat<6,6,Real>;
+  using Line = defaulttype::Vec<3,Real>;
+  // using Vec<3,real> dummyLines{0,0,0};
 
    virtual ~NonlinearElasticMaterial(){}
    Real hydrostaticPressure=0; // should cancel out in equation anyway
@@ -59,6 +61,16 @@ public:
 			return 0;
 	}
 
+  /** returns the strain energy of the current configuration */
+	virtual Matrix3 getCauchyStressTensor(StrainInformation<DataTypes> *, const  MaterialParameters<DataTypes> &) {
+      // initialize from dummy lines
+      Line dummyLines{0,0,0};
+      return Matrix3(dummyLines, dummyLines, dummyLines);
+	}
+  // /** returns the stress tensor of Cauchy of the current configuration */
+	// virtual Real getCauchyStressTensor(StressInformation<DataTypes> *, const  MaterialParameters<DataTypes> &) {
+	// 		return 0;
+	// }
 
 	/** computes the second Piola Kirchhoff stress tensor of the current configuration */
     virtual void deriveSPKTensor(StrainInformation<DataTypes> *, const  MaterialParameters<DataTypes> &,MatrixSym &)  {
@@ -71,7 +83,6 @@ public:
 	}
 
 	virtual void ElasticityTensor(StrainInformation<DataTypes> *, const  MaterialParameters<DataTypes> &, Matrix6&) {;}
-
 
 };
 
@@ -116,8 +127,8 @@ public:
   bool hasBeenInitialized;
   /// right Cauchy-Green deformation tensor C (gradPhi^T gradPhi)
   MatrixSym deformationTensor;
-  MatrixSym leftCauchy;
-  MatrixSym rightCauchy;
+  MatrixSym leftCauchy, rightCauchy;
+  MatrixSym F; // deformation gradient
   EigenMatrix Evect;
   CoordEigen Evalue;
   Real logJ;
@@ -127,6 +138,29 @@ public:
   StrainInformation() : trC(0), trF(0), J(0), lambda(0), trCsquare(0), hasBeenInitialized(false), deformationTensor(), Evect(), Evalue(), logJ(0), E() {}
   virtual ~StrainInformation() {}
 };
+
+// template<typename DataTypes>
+// class StressInformation
+// {
+// public:
+//
+//
+//   using Coord =  typename DataTypes::Coord;
+//   using Real =  typename Coord::value_type;
+//   using MatrixSym =  defaulttype::MatSym<3,Real>;
+//   using EigenMatrix =  typename Eigen::SelfAdjointEigenSolver<Eigen::Matrix<Real,3,3> >::MatrixType;
+//   using CoordEigen =  typename Eigen::SelfAdjointEigenSolver<Eigen::Matrix<Real,3,3> >::RealVectorType;
+//   // These from the derivation in wafr paper
+//   Real r, R, phi, theta;
+//   Real hydrostaticPressure;
+//   Real
+//   StressInformation()
+//   : r(0), R(0), phi(0), theta(0), hydrostaticPressure(0)
+//   {
+//     // stress tensor contructor
+//   }
+//   virtual ~StressInformation() {}
+// };
 
 } // namespace fem
 

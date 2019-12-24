@@ -52,10 +52,11 @@ the determinant of the deformation gradient J and the right Cauchy Green deforma
 template<class DataTypes>
 class MooneyRivlinIncompressible : public NonlinearElasticMaterial<DataTypes>{
 
-  typedef typename DataTypes::Coord::value_type Real;
-  typedef defaulttype::Mat<3,3,Real> Matrix3;
-  typedef defaulttype::Mat<6,6,Real> Matrix6;
-  typedef defaulttype::MatSym<3,Real> MatrixSym;
+  using Real =  typename DataTypes::Coord::value_type;
+  // using Identity3 = defaulttype::Mat<3,3, Real> Identity;
+  using Matrix3 =  defaulttype::Mat<3,3,Real>;
+  using Matrix6 =  defaulttype::Mat<6,6,Real>;
+  using MatrixSym =  defaulttype::MatSym<3,Real>;
 
   Real J; // det (A)
   Real lambda; // stretch ratios
@@ -67,32 +68,43 @@ class MooneyRivlinIncompressible : public NonlinearElasticMaterial<DataTypes>{
   MatrixSym rightCauchy;
 
   virtual Real getStrainEnergy(StrainInformation<DataTypes> *sinfo, const MaterialParameters<DataTypes> &param) {
-	  MatrixSym inversematrix;
-		MatrixSym C=sinfo->deformationTensor;
-		invertMatrix(inversematrix,C);
+	  MatrixSym Cinv;
+		MatrixSym C=sinfo->rightCauchy; // was deformationTensor
+		invertMatrix(Cinv,C);
 		Real I1=sinfo->trC;
-		Real I1square=(Real)(C[0]*C[0] + C[2]*C[2]+ C[5]*C[5]+2*(C[1]*C[1] + C[3]*C[3] + C[4]*C[4]));
-		Real I2=(Real)((pow(I1,(Real)2)- I1square)/2);
+		// Real I1square=(Real)(C[0]*C[0] + C[2]*C[2]+ C[5]*C[5]+2*(C[1]*C[1] + C[3]*C[3] + C[4]*C[4]));
+		// Real I2=(Real)((pow(I1,(Real)2)- I1square)/2);
+    Real I2=trace(Cinv);
 		Real c1=param.parameterArray[0];
 		Real c2=param.parameterArray[1];
-		Real k0=param.parameterArray[2];
-		return c1*(I1*pow(sinfo->J,(-2/3))-3)+c2*(I2*pow(sinfo->J,(-4/3)))+k0*log(sinfo->J)*log(sinfo->J)/2;
+		// Real k0=param.parameterArray[2];
+		// return c1*(I1*pow(sinfo->J,(-2/3))-3)+c2*(I2*pow(sinfo->J,(-4/3)))+k0*log(sinfo->J)*log(sinfo->J)/2;
+    return 0.5*c1*(I1-3)+0.5*c2*(I2-3);
+  }
 
+  virtual Matrix3 getCauchyStressTensor(StrainInformation<DataTypes> *sinfo, const MaterialParameters<DataTypes> &param,MatrixSym &SPKTensorGeneral){
+    // sigma = C_1 * B - C_2 * C^{-1} - p*I
+		Real C_1=param.parameterArray[0];
+		Real C_2=param.parameterArray[1];
+    Real p = param.parameterArray[2]; // be sure that paramArray constains hydrostatic pressure of air
+    MatrixSym B=sinfo->leftCauchy; // was deformationTensor
+    MatrixSym C=sinfo->rightCauchy; // was deformationTensor
+    MatrixSym Cinv;
+    invertMatrix(Cinv,C);
+    defaulttype::Mat<3,3, Real> Identity3;
+    return C_1 * B - C_2 * Cinv - p*this->Identity3;
   }
 
 	 virtual void deriveSPKTensor(StrainInformation<DataTypes> *sinfo, const MaterialParameters<DataTypes> &param,MatrixSym &SPKTensorGeneral){
-		MatrixSym inversematrix;
-		MatrixSym C=sinfo->deformationTensor;
-		invertMatrix(inversematrix,C);
-		Real I1=sinfo->trC;
-		Real I1square=(Real)(C[0]*C[0] + C[2]*C[2]+ C[5]*C[5]+2*(C[1]*C[1] + C[3]*C[3] + C[4]*C[4]));
-		Real I2=(Real)((pow(I1,(Real)2)- I1square)/2);
-		Real c1=param.parameterArray[0];
-		Real c2=param.parameterArray[1];
-		Real k0=param.parameterArray[2];
-		MatrixSym ID;
-		ID.identity();
-		SPKTensorGeneral=(-1*inversematrix*I1/3+ID)*(2*c1*pow(sinfo->J,(Real)(-2.0/3.0)))+(-1*inversematrix*2*I2/3+ID*I1-C)*(2*c2*pow(sinfo->J,(Real)(-4.0/3.0)))+inversematrix*k0*log(sinfo->J);
+		MatrixSym Cinv, HT;
+    MatrixSym F=sinfo->F; // was deformationGrad
+    MatrixSym C=sinfo->rightCauchy; // was deformationTensor
+		invertMatrix(Cinv,C);
+    invertMatrix(HT, F); // H^T = F^{-1}
+    Real J = sinfo->J;
+    // S = J H^T \sigma;
+    auto sigma = getCauchyStressTensor(sinfo, param);
+    return J * HT * sigma;
 	}
 
 
