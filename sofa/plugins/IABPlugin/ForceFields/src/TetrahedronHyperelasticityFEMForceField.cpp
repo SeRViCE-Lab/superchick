@@ -19,14 +19,13 @@
 *                                                                             *
 * Contact information: contact@sofa-framework.org                             *
 ******************************************************************************/
-#define SOFA_COMPONENT_FORCEFIELD_ISOCHORICFORCEFIELD_CPP
-// below from /modules/sofageneralobjectinteraction/interactionforcefield.cpp
-#include "IABPlugin/ForceFields/include/IsochoricForceField.inl"
-#include <sofa/defaulttype/VecTypes.h>
-#include <sofa/defaulttype/RigidTypes.h>
-#include <sofa/core/ObjectFactory.h>
-// #include "IABPlugin/ForceFields/include/initMiscFEM.h"
 
+#define SOFA_COMPONENT_FORCEFIELD_TETRAHEDRONHYPERELASTICITYFEMFORCEFIELD_CPP
+
+#include "IABPlugin/ForceFields/include/TetrahedronHyperelasticityFEMForceField.inl"
+#include <sofa/core/ObjectFactory.h>
+#include <sofa/defaulttype/VecTypes.h>
+#include "IABPlugin/ForceFields/include/initMiscFEM.h"
 namespace sofa
 {
 
@@ -38,23 +37,15 @@ namespace forcefield
 
 using namespace sofa::defaulttype;
 
+//////////****************To register in the factory******************
 
-// Give a description of your class
-// and declare the DataTypes on which the ForceField is instantiated
+// Register in the Factory
+int TetrahedronHyperelasticityFEMForceFieldClass = core::RegisterObject("Generic Tetrahedral finite elements")
+.add< TetrahedronHyperelasticityFEMForceField<Vec3Types> >()
 
-int IsochoricForceFieldClass = core::RegisterObject("IAB Isochoric ForceField applied to the boundary and interior")
-        .add< IsochoricForceField<Vec3Types> >()
-        // .add< IsochoricForceField<Vec2Types> >()
-        // .add< IsochoricForceField<Vec1Types> >()
-        // .add< IsochoricForceField<Vec6Types> >()
+;
 
-        ;
-
-template class IsochoricForceField<Vec3Types>;
-// template class IsochoricForceField<Vec2Types>;
-// template class IsochoricForceField<Vec1Types>;
-// template class IsochoricForceField<Vec6Types>;
-
+template class SOFA_MISC_FEM_API TetrahedronHyperelasticityFEMForceField<Vec3Types>;
 
 
 } // namespace forcefield

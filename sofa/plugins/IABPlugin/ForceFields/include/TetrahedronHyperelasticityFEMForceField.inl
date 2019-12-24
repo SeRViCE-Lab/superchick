@@ -1,26 +1,49 @@
-/*
-*  Ripped off sofa/modules/SofaMiscFem/TetrahedronHyperelasticityFEMForceField.inl
-*
-Author: Lekan Ogunmolux, December 18, 2019
-*/
-#ifndef SOFA_COMPONENT_FORCEFIELD_TETRAHEDRONNONLINEARELASTICITYFEMFORCEFIELD_INL
-#define SOFA_COMPONENT_FORCEFIELD_TETRAHEDRONNONLINEARELASTICITYFEMFORCEFIELD_INL
+/******************************************************************************
+*       SOFA, Simulation Open-Framework Architecture, development version     *
+*                (c) 2006-2019 INRIA, USTL, UJF, CNRS, MGH                    *
+*                                                                             *
+* This program is free software; you can redistribute it and/or modify it     *
+* under the terms of the GNU Lesser General Public License as published by    *
+* the Free Software Foundation; either version 2.1 of the License, or (at     *
+* your option) any later version.                                             *
+*                                                                             *
+* This program is distributed in the hope that it will be useful, but WITHOUT *
+* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or       *
+* FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License *
+* for more details.                                                           *
+*                                                                             *
+* You should have received a copy of the GNU Lesser General Public License    *
+* along with this program. If not, see <http://www.gnu.org/licenses/>.        *
+*******************************************************************************
+* Authors: The SOFA Team and external contributors (see Authors.txt)          *
+*                                                                             *
+* Contact information: contact@sofa-framework.org                             *
+******************************************************************************/
 
+#ifndef SOFA_COMPONENT_FORCEFIELD_TETRAHEDRONHYPERELASTICITYFEMFORCEFIELD_INL
+#define SOFA_COMPONENT_FORCEFIELD_TETRAHEDRONHYPERELASTICITYFEMFORCEFIELD_INL
+
+#include <sofa/helper/system/gl.h>
+#include <SofaMiscFem/BoyceAndArruda.h>
+#include <SofaMiscFem/NeoHookean.h>
+#include <SofaMiscFem/MooneyRivlin.h>
+#include <SofaMiscFem/VerondaWestman.h>
+#include <SofaMiscFem/STVenantKirchhoff.h>
+// #include <SofaMiscFem/HyperelasticMaterial.h>
+#include <IABPlugin/ForceFields/include/NonlinearElasticMaterial.h>
+#include <SofaMiscFem/Costa.h>
+#include <SofaMiscFem/Ogden.h>
+#include "IABPlugin/ForceFields/include/TetrahedronHyperelasticityFEMForceField.h"
+#include <sofa/core/visual/VisualParams.h>
+#include <sofa/defaulttype/VecTypes.h>
+#include <SofaBaseMechanics/MechanicalObject.h>
+#include <sofa/core/ObjectFactory.h>
 #include <fstream> // for reading the file
 #include <iostream> //for debugging
-#include <iterator>
-#include <algorithm>
-#include <SofaMiscFem/Costa.h>
-#include <sofa/helper/system/gl.h>
-#include <sofa/core/ObjectFactory.h>
-#include <sofa/defaulttype/VecTypes.h>
-#include <sofa/core/visual/VisualParams.h>
 #include <sofa/core/behavior/ForceField.inl>
 #include <SofaBaseTopology/TopologyData.inl>
-#include <SofaBaseMechanics/MechanicalObject.h>
-#include <IABPlugin/ForceFields/include/NonlinearElasticMaterial.h>
-#include "IABPlugin/ForceFields/include/TetrahedronNonlinearelasticityFEMForceField.h"
-
+#include <algorithm>
+#include <iterator>
 namespace sofa
 {
 namespace component
@@ -33,7 +56,7 @@ using namespace core::topology;
 
 
 template< class DataTypes >
-void TetrahedronNonlinearElasticityFEMForceField<DataTypes>::TetrahedronHandler::applyCreateFunction(unsigned int tetrahedronIndex,
+void TetrahedronHyperelasticityFEMForceField<DataTypes>::TetrahedronHandler::applyCreateFunction(unsigned int tetrahedronIndex,
                                                                                               TetrahedronRestInformation &tinfo,
                                                                                               const Tetrahedron &,
                                                                                               const sofa::helper::vector<unsigned int> &,
@@ -86,13 +109,13 @@ void TetrahedronNonlinearElasticityFEMForceField<DataTypes>::TetrahedronHandler:
 
 }
 
-template <class DataTypes> TetrahedronNonlinearElasticityFEMForceField<DataTypes>::TetrahedronNonlinearElasticityFEMForceField()
+template <class DataTypes> TetrahedronHyperelasticityFEMForceField<DataTypes>::TetrahedronHyperelasticityFEMForceField()
     : m_topology(0)
     , m_initialPoints(0)
     , m_updateMatrix(true)
     , m_meshSaved( false)
     , d_stiffnessMatrixRegularizationWeight(initData(&d_stiffnessMatrixRegularizationWeight, (bool)false,"matrixRegularization","Regularization of the Stiffness Matrix (between true or false)"))
-    , d_materialName(initData(&d_materialName,std::string("MooneyRivlinIncompressible"),"materialName","the name of the material to be used"))
+    , d_materialName(initData(&d_materialName,std::string("ArrudaBoyce"),"materialName","the name of the material to be used"))
     , d_parameterSet(initData(&d_parameterSet,"ParameterSet","The global parameters specifying the material"))
     , d_anisotropySet(initData(&d_anisotropySet,"AnisotropyDirections","The global directions of anisotropy of the material"))
     , m_tetrahedronInfo(initData(&m_tetrahedronInfo, "tetrahedronInfo", "Internal tetrahedron data"))
@@ -102,15 +125,15 @@ template <class DataTypes> TetrahedronNonlinearElasticityFEMForceField<DataTypes
     m_tetrahedronHandler = new TetrahedronHandler(this,&m_tetrahedronInfo);
 }
 
-template <class DataTypes> TetrahedronNonlinearElasticityFEMForceField<DataTypes>::~TetrahedronNonlinearElasticityFEMForceField()
+template <class DataTypes> TetrahedronHyperelasticityFEMForceField<DataTypes>::~TetrahedronHyperelasticityFEMForceField()
 {
     if(m_tetrahedronHandler) delete m_tetrahedronHandler;
 }
 
-template <class DataTypes> void TetrahedronNonlinearElasticityFEMForceField<DataTypes>::init()
+template <class DataTypes> void TetrahedronHyperelasticityFEMForceField<DataTypes>::init()
 {
     if (this->f_printLog.getValue())
-        msg_info() << "initializing TetrahedronNonlinearElasticityFEMForceField";
+        msg_info() << "initializing TetrahedronHyperelasticityFEMForceField";
 
     this->Inherited::init();
 
@@ -132,10 +155,53 @@ template <class DataTypes> void TetrahedronNonlinearElasticityFEMForceField<Data
 
     /** parse the input material name */
     string material = d_materialName.getValue();
-    if (material=="MooneyRivlinIncompressible")
+    if (material=="ArrudaBoyce")
     {
-        fem::NonlinearElastic<DataTypes> *NonlinearElasticMaterial = new fem::NonlinearElastic<DataTypes>;
-        m_myMaterial = NonlinearElasticMaterial;
+        fem::BoyceAndArruda<DataTypes> *BoyceAndArrudaMaterial = new fem::BoyceAndArruda<DataTypes>;
+        m_myMaterial = BoyceAndArrudaMaterial;
+        if (this->f_printLog.getValue())
+            msg_info()<<"The model is "<<material;
+    }
+    else if (material=="StVenantKirchhoff")
+    {
+        fem::STVenantKirchhoff<DataTypes> *STVenantKirchhoffMaterial = new fem::STVenantKirchhoff<DataTypes>;
+        m_myMaterial = STVenantKirchhoffMaterial;
+        if (this->f_printLog.getValue())
+            msg_info()<<"The model is "<<material;
+    }
+    else if (material=="NeoHookean")
+    {
+        fem::NeoHookean<DataTypes> *NeoHookeanMaterial = new fem::NeoHookean<DataTypes>;
+        m_myMaterial = NeoHookeanMaterial;
+        if (this->f_printLog.getValue())
+            msg_info()<<"The model is "<<material;
+    }
+    else if (material=="MooneyRivlin")
+    {
+        fem::MooneyRivlin<DataTypes> *MooneyRivlinMaterial = new fem::MooneyRivlin<DataTypes>;
+        m_myMaterial = MooneyRivlinMaterial;
+        if (this->f_printLog.getValue())
+            msg_info()<<"The model is "<<material;
+    }
+    else if (material=="VerondaWestman")
+    {
+        fem::VerondaWestman<DataTypes> *VerondaWestmanMaterial = new fem::VerondaWestman<DataTypes>;
+        m_myMaterial = VerondaWestmanMaterial;
+        if (this->f_printLog.getValue())
+            msg_info()<<"The model is "<<material;
+    }
+
+    else if (material=="Costa")
+    {
+        fem::Costa<DataTypes> *CostaMaterial = new fem::Costa<DataTypes>;
+        m_myMaterial = CostaMaterial;
+        if (this->f_printLog.getValue())
+            msg_info()<<"The model is "<<material;
+    }
+    else if (material=="Ogden")
+    {
+        fem::Ogden<DataTypes> *OgdenMaterial = new fem::Ogden<DataTypes>;
+        m_myMaterial = OgdenMaterial;
         if (this->f_printLog.getValue())
             msg_info()<<"The model is "<<material;
     }
@@ -147,16 +213,16 @@ template <class DataTypes> void TetrahedronNonlinearElasticityFEMForceField<Data
 
     if (!m_topology->getNbTetrahedra())
     {
-        msg_error() << "ERROR(TetrahedronNonlinearElasticityFEMForceField): object must have a Tetrahedral Set Topology.\n";
+        msg_error() << "ERROR(TetrahedronHyperelasticityFEMForceField): object must have a Tetrahedral Set Topology.\n";
         return;
     }
 
-    helper::vector<typename TetrahedronNonlinearElasticityFEMForceField<DataTypes>::TetrahedronRestInformation>& tetrahedronInf = *(m_tetrahedronInfo.beginEdit());
+    helper::vector<typename TetrahedronHyperelasticityFEMForceField<DataTypes>::TetrahedronRestInformation>& tetrahedronInf = *(m_tetrahedronInfo.beginEdit());
 
     /// prepare to store info in the triangle array
     tetrahedronInf.resize(m_topology->getNbTetrahedra());
 
-    helper::vector<typename TetrahedronNonlinearElasticityFEMForceField<DataTypes>::EdgeInformation>& edgeInf = *(m_edgeInfo.beginEdit());
+    helper::vector<typename TetrahedronHyperelasticityFEMForceField<DataTypes>::EdgeInformation>& edgeInf = *(m_edgeInfo.beginEdit());
 
     edgeInf.resize(m_topology->getNbEdges());
     m_edgeInfo.createTopologicalEngine(m_topology);
@@ -190,7 +256,7 @@ template <class DataTypes> void TetrahedronNonlinearElasticityFEMForceField<Data
 }
 
 template <class DataTypes>
-void TetrahedronNonlinearElasticityFEMForceField<DataTypes>::addForce(const core::MechanicalParams* /* mparams */ /* PARAMS FIRST */, DataVecDeriv& d_f, const DataVecCoord& d_x, const DataVecDeriv& /* d_v */)
+void TetrahedronHyperelasticityFEMForceField<DataTypes>::addForce(const core::MechanicalParams* /* mparams */ /* PARAMS FIRST */, DataVecDeriv& d_f, const DataVecCoord& d_x, const DataVecDeriv& /* d_v */)
 {
     VecDeriv& f = *d_f.beginEdit();
     const VecCoord& x = d_x.getValue();
@@ -199,7 +265,7 @@ void TetrahedronNonlinearElasticityFEMForceField<DataTypes>::addForce(const core
     const bool printLog = this->f_printLog.getValue();
     if (printLog && !m_meshSaved)
     {
-        saveMesh( "/opt/sofa-result.stl" );
+        saveMesh( "D:/Steph/sofa-result.stl" );
         printf( "Mesh saved.\n" );
         m_meshSaved = true;
     }
@@ -215,7 +281,7 @@ void TetrahedronNonlinearElasticityFEMForceField<DataTypes>::addForce(const core
 
     Coord dp[3],x0,sv;
 
-    // opportunity for improvement using my formulation here
+
     for(i=0; i<nbTetrahedra; i++ )
     {
         tetInfo=&tetrahedronInf[i];
@@ -243,27 +309,26 @@ void TetrahedronNonlinearElasticityFEMForceField<DataTypes>::addForce(const core
                 }
         }
 
-        /// compute the right Cauchy-Green deformation matrix: F^TF
+        /// compute the right Cauchy-Green deformation matrix
         for (k=0;k<3;++k) {
             for (l=k;l<3;++l) {
-                tetInfo->rightCauchy(k,l)=(tetInfo->m_deformationGradient(0,k)*tetInfo->m_deformationGradient(0,l)+
+                tetInfo->deformationTensor(k,l)=(tetInfo->m_deformationGradient(0,k)*tetInfo->m_deformationGradient(0,l)+
                 tetInfo->m_deformationGradient(1,k)*tetInfo->m_deformationGradient(1,l)+
                 tetInfo->m_deformationGradient(2,k)*tetInfo->m_deformationGradient(2,l));
             }
         }
 
-        // don't know if I need this
         if(globalParameters.anisotropyDirection.size()>0)
         {
             tetInfo->m_fiberDirection=globalParameters.anisotropyDirection[0];
-            Coord vectCa=tetInfo->rightCauchy*tetInfo->m_fiberDirection;
+            Coord vectCa=tetInfo->deformationTensor*tetInfo->m_fiberDirection;
             Real aDotCDota=dot(tetInfo->m_fiberDirection,vectCa);
             tetInfo->lambda=(Real)sqrt(aDotCDota);
         }
         Coord areaVec = cross( dp[1], dp[2] );
 
         tetInfo->J = dot( areaVec, dp[0] ) * tetInfo->m_volScale;
-        tetInfo->trC = (Real)( tetInfo->rightCauchy(0,0) + tetInfo->rightCauchy(1,1) + tetInfo->rightCauchy(2,2));
+        tetInfo->trC = (Real)( tetInfo->deformationTensor(0,0) + tetInfo->deformationTensor(1,1) + tetInfo->deformationTensor(2,2));
         tetInfo->m_SPKTensorGeneral.clear();
         m_myMaterial->deriveSPKTensor(tetInfo,globalParameters,tetInfo->m_SPKTensorGeneral);
         for(l=0;l<4;++l)
@@ -281,7 +346,7 @@ void TetrahedronNonlinearElasticityFEMForceField<DataTypes>::addForce(const core
 }
 
 template <class DataTypes>
-void TetrahedronNonlinearElasticityFEMForceField<DataTypes>::updateTangentMatrix()
+void TetrahedronHyperelasticityFEMForceField<DataTypes>::updateTangentMatrix()
 {
     unsigned int i=0,j=0,k=0,l=0;
     unsigned int nbEdges=m_topology->getNbEdges();
@@ -366,7 +431,7 @@ void TetrahedronNonlinearElasticityFEMForceField<DataTypes>::updateTangentMatrix
 
 
 template <class DataTypes>
-void TetrahedronNonlinearElasticityFEMForceField<DataTypes>::addDForce(const core::MechanicalParams* mparams /* PARAMS FIRST */, DataVecDeriv& d_df, const DataVecDeriv& d_dx)
+void TetrahedronHyperelasticityFEMForceField<DataTypes>::addDForce(const core::MechanicalParams* mparams /* PARAMS FIRST */, DataVecDeriv& d_df, const DataVecDeriv& d_dx)
 {
     VecDeriv& df = *d_df.beginEdit();
     const VecDeriv& dx = d_dx.getValue();
@@ -414,14 +479,14 @@ void TetrahedronNonlinearElasticityFEMForceField<DataTypes>::addDForce(const cor
 }
 
 template<class DataTypes>
-SReal TetrahedronNonlinearElasticityFEMForceField<DataTypes>::getPotentialEnergy(const core::MechanicalParams*, const DataVecCoord&) const
+SReal TetrahedronHyperelasticityFEMForceField<DataTypes>::getPotentialEnergy(const core::MechanicalParams*, const DataVecCoord&) const
 {
     msg_error() << "ERROR("<<this->getClassName()<<"): getPotentialEnergy( const MechanicalParams*, const DataVecCoord& ) not implemented.";
     return 0.0;
 }
 
 template <class DataTypes>
-void TetrahedronNonlinearElasticityFEMForceField<DataTypes>::addKToMatrix(sofa::defaulttype::BaseMatrix *mat, SReal k, unsigned int &offset)
+void TetrahedronHyperelasticityFEMForceField<DataTypes>::addKToMatrix(sofa::defaulttype::BaseMatrix *mat, SReal k, unsigned int &offset)
 {
 
     /// if the  matrix needs to be updated
@@ -461,7 +526,7 @@ void TetrahedronNonlinearElasticityFEMForceField<DataTypes>::addKToMatrix(sofa::
 
 
 template<class DataTypes>
-Mat<3,3,double> TetrahedronNonlinearElasticityFEMForceField<DataTypes>::getF(int TetrahedronIndex)
+Mat<3,3,double> TetrahedronHyperelasticityFEMForceField<DataTypes>::getPhi(int TetrahedronIndex)
 {
     helper::vector<TetrahedronRestInformation>& tetrahedronInf = *(m_tetrahedronInfo.beginEdit());
 	TetrahedronRestInformation *tetInfo;
@@ -471,7 +536,7 @@ Mat<3,3,double> TetrahedronNonlinearElasticityFEMForceField<DataTypes>::getF(int
 }
 
 template<class DataTypes>
-void TetrahedronNonlinearElasticityFEMForceField<DataTypes>::testDerivatives()
+void TetrahedronHyperelasticityFEMForceField<DataTypes>::testDerivatives()
 {
     DataVecCoord d_pos;
     VecCoord &pos = *d_pos.beginEdit();
@@ -612,7 +677,7 @@ void TetrahedronNonlinearElasticityFEMForceField<DataTypes>::testDerivatives()
 
 
 template<class DataTypes>
-void TetrahedronNonlinearElasticityFEMForceField<DataTypes>::saveMesh( const char *filename )
+void TetrahedronHyperelasticityFEMForceField<DataTypes>::saveMesh( const char *filename )
 {
     VecCoord pos( this->mstate->read(core::ConstVecCoordId::position())->getValue());
     core::topology::BaseMeshTopology::SeqTriangles triangles = m_topology->getTriangles();
@@ -657,7 +722,7 @@ void TetrahedronNonlinearElasticityFEMForceField<DataTypes>::saveMesh( const cha
 }
 
 template<class DataTypes>
-void TetrahedronNonlinearElasticityFEMForceField<DataTypes>::draw(const core::visual::VisualParams* vparams)
+void TetrahedronHyperelasticityFEMForceField<DataTypes>::draw(const core::visual::VisualParams* vparams)
 {
     //	unsigned int i;
     if (!vparams->displayFlags().getShowForceFields()) return;
@@ -709,7 +774,43 @@ void TetrahedronNonlinearElasticityFEMForceField<DataTypes>::draw(const core::vi
     Vec<4,float> color4;
 
     std::string material = d_materialName.getValue();
-    if (material=="MooneyRivlinIncompressible") {
+    if (material=="ArrudaBoyce") {
+        color1 = Vec<4,float>(0.0,1.0,0.0,1.0);
+        color2 = Vec<4,float>(0.5,1.0,0.0,1.0);
+        color3 = Vec<4,float>(1.0,1.0,0.0,1.0);
+        color4 = Vec<4,float>(1.0,1.0,0.5,1.0);
+    }
+    else if (material=="StVenantKirchhoff"){
+        color1 = Vec<4,float>(1.0,0.0,0.0,1.0);
+        color2 = Vec<4,float>(1.0,0.0,0.5,1.0);
+        color3 = Vec<4,float>(1.0,1.0,0.0,1.0);
+        color4 = Vec<4,float>(1.0,0.5,1.0,1.0);
+    }
+    else if (material=="NeoHookean"){
+        color1 = Vec<4,float>(0.0,1.0,1.0,1.0);
+        color2 = Vec<4,float>(0.5,0.0,1.0,1.0);
+        color3 = Vec<4,float>(1.0,0.0,1.0,1.0);
+        color4 = Vec<4,float>(1.0,0.5,1.0,1.0);
+    }
+    else if (material=="MooneyRivlin"){
+        color1 = Vec<4,float>(0.0,1.0,0.0,1.0);
+        color2 = Vec<4,float>(0.0,1.0,0.5,1.0);
+        color3 = Vec<4,float>(0.0,1.0,1.0,1.0);
+        color4 = Vec<4,float>(0.5,1.0,1.0,1.0);
+    }
+    else if (material=="VerondaWestman"){
+        color1 = Vec<4,float>(0.0,1.0,0.0,1.0);
+        color2 = Vec<4,float>(0.5,1.0,0.0,1.0);
+        color3 = Vec<4,float>(1.0,1.0,0.0,1.0);
+        color4 = Vec<4,float>(1.0,1.0,0.5,1.0);
+    }
+    else if (material=="Costa"){
+        color1 = Vec<4,float>(0.0,1.0,0.0,1.0);
+        color2 = Vec<4,float>(0.5,1.0,0.0,1.0);
+        color3 = Vec<4,float>(1.0,1.0,0.0,1.0);
+        color4 = Vec<4,float>(1.0,1.0,0.5,1.0);
+    }
+    else if (material=="Ogden"){
         color1 = Vec<4,float>(0.0,1.0,0.0,1.0);
         color2 = Vec<4,float>(0.5,1.0,0.0,1.0);
         color3 = Vec<4,float>(1.0,1.0,0.0,1.0);
@@ -740,4 +841,4 @@ void TetrahedronNonlinearElasticityFEMForceField<DataTypes>::draw(const core::vi
 
 } // namespace sofa
 
-#endif // SOFA_COMPONENT_FORCEFIELD_TetrahedronNonlinearElasticityFEMForceField_INL
+#endif // SOFA_COMPONENT_FORCEFIELD_TETRAHEDRONHYPERELASTICITYFEMFORCEFIELD_INL

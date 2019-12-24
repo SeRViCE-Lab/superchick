@@ -19,38 +19,27 @@
 *                                                                             *
 * Contact information: contact@sofa-framework.org                             *
 ******************************************************************************/
+#include <sofa/helper/system/config.h>
+#include <SofaMiscFem/initMiscFEM.h>
 
-#define SOFA_COMPONENT_FORCEFIELD_TETRAHEDRONHYPERELASTICITYFEMFORCEFIELD_CPP
 
-#include "TetrahedronHyperelasticityFEMForceField.inl"
-#include <sofa/core/ObjectFactory.h>
-#include <sofa/defaulttype/VecTypes.h>
-#include "initMiscFEM.h"
 namespace sofa
 {
 
 namespace component
 {
 
-namespace forcefield
+
+void initMiscFEM()
 {
+    static bool first = true;
+    if (first)
+    {
+        first = false;
+    }
+}
 
-using namespace sofa::defaulttype;
-
-//////////****************To register in the factory******************
-
-// Register in the Factory
-int TetrahedronHyperelasticityFEMForceFieldClass = core::RegisterObject("Generic Tetrahedral finite elements")
-.add< TetrahedronHyperelasticityFEMForceField<Vec3Types> >()
-
-;
-
-template class SOFA_MISC_FEM_API TetrahedronHyperelasticityFEMForceField<Vec3Types>;
-
-
-} // namespace forcefield
 
 } // namespace component
 
 } // namespace sofa
-

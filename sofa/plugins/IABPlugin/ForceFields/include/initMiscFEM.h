@@ -19,13 +19,9 @@
 *                                                                             *
 * Contact information: contact@sofa-framework.org                             *
 ******************************************************************************/
-#define SOFA_COMPONENT_FORCEFIELD_ISOCHORICFORCEFIELD_CPP
-// below from /modules/sofageneralobjectinteraction/interactionforcefield.cpp
-#include "IABPlugin/ForceFields/include/IsochoricForceField.inl"
-#include <sofa/defaulttype/VecTypes.h>
-#include <sofa/defaulttype/RigidTypes.h>
-#include <sofa/core/ObjectFactory.h>
-// #include "IABPlugin/ForceFields/include/initMiscFEM.h"
+#ifndef SOFA_COMPONENT_MISC_FEM_INIT_H
+#define SOFA_COMPONENT_MISC_FEM_INIT_H
+#include "config.h"
 
 namespace sofa
 {
@@ -33,32 +29,12 @@ namespace sofa
 namespace component
 {
 
-namespace forcefield
-{
 
-using namespace sofa::defaulttype;
-
-
-// Give a description of your class
-// and declare the DataTypes on which the ForceField is instantiated
-
-int IsochoricForceFieldClass = core::RegisterObject("IAB Isochoric ForceField applied to the boundary and interior")
-        .add< IsochoricForceField<Vec3Types> >()
-        // .add< IsochoricForceField<Vec2Types> >()
-        // .add< IsochoricForceField<Vec1Types> >()
-        // .add< IsochoricForceField<Vec6Types> >()
-
-        ;
-
-template class IsochoricForceField<Vec3Types>;
-// template class IsochoricForceField<Vec2Types>;
-// template class IsochoricForceField<Vec1Types>;
-// template class IsochoricForceField<Vec6Types>;
-
-
-
-} // namespace forcefield
+void SOFA_MISC_FEM_API initMiscFEM();
 
 } // namespace component
 
 } // namespace sofa
+
+#endif
+

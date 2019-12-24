@@ -1,14 +1,32 @@
-/*
-*  Ripped off sofa/modules/SofaMiscFem/TetrahedronHyperelasticityFEMForceField.h
-*
-Author: Lekan Ogunmolux, December 18, 2019
-*/
+/******************************************************************************
+*       SOFA, Simulation Open-Framework Architecture, development version     *
+*                (c) 2006-2019 INRIA, USTL, UJF, CNRS, MGH                    *
+*                                                                             *
+* This program is free software; you can redistribute it and/or modify it     *
+* under the terms of the GNU Lesser General Public License as published by    *
+* the Free Software Foundation; either version 2.1 of the License, or (at     *
+* your option) any later version.                                             *
+*                                                                             *
+* This program is distributed in the hope that it will be useful, but WITHOUT *
+* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or       *
+* FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License *
+* for more details.                                                           *
+*                                                                             *
+* You should have received a copy of the GNU Lesser General Public License    *
+* along with this program. If not, see <http://www.gnu.org/licenses/>.        *
+*******************************************************************************
+* Authors: The SOFA Team and external contributors (see Authors.txt)          *
+*                                                                             *
+* Contact information: contact@sofa-framework.org                             *
+******************************************************************************/
 
-#ifndef SOFA_COMPONENT_FORCEFIELD_TETRAHEDRONNONLINEARELASTICITYFEMFORCEFIELD_H
-#define SOFA_COMPONENT_FORCEFIELD_TETRAHEDRONNONLINEARELASTICITYFEMFORCEFIELD_H
+#ifndef SOFA_COMPONENT_FORCEFIELD_TETRAHEDRONHYPERELASTICITYFEMFORCEFIELD_H
+#define SOFA_COMPONENT_FORCEFIELD_TETRAHEDRONHYPERELASTICITYFEMFORCEFIELD_H
 
 
+// #include <SofaMiscFem/HyperelasticMaterial.h>
 #include <IABPlugin/ForceFields/include/NonlinearElasticMaterial.h>
+#include "IABPlugin/ForceFields/include/initMiscFEM.h"
 #include <sofa/core/behavior/ForceField.h>
 #include <SofaBaseMechanics/MechanicalObject.h>
 #include <sofa/defaulttype/Vec.h>
@@ -37,10 +55,10 @@ using namespace sofa::core::topology;
 /** Compute Finite Element forces based on tetrahedral elements.
 */
 template<class DataTypes>
-class TetrahedronNonlinearElasticityFEMForceField : public core::behavior::ForceField<DataTypes>
+class TetrahedronHyperelasticityFEMForceField : public core::behavior::ForceField<DataTypes>
 {
   public:
-    SOFA_CLASS(SOFA_TEMPLATE(TetrahedronNonlinearElasticityFEMForceField, DataTypes), SOFA_TEMPLATE(core::behavior::ForceField, DataTypes));
+    SOFA_CLASS(SOFA_TEMPLATE(TetrahedronHyperelasticityFEMForceField, DataTypes), SOFA_TEMPLATE(core::behavior::ForceField, DataTypes));
 
     typedef core::behavior::ForceField<DataTypes> Inherited;
     typedef typename DataTypes::VecCoord VecCoord;
@@ -101,7 +119,7 @@ public :
         Real m_volume;
         /// volume/ restVolume
         MatrixSym m_SPKTensorGeneral;
-        /// deformation gradient = F
+        /// deformation gradient = gradPhi
         Matrix3 m_deformationGradient;
         /// right Cauchy-Green deformation tensor C (gradPhi^T gradPhi)
         Real m_strainEnergy;
@@ -136,8 +154,8 @@ public :
     bool  m_meshSaved ;
 
     Data<bool> d_stiffnessMatrixRegularizationWeight; ///< Regularization of the Stiffness Matrix (between true or false)
-    Data<string> d_materialName; ///< the name of the material // this should be default in my case
-    Data<SetParameterArray> d_parameterSet; ///< The global parameters specifying the material: C1, C2 and bulk modulus
+    Data<string> d_materialName; ///< the name of the material
+    Data<SetParameterArray> d_parameterSet; ///< The global parameters specifying the material
     Data<SetAnisotropyDirectionArray> d_anisotropySet; ///< The global directions of anisotropy of the material
 
     TetrahedronData<sofa::helper::vector<TetrahedronRestInformation> > m_tetrahedronInfo; ///< Internal tetrahedron data
@@ -158,8 +176,8 @@ public:
     class SOFA_MISC_FEM_API TetrahedronHandler : public TopologyDataHandler<Tetrahedron,sofa::helper::vector<TetrahedronRestInformation> >
     {
     public:
-      typedef typename TetrahedronNonlinearElasticityFEMForceField<DataTypes>::TetrahedronRestInformation TetrahedronRestInformation;
-      TetrahedronHandler(TetrahedronNonlinearElasticityFEMForceField<DataTypes>* ff,
+      typedef typename TetrahedronHyperelasticityFEMForceField<DataTypes>::TetrahedronRestInformation TetrahedronRestInformation;
+      TetrahedronHandler(TetrahedronHyperelasticityFEMForceField<DataTypes>* ff,
                          TetrahedronData<sofa::helper::vector<TetrahedronRestInformation> >* data )
         :TopologyDataHandler<Tetrahedron,sofa::helper::vector<TetrahedronRestInformation> >(data)
         ,ff(ff)
@@ -171,13 +189,13 @@ public:
                                const sofa::helper::vector<unsigned int> &, const sofa::helper::vector<double> &);
 
     protected:
-      TetrahedronNonlinearElasticityFEMForceField<DataTypes>* ff;
+      TetrahedronHyperelasticityFEMForceField<DataTypes>* ff;
     };
 
 protected:
-   TetrahedronNonlinearElasticityFEMForceField();
+   TetrahedronHyperelasticityFEMForceField();
 
-   virtual   ~TetrahedronNonlinearElasticityFEMForceField();
+   virtual   ~TetrahedronHyperelasticityFEMForceField();
 public:
 
   //  virtual void parse(core::objectmodel::BaseObjectDescription* arg);
@@ -191,14 +209,14 @@ public:
 
     void draw(const core::visual::VisualParams* vparams) override;
 
-    Mat<3,3,double> getF( int tetrahedronIndex); // deformation Grad at the index tetrahedronIndex
+    Mat<3,3,double> getPhi( int tetrahedronIndex);
 
 
   protected:
 
     /// the array that describes the complete material energy and its derivatives
 
-    fem::NonlinearMaterial<DataTypes> *m_myMaterialModel;
+    fem::HyperelasticMaterial<DataTypes> *m_myMaterial;
     TetrahedronHandler* m_tetrahedronHandler;
 
     void testDerivatives();
@@ -212,7 +230,7 @@ using sofa::defaulttype::Vec3fTypes;
 
 #if  !defined(SOFA_COMPONENT_FORCEFIELD_TETRAHEDRONHYPERELASTICITYFEMFORCEFIELD_CPP)
 
-extern template class SOFA_MISC_FEM_API TetrahedronNonlinearElasticityFEMForceField<Vec3Types>;
+extern template class SOFA_MISC_FEM_API TetrahedronHyperelasticityFEMForceField<Vec3Types>;
 
 
 #endif //  !defined(SOFA_COMPONENT_FORCEFIELD_TETRAHEDRONHYPERELASTICITYFEMFORCEFIELD_CPP)
