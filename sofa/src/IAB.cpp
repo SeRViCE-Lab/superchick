@@ -215,8 +215,7 @@ int main(int argc, char** argv)
     if (int err = GUIManager::Init(argv[0],gui.c_str()))
         return err;
 
-    // if (fileName.empty())
-    std::string fileName = DataRepository.getFile(SetDirectory::GetCurrentDir() + "/../scenes/imrt.scn");
+    std::string fileName = DataRepository.getFile(SetDirectory::GetCurrentDir() + "/../scenes/imrt_half.scn");
 
     if (int err=GUIManager::createGUI(nullptr))
         return err;

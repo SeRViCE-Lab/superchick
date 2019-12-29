@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<Node name="DomeRingNode">
+
+	<!-- Mesh base for dome == locks with cover -->
+	<MeshSTLLoader name="dome_ring_loader" filename="../../../../ros/srs_traj_opt/patient_description/meshes/dome/dome_ring.stl"/>
+	<MechanicalObject name="dome-ring-states" src="@dome_ring_loader" template="Vec3d" />
+
+	<Node name="DomeRingVisu" >
+		<OglModel name="DomeRingVisual"  src="@../dome_ring_loader" translation="0 0 0" dx="0" dy="0" dz="0"  rx="0" ry="0" rz="0" color="magenta" scale="1"/>
+	</Node>
+
+	<Node 	 name="DomeRingCollis"  >
+		<MeshObjLoader name="dome-ring-collis-loader"  filename="../../../../ros/srs_traj_opt/patient_description/meshes/dome/dome_ring.obj"  scale="1"/>
+		<MeshTopology name="meshTopology"  />
+		<MechanicalObject template="Vec3d" name="dome-ring-collis-states"  velocity="0 0 0"  force="0 0 0"  externalForce="0 0 0" />
+	</Node>
+
+
+
+</Node>

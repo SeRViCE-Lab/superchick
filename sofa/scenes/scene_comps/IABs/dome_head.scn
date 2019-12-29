@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<Node name="DomeHeadNode">
+	<MeshSTLLoader name="dome_head_loader" filename="../../../../ros/srs_traj_opt/patient_description/meshes/dome/dome.stl"/>
+	<MechanicalObject name="dome-states" src="@dome_head_loader" template="Vec3d" />
+  <Node name="DomeHeadVisu" >
+    <OglModel name="DomeHeadVisual"  src="@../dome_head_loader" translation="0 0 0" rotation="0 0 0" dx="0" dy="0" dz="0" rx="0" ry="0" rz="0" color="0.8549 0.8235 0.6431"  scale="1"/>
+  </Node>
+	<Node 	 name="DomeHeadCollis"  >
+	  <MeshObjLoader name="dome-collis-loader"  filename="../../../../ros/srs_traj_opt/patient_description/meshes/dome/dome.obj"  scale="1"/>
+	  <MeshTopology name="meshTopology"  />
+	  <MechanicalObject template="Vec3d" name="dome-collis-states"  velocity="0 0 0"  force="0 0 0"  externalForce="0 0 0" />
+	</Node>
+</Node>
