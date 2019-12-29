@@ -9,6 +9,7 @@
 #include <sofa/defaulttype/RigidTypes.h>
 #include <sofa/core/MechanicalParams.h>
 #include <SofaEigen2Solver/EigenSparseMatrix.h>
+#include <sofa/defaulttype/RGBAColor.h>
 /*
 * Tetrahedron components ripped off but adapted to incompressible materials
 *  Ripped off sofa/modules/SofaMiscFem/TetrahedronHyperelasticityFEMForceField.h
@@ -16,7 +17,6 @@
 * Author: Lekan Ogunmolux, December 18, 2019
 */
 
-#include <sofa/defaulttype/RGBAColor.h>
 #include <IABPlugin/ForceFields/include/NonlinearElasticMaterial.h>
 #include <sofa/core/behavior/ForceField.h>
 #include <SofaBaseMechanics/MechanicalObject.h>
@@ -42,6 +42,7 @@ using namespace sofa::component::topology;
 using namespace sofa::core::topology;
 
 /// Apply constant forces to given degrees of freedom.
+// template<class DataTypes> // was class in tetrahedronmesh file -- > old
 template<typename DataTypes>
 class IsochoricForceField : public core::behavior::ForceField<DataTypes>
 {
@@ -82,7 +83,6 @@ class IsochoricForceField : public core::behavior::ForceField<DataTypes>
 	class TetrahedronRestInformation : public sofa::component::fem::StrainInformation<DataTypes>
   {
     public:
-        TetrahedronRestInformation() {}
         /// shape vector at the rest configuration
         Coord m_shapeVector[4];
         /// fiber direction in rest configuration
@@ -102,19 +102,24 @@ class IsochoricForceField : public core::behavior::ForceField<DataTypes>
         inline friend ostream& operator<< ( ostream& os, const TetrahedronRestInformation& /*eri*/ ) {  return os;  }
         /// Input stream
         inline friend istream& operator>> ( istream& in, TetrahedronRestInformation& /*eri*/ ) { return in; }
+
+        TetrahedronRestInformation() {}
   };
+
   /// data structure stored for each edge
   class EdgeInformation
   {
   public:
-      EdgeInformation() {}
       /// store the stiffness edge matrix
       Matrix3 DfDx;
       /// Output stream
       inline friend ostream& operator<< ( ostream& os, const EdgeInformation& /*eri*/ ) {  return os;  }
       /// Input stream
       inline friend istream& operator>> ( istream& in, EdgeInformation& /*eri*/ ) { return in; }
+
+      EdgeInformation() {}
   };
+
   // protected members for Isochoric Force Field
   protected :
       sofa::core::topology::BaseMeshTopology* m_topology;
@@ -132,10 +137,10 @@ class IsochoricForceField : public core::behavior::ForceField<DataTypes>
   public:
     void setparameter(const vector<Real> param) { d_parameterSet.setValue(param); }
     void setdirection(const vector<Coord> direction) { d_anisotropySet.setValue(direction); }
-    // class SOFA_MISC_FEM_API TetrahedronHandler : public TopologyDataHandler<Tetrahedron,sofa::helper::vector<TetrahedronRestInformation> >
+    // class TetrahedronHandler : public TopologyDataHandler<Tetrahedron,sofa::helper::vector<TetrahedronRestInformation> >
   class SOFA_IABPlugin_API TetrahedronHandler : public TopologyDataHandler<Tetrahedron,sofa::helper::vector<TetrahedronRestInformation> >
   {
-    // public:  /public by definition
+    public:  //public by definition
     using TetrahedronRestInformation = typename IsochoricForceField<DataTypes>::TetrahedronRestInformation;
     TetrahedronHandler(IsochoricForceField<DataTypes>* ff, TetrahedronData<sofa::helper::vector<TetrahedronRestInformation> >* data )
       :TopologyDataHandler<Tetrahedron,sofa::helper::vector<TetrahedronRestInformation> >(data), ff(ff)
@@ -149,29 +154,16 @@ class IsochoricForceField : public core::behavior::ForceField<DataTypes>
   protected:
    IsochoricForceField();
    virtual   ~IsochoricForceField();
-/*
-    /// Declare here the data and their type, you want the user to have access to
-    Data< Real > d_Ri, d_Ro; // referencce configuration radius
-    Data< Real > d_ri, d_ro; // current configuration radius
-    Data< std::string > d_mode; // mode tells whether we are expanding or compressing the IABs; accepts "compress" or "expand"
-    // Data< defaulttype::RGBAColor> color; ///< isochoric spherical forcefield color. (default=[0.0,0.5,1.0,1.0])
-    Data< helper::vector< unsigned int > > indices; ///< index of nodes controlled by the isochoric fields
-    unsigned counter = 0;
 
-    Real m_Ri, m_Ro, m_ri, m_ro, m_C1, m_C2;  // local for internal data usage
-
-    enum { N=DataTypes::spatial_dimensions };
-    using DeformationGrad = defaulttype::Mat<N,N,Real>;  // defines the dimension of the deformation tensor
-*/
 public:
     /// Function responsible for the initialization of the component
     void init() override;
     virtual void reinit() override;
     /// Add the explicit forces (right hand side)
-    virtual void addForce(const core::MechanicalParams* params, DataVecDeriv& d_f, const DataVecCoord& x, const DataVecDeriv& d_v) override;
+    void addForce(const core::MechanicalParams* params, DataVecDeriv& d_f, const DataVecCoord& x, const DataVecDeriv& d_v) override;
     /// Add the explicit derivatives of the forces (contributing to the right hand side vector b)
     /// IF iterative solver: add the implicit derivatives of the forces (contributing to the left hand side matrix A)
-    virtual void addDForce(const core::MechanicalParams* mparams, DataVecDeriv& d_df , const DataVecDeriv& d_dx) override;
+    void addDForce(const core::MechanicalParams* mparams, DataVecDeriv& d_df , const DataVecDeriv& d_dx) override;
     SReal getPotentialEnergy(const core::MechanicalParams* params, const DataVecCoord& x) const override;
     /// IF direct solver: add the implicit derivatives of the forces (contributing to the left hand side matrix A)
     void addKToMatrix(sofa::defaulttype::BaseMatrix *m, SReal kFactor, unsigned int &offset) override;
@@ -182,26 +174,20 @@ public:
     // linearsolver::EigenBaseSparseMatrix<typename DataTypes::Real> matS;
 protected:
     /// the array that describes the complete material energy and its derivatives
-    sofa::component::fem::NonlinearElasticMaterial<DataTypes> *m_MRIncompMatlModel;
+    fem::NonlinearElasticMaterial<DataTypes> *m_MRIncompMatlModel;
     TetrahedronHandler* m_tetrahedronHandler;
     void testDerivatives();
     void saveMesh( const char *filename );
     void updateTangentMatrix();
-
-  core::behavior::MechanicalState<DataTypes> *mState;
-  // Data< Real > d_C1, d_C2; // material elasticity weights in strain energy equations
-  // Real abstol, reltol;
 };
 
-#if  !defined(SOFA_COMPONENT_FORCEFIELD_TEMPLATEFORCEFIELD_CPP)
+#if  !defined(SOFA_COMPONENT_FORCEFIELD_ISOCHORICFORCEFIELD_CPP)
 extern template class SOFA_BOUNDARY_CONDITION_API IsochoricForceField<sofa::defaulttype::Vec3Types>;
 extern template class SOFA_BOUNDARY_CONDITION_API IsochoricForceField<sofa::defaulttype::Vec2Types>;
 extern template class SOFA_BOUNDARY_CONDITION_API IsochoricForceField<sofa::defaulttype::Vec1Types>;
 extern template class SOFA_BOUNDARY_CONDITION_API IsochoricForceField<sofa::defaulttype::Vec6Types>;
 /*Don't think I should include this here*/
-// extern template class SOFA_MISC_FEM_API TetrahedronNonlinearElasticityFEMForceField<Vec3Types>;
 extern template class SOFA_IABPlugin_API IsochoricForceField<Vec3Types>;
-// extern template class SOFA_BOUNDARY_CONDITION_API TetrahedronNonlinearElasticityFEMForceField<Vec3Types>;
 #endif
 } // namespace forcefield
 

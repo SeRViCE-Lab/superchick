@@ -25,6 +25,7 @@
 #include <sofa/defaulttype/VecTypes.h>
 #include <sofa/defaulttype/RigidTypes.h>
 #include <sofa/core/ObjectFactory.h>
+// #include "IABPlugin/ForceFields/include/initMiscFEM.h"
 
 namespace sofa
 {
@@ -43,16 +44,16 @@ using namespace sofa::defaulttype;
 
 int IsochoricForceFieldClass = core::RegisterObject("IAB Isochoric ForceField applied to the boundary and interior")
         .add< IsochoricForceField<Vec3Types> >()
-        .add< IsochoricForceField<Vec2Types> >()
-        .add< IsochoricForceField<Vec1Types> >()
-        .add< IsochoricForceField<Vec6Types> >()
+        // .add< IsochoricForceField<Vec2Types> >()
+        // .add< IsochoricForceField<Vec1Types> >()
+        // .add< IsochoricForceField<Vec6Types> >()
 
         ;
 
 template class IsochoricForceField<Vec3Types>;
-template class IsochoricForceField<Vec2Types>;
-template class IsochoricForceField<Vec1Types>;
-template class IsochoricForceField<Vec6Types>;
+// template class IsochoricForceField<Vec2Types>;
+// template class IsochoricForceField<Vec1Types>;
+// template class IsochoricForceField<Vec6Types>;
 
 
 
