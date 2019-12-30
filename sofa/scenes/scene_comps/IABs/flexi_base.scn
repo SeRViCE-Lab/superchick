@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<!-- Flexi width // skull to chin -->
+<Node name="FlexiBaseNode">
+	<MeshSTLLoader name="flexi_base_loader" filename="../../../../ros/srs_traj_opt/patient_description/meshes/flexi/flexi-base.stl"/>
+	<MechanicalObject name="flexi-base-states" src="@flexi_base_loader" template="Vec3d" />
+  <Node name="FlexiBaseVisu" >
+    <OglModel name="FlexiBaseVisual"  src="@../flexi_base_loader" translation="0 0 0" rotation="0 0 0" dx="0" dy="0" dz="0" rx="0" ry="0" rz="0" color="0.8549 0.8235 0.6431"  scale="1"/>
+  </Node>
+	<Node 	 name="FlexiBaseCollis">
+	  <MeshObjLoader name="flexi-base-collis-loader"  filename="../../../../ros/srs_traj_opt/patient_description/meshes/flexi/flexi-base.stl"  scale="1"/>
+	  <MeshTopology name="meshTopology"  />
+	  <MechanicalObject template="Vec3d" name="flexi-base-collis-states"  velocity="0 0 0"  force="0 0 0"  externalForce="0 0 0" />
+	</Node>
+</Node>
