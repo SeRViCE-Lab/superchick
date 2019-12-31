@@ -17,7 +17,7 @@
 
   <LightManager/>
 	<DefaultContactManager name="Response"  response="FrictionContact" />
-
+  <IsochoricForceField  template="Vec3d" C1="1000" C2="100" bulk="1000"      />ß
   <Node name="Patient">
     <include href="scene_comps/patients/patient_rigid_whole.scn" translation="-300 25 -50" scale="250" rx="-90" ry="-90" color="grey" />
 

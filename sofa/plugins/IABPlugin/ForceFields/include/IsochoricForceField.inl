@@ -109,23 +109,13 @@ IsochoricForceField<DataTypes>::IsochoricForceField()
     , d_parameterSet(initData(&d_parameterSet,"ParameterSet","The global parameters specifying the material"))
     , d_anisotropySet(initData(&d_anisotropySet,"AnisotropyDirections","The global directions of anisotropy of the material"))
     , m_tetrahedronInfo(initData(&m_tetrahedronInfo, "tetrahedronInfo", "Internal tetrahedron data"))
+    , m_sphericalPolarInfo(initData(&m_sphericalPolarInfo, "m_sphericalPolarInfo", "Internal spherical data"))
     , m_edgeInfo(initData(&m_edgeInfo, "edgeInfo", "Internal edge data"))
     , m_tetrahedronHandler(nullptr)
-    /*
-    indices(initData(&indices, "indices", "index of nodes controlled by the isochoric deformations")),
-    d_Ri(initData(&d_Ri, Real(10.0), "Ri", "internal radius in the reference configuration")),
-    d_Ro(initData(&d_Ro, Real(15.0), "Ro", "external radius in the reference configuration")),
-    d_ri(initData(&d_ri, Real(13.0), "ri", "internal radius in the current configuration")),
-    // d_ro(initData(&d_ro, Real(25), "ro", "external radius in the current configuration")),
-    d_C1(initData(&d_C1, Real(1e3), "C1", "material elasticity of the internal IAB wall")),
-    d_C2(initData(&d_C2, Real(1e3), "C2", "material elasticity of the outer IAB wall")),
-    d_mode(initData(&d_mode, "expand", "mode", "mode of deformation: <expansion> or <compression>")),
-    counter(0)
-    */
+    , m_sphericalPolarHandler(nullptr)
 {
   m_tetrahedronHandler = new TetrahedronHandler(this,&m_tetrahedronInfo);
-  //default Constructor
-  // init();
+  m_sphericalPolarHandler = new SphericalPolarHandler(this, &m_sphericalPolarInfo);
 }
 
 template<typename DataTypes>
@@ -133,9 +123,9 @@ IsochoricForceField<DataTypes>::~IsochoricForceField()
 {
   if(m_tetrahedronHandler)
     delete m_tetrahedronHandler;
+  if (m_sphericalPolarHandler)
+    delete m_sphericalPolarHandler;
 }
-
-
 
 template<typename DataTypes>
 void IsochoricForceField<DataTypes>::init()
@@ -183,6 +173,7 @@ void IsochoricForceField<DataTypes>::init()
     }
 
     helper::vector<typename IsochoricForceField<DataTypes>::TetrahedronRestInformation>& tetrahedronInf = *(m_tetrahedronInfo.beginEdit());
+    helper::vector<typename IsochoricForceField<DataTypes>::SphericalPolarRestInformation>& sphereInf = *(m_sphericalPolarInfo.beginEdit());
 
     /// prepare to store info in the triangle array
     tetrahedronInf.resize(m_topology->getNbTetrahedra());
@@ -283,13 +274,22 @@ void IsochoricForceField<DataTypes>::addForce(const core::MechanicalParams* /*pa
         }
 
         /// compute the right Cauchy-Green deformation matrix
+        // for (k=0;k<3;++k) {
+        //     for (l=k;l<3;++l) {
+        //         tetInfo->deformationTensor(k,l)=(tetInfo->m_deformationGradient(0,k)*tetInfo->m_deformationGradient(0,l)+
+        //         tetInfo->m_deformationGradient(1,k)*tetInfo->m_deformationGradient(1,l)+
+        //         tetInfo->m_deformationGradient(2,k)*tetInfo->m_deformationGradient(2,l));
+        //     }
+        // }
+        // myne right cauchy-green tensor
         for (k=0;k<3;++k) {
             for (l=k;l<3;++l) {
-                tetInfo->deformationTensor(k,l)=(tetInfo->m_deformationGradient(0,k)*tetInfo->m_deformationGradient(0,l)+
+                tetInfo->rightCauchy(k,l)=(tetInfo->m_deformationGradient(0,k)*tetInfo->m_deformationGradient(0,l)+
                 tetInfo->m_deformationGradient(1,k)*tetInfo->m_deformationGradient(1,l)+
                 tetInfo->m_deformationGradient(2,k)*tetInfo->m_deformationGradient(2,l));
             }
         }
+
 
         if(globalParameters.anisotropyDirection.size()>0)
         {
