@@ -64,7 +64,6 @@ class IsochoricForceField : public core::behavior::ForceField<DataTypes>
     using MatrixCoeffPair =  std::pair<Real,MatrixSym>;
 
     using SetParameterArray =  helper::vector<Real>;
-    using SetAnisotropyDirectionArray =  helper::vector<Coord>;
 
     using Index =  core::topology::BaseMeshTopology::index_type;
     using Element =  core::topology::BaseMeshTopology::Tetra;
@@ -76,7 +75,6 @@ class IsochoricForceField : public core::behavior::ForceField<DataTypes>
     // since the spheres are xtized by three coordinates
     using Sphere = sofa::core::topology::Topology::Triangle;
     using SphereID = sofa::core::topology::Topology::TriangleID;
-    // using Sphere = sofa::core::topology::Topology::Triangle;
     // Fwd Declaration
     class SphericalPolarRestInformation;
     // trick for spherical polardata
@@ -91,34 +89,7 @@ class IsochoricForceField : public core::behavior::ForceField<DataTypes>
   public :
     	typename sofa::component::fem::MaterialParameters<DataTypes> globalParameters;
 
-  /// data structure stored for each tetrahedron
-	class TetrahedronRestInformation : public sofa::component::fem::StrainInformation<DataTypes>
-  {
-    public:
-        /// shape vector at the rest configuration
-        Coord m_shapeVector[4];
-        /// fiber direction in rest configuration
-        Coord m_fiberDirection;
-        /// rest volume
-        Real m_restVolume;
-        /// current tetrahedron volume
-        Real m_volScale;
-        Real m_volume;
-        /// volume/ restVolume
-        MatrixSym m_SPKTensorGeneral;
-        /// deformation gradient = F
-        Matrix3 m_deformationGradient;
-        /// right Cauchy-Green deformation tensor C (gradPhi^T gradPhi)
-        Real m_strainEnergy;
-        /// Output stream
-        inline friend ostream& operator<< ( ostream& os, const TetrahedronRestInformation& /*eri*/ ) {  return os;  }
-        /// Input stream
-        inline friend istream& operator>> ( istream& in, TetrahedronRestInformation& /*eri*/ ) { return in; }
-
-        TetrahedronRestInformation() {}
-  };
-
-  /// data structure stored for each minisphere
+  /// data structure stored for each minisphere==>Triangle
 	class SphericalPolarRestInformation : public sofa::component::fem::StrainInformation<DataTypes>
   {
     public:
@@ -152,6 +123,8 @@ class IsochoricForceField : public core::behavior::ForceField<DataTypes>
         Real m_beta;
         // angle of shear between configurations
         Real m_shear;
+        // volume
+        Real m_restVolume;
         /// Output stream
         inline friend ostream& operator<< ( ostream& os, const SphericalPolarRestInformation& /*eri*/ ) {  return os;  }
         /// Input stream
@@ -183,28 +156,12 @@ class IsochoricForceField : public core::behavior::ForceField<DataTypes>
       Data<bool> d_stiffnessMatrixRegularizationWeight; ///< Regularization of the Stiffness Matrix (between true or false)
       Data<string> d_materialName; ///< the name of the material // this should be default in my case
       Data<SetParameterArray> d_parameterSet; ///< The global parameters specifying the material: C1, C2 and bulk modulus
-      Data<SetAnisotropyDirectionArray> d_anisotropySet; ///< The global directions of anisotropy of the material
 
-      TetrahedronData<sofa::helper::vector<TetrahedronRestInformation> > m_tetrahedronInfo; ///< Internal tetrahedron data from TopologyData.h
       SphericalPolarData m_sphericalPolarInfo;
       // TriangleData<sofa::helper::vector<SphericalPolarRestInformation> > m_sphericalPolarInfo; ///< Internal tetrahedron data from TopologyData.h
       EdgeData<sofa::helper::vector<EdgeInformation> > m_edgeInfo; ///< Internal edge data
   public:
     void setparameter(const vector<Real> param) { d_parameterSet.setValue(param); }
-    void setdirection(const vector<Coord> direction) { d_anisotropySet.setValue(direction); }
-  class SOFA_IABPlugin_API TetrahedronHandler : public TopologyDataHandler<Tetrahedron,sofa::helper::vector<TetrahedronRestInformation> >
-  {
-    public:  //public by definition
-    using TetrahedronRestInformation = typename IsochoricForceField<DataTypes>::TetrahedronRestInformation;
-    TetrahedronHandler(IsochoricForceField<DataTypes>* ff, TetrahedronData<sofa::helper::vector<TetrahedronRestInformation> >* data )
-      :TopologyDataHandler<Tetrahedron,sofa::helper::vector<TetrahedronRestInformation> >(data), ff(ff)
-    {  }
-    void applyCreateFunction(unsigned int, TetrahedronRestInformation &t, const Tetrahedron &,
-                             const sofa::helper::vector<unsigned int> &,
-                             const sofa::helper::vector<double> &);
-    protected:
-        IsochoricForceField<DataTypes>* ff;
-  };
 
   class SOFA_IABPlugin_API SphericalPolarHandler : public TopologyDataHandler<Sphere,sofa::helper::vector<SphericalPolarRestInformation> >
   {
@@ -243,7 +200,6 @@ public:
 protected:
     /// the array that describes the complete material energy and its derivatives
     fem::NonlinearElasticMaterial<DataTypes> *m_MRIncompMatlModel;
-    TetrahedronHandler* m_tetrahedronHandler;
     SphericalPolarHandler* m_sphericalPolarHandler;
     void testDerivatives();
     void saveMesh( const char *filename );

@@ -43,53 +43,48 @@ namespace forcefield
   using namespace	sofa::component::topology;
   using namespace core::topology;
 
-
 template<typename DataTypes>
-void IsochoricForceField<DataTypes>::TetrahedronHandler::applyCreateFunction(unsigned int tetrahedronIndex,
-                                                                            TetrahedronRestInformation &tinfo,
-                                                                            const Tetrahedron &,
+void IsochoricForceField<DataTypes>::SphericalPolarHandler::applyCreateFunction(unsigned int sphereIndex,
+                                                                            SphericalPolarRestInformation &sinfo,
+                                                                            const Sphere &,
                                                                             const sofa::helper::vector<unsigned int> &,
                                                                             const sofa::helper::vector<double> &)
 {
   if (ff) {
-      const vector< Tetrahedron > &tetrahedronArray=ff->m_topology->getTetrahedra() ;
+      const vector< Sphere > &sphereArray=ff->m_topology->getTriangles() ;
       const std::vector< Edge> &edgeArray=ff->m_topology->getEdges() ;
       unsigned int j;
 //      int k;
       typename DataTypes::Real volume;
-      typename DataTypes::Coord point[4];
+      typename DataTypes::Coord point[3];
       const typename DataTypes::VecCoord restPosition = ff->mstate->read(core::ConstVecCoordId::restPosition())->getValue();
 
-      ///describe the indices of the 4 tetrahedron vertices
-      const Tetrahedron &t= tetrahedronArray[tetrahedronIndex];
-      BaseMeshTopology::EdgesInTetrahedron te=ff->m_topology->getEdgesInTetrahedron(tetrahedronIndex);
+      ///describe the indices of the 3 spherical coordinates at a point
+      const Sphere &t= sphereArray[sphereIndex];
+      BaseMeshTopology::EdgesInTriangle te=ff->m_topology->getEdgesInTriangle(sphereIndex);
 
       // store the point position
-      for(j=0;j<4;++j)
+      for(j=0;j<3;++j) //was j<4
           point[j]=(restPosition)[t[j]];
       /// compute 6 times the rest volume
-      volume=dot(cross(point[2]-point[0],point[3]-point[0]),point[1]-point[0]);
+      // volume=dot(cross(point[2]-point[0],point[3]-point[0]),point[1]-point[0]);
+      m_radialVector[0] = point[0]; //m_r * std::cos(m_theta) * std::sin(m_phi);
+      m_radialVector[1] = point[1]; //m_r * std::sin(m_theta) * std::sin(m_phi);
+      m_radialVector[2] = point[2]; //m_r * std::cos(m_theta);
+
+      volume=(2/3)*M_Pi*std::norm(m_radialVector);
       /// store the rest volume
-      tinfo.m_volScale =(Real)(1.0/volume);
-      tinfo.m_restVolume = std::fabs(volume/6);
-      // store shape vectors at the rest configuration
-      for(j=0;j<4;++j) {
-          if (!(j%2))
-              tinfo.m_shapeVector[j]=-cross(point[(j+2)%4] - point[(j+1)%4],point[(j+3)%4] - point[(j+1)%4])/ volume;
-          else
-              tinfo.m_shapeVector[j]=cross(point[(j+2)%4] - point[(j+1)%4],point[(j+3)%4] - point[(j+1)%4])/ volume;;
-      }
+      sinfo.m_restVolume = std::fabs(volume);
 
-
-      for(j=0;j<6;++j) {
-          Edge e=ff->m_topology->getLocalEdgesInTetrahedron(j);
-          int k=e[0];
-          //int l=e[1];
-          if (edgeArray[te[j]][0]!=t[k]) {
-              k=e[1];
-              //l=e[0];
-          }
-      }
+      // for(j=0;j<6;++j) {
+      //     Edge e=ff->m_topology->getLocalEdgesInTetrahedron(j);
+      //     int k=e[0];
+      //     //int l=e[1];
+      //     if (edgeArray[te[j]][0]!=t[k]) {
+      //         k=e[1];
+      //         //l=e[0];
+      //     }
+      // }
 
 
   }//end if(ff)
@@ -103,26 +98,20 @@ IsochoricForceField<DataTypes>::IsochoricForceField()
     : m_topology(0)
     , m_initialPoints(0)
     , m_updateMatrix(true)
-    , m_meshSaved( false)
+    , m_meshSaved(false)
     , d_stiffnessMatrixRegularizationWeight(initData(&d_stiffnessMatrixRegularizationWeight, (bool)false,"matrixRegularization","Regularization of the Stiffness Matrix (between true or false)"))
     , d_materialName(initData(&d_materialName,std::string("MooneyRivlinIncompressible"),"materialName","the name of the material to be used"))
     , d_parameterSet(initData(&d_parameterSet,"ParameterSet","The global parameters specifying the material"))
-    , d_anisotropySet(initData(&d_anisotropySet,"AnisotropyDirections","The global directions of anisotropy of the material"))
-    , m_tetrahedronInfo(initData(&m_tetrahedronInfo, "tetrahedronInfo", "Internal tetrahedron data"))
     , m_sphericalPolarInfo(initData(&m_sphericalPolarInfo, "m_sphericalPolarInfo", "Internal spherical data"))
     , m_edgeInfo(initData(&m_edgeInfo, "edgeInfo", "Internal edge data"))
-    , m_tetrahedronHandler(nullptr)
     , m_sphericalPolarHandler(nullptr)
 {
-  m_tetrahedronHandler = new TetrahedronHandler(this,&m_tetrahedronInfo);
   m_sphericalPolarHandler = new SphericalPolarHandler(this, &m_sphericalPolarInfo);
 }
 
 template<typename DataTypes>
 IsochoricForceField<DataTypes>::~IsochoricForceField()
 {
-  if(m_tetrahedronHandler)
-    delete m_tetrahedronHandler;
   if (m_sphericalPolarHandler)
     delete m_sphericalPolarHandler;
 }
@@ -140,12 +129,6 @@ void IsochoricForceField<DataTypes>::init()
     if (paramSet.size()>0) {
             globalParameters.parameterArray.resize(paramSet.size());
             copy(paramSet.begin(), paramSet.end(),globalParameters.parameterArray.begin());
-    }
-    /** parse the anisotropy Direction set */
-    SetAnisotropyDirectionArray anisotropySet=d_anisotropySet.getValue();
-    if (anisotropySet.size()>0) {
-            globalParameters.anisotropyDirection.resize(anisotropySet.size());
-            copy(anisotropySet.begin(), anisotropySet.end(),globalParameters.anisotropyDirection.begin());
     }
 
     m_topology = this->getContext()->getMeshTopology();
@@ -166,17 +149,16 @@ void IsochoricForceField<DataTypes>::init()
     }
 
 
-    if (!m_topology->getNbTetrahedra())
+    if (!m_topology->getNbTriangles())
     {
-        msg_error() << "ERROR(IsochoricForceField): object must have a Tetrahedral Set Topology.\n";
+        msg_error() << "ERROR(IsochoricForceField): object must have a Triangle Set Topology.\n";
         return;
     }
 
-    helper::vector<typename IsochoricForceField<DataTypes>::TetrahedronRestInformation>& tetrahedronInf = *(m_tetrahedronInfo.beginEdit());
     helper::vector<typename IsochoricForceField<DataTypes>::SphericalPolarRestInformation>& sphereInf = *(m_sphericalPolarInfo.beginEdit());
 
     /// prepare to store info in the triangle array
-    tetrahedronInf.resize(m_topology->getNbTetrahedra());
+    sphereInf.resize(m_topology->getNbTriangles());
 
     helper::vector<typename IsochoricForceField<DataTypes>::EdgeInformation>& edgeInf = *(m_edgeInfo.beginEdit());
 
@@ -195,20 +177,20 @@ void IsochoricForceField<DataTypes>::init()
     }
 
     /// initialize the data structure associated with each tetrahedron
-    for (Topology::TetrahedronID tetID=0; tetID<m_topology->getNbTetrahedra(); ++tetID)
+    for (Topology::TriangleID triID=0; triID<m_topology->getNbTriangles(); ++triID)
     {
-        m_tetrahedronHandler->applyCreateFunction(tetID, tetrahedronInf[tetID],
-                                                m_topology->getTetrahedron(tetID),  (const vector< unsigned int > )0,
+        m_sphericalPolarHandler->applyCreateFunction(triID, sphereInf[triID],
+                                                m_topology->getTriangles(triID),
+                                                (const vector< unsigned int > )0,
                                                 (const vector< double >)0);
     }
 
     /// set the call back function upon creation of a tetrahedron
-    m_tetrahedronInfo.createTopologicalEngine(m_topology,m_tetrahedronHandler);
-    m_tetrahedronInfo.registerTopologicalData();
+    m_sphericalPolarInfo.createTopologicalEngine(m_topology,m_sphericalPolarHandler);
+    m_sphericalPolarInfo.registerTopologicalData();
 
-    m_tetrahedronInfo.endEdit();
+    m_sphericalPolarInfo.endEdit();
     //testDerivatives();
-
 }
 
 template<typename DataTypes>
@@ -234,22 +216,21 @@ void IsochoricForceField<DataTypes>::addForce(const core::MechanicalParams* /*pa
         m_meshSaved = true;
     }
     unsigned int i=0,j=0,k=0,l=0;
-    unsigned int nbTetrahedra=m_topology->getNbTetrahedra();
+    unsigned int nbTriangles=m_topology->getNbTriangles();
 
-    helper::vector<TetrahedronRestInformation>& tetrahedronInf = *(m_tetrahedronInfo.beginEdit());
+    helper::vector<SphericalPolarRestInformation>& sphereInf = *(m_sphericalPolarInfo.beginEdit());
 
-
-    TetrahedronRestInformation *tetInfo;
+    SphericalPolarRestInformation *sphInfo;
 
     assert(this->mstate);
 
     Coord dp[3],x0,sv;
 
 
-    for(i=0; i<nbTetrahedra; i++ )
+    for(i=0; i<nbTriangles; i++ )
     {
-        tetInfo=&tetrahedronInf[i];
-        const Tetrahedron &ta= m_topology->getTetrahedron(i);
+        sphInfo=&sphereInf[i];
+        const Sphere &ta= m_topology->getTriangle(i);
 
         x0=x[ta[0]];
 
@@ -257,10 +238,10 @@ void IsochoricForceField<DataTypes>::addForce(const core::MechanicalParams* /*pa
         // deformation gradient = sum of tensor product between vertex position and shape vector
         // optimize by using displacement with first vertex
         dp[0]=x[ta[1]]-x0;
-        sv=tetInfo->m_shapeVector[1];
+        sv=sphInfo->m_shapeVector[1];
         for (k=0;k<3;++k) {
                 for (l=0;l<3;++l) {
-                        tetInfo->m_deformationGradient[k][l]=dp[0][k]*sv[l];
+                        sphInfo->m_deformationGradient[k][l]=dp[0][k]*sv[l];
                 }
         }
         for (j=1;j<3;++j) {
@@ -290,14 +271,6 @@ void IsochoricForceField<DataTypes>::addForce(const core::MechanicalParams* /*pa
             }
         }
 
-
-        if(globalParameters.anisotropyDirection.size()>0)
-        {
-            tetInfo->m_fiberDirection=globalParameters.anisotropyDirection[0];
-            Coord vectCa=tetInfo->deformationTensor*tetInfo->m_fiberDirection;
-            Real aDotCDota=dot(tetInfo->m_fiberDirection,vectCa);
-            tetInfo->lambda=(Real)sqrt(aDotCDota);
-        }
         Coord areaVec = cross( dp[1], dp[2] );
 
         tetInfo->J = dot( areaVec, dp[0] ) * tetInfo->m_volScale;
@@ -338,9 +311,9 @@ void IsochoricForceField<DataTypes>::addDForce(const core::MechanicalParams* mpa
     unsigned int i=0,j=0,k=0,l=0;
     unsigned int nbTetrahedra=m_topology->getNbTetrahedra();
 
-    helper::vector<TetrahedronRestInformation>& tetrahedronInf = *(m_tetrahedronInfo.beginEdit());
+    helper::vector<SphericalPolarRestInformation>& sphereInf = *(m_tetrahedronInfo.beginEdit());
 
-    TetrahedronRestInformation *tetInfo;
+    SphericalPolarRestInformation *sphInfo;
 
     assert(this->mstate);
 
@@ -349,7 +322,7 @@ void IsochoricForceField<DataTypes>::addDForce(const core::MechanicalParams* mpa
     // opportunity for improvement using my formulation here
     for(i=0; i<nbTetrahedra; i++ )
     {
-        tetInfo=&tetrahedronInf[i];
+        sphInfo=&tetrahedronInf[i];
         const Tetrahedron &ta= m_topology->getTetrahedron(i);
 
         x0=x[ta[0]];
@@ -358,18 +331,18 @@ void IsochoricForceField<DataTypes>::addDForce(const core::MechanicalParams* mpa
         // deformation gradient = sum of tensor product between vertex position and shape vector
         // optimize by using displacement with first vertex
         dp[0]=x[ta[1]]-x0;
-        sv=tetInfo->m_shapeVector[1];
+        sv=sphInfo->m_shapeVector[1];
         for (k=0;k<3;++k) {
                 for (l=0;l<3;++l) {
-                        tetInfo->m_deformationGradient[k][l]=dp[0][k]*sv[l];
+                        sphInfo->m_deformationGradient[k][l]=dp[0][k]*sv[l];
                 }
         }
         for (j=1;j<3;++j) {
                 dp[j]=x[ta[j+1]]-x0;
-                sv=tetInfo->m_shapeVector[j+1];
+                sv=sphInfo->m_shapeVector[j+1];
                 for (k=0;k<3;++k) {
                         for (l=0;l<3;++l) {
-                                tetInfo->m_deformationGradient[k][l]+=dp[j][k]*sv[l];
+                                sphInfo->m_deformationGradient[k][l]+=dp[j][k]*sv[l];
                         }
                 }
         }
@@ -377,30 +350,22 @@ void IsochoricForceField<DataTypes>::addDForce(const core::MechanicalParams* mpa
         /// compute the right Cauchy-Green deformation matrix: F^TF
         for (k=0;k<3;++k) {
             for (l=k;l<3;++l) {
-                tetInfo->rightCauchy(k,l)=\
-               (tetInfo->m_deformationGradient(0,k)*tetInfo->m_deformationGradient(0,l)+
-                tetInfo->m_deformationGradient(1,k)*tetInfo->m_deformationGradient(1,l)+
-                tetInfo->m_deformationGradient(2,k)*tetInfo->m_deformationGradient(2,l));
+                sphInfo->rightCauchy(k,l)=\
+               (sphInfo->m_deformationGradient(0,k)*sphInfo->m_deformationGradient(0,l)+
+                sphInfo->m_deformationGradient(1,k)*sphInfo->m_deformationGradient(1,l)+
+                sphInfo->m_deformationGradient(2,k)*sphInfo->m_deformationGradient(2,l));
             }
         }
 
-        // don't know if I need this
-        if(globalParameters.anisotropyDirection.size()>0)
-        {
-            tetInfo->m_fiberDirection=globalParameters.anisotropyDirection[0];
-            Coord vectCa=tetInfo->rightCauchy*tetInfo->m_fiberDirection;
-            Real aDotCDota=dot(tetInfo->m_fiberDirection,vectCa);
-            tetInfo->lambda=(Real)sqrt(aDotCDota);
-        }
         Coord areaVec = cross( dp[1], dp[2] );
 
-        tetInfo->J = dot( areaVec, dp[0] ) * tetInfo->m_volScale;
-        tetInfo->trC = (Real)( tetInfo->rightCauchy(0,0) + tetInfo->rightCauchy(1,1) + tetInfo->rightCauchy(2,2));
-        tetInfo->m_SPKTensorGeneral.clear();
-        m_MRIncompMatlModel->deriveSPKTensor(tetInfo,globalParameters,tetInfo->m_SPKTensorGeneral);
+        sphInfo->J = dot( areaVec, dp[0] ) * sphInfo->m_volScale;
+        sphInfo->trC = (Real)( sphInfo->rightCauchy(0,0) + sphInfo->rightCauchy(1,1) + sphInfo->rightCauchy(2,2));
+        sphInfo->m_SPKTensorGeneral.clear();
+        m_MRIncompMatlModel->deriveSPKTensor(sphInfo,globalParameters,sphInfo->m_SPKTensorGeneral);
         for(l=0;l<4;++l)
         {
-            f[ta[l]]-=tetInfo->m_deformationGradient*(tetInfo->m_SPKTensorGeneral*tetInfo->m_shapeVector[l])*tetInfo->m_restVolume;
+            f[ta[l]]-=sphInfo->m_deformationGradient*(sphInfo->m_SPKTensorGeneral*tetInfo->m_shapeVector[l])*tetInfo->m_restVolume;
         }
     }
 
