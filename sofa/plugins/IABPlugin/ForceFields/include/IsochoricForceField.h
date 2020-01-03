@@ -102,25 +102,23 @@ class IsochoricForceField : public core::behavior::ForceField<DataTypes>
         // components in spherical polar coordinates
         Real m_r, m_theta, m_phi;
         // Lagrangean coordinates
-        Real m_R, m_Theta, m_Phi;
+        Real m_R, m_Theta, m_Phi; // see globalParameters
         // internal and external radii
         Real m_ri, m_ro ;
         // Lagrangean coordinates
-        Real m_Ri, m_Ro;
+        Real m_Ri, m_Ro; // see globalParameters
         /// deformation gradient = F
-        Matrix3 m_F;
+        Matrix3 m_F(0); // initialize to zeros
         /// right Cauchy-Green deformation tensor C (gradPhi^T gradPhi)
-        Matrix3 m_C;
+        Matrix3 m_C(0); // initialize to zeros
         // left Cauchy-Green Tensor
-        Matrix3 m_B;
+        Matrix3 m_B(0); // initialize to zeros
+        // Mooney-Rivlin Constants
+        Real m_C1, m_C2;
         // Extension ratios
         Real m_lambda_r, m_lambda_theta, m_lambda_phi;
         // Cauchy Stress Tensor
-        Matrix3 m_cauchyStressTensor;
-        // Right Cauchy Stress Tensor
-        Matrix3 m_C;
-        // Left Cauchy Stress Tensor
-        Matrix3 m_B;
+        Matrix3 m_cauchyStressTensor(0); // initialize to zeros
         // angle between directions:: eulerian form
         Real m_alpha;
         // Lagrangean form
@@ -128,7 +126,7 @@ class IsochoricForceField : public core::behavior::ForceField<DataTypes>
         // angle of shear between configurations
         Real m_shear;
         // volume
-        Real m_restVolume;
+        Real m_restVolume; // do we need this
         /// Output stream
         inline friend ostream& operator<< ( ostream& os, const SphericalPolarRestInformation& /*eri*/ ) {  return os;  }
         /// Input stream
@@ -159,6 +157,9 @@ class IsochoricForceField : public core::behavior::ForceField<DataTypes>
 
       Data<bool> d_stiffnessMatrixRegularizationWeight; ///< Regularization of the Stiffness Matrix (between true or false)
       Data<string> d_materialName; ///< the name of the material // this should be default in my case
+      /* The global parameter array should contain the ff:
+          initial Ri, Ro, R, Phi, Theta, C1, C2
+      */
       Data<SetParameterArray> d_parameterSet; ///< The global parameters specifying the material: C1, C2 and bulk modulus
 
       SphericalPolarData m_sphericalPolarInfo;

@@ -78,15 +78,15 @@ void IsochoricForceField<DataTypes>::SphericalPolarHandler::applyCreateFunction(
       /// store the rest volume
       sinfo.m_restVolume = std::fabs((2/3)*M_Pi*std::norm(m_radialVector));
 
-      // for(j=0;j<6;++j) {
-      //     Edge e=ff->m_topology->getLocalEdgesInTetrahedron(j);
-      //     int k=e[0];
-      //     //int l=e[1];
-      //     if (edgeArray[te[j]][0]!=t[k]) {
-      //         k=e[1];
-      //         //l=e[0];
-      //     }
-      // }
+      for(j=0;j<6;++j) {
+          Edge e=ff->m_topology->getLocalEdgesInTriangle(j);
+          int k=e[0];
+          //int l=e[1];
+          if (edgeArray[te[j]][0]!=t[k]) {
+              k=e[1];
+              //l=e[0];
+          }
+      }
   }//end if(ff)
 
 }
@@ -158,6 +158,14 @@ void IsochoricForceField<DataTypes>::init()
     // this will be the spherical polar info for reference configuration
     helper::vector<typename IsochoricForceField<DataTypes>::SphericalPolarRestInformation>& triSphereInfVec = *(m_sphericalPolarInfo.beginEdit());
 
+    // update Lagrangean parameters from global array
+    triSphereInfVec->m_R   = paramSet[0];
+    triSphereInfVec->m_Theta = paramSet[1];
+    triSphereInfVec->m_Phi = paramSet[2];
+    triSphereInfVec->m_Ri  = paramSet[3];
+    triSphereInfVec->m_Ro  = paramSet[4];
+    triSphereInfVec->C1    = paramSet[5];
+    triSphereInfVec->C2    = paramSet[6];
     /// prepare to store info in the triangle array
     triSphereInfVec.resize(m_topology->getNbTriangles());
 
@@ -205,17 +213,11 @@ void IsochoricForceField<DataTypes>::addForce(const core::MechanicalParams* /*pa
                                              DataVecDeriv& d_f, const DataVecCoord& d_x,
                                              const DataVecDeriv& /*d_v*/)
 {
+    sofa::helper::AdvancedTimer::stepBegin("addForceSphericalPolarFEM");
+
     VecDeriv& f = *d_f.beginEdit();
     const VecCoord& x = d_x.getValue();
 
-
-    // const bool printLog = this->f_printLog.getValue();
-    // if (printLog && !m_meshSaved)
-    // {
-    //     saveMesh( "/opt/sofa-result.stl" );
-    //     printf( "Mesh saved.\n" );
-    //     m_meshSaved = true;
-    // }
     unsigned int i=0,j=0,k=0,l=0;
     unsigned int nbTriangles=m_topology->getNbTriangles();
 
@@ -226,19 +228,19 @@ void IsochoricForceField<DataTypes>::addForce(const core::MechanicalParams* /*pa
 
     assert(this->mstate);
 
-    Coord dp[3],x0,sv;
+    // Coord dp[3],x0,sv;
     // for every fem triangle, get sph info
     for(i=0; i<nbTriangles; i++ )
     {
         sphInfo=&sphereInfVec[i];
         const Sphere &triSphTopo= m_topology->getTriangle(i);
 
-        x0=x[triSphTopo[0]];
+        // x0=x[triSphTopo[0]];
 
         // compute the deformation gradient between two configurations
         // initialize bottom left block of def grad to zeros
-        for (k = 1; k < 3; ++k)
-          for(l=0; l <3; ++l)
+        for (k = 1; k < 3; ++k) // rows 1 and 2
+          for(l=0; l <2; ++l)  // cols 0 through 1
             sphInfo->m_F[k][l] =  0;
         sphInfo->m_F[0][0] = std::pow(sphInfo->m_R, 2)/std::pow(sphInfo->m_r, 2);
         sphInfo->m_F[0][1] = -sphInfo->m_phi/sphInfo->m_R;
@@ -251,8 +253,14 @@ void IsochoricForceField<DataTypes>::addForce(const core::MechanicalParams* /*pa
                               (std::cos(sphInfo->m_phi)/std::sin(sphInfo->m_phi))+\
                               ((1/sphInfo->R)*sphInfo->m_Phi);
 
-        // left and right cauchy-green tensor
-        sphInfo->m_C = sphInfo->m_B = sphInfo->m_F * sphInfo->m_F;
+        // left and right cauchy-green tensors
+        int idx = 0;
+        while(idx < 3)
+        {
+          sphInfo->m_C[idx][idx] = std::pow(sphInfo->m_F[idx][idx], 2)
+          sphInfo->m_B[idx][idx] = std::pow(sphInfo->m_F[idx][idx], 2)
+          ++idx;
+        }
     }
     /// indicates that the next call to addDForce will need to update the stiffness matrix
     m_updateMatrix=true;
@@ -278,74 +286,55 @@ void IsochoricForceField<DataTypes>::addDForce(const core::MechanicalParams* mpa
         m_meshSaved = true;
     }
     unsigned int i=0,j=0,k=0,l=0;
-    unsigned int nbTetrahedra=m_topology->getNbTetrahedra();
+    unsigned int nbTriangles=m_topology->getNbTriangles();
 
-    helper::vector<SphericalPolarRestInformation>& sphereInfVec = *(m_tetrahedronInfo.beginEdit());
+    helper::vector<SphericalPolarRestInformation>& sphereInfVec = *(m_sphericalPolarInfo.beginEdit());
 
     SphericalPolarRestInformation *sphInfo;
 
     assert(this->mstate);
 
-    Coord dp[3],x0,sv;
+    // Coord dp[3],x0,sv;
 
     // opportunity for improvement using my formulation here
-    for(i=0; i<nbTetrahedra; i++ )
+    for(i=0; i<nbTriangles; i++ )
     {
-        sphInfo=&tetrahedronInf[i];
-        const Tetrahedron &ta= m_topology->getTetrahedron(i);
-
-        x0=x[ta[0]];
+        sphInfo=&sphereInfVec[i];
+        const Sphere &triSphTopo= m_topology->getTriangle(i);
 
         // compute the deformation gradient
-        // deformation gradient = sum of tensor product between vertex position and shape vector
-        // optimize by using displacement with first vertex
-        // sphInfo->m_deformationGradient[0][0] =
-        /*
-        dp[0]=x[ta[1]]-x0;
-        sv=sphInfo->m_shapeVector[1];
-        for (k=0;k<3;++k) {
-                for (l=0;l<3;++l) {
-                        sphInfo->m_deformationGradient[k][l]=dp[0][k]*sv[l];
-                }
-        }
-        for (j=1;j<3;++j) {
-                dp[j]=x[ta[j+1]]-x0;
-                sv=sphInfo->m_shapeVector[j+1];
-                for (k=0;k<3;++k) {
-                        for (l=0;l<3;++l) {
-                                sphInfo->m_deformationGradient[k][l]+=dp[j][k]*sv[l];
-                        }
-                }
-        }
-        */
+        // initialize bottom left block of def grad to zeros
+        for (k = 1; k < 3; ++k) // rows 1 and 2
+          for(l=0; l <2; ++l)  // cols 0 through 1
+            sphInfo->m_F[k][l] =  0;
+        sphInfo->m_F[0][0] = std::pow(sphInfo->m_R, 2)/std::pow(sphInfo->m_r, 2);
+        sphInfo->m_F[0][1] = -sphInfo->m_phi/sphInfo->m_R;
+        sphInfo->m_F[0][2] = -sphInfo->m_theta/sphInfo->m_R;
+        sphInfo->m_F[1][1] = (sphInfo->m_r/sphInfo->m_R)+(1/sphInfo->m_R);
+        sphInfo->m_F[1][2] = -(sphInfo->m_theta/sphInfo->m_R)*\
+                              (std::cos(sphInfo->m_phi)/std::sin(sphInfo->m_phi));
+        sphInfo->m_F[2][2] = (sphInfo->m_r/sphInfo->m_R)+\
+                              (sphInfo->m_phi/sphInfo->m_R)*\
+                              (std::cos(sphInfo->m_phi)/std::sin(sphInfo->m_phi))+\
+                              ((1/sphInfo->R)*sphInfo->m_Phi);
 
-        /// compute the right Cauchy-Green deformation matrix: F^TF
-        for (k=0;k<3;++k) {
-            for (l=k;l<3;++l) {
-                sphInfo->rightCauchy(k,l)=\
-               (sphInfo->m_deformationGradient(0,k)*sphInfo->m_deformationGradient(0,l)+
-                sphInfo->m_deformationGradient(1,k)*sphInfo->m_deformationGradient(1,l)+
-                sphInfo->m_deformationGradient(2,k)*sphInfo->m_deformationGradient(2,l));
-            }
-        }
 
-        Coord areaVec = cross( dp[1], dp[2] );
-
-        sphInfo->J = dot( areaVec, dp[0] ) * sphInfo->m_volScale;
-        sphInfo->trC = (Real)( sphInfo->rightCauchy(0,0) + sphInfo->rightCauchy(1,1) + sphInfo->rightCauchy(2,2));
-        sphInfo->m_SPKTensorGeneral.clear();
-        m_MRIncompMatlModel->deriveSPKTensor(sphInfo,globalParameters,sphInfo->m_SPKTensorGeneral);
-        for(l=0;l<4;++l)
+        // left and right cauchy-green tensors
+        int idx = 0;
+        while(idx < 3)
         {
-            f[ta[l]]-=sphInfo->m_deformationGradient*(sphInfo->m_SPKTensorGeneral*sphInfo->m_shapeVector[l])*sphInfo->m_restVolume;
+          sphInfo->m_C[idx][idx] = std::pow(sphInfo->m_F[idx][idx], 2)
+          sphInfo->m_B[idx][idx] = std::pow(sphInfo->m_F[idx][idx], 2)
+          ++idx;
         }
+
+        // now fix generalized coordinates for shear deformation
     }
 
 
     /// indicates that the next call to addDForce will need to update the stiffness matrix
     m_updateMatrix=true;
-    m_tetrahedronInfo.endEdit();
-
+    m_sphericalPolarInfo.endEdit();
     d_f.endEdit();
 }
 

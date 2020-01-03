@@ -17,7 +17,13 @@
 
   <LightManager/>
 	<DefaultContactManager name="Response"  response="FrictionContact" />
-  <IsochoricForceField  template="Vec3d" C1="1000" C2="100" bulk="1000"      />ß
+
+  <EulerImplicitSolver name="cg_odesolver" printLog="false" />
+  <CGLinearSolver iterations="25" name="linear solver" tolerance="1.0e-9" threshold="1.0e-9" />
+  <RegularGrid name="hexaGrid" min="0 0 0" max="1 1 2.7" n="3 3 8" p0="8 0 0"/>
+  <MechanicalObject name="mechObj"/>
+  <UniformMass/>
+
   <Node name="Patient">
     <include href="scene_comps/patients/patient_rigid_whole.scn" translation="-300 25 -50" scale="250" rx="-90" ry="-90" color="grey" />
 
@@ -81,5 +87,25 @@
       <include href="scene_comps/supports/cushion.scn" name="Cushion-4" translation="0 -440 0"/>
       <include href="scene_comps/supports/cushion.scn" name="Cushion-5" translation="0 -550 0"/>
     </Node>
+    <!-- For these, see ./build/install/share/sofa/examples/Components/forcefield/TetrahedronHyperelasticityFEMForceField.scn +99 -->
+    <Node name="tris">
+      <!-- stores a set of triangles and provides access
+            to each triangle and its edges and vertices  -->
+      <TriangleSetTopologyContainer name="Container"/>
+      <!-- modifies the topology by adding and removing triangles -->
+      <TriangleSetTopologyModifier name="Modifier" />
+      <!--  performs topology algorithms on a TriangleSet -->
+      <TriangleSetTopologyAlgorithms template="Vec3d" name="TopoAlgo" />
+      <!-- provides geometry information on an TriangleSet. -->
+      <TriangleSetGeometryAlgorithms template="Vec3d" name="GeomAlgo" />
+      <!-- <Hexa2TriTopologicalMapping name="default28" input="@../" output="@Container" printLog="0" /> -->
+      <!-- Values are R, Theta, Phi, Ri, Ro, C1, C2 -->
+      <IsochoricForceField  template="Vec3d" ParameterSet="0.0998 1.57 1.57 .08998 0.0998 5000 7000" materialName="MooneyRivlinIncompressible" />
+    </Node>
+    <!--  ::./modules/SofaGeneralEngine/BoxROI.h::find all the points/edges/triangles/tetrahedra located inside a given box. -->
+    <BoxROI drawBoxes="1" box="8 0 0 9 1 0.05" name="box"/>
+    <!-- Fixed Projective Constraint:: ./modules/SofaBoundaryCondition/FixedConstraint.h:: -->
+    <FixedConstraint indices="@box.indices"/>
+    <Visual3DText text="MooneyRivlinIncompressible Visual" position="9 0 -0.5" scale="0.2" />
 
 </Node>
