@@ -94,7 +94,7 @@ class IsochoricForceField : public core::behavior::ForceField<DataTypes>
   {
     public:
         /// shape vector at the rest configuration, boldr
-        Coord m_radialVector[3], m_RadialVector[3];
+        VecCoord m_radialVector, m_RadialVector; // [3] [3];
         /// fiber direction in eulerian configuration: vector M
         Coord m_m[3];
         //fiber direction Lagrangean conf
@@ -117,6 +117,10 @@ class IsochoricForceField : public core::behavior::ForceField<DataTypes>
         Real m_lambda_r, m_lambda_theta, m_lambda_phi;
         // Cauchy Stress Tensor
         Matrix3 m_cauchyStressTensor;
+        // Right Cauchy Stress Tensor
+        Matrix3 m_C;
+        // Left Cauchy Stress Tensor
+        Matrix3 m_B;
         // angle between directions:: eulerian form
         Real m_alpha;
         // Lagrangean form
@@ -170,7 +174,8 @@ class IsochoricForceField : public core::behavior::ForceField<DataTypes>
     SphericalPolarHandler(IsochoricForceField<DataTypes>* ff, TriangleData<sofa::helper::vector<SphericalPolarRestInformation> >* data )
       :TopologyDataHandler<Sphere,sofa::helper::vector<SphericalPolarRestInformation> >(data), ff(ff)
     {  }
-    void applyCreateFunction(unsigned int, SphericalPolarRestInformation &t, const Sphere &,
+    void applyCreateFunction(unsigned int, SphericalPolarRestInformation &t,
+                             const Sphere &,
                              const sofa::helper::vector<unsigned int> &,
                              const sofa::helper::vector<double> &);
     protected:
