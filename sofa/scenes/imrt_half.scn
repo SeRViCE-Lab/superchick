@@ -99,8 +99,8 @@
       <!-- provides geometry information on an TriangleSet. -->
       <TriangleSetGeometryAlgorithms template="Vec3d" name="GeomAlgo" />
       <!-- <Hexa2TriTopologicalMapping name="default28" input="@../" output="@Container" printLog="0" /> -->
-      <!-- Values are R, Theta, Phi, Ri, Ro, C1, C2 -->
-      <IsochoricForceField  template="Vec3d" ParameterSet="0.0998 1.57 1.57 .08998 0.0998 5000 7000" materialName="MooneyRivlinIncompressible" />
+      <!-- Values are  C1, C2 -->
+      <IsochoricForceField  template="Vec3d" ParameterSet="5000 7000" materialName="MooneyRivlinIncompressible" />
     </Node>
     <!--  ::./modules/SofaGeneralEngine/BoxROI.h::find all the points/edges/triangles/tetrahedra located inside a given box. -->
     <BoxROI drawBoxes="1" box="8 0 0 9 1 0.05" name="box"/>

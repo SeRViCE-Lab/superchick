@@ -67,16 +67,17 @@ void IsochoricForceField<DataTypes>::SphericalPolarHandler::applyCreateFunction(
       // store the point position
       for(j=0;j<3;++j)
           point[j]=(restPosition)[tri_array[j]];
-      // take the spherical polar coordinates of the centroid of each triangle
-      Coord triCentroid = (1/3)*(point[0]+point[1]+point[2]); // should implement add function in /SofaKernel/framework/sofa/defaulttype/VecTypes.h
-      // see http://mathworld.wolfram.com/SphericalCoordinates.html
-      sinfo.m_r = std::sqrt(std::pow(triCentroid[0], 2) + std::pow(triCentroid[1], 2) + std::pow(triCentroid[2], 2) );
-      sinfo.m_theta = std::atan(triCentroid[1]/triCentroid[0]);
-      sinfo.m_phi   = std::acos(triCentroid[2]/sinfo.m_r);
+
+      sphInfo->m_R = rsqrt(SQ(point[0]), SQ(point[1]), SQ(point[2]));
+      sphinfo->m_Theta = std::atan(point[2]/point[1]);
+      sphInfo->m_Phi = std::acos(point[2]/sphInfo->m_R);
+      // initialize associated tri components
+      sphInfo->m_Ro = sphInfo->m_R;
+
       // assemble radial vector
-      sinfo.m_radialVector = {sinfo.m_r, sinfo.m_theta, sinfo.m_phi};
+      sinfo.m_RadialVector = {sinfo.m_R, sinfo.m_Theta, sinfo.m_Phi};
       /// store the rest volume
-      sinfo.m_restVolume = std::fabs((2/3)*M_Pi*std::norm(m_radialVector));
+      sinfo.m_restVolume = std::fabs((2/3)*M_Pi*std::norm(m_RadialVector));
 
       for(j=0;j<6;++j) {
           Edge e=ff->m_topology->getLocalEdgesInTriangle(j);
@@ -87,6 +88,7 @@ void IsochoricForceField<DataTypes>::SphericalPolarHandler::applyCreateFunction(
               //l=e[0];
           }
       }
+      // update Tangent Matrix
   }//end if(ff)
 
 }
@@ -159,13 +161,17 @@ void IsochoricForceField<DataTypes>::init()
     helper::vector<typename IsochoricForceField<DataTypes>::SphericalPolarRestInformation>& triSphereInfVec = *(m_sphericalPolarInfo.beginEdit());
 
     // update Lagrangean parameters from global array
+    /*
+    These are read from apply create function for
+    every individual triangle in the topology
     triSphereInfVec->m_R   = paramSet[0];
     triSphereInfVec->m_Theta = paramSet[1];
     triSphereInfVec->m_Phi = paramSet[2];
     triSphereInfVec->m_Ri  = paramSet[3];
     triSphereInfVec->m_Ro  = paramSet[4];
-    triSphereInfVec->C1    = paramSet[5];
-    triSphereInfVec->C2    = paramSet[6];
+    */
+    triSphereInfVec->C1    = paramSet[0];
+    triSphereInfVec->C2    = paramSet[1];
     /// prepare to store info in the triangle array
     triSphereInfVec.resize(m_topology->getNbTriangles());
 
@@ -228,40 +234,14 @@ void IsochoricForceField<DataTypes>::addForce(const core::MechanicalParams* /*pa
 
     assert(this->mstate);
 
-    // Coord dp[3],x0,sv;
-    // for every fem triangle, get sph info
+    // opportunity for improvement using my formulation here
     for(i=0; i<nbTriangles; i++ )
     {
-        sphInfo=&sphereInfVec[i];
-        const Sphere &triSphTopo= m_topology->getTriangle(i);
-
-        // x0=x[triSphTopo[0]];
-
-        // compute the deformation gradient between two configurations
-        // initialize bottom left block of def grad to zeros
-        for (k = 1; k < 3; ++k) // rows 1 and 2
-          for(l=0; l <2; ++l)  // cols 0 through 1
-            sphInfo->m_F[k][l] =  0;
-        sphInfo->m_F[0][0] = std::pow(sphInfo->m_R, 2)/std::pow(sphInfo->m_r, 2);
-        sphInfo->m_F[0][1] = -sphInfo->m_phi/sphInfo->m_R;
-        sphInfo->m_F[0][2] = -sphInfo->m_theta/sphInfo->m_R;
-        sphInfo->m_F[1][1] = (sphInfo->m_r/sphInfo->m_R)+(1/sphInfo->m_R);
-        sphInfo->m_F[1][2] = -(sphInfo->m_theta/sphInfo->m_R)*\
-                              (std::cos(sphInfo->m_phi)/std::sin(sphInfo->m_phi));
-        sphInfo->m_F[2][2] = (sphInfo->m_r/sphInfo->m_R)+\
-                              (sphInfo->m_phi/sphInfo->m_R)*\
-                              (std::cos(sphInfo->m_phi)/std::sin(sphInfo->m_phi))+\
-                              ((1/sphInfo->R)*sphInfo->m_Phi);
-
-        // left and right cauchy-green tensors
-        int idx = 0;
-        while(idx < 3)
-        {
-          sphInfo->m_C[idx][idx] = std::pow(sphInfo->m_F[idx][idx], 2)
-          sphInfo->m_B[idx][idx] = std::pow(sphInfo->m_F[idx][idx], 2)
-          ++idx;
-        }
+      // compute F, B, and C (defGrad, left and right Cauchy-Green Tensors)
+        this->updateStrainInfo(i, sphInfo, sphereInfVec);
+        // now fix generalized coordinates for shear deformation
     }
+
     /// indicates that the next call to addDForce will need to update the stiffness matrix
     m_updateMatrix=true;
     m_sphericalPolarInfo.endEdit();
@@ -294,40 +274,11 @@ void IsochoricForceField<DataTypes>::addDForce(const core::MechanicalParams* mpa
 
     assert(this->mstate);
 
-    // Coord dp[3],x0,sv;
-
     // opportunity for improvement using my formulation here
     for(i=0; i<nbTriangles; i++ )
     {
-        sphInfo=&sphereInfVec[i];
-        const Sphere &triSphTopo= m_topology->getTriangle(i);
-
-        // compute the deformation gradient
-        // initialize bottom left block of def grad to zeros
-        for (k = 1; k < 3; ++k) // rows 1 and 2
-          for(l=0; l <2; ++l)  // cols 0 through 1
-            sphInfo->m_F[k][l] =  0;
-        sphInfo->m_F[0][0] = std::pow(sphInfo->m_R, 2)/std::pow(sphInfo->m_r, 2);
-        sphInfo->m_F[0][1] = -sphInfo->m_phi/sphInfo->m_R;
-        sphInfo->m_F[0][2] = -sphInfo->m_theta/sphInfo->m_R;
-        sphInfo->m_F[1][1] = (sphInfo->m_r/sphInfo->m_R)+(1/sphInfo->m_R);
-        sphInfo->m_F[1][2] = -(sphInfo->m_theta/sphInfo->m_R)*\
-                              (std::cos(sphInfo->m_phi)/std::sin(sphInfo->m_phi));
-        sphInfo->m_F[2][2] = (sphInfo->m_r/sphInfo->m_R)+\
-                              (sphInfo->m_phi/sphInfo->m_R)*\
-                              (std::cos(sphInfo->m_phi)/std::sin(sphInfo->m_phi))+\
-                              ((1/sphInfo->R)*sphInfo->m_Phi);
-
-
-        // left and right cauchy-green tensors
-        int idx = 0;
-        while(idx < 3)
-        {
-          sphInfo->m_C[idx][idx] = std::pow(sphInfo->m_F[idx][idx], 2)
-          sphInfo->m_B[idx][idx] = std::pow(sphInfo->m_F[idx][idx], 2)
-          ++idx;
-        }
-
+      // compute F, B, and C (defGrad, left and right Cauchy-Green Tensors)
+        this->updateStrainInfo(i, sphInfo, sphereInfVec);
         // now fix generalized coordinates for shear deformation
     }
 
@@ -338,12 +289,47 @@ void IsochoricForceField<DataTypes>::addDForce(const core::MechanicalParams* mpa
     d_f.endEdit();
 }
 
-
-template<typename DataTypes>
-void IsochoricForceField<DataTypes>::addKToMatrix(sofa::defaulttype::BaseMatrix * /* mat */,
-                                                 SReal /* k */, unsigned int & /* offset */)
+void updateStrainInfo(int&& triIdx, SphericalPolarRestInformation&& sphInfo,
+                    helper::vector<SphericalPolarRestInformation>&& sphereInfVec)
 {
-    // Compute the force derivative d_df from the current and store the resulting matrix
+  sphInfo=&sphereInfVec[triIdx];
+  const Sphere &triSphTopo= m_topology->getTriangle(triIdx);
+
+  /* see http://mathworld.wolfram.com/SphericalCoordinates.html
+  My convention is (x, y, z)->(triSphTopo[0], triSphTopo[1], triSphTopo[2])
+  */
+  sphInfo->m_r = rsqrt(SQ(x[triSphTopo[0]]), SQ(x[triSphTopo[1]), SQ(x[triSphTopo[2]]));
+  sphinfo->m_theta = std::atan(SQ(x[triSphTopo[2]/SQ(x[triSphTopo[1]);
+  sphInfo->m_phi = std::acos(SQ(x[triSphTopo[2]triSphTopo[sphInfo->m_r]);
+  // initialize associated tri components
+  sphInfo->m_ro = sphInfo->m_r;
+  // compute the deformation gradient
+  // initialize bottom left block of def grad to zeros
+  for (k = 1; k < 3; ++k) // rows 1 and 2
+    for(l=0; l <2; ++l)  // cols 0 through 1
+      sphInfo->m_F[k][l] =  0;
+  sphInfo->m_F[0][0] = SQ(sphInfo->m_R)/SQ(sphInfo->m_r);
+  sphInfo->m_F[0][1] = -sphInfo->m_phi/sphInfo->m_R;
+  sphInfo->m_F[0][2] = -sphInfo->m_theta/sphInfo->m_R;
+  sphInfo->m_F[1][1] = (sphInfo->m_r/sphInfo->m_R)+(1/sphInfo->m_R);
+  sphInfo->m_F[1][2] = -(sphInfo->m_theta/sphInfo->m_R)*\
+                        (std::cos(sphInfo->m_phi)/std::sin(sphInfo->m_phi));
+  sphInfo->m_F[2][2] = (sphInfo->m_r/sphInfo->m_R)+\
+                        (sphInfo->m_phi/sphInfo->m_R)*\
+                        (std::cos(sphInfo->m_phi)/std::sin(sphInfo->m_phi))+\
+                        ((1/sphInfo->R)*sphInfo->m_Phi);
+
+
+  // left and right cauchy-green tensors
+  int idx = 0;
+  while(idx < 3)
+  {
+    sphInfo->m_C[idx][idx] = SQ(sphInfo->m_F[idx][idx])
+    sphInfo->m_B[idx][idx] = SQ(sphInfo->m_F[idx][idx])
+    ++idx;
+  }
+  // compute fiber direction
+  this->m_fiber_Direction = {sphInfo->m_F[0][0]*rcos(sphinfo->gamma), -sphInfo->m_F[1][1]*sphinfo->gamma, 0}
 }
 
 template<typename DataTypes>
@@ -351,6 +337,22 @@ void IsochoricForceField<DataTypes>::draw(const core::visual::VisualParams* vpar
 {
   // nothing to do here
 };
+
+template<typename DataTypes>
+void IsochoricForceField<DataTypes>::computePositionalVector()
+{
+    // Compute the positional vector for every point on the spherical body
+    // using Matrix2 = Mat<2,1, Real>;
+    // this->m_radialVector.resize(2);
+    this->m_radialVector(this->m_r/this->m_R, this_>m_beta-this->m_alpha);
+}
+
+template<typename DataTypes>
+void IsochoricForceField<DataTypes>::addKToMatrix(sofa::defaulttype::BaseMatrix * /* mat */,
+                                                 SReal /* k */, unsigned int & /* offset */)
+{
+    // Compute the force derivative d_df from the current and store the resulting matrix
+}
 
 template<typename DataTypes>
 void IsochoricForceField<DataTypes>::addKToMatrix(const sofa::core::behavior::MultiMatrixAccessor* /*matrix*/,

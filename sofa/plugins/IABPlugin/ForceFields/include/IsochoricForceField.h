@@ -28,6 +28,10 @@
 #include <string>
 #include <map>
 
+// simple macro for mathematical ops
+#define SQ(__X__) std::pow(__X__, 2);
+
+
 namespace sofa
 {
 
@@ -42,7 +46,7 @@ using namespace sofa::component::topology;
 using namespace sofa::core::topology;
 
 /// Apply constant forces to given degrees of freedom.
-// template<class DataTypes> // was class in tetrahedronmesh file -- > old
+// DataTypes will be Vec3Types. See sofa/v19.06/SofaKernel/framework/sofa/defaulttype/VecTypes.h
 template<typename DataTypes>
 class IsochoricForceField : public core::behavior::ForceField<DataTypes>
 {
@@ -125,6 +129,8 @@ class IsochoricForceField : public core::behavior::ForceField<DataTypes>
         Real m_beta;
         // angle of shear between configurations
         Real m_shear;
+        // fiber Vector in Eulerian coordinates
+        Vec3d m_fiberDirection;
         // volume
         Real m_restVolume; // do we need this
         /// Output stream
@@ -201,7 +207,9 @@ public:
     /// Same as previous, but using accessor
     void addKToMatrix(const sofa::core::behavior::MultiMatrixAccessor* /*matrix*/, SReal /*kFact*/) ;
     void draw(const core::visual::VisualParams* vparams) override;
-    Mat<3,3,double> getF( int tetrahedronIndex); // deformation Grad at the index tetrahedronIndex
+    Matrix3 updateStrainInfo(int&& triIdx, SphericalPolarRestInformation&& sphInfo,
+                        helper::vector<SphericalPolarRestInformation>&& sphereInfVec); // deformation Grad at the index tetrahedronIndex
+    void computePositionalVector();
     // linearsolver::EigenBaseSparseMatrix<typename DataTypes::Real> matS;
 protected:
     /// the array that describes the complete material energy and its derivatives
@@ -209,7 +217,7 @@ protected:
     SphericalPolarHandler* m_sphericalPolarHandler;
     void testDerivatives();
     void saveMesh( const char *filename );
-    void updateTangentMatrix();
+    // void updateTangentMatrix();
 };
 
 #if  !defined(SOFA_COMPONENT_FORCEFIELD_ISOCHORICFORCEFIELD_CPP)
