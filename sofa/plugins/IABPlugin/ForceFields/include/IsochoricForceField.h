@@ -92,6 +92,10 @@ class IsochoricForceField : public core::behavior::ForceField<DataTypes>
 
   public :
     	typename sofa::component::fem::MaterialParameters<DataTypes> globalParameters;
+      /*Why are these vectors */
+      Data<helper::vector<Real> > f_poisson; ///< Poisson ratio in Hooke's law (vector)
+      Data<helper::vector<Real> > f_young; ///< Young modulus in Hooke's law (vector)
+      Data<Real> f_damping; ///< Ratio damping/stiffness
 
   /// data structure stored for each minisphere==>Triangle
 	class SphericalPolarRestInformation : public sofa::component::fem::StrainInformation<DataTypes>
@@ -105,8 +109,6 @@ class IsochoricForceField : public core::behavior::ForceField<DataTypes>
         Coord m_M[3];
         // components in spherical polar coordinates
         Real m_r, m_theta, m_phi;
-        // Lagrangean coordinates
-        Real m_R, m_Theta, m_Phi; // see globalParameters
         // internal and external radii
         Real m_ri, m_ro ;
         // Lagrangean coordinates
@@ -174,6 +176,22 @@ class IsochoricForceField : public core::behavior::ForceField<DataTypes>
   public:
     void setparameter(const vector<Real> param) { d_parameterSet.setValue(param); }
 
+    /// Get/Set methods
+    Real getPoisson() { return (f_poisson.getValue())[0]; }
+    void setPoisson(Real val)
+    {
+      helper::vector<Real> newP(1, val);
+      f_poisson.setValue(newP);
+    }
+    Real getYoung() { return (f_young.getValue())[0]; }
+    void setYoung(Real val)
+    {
+      helper::vector<Real> newY(1, val);
+      f_young.setValue(newY);
+    }
+    Real getDamping() { return f_damping.getValue(); }
+    void setDamping(Real val) { f_damping.setValue(val); }
+
   class SOFA_IABPlugin_API SphericalPolarHandler : public TopologyDataHandler<Sphere,sofa::helper::vector<SphericalPolarRestInformation> >
   {
   public:
@@ -215,9 +233,9 @@ protected:
     /// the array that describes the complete material energy and its derivatives
     fem::NonlinearElasticMaterial<DataTypes> *m_MRIncompMatlModel;
     SphericalPolarHandler* m_sphericalPolarHandler;
-    void testDerivatives();
+    // void testDerivatives();
     void saveMesh( const char *filename );
-    // void updateTangentMatrix();
+    void updateTangentMatrix();
 };
 
 #if  !defined(SOFA_COMPONENT_FORCEFIELD_ISOCHORICFORCEFIELD_CPP)
