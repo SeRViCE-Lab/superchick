@@ -152,7 +152,7 @@ void IsochoricForceField<DataTypes>::init()
     }
     else
     {
-        msg_error() << "material name " << material << " is not valid (should be ArrudaBoyce, StVenantKirchhoff, MooneyRivlin, VerondaWestman, Costa or Ogden)";
+        msg_error() << "material name " << material << " is not valid (should be MooneyRivlinIncompressible)";
     }
 
 
@@ -225,29 +225,35 @@ void IsochoricForceField<DataTypes>::updateTangentMatrix()
     const std::vector< Sphere > &triSphTopo=m_topology->getTriangles() ;
 
     for(l=0; l<nbEdges; l++ )
+    {
       edgeInf[l].DfDx.clear();
+    }
+
     for(i=0; i<nbTriangles; i++ )
     {
         sphInfo=&sphereInfVec[i];
         Matrix3 &df=sphInfo->m_F;
         BaseMeshTopology::EdgesInTriangle tri_edges=m_topology->getEdgesInTriangle(i);
 
-        /// describe the jth vertex index of triangle no i
+        // why do we need edge info for sphgerical polar coordinates
         const Sphere &sph= triSphTopo[i];
-        for(j=0;j<3;j++) {
+        /*
+        for(j=0;j<3;j++)
+        {
             einfo= &edgeInf[tri_edges[j]];
             //Edge e=m_topology->getLocalEdgesInTriangle(j);
             Edge e=m_topology->getEdgesInTriangle(j);
 
             k=e[0];
             l=e[1];
-            if (edgeArray[tri_edges[j]][0]!=sph[k]) {
+            if (edgeArray[tri_edges[j]][0]!=sph[k])
+            {
                 k=e[1];
                 l=e[0];
             }
             Matrix3 &edgeDfDx = einfo->DfDx;
 
-/* What are these for? Review tonight
+
             Coord svl=sphInfo->m_shapeVector[l];
             Coord svk=sphInfo->m_shapeVector[k];
 
@@ -288,7 +294,7 @@ void IsochoricForceField<DataTypes>::updateTangentMatrix()
 
             edgeDfDx += (M+N)*sphInfo->m_restVolume;
         }// end of for j
-*/
+        */
     }//end of for i
     m_updateMatrix=false;
 }
