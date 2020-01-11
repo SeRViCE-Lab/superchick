@@ -77,6 +77,13 @@ void TetrahedronMooneyRivlinFEMForceField<DataTypes>::TetrahedronHandler::applyC
       tinfo.m_volScale =(Real)(1.0/volume);
       tinfo.m_restVolume = fabs(volume/6);
       // store shape vectors at the rest configuration
+      for(j=0;j<4;++j) {
+          if (!(j%2))
+              tinfo.m_shapeVector[j]=-cross(point[(j+2)%4] - point[(j+1)%4],point[(j+3)%4] - point[(j+1)%4])/ volume;
+          else
+              tinfo.m_shapeVector[j]=cross(point[(j+2)%4] - point[(j+1)%4],point[(j+3)%4] - point[(j+1)%4])/ volume;;
+      }
+
       for(j=0;j<6;++j)
       {
           Edge e=ff->m_topology->getLocalEdgesInTetrahedron(j);
@@ -161,7 +168,7 @@ template <class DataTypes> void TetrahedronMooneyRivlinFEMForceField<DataTypes>:
     helper::vector<typename TetrahedronMooneyRivlinFEMForceField<DataTypes>::TetrahedronRestInformation>& tetrahedronInfVec = *(m_tetrahedronInfo.beginEdit());
 
     /// prepare to store info in the triangle array
-    tetrahedronInf.resize(m_topology->getNbTetrahedra());
+    tetrahedronInfVec.resize(m_topology->getNbTetrahedra());
 
     helper::vector<typename TetrahedronMooneyRivlinFEMForceField<DataTypes>::EdgeInformation>& edgeInf = *(m_edgeInfo.beginEdit());
 
@@ -276,6 +283,22 @@ void TetrahedronMooneyRivlinFEMForceField<DataTypes>::addForce(const core::Mecha
                                       -tetInfo->m_sPolarVecEul[j].m_F[1][1]*rsin(sphInfo->gamma), \
                                       0};
         } // end tetra vertices for
+        // update strain tensors
+        tetInfo->m_deformationGradient = 0;
+        tetInfo->rightCauchy = 0;
+        tetInfo->leftCauchy = 0;
+        for(int z = 0; z< 4; ++z)
+        {
+          // computer the def tensor for this tetrahedron
+          tetInfo->m_deformationGradient+=tetInfo->m_sPolarVecEul[z].m_F;
+          // compute right and left cauchy-green tensors as well
+          tetInfo->rightCauchyGreen+=tetInfo->m_sPolarVecEul[z].m_C;
+          tetInfo->leftCauchyGreen+=tetInfo->m_sPolarVecEul[z].m_B;
+        }
+        tetInfo->m_deformationGradient/=4;
+        tetInfo->leftCauchyGreen/=4;
+        tetInfo->rightCauchyGreen/=4;
+        tetInfo->J = determinant(tetInfo->m_deformationGradient);
       } // end all tetrahedron for
     }
     /// indicates that the next call to addDForce will need to update the stiffness matrix
@@ -300,10 +323,12 @@ void TetrahedronMooneyRivlinFEMForceField<DataTypes>::updateTangentMatrix()
     unsigned int nbTetrahedra=m_topology->getNbTetrahedra();
     const std::vector< Tetrahedron> &tetrahedronArray=m_topology->getTetrahedra() ;
 
-    for(l=0; l<nbEdges; l++ )edgeInf[l].DfDx.clear();
+    for(l=0; l<nbEdges; l++ ) edgeInf[l].DfDx.clear();
     for(i=0; i<nbTetrahedra; i++ )
     {
         tetInfo=&tetrahedronInfVec[i];
+        // Matrix3 &df=tetInfo->m_deformationGradient;
+        // avg all def grads for this tetrahedron
         Matrix3 &df=tetInfo->m_deformationGradient;
         BaseMeshTopology::EdgesInTetrahedron te=m_topology->getEdgesInTetrahedron(i);
 
@@ -330,6 +355,7 @@ void TetrahedronMooneyRivlinFEMForceField<DataTypes>::updateTangentMatrix()
             N.clear();
             vector<MatrixSym> inputTensor;
             inputTensor.resize(3);
+
             //	MatrixSym input1,input2,input3,outputTensor;
             for(int m=0; m<3;m++){
                 for (int n=m;n<3;n++){
@@ -340,8 +366,7 @@ void TetrahedronMooneyRivlinFEMForceField<DataTypes>::updateTangentMatrix()
             }
 
             for(int m=0; m<3; m++){
-
-                m_myMaterial->applyElasticityTensor(tetInfo,globalParameters,inputTensor[m],outputTensor);
+                m_MRIncompMatlModel->applyElasticityTensor(tetInfo,globalParameters,inputTensor[m],outputTensor);
                 Coord vectortemp=df*(outputTensor*svk);
                 Matrix3 Nv;
                 //Nv.clear();
@@ -361,8 +386,6 @@ void TetrahedronMooneyRivlinFEMForceField<DataTypes>::updateTangentMatrix()
             M[0][0]=M[1][1]=M[2][2]=(Real)productSD;
 
             edgeDfDx += (M+N)*tetInfo->m_restVolume;
-
-
         }// end of for j
     }//end of for i
     m_updateMatrix=false;
@@ -464,15 +487,15 @@ void TetrahedronMooneyRivlinFEMForceField<DataTypes>::addKToMatrix(sofa::default
 }
 
 
-template<class DataTypes>
-Mat<3,3,double> TetrahedronMooneyRivlinFEMForceField<DataTypes>::getPhi(int TetrahedronIndex)
-{
-    helper::vector<TetrahedronRestInformation>& tetrahedronInf = *(m_tetrahedronInfo.beginEdit());
-	TetrahedronRestInformation *tetInfo;
-	tetInfo=&tetrahedronInf[TetrahedronIndex];
-    return tetInfo->m_deformationGradient;
-
-}
+// template<class DataTypes>
+// Mat<3,3,double> TetrahedronMooneyRivlinFEMForceField<DataTypes>::getPhi(int TetrahedronIndex)
+// {
+//     helper::vector<TetrahedronRestInformation>& tetrahedronInf = *(m_tetrahedronInfo.beginEdit());
+// 	TetrahedronRestInformation *tetInfo;
+// 	tetInfo=&tetrahedronInf[TetrahedronIndex];
+//     return tetInfo->m_deformationGradient;
+//
+// }
 
 template<class DataTypes>
 void TetrahedronHyperelasticityFEMForceField<DataTypes>::testDerivatives()

@@ -122,8 +122,6 @@ public :
     Matrix3 m_C; //(0); // initialize to zeros
     // left Cauchy-Green Tensor
     Matrix3 m_B; //(0); // initialize to zeros
-    // Mooney-Rivlin Constants
-    Real m_C1, m_C2;
     // Extension ratios
     Real m_lambda_r, m_lambda_theta, m_lambda_phi;
     // Cauchy Stress Tensor
@@ -145,11 +143,20 @@ public :
       std::vector<SphericalPolarInfo> m_sPolarVecLag[4]; // Lagrangian Coordinates
       std::vector<SphericalPolarInfo> m_sPolarVecEul[4]; // Eulerian Coordinates
       // volume
-      Real m_restVolume, m_volScale; // do we need this
+      Real m_restVolume, m_volScale, m_volume; // do we need this
       /// Output stream
       inline friend ostream& operator<< ( ostream& os, const TetrahedronRestInformation& /*eri*/ ) {  return os;  }
       /// Input stream
       inline friend istream& operator>> ( istream& in, TetrahedronRestInformation& /*eri*/ ) { return in; }
+      // Mooney-Rivlin Constants
+      Real m_C1, m_C2;
+      //
+      MatrixSym m_SPKTensorGeneral;
+      /// deformation gradient = gradPhi
+      // right and left Cauchy-Green Tensors
+      Matrix3 rightCauchyGreen, leftCauchyGreen;
+      Matrix3 m_deformationGradient;
+      Real J;
 
       TetrahedronRestInformation() {}
     };

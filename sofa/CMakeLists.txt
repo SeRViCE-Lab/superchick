@@ -81,6 +81,12 @@ set(SOURCE_FILES
 		"${PLUGINS_DIR}/IABPlugin/behavior/IABConstraint.cpp"
 		"${PLUGINS_DIR}/IABPlugin/behavior/IABBaseConstraint.cpp"
 		)
+
+set(TETRA_SRC_FILES
+		"${PLUGINS_DIR}/IABPlugin/src/initIABPlugin.cpp"
+		"${PLUGINS_DIR}/IABPlugin/ForceFields/Tetra/src/TetrahedronMooneyRivlinFEMForceField.cpp"
+		)
+
 # [Qt] Create moc code.
 qt5_wrap_cpp(MOCCED_HEADER_FILES ${HEADER_FILES_TO_MOC})
 
@@ -90,6 +96,12 @@ add_library(${PROJECT_NAME} SHARED  #${HEADER_FILES}
 																		${MOCCED_HEADER_FILES}
 																		${SOURCE_FILES})
 target_link_libraries(${PROJECT_NAME} SofaGuiQt)
+
+add_library(IABTetra SHARED  #${HEADER_FILES}
+																		${HEADER_FILES_TO_MOC}
+																		${MOCCED_HEADER_FILES}
+																		${TETRA_SRC_FILES})
+target_link_libraries(IABTetra SofaGuiQt)
 
 # adding this because of GLEW conflicts
 link_directories($ENV{SOFA_ROOT}/install/lib/)

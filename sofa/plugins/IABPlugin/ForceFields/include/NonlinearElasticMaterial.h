@@ -76,9 +76,38 @@ public:
     virtual void deriveSPKTensor(StrainInformation<DataTypes> *, const  MaterialParameters<DataTypes> &,MatrixSym &)  {
 
 	}
-	/** computes the Elasticity Tensor of the current configuration */
+	/** computes the Elasticity Tensor of the current configuration
+      Why are we using the Mooney-Rivlin form for a solid here?
+  */
 
-    virtual void applyElasticityTensor(StrainInformation<DataTypes> *, const  MaterialParameters<DataTypes> &,const MatrixSym& , MatrixSym &)  {
+    virtual void applyElasticityTensor(StrainInformation<DataTypes> *sinfo, const  MaterialParameters<DataTypes> &param,const MatrixSym& inputTensor, MatrixSym &outputTensor)  {
+  		MatrixSym inversematrix;
+  		MatrixSym F=sinfo->m_deformationGradient;
+  		invertMatrix(inversematrix,F);
+  		Real I1=trace(F);
+  		Real I1square=(Real)(F[0]*F[0] + F[2]*F[2]+ F[5]*F[5]+2*(F[1]*F[1] + F[3]*F[3] + F[4]*F[4]));
+  		Real I2=(Real)((pow(I1,(Real)2)- I1square)/2);
+  		Real c1=param.parameterArray[0];
+  		Real c2=param.parameterArray[1];
+  		// Real k0=param.parameterArray[2];
+  		MatrixSym ID;
+  		ID.identity();
+  		// C-1:H
+  		Real _trHC=inputTensor[0]*inversematrix[0]+inputTensor[2]*inversematrix[2]+inputTensor[5]*inversematrix[5]
+  		+2*inputTensor[1]*inversematrix[1]+2*inputTensor[3]*inversematrix[3]+2*inputTensor[4]*inversematrix[4];
+  		MatrixSym Firstmatrix;
+  		//C-1HC-1 convert to sym matrix
+  		Firstmatrix.Mat2Sym(inversematrix.SymMatMultiply(inputTensor.SymSymMultiply(inversematrix)),Firstmatrix);
+  		//C:H
+  		Real trHC=inputTensor[0]*F[0]+inputTensor[2]*F[2]+inputTensor[5]*F[5]
+  		+2*inputTensor[1]*F[1]+2*inputTensor[3]*F[3]+2*inputTensor[4]*F[4];
+
+  		//trH
+  		Real trH=inputTensor[0]+inputTensor[2]+inputTensor[5];
+
+  		outputTensor=((ID-inversematrix*I1/(Real)3.0)*(-_trHC)/(Real)3.0+Firstmatrix*I1/(Real)3.0-inversematrix*trH/(Real)3.0)*(Real)2.0*c1*pow(sinfo->J,(Real)(-2.0/3.0))
+  			+((inversematrix*(Real)(-2.0)*I2/(Real)3.0+ID*I1-F)*(Real)(-2.0)*_trHC/(Real)3.0+Firstmatrix*(Real)2.0*I2/(Real)3.0-inversematrix*(Real)2.0*(I1*trH-trHC)/(Real)3.0+ID*trH-inputTensor)*(Real)2.0*c2*pow(sinfo->J,(Real)(-4.0/3.0))
+  			+inversematrix*_trHC*k0/(Real)2.0-Firstmatrix*k0*log(sinfo->J);
 
 	}
 
