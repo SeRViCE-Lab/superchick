@@ -1,5 +1,5 @@
-#ifndef SOFA_COMPONENT_FORCEFIELD_TETRAHEDRONMOONEYRIVLINFEMFORCEFIELD_INL
-#define SOFA_COMPONENT_FORCEFIELD_TETRAHEDRONMOONEYRIVLINFEMFORCEFIELD_INL
+#ifndef SOFA_COMPONENT_FORCEFIELD_TETRAHEDRONMOONEYRIVLINFEMFORCEFIELD_H
+#define SOFA_COMPONENT_FORCEFIELD_TETRAHEDRONMOONEYRIVLINFEMFORCEFIELD_H
 
 #include "IABPlugin/include/debuggers.h"  // this from global project include
 #include "IABPlugin/ForceFields/include/config.h"
@@ -52,7 +52,7 @@ using namespace sofa::core::topology;
 
 /** Compute Finite Element forces based on tetrahedral elements.
 */
-template<class DataTypes>
+template<typename DataTypes>
 class TetrahedronMooneyRivlinFEMForceField : public core::behavior::ForceField<DataTypes>
 {
   public:
@@ -74,6 +74,7 @@ class TetrahedronMooneyRivlinFEMForceField : public core::behavior::ForceField<D
     using MatrixCoeffPair =  std::pair<Real,MatrixSym>;
 
     using SetParameterArray =  helper::vector<Real>;
+    using SetAnisotropyDirectionArray = helper::vector<Coord>;
 
     using Index =  core::topology::BaseMeshTopology::index_type;
     using Element =  core::topology::BaseMeshTopology::Tetra;
@@ -88,109 +89,11 @@ class TetrahedronMooneyRivlinFEMForceField : public core::behavior::ForceField<D
     using EdgesInTetrahedron =  sofa::core::topology::BaseMeshTopology::EdgesInTetrahedron;
     using TrianglesInTetrahedron =  sofa::core::topology::BaseMeshTopology::TrianglesInTetrahedron;
 
-
-public :
-
-	typename sofa::component::fem::MaterialParameters<DataTypes> globalParameters;
-  /*Why are these vectors */
-  Data<helper::vector<Real> > f_poisson; ///< Poisson ratio in Hooke's law (vector)
-  Data<helper::vector<Real> > f_young; ///< Young modulus in Hooke's law (vector)
-  Data<Real> f_damping; ///< Ratio damping/stiffness
-
-	class MatrixList
-	{
-	public:
-		Matrix3 data[6];
-	};
-
-  struct SphericalPolarInfo
-  {
-    double r, theta, phi;
-    // position vector eulerian and lagrangean forms
-    Coord m_radialVector, m_RadialVector; // [3] [3];
-    // internal and external radii
-    Real m_ri, m_ro ;
-    /// fiber direction in eulerian configuration: vector M
-    Coord m_m[3];
-    //fiber direction Lagrangean conf
-    Coord m_M[3];
-    // components in spherical polar coordinates
-    Real m_r, m_theta, m_phi;
-    /// deformation gradient = F
-    Matrix3 m_F; //(0); // initialize to zeros
-    /// right Cauchy-Green deformation tensor C (gradPhi^T gradPhi)
-    Matrix3 m_C; //(0); // initialize to zeros
-    // left Cauchy-Green Tensor
-    Matrix3 m_B; //(0); // initialize to zeros
-    // Extension ratios
-    Real m_lambda_r, m_lambda_theta, m_lambda_phi;
-    // Cauchy Stress Tensor
-    Matrix3 m_cauchyStressTensor; //(0); // initialize to zeros
-    // angle between two fibers::eulerian and lagrangrean forms
-    Real m_alpha, m_beta, gamma; // gamma is the diff. between two fibers
-    // angle of shear between configurations
-    Real m_shear;
-    // fiber Vector in Eulerian coordinates
-    Coord m_fiberDirection;
-  }
-    /// data structure stored for each tetrahedron
-	class TetrahedronRestInformation : public fem::StrainInformation<DataTypes>
-    {
-    public:
-      /// shape vector at the rest configuration
-      Coord m_shapeVector[4];
-      // define a spherical polar point for each of the 4 vertices of the tetrahedron
-      std::vector<SphericalPolarInfo> m_sPolarVecLag[4]; // Lagrangian Coordinates
-      std::vector<SphericalPolarInfo> m_sPolarVecEul[4]; // Eulerian Coordinates
-      // volume
-      Real m_restVolume, m_volScale, m_volume; // do we need this
-      /// Output stream
-      inline friend ostream& operator<< ( ostream& os, const TetrahedronRestInformation& /*eri*/ ) {  return os;  }
-      /// Input stream
-      inline friend istream& operator>> ( istream& in, TetrahedronRestInformation& /*eri*/ ) { return in; }
-      // Mooney-Rivlin Constants
-      Real m_C1, m_C2;
-      //
-      MatrixSym m_SPKTensorGeneral;
-      /// deformation gradient = gradPhi
-      // right and left Cauchy-Green Tensors
-      Matrix3 rightCauchyGreen, leftCauchyGreen;
-      Matrix3 m_deformationGradient;
-      Real J;
-
-      TetrahedronRestInformation() {}
-    };
-
-    /// data structure stored for each edge
-    class EdgeInformation
-    {
-    public:
-        /// store the stiffness edge matrix
-        Matrix3 DfDx;
-
-        /// Output stream
-        inline friend ostream& operator<< ( ostream& os, const EdgeInformation& /*eri*/ ) {  return os;  }
-        /// Input stream
-        inline friend istream& operator>> ( istream& in, EdgeInformation& /*eri*/ ) { return in; }
-
-        EdgeInformation() {}
-    };
-
- protected :
-    core::topology::BaseMeshTopology* m_topology;
-    VecCoord  m_initialPoints;	/// the intial positions of the points
-    bool m_updateMatrix;
-    bool  m_meshSaved ;
-
-    Data<bool> d_stiffnessMatrixRegularizationWeight; ///< Regularization of the Stiffness Matrix (between true or false)
-    Data<string> d_materialName; ///< the name of the material
-    Data<SetParameterArray> d_parameterSet; ///< The global parameters specifying the material
-    Data<SetAnisotropyDirectionArray> d_anisotropySet; ///< The global directions of anisotropy of the material
-
-    TetrahedronData<sofa::helper::vector<TetrahedronRestInformation> > m_tetrahedronInfo; ///< Internal tetrahedron data
-    EdgeData<sofa::helper::vector<EdgeInformation> > m_edgeInfo; ///< Internal edge data
-
-public:
+    sofa::component::fem::MaterialParameters<DataTypes> globalParameters;
+    /*Why are these vectors */
+    Data<helper::vector<Real> > f_poisson; ///< Poisson ratio in Hooke's law (vector)
+    Data<helper::vector<Real> > f_young; ///< Young modulus in Hooke's law (vector)
+    Data<Real> f_damping; ///< Ratio damping/stiffness
 
     void setMaterialName(const string name) {
         d_materialName.setValue(name);
@@ -218,55 +121,153 @@ public:
     Real getDamping() { return f_damping.getValue(); }
     void setDamping(Real val) { f_damping.setValue(val); }
 
-    class SOFA_MISC_FEM_API TetrahedronHandler : public TopologyDataHandler<Tetrahedron,sofa::helper::vector<TetrahedronRestInformation> >
+  	class MatrixList
+  	{
+    	public:
+    		Matrix3 data[6];
+  	};
+
+
+    struct SphericalPolarInfoLagrangean
     {
-    public:
-      typedef typename TetrahedronMooneyRivlinFEMForceField<DataTypes>::TetrahedronRestInformation TetrahedronRestInformation;
-      TetrahedronHandler(TetrahedronMooneyRivlinFEMForceField<DataTypes>* ff,
-                         TetrahedronData<sofa::helper::vector<TetrahedronRestInformation> >* data )
-        :TopologyDataHandler<Tetrahedron,sofa::helper::vector<TetrahedronRestInformation> >(data)
-        ,ff(ff)
-      {
-
-      }
-
-      void applyCreateFunction(unsigned int, TetrahedronRestInformation &t, const Tetrahedron &,
-                               const sofa::helper::vector<unsigned int> &, const sofa::helper::vector<double> &);
-
-    protected:
-      TetrahedronMooneyRivlinFEMForceField<DataTypes>* ff;
+      Real m_R, m_Theta, m_Phi;
+      // internal and external radii
+      Real m_Ri, m_Ro ;
+      // position vector eulerian and lagrangean forms
+      Coord m_RadialVector; // [3] [3];
+      //fiber direction Lagrangean conf
+      Coord m_M[3];
+      Real m_lambda_R, m_lambda_Theta, m_lambda_Phi;
+      // angle between two fibers::eulerian and lagrangrean forms
+      Real m_Alpha, m_Beta, Gamma; // gamma is the diff. between two fibers
+      // angle of shear between configurations
+      Real m_Shear;
+      // fiber Vector in Eulerian coordinates
+      Coord m_fiberDirection;
     };
 
-protected:
-   TetrahedronMooneyRivlinFEMForceField();
+    struct SphericalPolarInfo
+    {
+      // position vector eulerian and lagrangean forms
+      Coord m_radialVector; // [3] [3];
+      // internal and external radii
+      Real m_ri, m_ro ;
+      /// fiber direction in eulerian configuration: vector M
+      Coord m_m[3];
+      // components in spherical polar coordinates
+      Real m_r, m_theta, m_phi;
+      /// deformation gradient = F
+      Matrix3 m_F; //(0); // initialize to zeros
+      /// right Cauchy-Green deformation tensor C (gradPhi^T gradPhi)
+      Matrix3 m_C; //(0); // initialize to zeros
+      // left Cauchy-Green Tensor
+      Matrix3 m_B; //(0); // initialize to zeros
+      // Extension ratios
+      Real m_lambda_r, m_lambda_theta, m_lambda_phi;
+      // Cauchy Stress Tensor
+      Matrix3 m_cauchyStressTensor; //(0); // initialize to zeros
+      // angle between two fibers::eulerian and lagrangrean forms
+      Real m_alpha, m_beta, gamma; // gamma is the diff. between two fibers
+      // angle of shear between configurations
+      Real m_shear;
+      // fiber Vector in Eulerian coordinates
+      Coord m_fiberDirection;
+    };
 
-   virtual   ~TetrahedronMooneyRivlinFEMForceField();
-public:
+    /// data structure stored for each tetrahedron
+  	class TetrahedronRestInformation : public fem::StrainInformation<DataTypes>
+    {
+        public:
+          /// shape vector at the rest configuration
+          Coord m_shapeVector[4];
+          // define a spherical polar point for each of the 4 vertices of the tetrahedron
+          helper::vector<SphericalPolarInfoLagrangean> m_sPolarVecLag; // Lagrangian Coordinates
+          helper::vector<SphericalPolarInfo> m_sPolarVecEul; // Eulerian Coordinates
+          // volume
+          Real m_restVolume, m_volScale, m_volume; // do we need this
+          /// Output stream
+          inline friend ostream& operator<< ( ostream& os, const TetrahedronRestInformation& /*eri*/ ) {  return os;  }
+          /// Input stream
+          inline friend istream& operator>> ( istream& in, TetrahedronRestInformation& /*eri*/ ) { return in; }
+          // Mooney-Rivlin Constants
+          Real m_C1, m_C2;
+          //
+          MatrixSym m_SPKTensorGeneral;
+          /// deformation gradient = gradPhi
+          // right and left Cauchy-Green Tensors
+          Matrix3 rightCauchyGreen, leftCauchyGreen;
+          Matrix3 m_deformationGradient;
+          // MatrixSym m_deformationGradient;
+          Real J;
+          Real m_strainEnergy;
 
-  //  virtual void parse(core::objectmodel::BaseObjectDescription* arg);
+          TetrahedronRestInformation() {}
+      };
 
+    /// data structure stored for each edge
+    class EdgeInformation
+    {
+      public:
+        /// store the stiffness edge matrix
+        Matrix3 DfDx;
+
+        /// Output stream
+        inline friend ostream& operator<< ( ostream& os, const EdgeInformation& /*eri*/ ) {  return os;  }
+        /// Input stream
+        inline friend istream& operator>> ( istream& in, EdgeInformation& /*eri*/ ) { return in; }
+
+        EdgeInformation() {}
+    };
+
+    // class SOFA_TETRAMOONRIVPlugin_API TetrahedronHandler: public TopologyDataHandler<Tetrahedron,sofa::helper::vector<TetrahedronRestInformation> >
+    class  TetrahedronHandler: public TopologyDataHandler<Tetrahedron,sofa::helper::vector<TetrahedronRestInformation> >
+    {
+      public:
+        using TetrahedronRestInformation = TetrahedronMooneyRivlinFEMForceField<DataTypes>::TetrahedronRestInformation ;
+        TetrahedronHandler(TetrahedronMooneyRivlinFEMForceField<DataTypes>* ff,
+                           TetrahedronData<sofa::helper::vector<TetrahedronRestInformation> >* data )
+          :TopologyDataHandler<Tetrahedron,sofa::helper::vector<TetrahedronRestInformation> >(data)
+          ,ff(ff)
+        {
+
+        }
+        void applyCreateFunction(unsigned int, TetrahedronRestInformation &t, const Tetrahedron &,
+                                 const sofa::helper::vector<unsigned int> &, const sofa::helper::vector<double> &);
+
+      protected:
+        TetrahedronMooneyRivlinFEMForceField<DataTypes>* ff;
+    };
+
+    /* Member Functions */
     void init() override;
     virtual void reinit() override;
     void addForce(const core::MechanicalParams* mparams /* PARAMS FIRST */, DataVecDeriv& d_f, const DataVecCoord& d_x, const DataVecDeriv& d_v) override;
     void addDForce(const core::MechanicalParams* mparams /* PARAMS FIRST */, DataVecDeriv& d_df, const DataVecDeriv& d_dx) override;
     SReal getPotentialEnergy(const core::MechanicalParams*, const DataVecCoord&) const override;
     void addKToMatrix(sofa::defaulttype::BaseMatrix *mat, SReal k, unsigned int &offset) override;
-
     void draw(const core::visual::VisualParams* vparams) override;
-
     Mat<3,3,double> get_defGrad( int tetrahedronIndex);
 
-
   protected:
+    core::topology::BaseMeshTopology* m_topology;
+    VecCoord  m_initialPoints;	/// the intial positions of the points
+    bool m_updateMatrix;
+    bool  m_meshSaved ;
 
+    Data<bool> d_stiffnessMatrixRegularizationWeight; ///< Regularization of the Stiffness Matrix (between true or false)
+    Data<string> d_materialName; ///< the name of the material
+    Data<SetParameterArray> d_parameterSet; ///< The global parameters specifying the material
+    Data<SetAnisotropyDirectionArray> d_anisotropySet; ///< The global directions of anisotropy of the material
+
+    TetrahedronData<sofa::helper::vector<TetrahedronRestInformation> > m_tetrahedronInfo; ///< Internal tetrahedron data
+    EdgeData<sofa::helper::vector<EdgeInformation> > m_edgeInfo; ///< Internal edge data
+    TetrahedronMooneyRivlinFEMForceField();
+    virtual ~TetrahedronMooneyRivlinFEMForceField();
     /// the array that describes the complete material energy and its derivatives
-
     fem::NonlinearElasticMaterial<DataTypes> *m_MRIncompMatlModel;
     TetrahedronHandler* m_tetrahedronHandler;
-
     void testDerivatives();
     void saveMesh( const char *filename );
-
     void updateTangentMatrix();
 };
 
@@ -275,9 +276,8 @@ using sofa::defaulttype::Vec3fTypes;
 
 #if  !defined(SOFA_COMPONENT_FORCEFIELD_TETRAHEDRONMOONEYRIVLINFEMFORCEFIELD_CPP)
 
-extern template class SOFA_MISC_FEM_API TetrahedronMooneyRivlinFEMForceField<Vec3Types>;
 extern template class SOFA_BOUNDARY_CONDITION_API TetrahedronMooneyRivlinFEMForceField<sofa::defaulttype::Vec3Types>;
-
+extern template class SOFA_TETRAMOONRIVPlugin_API TetrahedronMooneyRivlinFEMForceField<Vec3Types>;
 
 #endif //  !defined(SOFA_COMPONENT_FORCEFIELD_TETRAHEDRONHYPERELASTICITYFEMFORCEFIELD_CPP)
 

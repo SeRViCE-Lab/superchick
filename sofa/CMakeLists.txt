@@ -74,7 +74,7 @@ INCLUDE_DIRECTORIES("${CMAKE_CURRENT_SOURCE_DIR}/include"
   									"${Boost_INCLUDE_DIRS}")
 
 set(SOURCE_FILES
-		"${PLUGINS_DIR}/IABPlugin/src/initIABPlugin.cpp"
+		"${PLUGINS_DIR}/IABPlugin/ForceFields/src/initIABPlugin.cpp"
 		# "${PLUGINS_DIR}/IABPlugin/ForceFields/src/initMiscFEM.cpp"
 		# "${PLUGINS_DIR}/IABPlugin/ForceFields/src/TetrahedronHyperelasticityFEMForceField.cpp"
 		"${PLUGINS_DIR}/IABPlugin/ForceFields/src/IsochoricForceField.cpp"

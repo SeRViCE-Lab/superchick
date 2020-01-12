@@ -1,4 +1,4 @@
-#include "IABPlugin/include/initIABPlugin.h"
+#include "IABPlugin/ForceFields/include/initIABPlugin.h"
 
 // Ref sofa/v19.06/applications/plugins/SoftRobots/src/SoftRobots/component/initSoftRobots.cpp
 

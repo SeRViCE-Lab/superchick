@@ -82,7 +82,7 @@ public:
 
     virtual void applyElasticityTensor(StrainInformation<DataTypes> *sinfo, const  MaterialParameters<DataTypes> &param,const MatrixSym& inputTensor, MatrixSym &outputTensor)  {
   		MatrixSym inversematrix;
-  		MatrixSym F=sinfo->m_deformationGradient;
+  		MatrixSym F=sinfo->deformationTensor;
   		invertMatrix(inversematrix,F);
   		Real I1=trace(F);
   		Real I1square=(Real)(F[0]*F[0] + F[2]*F[2]+ F[5]*F[5]+2*(F[1]*F[1] + F[3]*F[3] + F[4]*F[4]));
@@ -146,7 +146,7 @@ public:
   typedef typename Eigen::SelfAdjointEigenSolver<Eigen::Matrix<Real,3,3> >::RealVectorType CoordEigen;
   /// Trace of C = I1
   Real trC;
-  Real trF;
+  // Real trF;
   Real J; // det (A)
   Real lambda; // stretch ratios
   /// Trace of C^2 : I2 = (trCSquare - trC^2)/2
@@ -156,7 +156,7 @@ public:
   bool hasBeenInitialized;
   /// right Cauchy-Green deformation tensor C (gradPhi^T gradPhi)
   MatrixSym deformationTensor;
-  MatrixSym leftCauchy, rightCauchy;
+  // MatrixSym leftCauchy, rightCauchy;
   MatrixSym F; // deformation gradient
   EigenMatrix Evect;
   CoordEigen Evalue;
@@ -164,7 +164,7 @@ public:
   MatrixSym E;
 
 
-  StrainInformation() : trC(0), trF(0), J(0), lambda(0), trCsquare(0), hasBeenInitialized(false), deformationTensor(), Evect(), Evalue(), logJ(0), E() {}
+  StrainInformation() : trC(0), J(0), lambda(0), trCsquare(0), hasBeenInitialized(false), deformationTensor(), Evect(), Evalue(), logJ(0), E() {}
   virtual ~StrainInformation() {}
 };
 

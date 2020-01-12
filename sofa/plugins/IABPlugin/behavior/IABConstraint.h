@@ -33,7 +33,7 @@
 #include <sofa/core/behavior/MechanicalState.h>
 #include "IABPlugin/behavior/IABBaseConstraint.h"
 
-#include "IABPlugin/include/initIABPlugin.h"
+#include "IABPlugin/ForceFields/include/initIABPlugin.h"
 
 namespace sofa
 {
