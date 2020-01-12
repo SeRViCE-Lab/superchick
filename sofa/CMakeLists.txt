@@ -83,7 +83,7 @@ set(SOURCE_FILES
 		)
 
 set(TETRA_SRC_FILES
-		"${PLUGINS_DIR}/IABPlugin/src/initIABPlugin.cpp"
+		"${PLUGINS_DIR}/IABPlugin/ForceFields/Tetra/src/initTetrahedronFFPlugin.cpp"
 		"${PLUGINS_DIR}/IABPlugin/ForceFields/Tetra/src/TetrahedronMooneyRivlinFEMForceField.cpp"
 		)
 

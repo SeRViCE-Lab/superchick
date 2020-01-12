@@ -25,7 +25,7 @@ Author: Lekan Ogunmolux, December 18, 2019
 #include <SofaBaseMechanics/MechanicalObject.h>
 #include "IABPlugin/ForceFields/include/integrand.inl"  // will help with our integrations
 #include "IABPlugin/ForceFields/include/NonlinearElasticMaterial.h"
-#include "IABPlugin/ForceFields/include/MooneyRivlinIncompressible.h"
+//#include "IABPlugin/ForceFields/include/MooneyRivlinIncompressible.h"
 #include "IABPlugin/ForceFields/Tetra/include/TetrahedronMooneyRivlinFEMForceField.h"
 
 

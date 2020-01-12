@@ -89,7 +89,7 @@ public:
   		Real I2=(Real)((pow(I1,(Real)2)- I1square)/2);
   		Real c1=param.parameterArray[0];
   		Real c2=param.parameterArray[1];
-  		// Real k0=param.parameterArray[2];
+  		Real k0=param.parameterArray[2];
   		MatrixSym ID;
   		ID.identity();
   		// C-1:H
