@@ -1,3 +1,11 @@
+
+/*
+* Tetrahedron components ripped off but adapted to incompressible materials
+*  Ripped off sofa/modules/SofaMiscFem/TetrahedronMooneyRivlinFEMForceField.h
+*
+* Author: Lekan Ogunmolux, December 18, 2019
+*/
+
 #ifndef SOFA_COMPONENT_FORCEFIELD_TETRAHEDRONMOONEYRIVLINFEMFORCEFIELD_H
 #define SOFA_COMPONENT_FORCEFIELD_TETRAHEDRONMOONEYRIVLINFEMFORCEFIELD_H
 
@@ -10,13 +18,6 @@
 #include <sofa/core/MechanicalParams.h>
 #include <SofaEigen2Solver/EigenSparseMatrix.h>
 #include <sofa/defaulttype/RGBAColor.h>
-/*
-* Tetrahedron components ripped off but adapted to incompressible materials
-*  Ripped off sofa/modules/SofaMiscFem/TetrahedronMooneyRivlinFEMForceField.h
-*
-* Author: Lekan Ogunmolux, December 18, 2019
-*/
-
 #include <IABPlugin/ForceFields/include/NonlinearElasticMaterial.h>
 #include <sofa/core/behavior/ForceField.h>
 #include <SofaBaseMechanics/MechanicalObject.h>

@@ -3,7 +3,8 @@
   <APIVersion level="19.06" />
   <RequiredPlugin name="SofaOpenglVisual"/>
   <RequiredPlugin pluginName="CImgPlugin"/>
-  <RequiredPlugin name="IAB" pluginName="IAB"/>
+  <RequiredPlugin name="IAB" pluginName="IAB_Isochoric"/>
+  <RequiredPlugin name="IABTetra" pluginName="IAB_Tetra"/>
 	<VisualStyle displayFlags="showVisual showBehavior showCollision hideOptions showMapping showForceFields" />
   <LightManager ambient="4 8.5 10"/>
   <LCPConstraintSolver tolerance="1e-3" maxIt="1000" initial_guess="false" build_lcp="false"  printLog="0" mu="0.2"/>
@@ -37,6 +38,8 @@
                 dx="-100" dy="-80" dz="10" rx="-90" color="brown" scale="20"/>
         <include name="NeckRight" href="scene_comps/IABs/dome_assembly.scn"
                 dx="-100" dy="-80" dz="-90" rx="-90" color="brown" scale="20"/>
+        <!-- initialize C1 and C2, Ri, and ri -->
+        <TetraMooneyRivlinPlugin template="Vec3d" ParameterSet="1000 100"/>
       </Node>
 
       <Node name="SideIABs">
@@ -48,6 +51,13 @@
                 dx="-100" dy="40" dz="80" rx="180" scale="20"/>
         <include name="ChinRight" href="scene_comps/IABs/dome_assembly.scn"
                 dx="-100" dy="40" dz="-180" scale="20"/>
+        <TetrahedronSetTopologyContainer name="Container"/>
+        <TetrahedronSetTopologyModifier name="Modifier" />
+        <TetrahedronSetTopologyAlgorithms template="Vec3d" name="TopoAlgo" />
+        <TetrahedronSetGeometryAlgorithms template="Vec3d" name="GeomAlgo" />
+        <Hexa2TetraTopologicalMapping name="default28" input="@../" output="@Container" printLog="0" />
+        <!-- initialize C1 and C2, Ri, and ri -->
+        <TetraMooneyRivlinPlugin template="Vec3d" ParameterSet="1000 100" materialName="MooneyRivlinIncompressible"/>
       </Node>
 
       <Node name="FlexiHolders">
