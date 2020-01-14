@@ -11,7 +11,7 @@ void initExternalModule()
 
 const char* getModuleName()
 {
-  return "TetraToSphericalPolar";
+  return "IABTetra";
 }
 
 const char* getModuleVersion()

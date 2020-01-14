@@ -222,7 +222,7 @@ int main(int argc, char** argv)
         return err;
 
     // if (fileName.empty())
-    std::string fileName = DataRepository.getFile(SetDirectory::GetCurrentDir() + "/../scenes/scene_comps/IABs/sphere_test.scn");
+    std::string fileName = DataRepository.getFile(SetDirectory::GetCurrentDir() + "/../scenes/scene_comps/IABs/dome_test.scn");
 
     if (int err=GUIManager::createGUI(nullptr))
         return err;

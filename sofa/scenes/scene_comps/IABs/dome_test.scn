@@ -4,30 +4,15 @@
 <RequiredPlugin name="SofaOpenglVisual"/>
 <RequiredPlugin pluginName="CImgPlugin"/>
 <RequiredPlugin name="IAB" pluginName="IAB"/>
+<RequiredPlugin name="IABTetra" pluginName="IAB_Tetra"/>
 <EulerImplicitSolver rayleighStiffness="0.01"  rayleighMass="0.1" />
+<CGLinearSolver template="GraphScattered" iterations="100" tolerance="1e-5"  threshold="1e-5"  />
 <!--  Presumably handles Lagrange Constraint multipliers https://www.sofa-framework.org/community/doc/using-sofa/components/animationloop/multistepanimationloop/-->
 <DefaultAnimationLoop />
-	<CGLinearSolver template="GraphScattered" iterations="100" tolerance="1e-5"  threshold="1e-5"  /> -->
-		<!-- see examples/Components/mass/MeshMatrixMass.scn &
-						 https://www.sofa-framework.org/community/doc/using-sofa/components/masses/meshmatrixmass/ -->
-	<MeshSTLLoader name="sphere_loader" filename="../../../../ros/srs_traj_opt/patient_description/meshes/sphere/sphere.stl"/>
-  <MechanicalObject name="spherical-states" src="@sphere_loader" template="Vec6d" />
-	<!-- Note that Vec6D is not available from MatrixMass and MeshSpringForceField -->
-	<!-- <MatrixMass defaultValue="75" template="Vec3d"/> -->
-	<!-- <MeshSpringForceField name="Springs" stiffness="100" damping="10" template="Vec3d"/> -->
-	<!-- <IsochoricForceField ri="13" templates="Vec3d" /> -->
-	<!-- values in cm -->
-	<IsochoricForceField ri="13" Ri="10" Ro="15" C1="1.1e4" C2="2.2e4"
-				templates="Vec3d" />
-	<!-- <IsochoricForceField ri="26" Ri="13" Ro="15" C1="1.1e1" C2="2.2e1"
-				templates="Vec3d" /> -->
-
-  <Node name="SphereVisu" >
-    <OglModel name="SphereVisual"  src="@../sphere_loader" translation="0 0 0" dx="-50" dy="0" dz="0" color="0.3 0.65 0.6" scale="1.5"/>
-  </Node>
-<Node 	 name="SphereCollis"  >
-  <MeshObjLoader name="sphere-collis-loader"  filename="../../../../ros/srs_traj_opt/patient_description/meshes/sphere/sphere.obj"  scale="1.5"/>
-  <MeshTopology name="meshTopology"  />
-  <MechanicalObject template="Vec3d" name="sphere-collis-states"  velocity="0 0 0"  force="0 0 0"  externalForce="0 0 0" />
-</Node>
+	<include href="dome_head.scn"
+					dx="0" dy="0" dz="0" translation="0 0 0" rotation="0 0 0" color="grey" scale="1"/>
+	<include href="dome_ring.scn"
+					dx="0" dy="0" dz="0" translation="0 0 0" rotation="0 0 0" color="black" scale="1"/>
+	<include href="dome_cover.scn"
+					dx="0" dy="0" dz="0" translation="0 0 0" rotation="0 0 0" color="brown" scale="1"/>
 </Node>
