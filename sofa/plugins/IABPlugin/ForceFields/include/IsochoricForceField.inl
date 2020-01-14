@@ -246,7 +246,7 @@ void IsochoricForceField<DataTypes>::updateTangentMatrix()
             }
             Matrix3 &edgeDfDx = einfo->DfDx;
 
-/* What are these for? Review tonight
+            /* What are these for? Review tonight
             Coord svl=sphInfo->m_shapeVector[l];
             Coord svk=sphInfo->m_shapeVector[k];
 
