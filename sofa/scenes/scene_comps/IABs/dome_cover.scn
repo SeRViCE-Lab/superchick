@@ -13,6 +13,8 @@
 		<MeshObjLoader name="dome-cover-collis-loader"  filename="../../../../ros/srs_traj_opt/patient_description/meshes/dome/dome_cover.obj"  scale="1"/>
 		<MeshTopology name="meshTopology"  />
 		<MechanicalObject template="Vec3d" name="dome-cover-collis-states"  velocity="0 0 0"  force="0 0 0"  externalForce="0 0 0" />
+		<!-- Does not need this force field -->
+		<!-- <TetrahedronMooneyRivlinFEMForceField  template="Vec3d" ParameterSet="1000 100" /> -->
 	</Node>
 
 
