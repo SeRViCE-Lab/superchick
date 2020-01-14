@@ -95,7 +95,8 @@ void TetrahedronMooneyRivlinFEMForceField<DataTypes>::TetrahedronHandler::applyC
   }
 }
 
-template <class DataTypes> TetrahedronMooneyRivlinFEMForceField<DataTypes>::TetrahedronMooneyRivlinFEMForceField()
+template <class DataTypes>
+TetrahedronMooneyRivlinFEMForceField<DataTypes>::TetrahedronMooneyRivlinFEMForceField()
     : m_topology(0)
     m_initialPoints(0),
     m_updateMatrix(true),
@@ -116,12 +117,14 @@ template <class DataTypes> TetrahedronMooneyRivlinFEMForceField<DataTypes>::Tetr
     f_young.setRequired(true);
 }
 
-template <class DataTypes> TetrahedronMooneyRivlinFEMForceField<DataTypes>::~TetrahedronMooneyRivlinFEMForceField()
+template <class DataTypes>
+TetrahedronMooneyRivlinFEMForceField<DataTypes>::~TetrahedronMooneyRivlinFEMForceField()
 {
     if(m_tetrahedronHandler) delete m_tetrahedronHandler;
 }
 
-template <class DataTypes> void TetrahedronMooneyRivlinFEMForceField<DataTypes>::init()
+template <class DataTypes>
+void TetrahedronMooneyRivlinFEMForceField<DataTypes>::init()
 {
     if (this->f_printLog.getValue())
         msg_info() << "initializing TetrahedronMooneyRivlinFEMForceField";

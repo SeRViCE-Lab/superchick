@@ -3,7 +3,7 @@
 * Tetrahedron components ripped off but adapted to incompressible materials
 *  Ripped off sofa/modules/SofaMiscFem/TetrahedronMooneyRivlinFEMForceField.h
 *
-* Author: Lekan Ogunmolux, December 18, 2019
+* Author: Lekan Ogunmolu, December 18, 2019
 */
 
 #ifndef SOFA_COMPONENT_FORCEFIELD_TETRAHEDRONMOONEYRIVLINFEMFORCEFIELD_H
