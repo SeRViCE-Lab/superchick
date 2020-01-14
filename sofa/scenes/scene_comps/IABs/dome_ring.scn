@@ -4,7 +4,7 @@
 	<CGLinearSolver iterations="25" name="linear solver" tolerance="1.0e-9" threshold="1.0e-9" />
 
 	<!-- Mesh base for dome == locks with cover -->
-	<UniformMass/>
+	<!-- <UniformMass template="Vec3d"/> -->
 	<MeshSTLLoader name="dome_ring_loader" filename="../../../../ros/srs_traj_opt/patient_description/meshes/dome/dome_ring.stl"/>
 	<MechanicalObject name="dome-ring-states" src="@dome_ring_loader" template="Vec3d" />
 

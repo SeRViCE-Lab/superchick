@@ -25,7 +25,7 @@ Author: Lekan Ogunmolux, December 18, 2019
 #include <SofaBaseMechanics/MechanicalObject.h>
 #include "IABPlugin/ForceFields/include/integrand.inl"  // will help with our integrations
 #include "IABPlugin/ForceFields/include/NonlinearElasticMaterial.h"
-//#include "IABPlugin/ForceFields/include/MooneyRivlinIncompressible.h"
+#include "IABPlugin/ForceFields/include/MooneyRivlinIncompressible.h"
 #include "IABPlugin/ForceFields/Tetra/include/TetrahedronMooneyRivlinFEMForceField.h"
 
 
@@ -96,7 +96,7 @@ void TetrahedronMooneyRivlinFEMForceField<DataTypes>::TetrahedronHandler::applyC
   }
 }
 
-template <class DataTypes>
+template <typename DataTypes>
 TetrahedronMooneyRivlinFEMForceField<DataTypes>::TetrahedronMooneyRivlinFEMForceField()
     : m_topology(0)
     , m_initialPoints(0)
@@ -118,13 +118,13 @@ TetrahedronMooneyRivlinFEMForceField<DataTypes>::TetrahedronMooneyRivlinFEMForce
     f_young.setRequired(true);
 }
 
-template <class DataTypes>
+template <typename DataTypes>
 TetrahedronMooneyRivlinFEMForceField<DataTypes>::~TetrahedronMooneyRivlinFEMForceField()
 {
     if(m_tetrahedronHandler) delete m_tetrahedronHandler;
 }
 
-template <class DataTypes>
+template <typename DataTypes>
 void TetrahedronMooneyRivlinFEMForceField<DataTypes>::init()
 {
     if (this->f_printLog.getValue())
@@ -208,7 +208,11 @@ void TetrahedronMooneyRivlinFEMForceField<DataTypes>::init()
     //testDerivatives();
 }
 
-template <class DataTypes>
+template <typename DataTypes>
+void TetrahedronMooneyRivlinFEMForceField<DataTypes>::reinit()
+{ /*Nothing to do here, Scotty! */}
+
+template <typename DataTypes>
 void TetrahedronMooneyRivlinFEMForceField<DataTypes>::addForce(const core::MechanicalParams* /* mparams */ /* PARAMS FIRST */, DataVecDeriv& d_f, const DataVecCoord& d_x, const DataVecDeriv& /* d_v */)
 {
     sofa::helper::AdvancedTimer::stepBegin("addForceSphericalPolarFEM");
@@ -312,7 +316,7 @@ void TetrahedronMooneyRivlinFEMForceField<DataTypes>::addForce(const core::Mecha
     d_f.endEdit();
 }
 
-template <class DataTypes>
+template <typename DataTypes>
 void TetrahedronMooneyRivlinFEMForceField<DataTypes>::updateTangentMatrix()
 {
     unsigned int i=0,j=0,k=0,l=0;
@@ -396,7 +400,7 @@ void TetrahedronMooneyRivlinFEMForceField<DataTypes>::updateTangentMatrix()
 }
 
 
-template <class DataTypes>
+template <typename DataTypes>
 void TetrahedronMooneyRivlinFEMForceField<DataTypes>::addDForce(const core::MechanicalParams* mparams, DataVecDeriv& d_df, const DataVecDeriv& d_dx)
 {
     VecDeriv& df = *d_df.beginEdit();
@@ -444,14 +448,14 @@ void TetrahedronMooneyRivlinFEMForceField<DataTypes>::addDForce(const core::Mech
     d_df.endEdit();
 }
 
-template<class DataTypes>
+template<typename DataTypes>
 SReal TetrahedronMooneyRivlinFEMForceField<DataTypes>::getPotentialEnergy(const core::MechanicalParams*, const DataVecCoord&) const
 {
     msg_error() << "ERROR("<<this->getClassName()<<"): getPotentialEnergy( const MechanicalParams*, const DataVecCoord& ) not implemented.";
     return 0.0;
 }
 
-template <class DataTypes>
+template <typename DataTypes>
 void TetrahedronMooneyRivlinFEMForceField<DataTypes>::addKToMatrix(sofa::defaulttype::BaseMatrix *mat, SReal k, unsigned int &offset)
 {
 
@@ -491,7 +495,7 @@ void TetrahedronMooneyRivlinFEMForceField<DataTypes>::addKToMatrix(sofa::default
 }
 
 
-template<class DataTypes>
+template<typename DataTypes>
 void TetrahedronMooneyRivlinFEMForceField<DataTypes>::testDerivatives()
 {
     DataVecCoord d_pos;
@@ -632,7 +636,7 @@ void TetrahedronMooneyRivlinFEMForceField<DataTypes>::testDerivatives()
 }
 
 
-template<class DataTypes>
+template<typename DataTypes>
 void TetrahedronMooneyRivlinFEMForceField<DataTypes>::saveMesh( const char *filename )
 {
     VecCoord pos( this->mstate->read(core::ConstVecCoordId::position())->getValue());
@@ -677,7 +681,7 @@ void TetrahedronMooneyRivlinFEMForceField<DataTypes>::saveMesh( const char *file
 	fclose( file );
 }
 
-template<class DataTypes>
+template<typename DataTypes>
 void TetrahedronMooneyRivlinFEMForceField<DataTypes>::draw(const core::visual::VisualParams* vparams)
 {
     //	unsigned int i;
@@ -797,4 +801,4 @@ void TetrahedronMooneyRivlinFEMForceField<DataTypes>::draw(const core::visual::V
 
 } // namespace sofa
 
-#endif // SOFA_COMPONENT_FORCEFIELD_TETRAHEDRONHYPERELASTICITYFEMFORCEFIELD_INL
+#endif // SOFA_COMPONENT_FORCEFIELD_TETRAHEDRONMOONEYRIVLINFEMFORCEFIELD_INL

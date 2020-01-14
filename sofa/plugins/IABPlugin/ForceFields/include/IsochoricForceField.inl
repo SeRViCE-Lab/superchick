@@ -68,12 +68,6 @@ void IsochoricForceField<DataTypes>::SphericalPolarHandler::applyCreateFunction(
       for(j=0;j<3;++j)
           point[j]=(restPosition)[tri_array[j]];
 
-      // Need to figure out ho to retrieve spherical points from each triangle
-      // sinfo.m_R = point[0]*point[0]; //(sqrt(x^2+y^2+z^2))
-      // sinfo.m_R = (SQR(point[0]), SQR(point[1]), SQR(point[2])).norm(); //(sqrt(x^2+y^2+z^2))
-      // sinfo.m_Theta = std::atan(point[1]/point[0]);    // arctan(y/x)
-      // sinfo.m_Phi = std::acos(point[2]/sinfo.m_R); // arccos(z/r)
-
       // initialize associated tri components
       sinfo.m_Ro = sinfo.m_R;
 

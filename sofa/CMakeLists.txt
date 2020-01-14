@@ -75,15 +75,13 @@ INCLUDE_DIRECTORIES("${CMAKE_CURRENT_SOURCE_DIR}/include"
 
 set(SOURCE_FILES
 		"${PLUGINS_DIR}/IABPlugin/ForceFields/src/initIABPlugin.cpp"
-		# "${PLUGINS_DIR}/IABPlugin/ForceFields/src/initMiscFEM.cpp"
-		# "${PLUGINS_DIR}/IABPlugin/ForceFields/src/TetrahedronHyperelasticityFEMForceField.cpp"
 		"${PLUGINS_DIR}/IABPlugin/ForceFields/src/IsochoricForceField.cpp"
 		"${PLUGINS_DIR}/IABPlugin/behavior/IABConstraint.cpp"
 		"${PLUGINS_DIR}/IABPlugin/behavior/IABBaseConstraint.cpp"
 		)
 
 set(TETRA_SRC_FILES
-		"${PLUGINS_DIR}/IABPlugin/ForceFields/Tetra/src/initTetrahedronFFPlugin.cpp"
+		"${PLUGINS_DIR}/IABPlugin/ForceFields/Tetra/src/initTetrahedronMooneyRivlinFEMForceField.cpp"
 		"${PLUGINS_DIR}/IABPlugin/ForceFields/Tetra/src/TetrahedronMooneyRivlinFEMForceField.cpp"
 		)
 
@@ -91,17 +89,15 @@ set(TETRA_SRC_FILES
 qt5_wrap_cpp(MOCCED_HEADER_FILES ${HEADER_FILES_TO_MOC})
 
 # Create the plugin library.
-add_library(${PROJECT_NAME} SHARED  #${HEADER_FILES}
-																		${HEADER_FILES_TO_MOC}
+add_library(${PROJECT_NAME} SHARED  ${HEADER_FILES_TO_MOC}
 																		${MOCCED_HEADER_FILES}
 																		${SOURCE_FILES})
 target_link_libraries(${PROJECT_NAME} SofaGuiQt)
 
-add_library(IABTetra SHARED  #${HEADER_FILES}
-																		${HEADER_FILES_TO_MOC}
-																		${MOCCED_HEADER_FILES}
-																		${TETRA_SRC_FILES})
-target_link_libraries(IABTetra SofaGuiQt)
+add_library(IABTetra SHARED  ${HEADER_FILES_TO_MOC}
+														 ${MOCCED_HEADER_FILES}
+														 ${TETRA_SRC_FILES})
+target_link_libraries(IABTetra SofaGuiQt ${SOFA_LIBS})
 
 # adding this because of GLEW conflicts
 link_directories($ENV{SOFA_ROOT}/install/lib/)
@@ -113,6 +109,7 @@ set(SOFA_LIBS SofaComponentAdvanced
 							)
 
 add_executable("${PROJECT_NAME}_Launcher" src/IAB.cpp)
+target_link_libraries("${PROJECT_NAME}_Launcher" ${SOFA_LIBS})
 target_link_libraries("${PROJECT_NAME}_Launcher" ${SOFA_LIBS})
 
 add_executable(SingleIAB src/SingleIAB.cpp)
