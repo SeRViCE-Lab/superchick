@@ -9,7 +9,7 @@ using std::string;
 using std::vector;
 
 #include "IABPlugin/include/debuggers.h"
-#include "IABPlugin/include/initIABPlugin.h"
+#include "IABPlugin/ForceFields/include/initIABPlugin.h"
 #include <sofa/helper/ArgumentParser.h>
 #include <SofaSimulationCommon/common.h>
 #include <sofa/simulation/Node.h>

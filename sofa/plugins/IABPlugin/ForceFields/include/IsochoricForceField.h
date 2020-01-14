@@ -29,7 +29,9 @@
 #include <map>
 
 // simple macro for mathematical ops
-#define SQ(__X__) std::pow(__X__, 2);
+//#define power(SQ, X) double SQ(X) {return std::pow(X, 2.0f); }
+inline float SQ(float x){ return std::pow(x, 2.0f); }
+inline double SQ(double x){ return std::pow(x, 2.0d); }
 
 
 namespace sofa
@@ -101,8 +103,8 @@ class IsochoricForceField : public core::behavior::ForceField<DataTypes>
 	class SphericalPolarRestInformation : public sofa::component::fem::StrainInformation<DataTypes>
   {
     public:
-        /// shape vector at the rest configuration, boldr
-        VecCoord m_radialVector, m_RadialVector; // [3] [3];
+        // position vector eulerian and lagrangean forms
+        Coord m_radialVector, m_RadialVector; // [3] [3];
         /// fiber direction in eulerian configuration: vector M
         Coord m_m[3];
         //fiber direction Lagrangean conf
@@ -112,27 +114,26 @@ class IsochoricForceField : public core::behavior::ForceField<DataTypes>
         // internal and external radii
         Real m_ri, m_ro ;
         // Lagrangean coordinates
+        Real m_R, m_Theta, m_Phi; // see globalParameters
         Real m_Ri, m_Ro; // see globalParameters
         /// deformation gradient = F
-        Matrix3 m_F(0); // initialize to zeros
+        Matrix3 m_F; //(0); // initialize to zeros
         /// right Cauchy-Green deformation tensor C (gradPhi^T gradPhi)
-        Matrix3 m_C(0); // initialize to zeros
+        Matrix3 m_C; //(0); // initialize to zeros
         // left Cauchy-Green Tensor
-        Matrix3 m_B(0); // initialize to zeros
+        Matrix3 m_B; //(0); // initialize to zeros
         // Mooney-Rivlin Constants
         Real m_C1, m_C2;
         // Extension ratios
         Real m_lambda_r, m_lambda_theta, m_lambda_phi;
         // Cauchy Stress Tensor
-        Matrix3 m_cauchyStressTensor(0); // initialize to zeros
-        // angle between directions:: eulerian form
-        Real m_alpha;
-        // Lagrangean form
-        Real m_beta;
+        Matrix3 m_cauchyStressTensor; //(0); // initialize to zeros
+        // angle between two fibers::eulerian and lagrangrean forms
+        Real m_alpha, m_beta, gamma; // gamma is the diff. between two fibers
         // angle of shear between configurations
         Real m_shear;
         // fiber Vector in Eulerian coordinates
-        Vec3d m_fiberDirection;
+        Coord m_fiberDirection;
         // volume
         Real m_restVolume; // do we need this
         /// Output stream
@@ -225,8 +226,7 @@ public:
     /// Same as previous, but using accessor
     void addKToMatrix(const sofa::core::behavior::MultiMatrixAccessor* /*matrix*/, SReal /*kFact*/) ;
     void draw(const core::visual::VisualParams* vparams) override;
-    Matrix3 updateStrainInfo(int&& triIdx, SphericalPolarRestInformation&& sphInfo,
-                        helper::vector<SphericalPolarRestInformation>&& sphereInfVec); // deformation Grad at the index tetrahedronIndex
+    void updateStrainInfo(const SphericalPolarRestInformation& sphInfo); // deformation Grad at the index tetrahedronIndex
     void computePositionalVector();
     // linearsolver::EigenBaseSparseMatrix<typename DataTypes::Real> matS;
 protected:

@@ -32,7 +32,7 @@
 
 #include <sofa/core/behavior/BaseConstraint.h>
 
-#include "IABPlugin/include/initIABPlugin.h"
+#include "IABPlugin/ForceFields/include/initIABPlugin.h"
 
 namespace sofa
 {

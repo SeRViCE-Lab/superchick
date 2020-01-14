@@ -1,4 +1,4 @@
-#include "IABPlugin/include/initIABPlugin.h"
+#include "IABPlugin/ForceFields/Tetra/include/initTetrahedronFFPlugin.h"
 
 // Ref sofa/v19.06/applications/plugins/SoftRobots/src/SoftRobots/component/initSoftRobots.cpp
 
@@ -11,7 +11,7 @@ void initExternalModule()
 
 const char* getModuleName()
 {
-  return "IAB";
+  return "TetraToSphericalPolar";
 }
 
 const char* getModuleVersion()
@@ -26,12 +26,11 @@ const char* getModuleLicense()
 
 const char* getModuleDescription()
 {
-  return "IAB Isochoric Plugin";
+  return "TetraSphericalPolar Plugin";
 }
 
 const char* getModuleComponentList()
 {
-  // see /home/lex/sofa/v19.06/applications/plugins/SoftRobots/src/SoftRobots/component/initSoftRobots.cpp
   return "None for now";
 }
 
