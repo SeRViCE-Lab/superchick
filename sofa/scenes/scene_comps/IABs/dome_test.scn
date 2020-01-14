@@ -4,7 +4,7 @@
 <RequiredPlugin name="SofaOpenglVisual"/>
 <RequiredPlugin pluginName="CImgPlugin"/>
 <RequiredPlugin name="IAB" pluginName="IAB"/>
-<RequiredPlugin name="IABTetra" pluginName="IAB_Tetra"/>
+<RequiredPlugin name="IAB_Tetra" pluginName="IABTetra"/>
 <EulerImplicitSolver rayleighStiffness="0.01"  rayleighMass="0.1" />
 <CGLinearSolver template="GraphScattered" iterations="100" tolerance="1e-5"  threshold="1e-5"  />
 <!--  Presumably handles Lagrange Constraint multipliers https://www.sofa-framework.org/community/doc/using-sofa/components/animationloop/multistepanimationloop/-->

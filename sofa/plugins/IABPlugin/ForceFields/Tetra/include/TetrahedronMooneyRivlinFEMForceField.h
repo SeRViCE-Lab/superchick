@@ -219,8 +219,8 @@ class TetrahedronMooneyRivlinFEMForceField : public core::behavior::ForceField<D
         EdgeInformation() {}
     };
 
-    // class SOFA_TETRAMOONRIVPlugin_API TetrahedronHandler: public TopologyDataHandler<Tetrahedron,sofa::helper::vector<TetrahedronRestInformation> >
-    class  TetrahedronHandler: public TopologyDataHandler<Tetrahedron,sofa::helper::vector<TetrahedronRestInformation> >
+    class SOFA_TetrahedronMooneyRivlinFEMForceField_API TetrahedronHandler: public TopologyDataHandler<Tetrahedron,sofa::helper::vector<TetrahedronRestInformation> >
+    // class  TetrahedronHandler: public TopologyDataHandler<Tetrahedron,sofa::helper::vector<TetrahedronRestInformation> >
     {
       public:
         using TetrahedronRestInformation = TetrahedronMooneyRivlinFEMForceField<DataTypes>::TetrahedronRestInformation ;
@@ -275,10 +275,11 @@ using sofa::defaulttype::Vec3dTypes;
 using sofa::defaulttype::Vec3fTypes;
 
 #if  !defined(SOFA_COMPONENT_FORCEFIELD_TETRAHEDRONMOONEYRIVLINFEMFORCEFIELD_CPP)
-
 extern template class SOFA_BOUNDARY_CONDITION_API TetrahedronMooneyRivlinFEMForceField<sofa::defaulttype::Vec3Types>;
-extern template class SOFA_TETRAMOONRIVPlugin_API TetrahedronMooneyRivlinFEMForceField<Vec3Types>;
-
+extern template class SOFA_BOUNDARY_CONDITION_API TetrahedronMooneyRivlinFEMForceField<sofa::defaulttype::Vec2Types>;
+extern template class SOFA_BOUNDARY_CONDITION_API TetrahedronMooneyRivlinFEMForceField<sofa::defaulttype::Vec1Types>;
+extern template class SOFA_BOUNDARY_CONDITION_API TetrahedronMooneyRivlinFEMForceField<sofa::defaulttype::Vec6Types>;
+extern template class SOFA_TetrahedronMooneyRivlinFEMForceField_API TetrahedronMooneyRivlinFEMForceField<Vec3Types>;
 #endif //  !defined(SOFA_COMPONENT_FORCEFIELD_TETRAHEDRONHYPERELASTICITYFEMFORCEFIELD_CPP)
 
 } // namespace forcefield

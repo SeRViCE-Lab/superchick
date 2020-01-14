@@ -17,14 +17,17 @@
 		<MeshTopology name="meshTopology"  />
 		<MechanicalObject template="Vec3d" name="dome-ring-collis-states"  velocity="0 0 0"  force="0 0 0"  externalForce="0 0 0" />
 
-		<TetrahedronSetTopologyContainer name="Container"/>
-		<TetrahedronSetTopologyModifier name="Modifier" />
-		<TetrahedronSetTopologyAlgorithms template="Vec3d" name="TopoAlgo" />
-		<TetrahedronSetGeometryAlgorithms template="Vec3d" name="GeomAlgo" />
-		<Hexa2TetraTopologicalMapping name="default28" input="@../" output="@Container" printLog="0" />
+		<Node name="tetras">
+			<TetrahedronSetTopologyContainer name="Container"/>
+			<TetrahedronSetTopologyModifier name="Modifier" />
+			<TetrahedronSetTopologyAlgorithms template="Vec3d" name="TopoAlgo" />
+			<TetrahedronSetGeometryAlgorithms template="Vec3d" name="GeomAlgo" />
+			<Hexa2TetraTopologicalMapping name="default28" input="@../" output="@Container" printLog="0" />
+		</Node>
+
 
 		<TetrahedronMooneyRivlinFEMForceField  template="Vec3d" ParameterSet="1000 100"
-			 	materialName="MooneyRivlinIncompressible"  youngModulus="10000" poissonRatio="0.45" />
+			 	materialName="MooneyRivlinIncompressible"  youngModulus="1000" poissonRatio="0.45" />
 	</Node>
 
 

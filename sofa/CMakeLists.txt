@@ -119,7 +119,7 @@ add_executable(SingleIAB src/SingleIAB.cpp)
 target_link_libraries(SingleIAB ${SOFA_LIBS} SofaMiscFem)
 
 
-install(TARGETS ${PROJECT_NAME}
+install(TARGETS ${PROJECT_NAME} IABTetra
         LIBRARY DESTINATION "$ENV{SOFA_ROOT}/lib")
 
 install(DIRECTORY "$ENV{SOFA_ROOT}/lib/" DESTINATION "$ENV{SOFA_ROOT}/lib"

@@ -14,7 +14,7 @@
 	  <MeshTopology name="meshTopology"  />
 	  <MechanicalObject template="Vec3d" name="dome-collis-states"  velocity="0 0 0"  force="0 0 0"  externalForce="0 0 0" />
 		<!-- See /sofa/examples/Components/forcefield/TetrahedronHyperelasticityFEMForceField.scn -->
-		<!-- <Node name="tetras"> -->
+		<Node name="tetras">
 		<TetrahedronSetTopologyContainer name="Container"/>
 		<TetrahedronSetTopologyModifier name="Modifier" />
 		<TetrahedronSetTopologyAlgorithms template="Vec3d" name="TopoAlgo" />
@@ -23,7 +23,7 @@
 
 		<TetrahedronMooneyRivlinFEMForceField  template="Vec3d" ParameterSet="1000 100"
 			 	materialName="MooneyRivlinIncompressible"  youngModulus="10000" poissonRatio="0.45" />
-		<!-- </Node> -->
+		</Node>
 
 	</Node>
 </Node>

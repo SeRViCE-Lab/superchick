@@ -3,11 +3,11 @@
 
 #include <sofa/helper/system/config.h>
 
-#define SOFA_TARGET TetraMooneyRivlinPlugin
-#ifdef SOFA_BUILD_TETRAMOONRIVPLUGIN
-# define SOFA_TETRAMOONRIVPlugin_API SOFA_EXPORT_DYNAMIC_LIBRARY
+#define SOFA_TARGET TetraMooneyRivlinFEMForceFieldPlugin
+#ifdef SOFA_BUILD_IABTETRAPLUGIN
+# define SOFA_IABTetraPlugin_API SOFA_EXPORT_DYNAMIC_LIBRARY
 #else
-# define SOFA_TETRAMOONRIVPlugin_API SOFA_IMPORT_DYNAMIC_LIBRARY
+# define SOFA_IABTetraPlugin_API SOFA_IMPORT_DYNAMIC_LIBRARY
 #endif
 
 #endif
