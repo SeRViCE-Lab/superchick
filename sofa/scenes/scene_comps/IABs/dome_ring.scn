@@ -1,35 +1,31 @@
 <?xml version="1.0"?>
-<Node name="DomeRingNode">
-	<EulerImplicitSolver name="cg_odesolver" printLog="false" />
-	<CGLinearSolver iterations="25" name="linear solver" tolerance="1.0e-9" threshold="1.0e-9" />
-
-	<!-- Mesh base for dome == locks with cover -->
-	<!-- <UniformMass /> -->
-	<MeshSTLLoader name="dome_ring_loader" filename="../../../../ros/srs_traj_opt/patient_description/meshes/dome/dome_ring.stl"/>
-	<MechanicalObject name="dome-ring-states" src="@dome_ring_loader" template="Vec3d" />
-
-	<Node name="DomeRingVisu" >
-		<OglModel name="DomeRingVisual"  src="@../dome_ring_loader" translation="0 0 0" dx="0" dy="0" dz="0"  rx="0" ry="0" rz="0" color="magenta" scale="1"/>
-	</Node>
-
-	<Node name="DomeRingCollis"  >
-		<MeshObjLoader name="dome-ring-collis-loader"  filename="../../../../ros/srs_traj_opt/patient_description/meshes/dome/dome_ring.obj"  scale="1"/>
-		<MeshTopology name="meshTopology"  />
-		<MechanicalObject template="Vec3d" name="dome-ring-collis-states"  velocity="0 0 0"  force="0 0 0"  externalForce="0 0 0" />
-
-		<!-- <Node name="tetras"> -->
-			<TetrahedronSetTopologyContainer name="Container"/>
-			<TetrahedronSetTopologyModifier name="Modifier" />
-			<TetrahedronSetTopologyAlgorithms template="Vec3d" name="TopoAlgo" />
-			<TetrahedronSetGeometryAlgorithms template="Vec3d" name="GeomAlgo" />
-			<!-- <Hexa2TetraTopologicalMapping name="default28" input="@../" output="@Container" printLog="0" /> -->
-		<!-- </Node> -->
-
-
+<Node name="DomeRingRoot" gravity="0 -9.81 0" dt=".02">
+	<MeshObjLoader name="dome_ring_loader"  filename="../../../../ros/srs_traj_opt/patient_description/meshes/dome/dome_ring.obj"  scale="1"/>
+	<Node name="DomeRing"  gravity="0 -9.81 0">
+		<EulerImplicitSolver name="cg_odesolver_dome_ring" printLog="false" />
+		<CGLinearSolver iterations="25" name="linear solver_dome_ring" tolerance="1.0e-9" threshold="1.0e-9" />
+		<MeshGmshLoader name="gmeshLoader_dome_ring" filename="../../../../ros/srs_traj_opt/patient_description/meshes/dome/dome_ring.msh" />
+		<TetrahedronSetTopologyContainer name="TetraTopologyContainer_dome_ring" src="@gmeshLoader_dome_ring" />
+		<MechanicalObject name="dofs_dome_ring" src="@gmeshLoader_dome_ring" template="Vec3d" />
+		<TetrahedronSetGeometryAlgorithms template="Vec3d" name="TetraGeomAlgo_dome_ring"  drawTetrahedra="1"/>
+		<!-- defines more specific algorithms (e.g. subDivideTetrahedronsWithPlane(), InciseAlongEdge() -->
+		<TetrahedronSetTopologyAlgorithms template="Vec3d" name="TetraTopologyAlgo_dome_ring" />
+		<!-- defines all the basic operations (add or remove tetrahedra) and their process -->
+		<TetrahedronSetTopologyModifier name="TetraTopologyModifier_dome_ring" />
+		<DiagonalMass  name="computed using mass density_dome_ring" massDensity="1" />
 		<TetrahedronMooneyRivlinFEMForceField  template="Vec3d" ParameterSet="1000 100"
-			 	materialName="MooneyRivlinIncompressible"  youngModulus="1000" poissonRatio="0.45" />
+			 	materialName="MooneyRivlinIncompressible"  youngModulus="10000" poissonRatio="0.45" />
+		<Node name="DomeRingVisu" tags="Visual" gravity="0 -9.81 0">
+	    <OglModel name="DomeRingVisual"  src="@../../dome_ring_loader" translation="0 0 0"
+				rotation="0 0 0" dx="0" dy="0" dz="0" rx="0" ry="0" rz="0" color="0.8549 0.8235 0.6431"
+				scale="1"/>
+		  <!-- <BarycentricMapping name="visual mapping" input="@../dofs" output="@DomeRingVisual" /> -->
+		</Node>
+  </Node>
+	<Node 	 name="DomeRingCollis"  gravity="0 -9.81 0" >
+	  <MeshObjLoader name="domeRingCollisLoader"  filename="../../../../ros/srs_traj_opt/patient_description/meshes/dome/dome_ring.obj"  scale="1"/>
+	  <MechanicalObject template="Vec3d" name="dome-ringcollis-states"  src="@domeRingCollisLoader"
+				velocity="0 0 0"  force="0 0 0" translation="0 0 0"
+				rotation="0 0 0" dx="0" dy="0" dz="0" rx="0" ry="0" rz="0" scale="1" externalForce="0 0 0" />
 	</Node>
-
-
-
 </Node>
