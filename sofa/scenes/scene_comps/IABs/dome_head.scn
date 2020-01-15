@@ -5,25 +5,33 @@
 
 	<MeshSTLLoader name="dome_head_loader" filename="../../../../ros/srs_traj_opt/patient_description/meshes/dome/dome.stl"/>
 	<MechanicalObject name="dome-states" src="@dome_head_loader" template="Vec3d" />
-	<!-- <UniformMass  template="Vec3d"/> -->
+	<!-- <UniformMass /> -->
   <Node name="DomeHeadVisu" >
-    <OglModel name="DomeHeadVisual"  src="@../dome_head_loader" translation="0 0 0" rotation="0 0 0" dx="0" dy="0" dz="0" rx="0" ry="0" rz="0" color="0.8549 0.8235 0.6431"  scale="1"/>
+    <OglModel name="DomeHeadVisual"  src="@../dome_head_loader" translation="0 0 0"
+			rotation="0 0 0" dx="0" dy="0" dz="0" rx="0" ry="0" rz="0" color="0.8549 0.8235 0.6431"
+			scale="1"/>
+	  <!-- <BarycentricMapping name="visual mapping" input="@../dome-states" output="@DomeHeadVisual" /> -->
   </Node>
 	<Node 	 name="DomeHeadCollis"  >
-	  <MeshObjLoader name="dome-collis-loader"  filename="../../../../ros/srs_traj_opt/patient_description/meshes/dome/dome.obj"  scale="1"/>
-	  <MeshTopology name="meshTopology"  />
-	  <MechanicalObject template="Vec3d" name="dome-collis-states"  velocity="0 0 0"  force="0 0 0"  externalForce="0 0 0" />
+	  <MeshObjLoader name="domeCollisLoader"  filename="../../../../ros/srs_traj_opt/patient_description/meshes/dome/dome.obj"  scale="1"/>
+	  <!-- <MeshTopology name="meshTopology" src="@domeCollisLoader" /> -->
+	  <MechanicalObject template="Vec3d" name="dome-collis-states"  src="@domeCollisLoader"
+				velocity="0 0 0"  force="0 0 0"  externalForce="0 0 0" />
 		<!-- See /sofa/examples/Components/forcefield/TetrahedronHyperelasticityFEMForceField.scn -->
-		<Node name="tetras">
-		<TetrahedronSetTopologyContainer name="Container"/>
-		<TetrahedronSetTopologyModifier name="Modifier" />
-		<TetrahedronSetTopologyAlgorithms template="Vec3d" name="TopoAlgo" />
-		<TetrahedronSetGeometryAlgorithms template="Vec3d" name="GeomAlgo" />
-		<Hexa2TetraTopologicalMapping name="default28" input="@../" output="@Container" printLog="0" />
+		<!-- <Node name="tetras"> -->
+		<TetrahedronSetTopologyContainer name="TetraTopologyContainer" src="@domeCollisLoader" />
+		<!-- defines all the basic operations (add or remove tetrahedra) and their process -->
+		<TetrahedronSetTopologyModifier name="TetraTopologyModifier" />
+		<!-- defines more specific algorithms (e.g. subDivideTetrahedronsWithPlane(), InciseAlongEdge() -->
+		<TetrahedronSetTopologyAlgorithms template="Vec3d" name="TetraTopologyAlgo" />
+		<TetrahedronSetGeometryAlgorithms template="Vec3d" name="TetraGeomAlgo"  drawTetrahedra="1"/>
+		<DiagonalMass  name="computed using mass density" massDensity="1" />
+
+		<!-- <Hexa2TetraTopologicalMapping name="default28" input="@../" output="@Container" printLog="0" /> -->
 
 		<TetrahedronMooneyRivlinFEMForceField  template="Vec3d" ParameterSet="1000 100"
 			 	materialName="MooneyRivlinIncompressible"  youngModulus="10000" poissonRatio="0.45" />
-		</Node>
+		<!-- </Node> -->
 
 	</Node>
 </Node>

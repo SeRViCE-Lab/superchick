@@ -1,18 +1,25 @@
 <?xml version="1.0"?>
-<Node name="DomeNode">
+<Node name="DomeNode" dt="0.005" showBoundingTree="0" gravity="0 -9 0">
 <APIVersion level="19.06" />
 <RequiredPlugin name="SofaOpenglVisual"/>
 <RequiredPlugin pluginName="CImgPlugin"/>
 <RequiredPlugin name="IAB" pluginName="IAB"/>
+<RequiredPlugin pluginName='SofaMiscCollision'/>
 <RequiredPlugin name="IABTetra" pluginName="IABTetra"/>
 <EulerImplicitSolver rayleighStiffness="0.01"  rayleighMass="0.1" />
 <CGLinearSolver template="GraphScattered" iterations="100" tolerance="1e-5"  threshold="1e-5"  />
+<VisualStyle displayFlags="showForceFields showBehaviorModels" />
+<DefaultPipeline verbose="0" />
+<BruteForceDetection name="N2" />
+<DefaultContactManager response="default" />
+<MinProximityIntersection name="Proximity" alarmDistance="0.8" contactDistance="0.5" />
+<DefaultCollisionGroupManager />
 <!--  Presumably handles Lagrange Constraint multipliers https://www.sofa-framework.org/community/doc/using-sofa/components/animationloop/multistepanimationloop/-->
 <DefaultAnimationLoop />
 	<include href="dome_head.scn"
 					dx="0" dy="0" dz="0" translation="0 0 0" rotation="0 0 0" color="grey" scale="1"/>
-	<include href="dome_ring.scn"
-					dx="0" dy="0" dz="0" translation="0 0 0" rotation="0 0 0" color="black" scale="1"/>
-	<include href="dome_cover.scn"
-					dx="0" dy="0" dz="0" translation="0 0 0" rotation="0 0 0" color="brown" scale="1"/>
+	<!-- <include href="dome_ring.scn"
+					dx="0" dy="0" dz="0" translation="0 0 0" rotation="0 0 0" color="black" scale="1"/> -->
+	<!-- <include href="dome_cover.scn"
+					dx="0" dy="0" dz="0" translation="0 0 0" rotation="0 0 0" color="brown" scale="1"/> -->
 </Node>
