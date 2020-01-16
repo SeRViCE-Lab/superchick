@@ -242,7 +242,7 @@ int main(int argc, char** argv)
 
     //=======================================
     //Apply Options
-    groot->setAnimate(true);
+    groot->setAnimate(false);
     // test expansion and deformation here for a single soro
 
     if( computationTimeSampling>0 )

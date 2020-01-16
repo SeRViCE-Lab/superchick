@@ -73,13 +73,6 @@ using sofa::helper::system::DataRepository;
 using sofa::helper::system::PluginRepository;
 using sofa::helper::system::PluginManager;
 
-
-// myne
-// #include <SofaComponentMass/.h>
-#include <SofaMiscForceField/MeshMatrixMass.h>
-
-using sofa::component::mass::MeshMatrixMass;
-
 // see http://www.decompile.com/cpp/faq/file_and_line_error_string.htm
 #define STRINGIFY(x) #x
 #define TOSTRING(x) STRINGIFY(x)
@@ -156,8 +149,8 @@ int main(int argc, char** argv)
     string colorsStatus = "unset";
     string messageHandler = "auto";
     bool enableInteraction = false ;
-    int width = 800; //1280;
-    int height = 600; //1024;
+    int width = 1280;
+    int height = 1024;
 
     ArgumentParser* argParser = new ArgumentParser(argc, argv);
     argParser->addArgument(po::value<std::vector<std::string>>(&plugins), "load,l", "load given plugins");
@@ -202,7 +195,7 @@ int main(int argc, char** argv)
     for (unsigned int i=0; i<plugins.size(); i++)
     {
       // provide full path to IAB plugin in cmd line
-      msg_info("IAB") << "Loading " << IABBuildPATH + "/lib/" + plugins[i];
+      msg_info("SingleIAB") << "Loading " << IABBuildPATH + "/lib/" + plugins[i];
       PluginManager::getInstance().loadPluginByPath(IABBuildPATH + "/lib/" + plugins[i]);
     }
 
@@ -247,6 +240,7 @@ int main(int argc, char** argv)
     // see accessing node compos in v19.06/SofaKernel/framework/sofa/simulation/Node.cpp
 
     GUIManager::SetScene(groot,fileName.c_str(), temporaryFile);
+    /*
     // auto sphereNode = groot->getChild("SphereNode"); //root node has no children
     // // get degrees of freedom
     auto states = groot->getState();
@@ -261,7 +255,7 @@ int main(int argc, char** argv)
     msg_info("SphereDeform") << "mechStates Dim: " << mechStates->getCoordDimension(); // specified by VecXd in scene file
     msg_info("SphereDeform") << "mechStates Dim Derivs: " << mechStates->getDerivDimension();  // specified by VecXd in scene file
     msg_info("SphereDeform") << "mechStates Template Name: " << mechStates->getTemplateName(); // returns sofa::core::behavior::BaseMechanicalState has no member named ‘readPositions’
-
+*/
     // test random rotation and translation of scene:
       // v19.06/modules/SofaGeneralDeformable/SofaGeneralDeformable_test/StiffSpringForceField_test.cpp#95
 
@@ -269,7 +263,7 @@ int main(int argc, char** argv)
     // see /Users/olalekanogunmolu/sofa/v19.06/SofaKernel/framework/sofa/core/behavior/MechanicalState.h#L86
     //=======================================
     //Apply Options
-    groot->setAnimate(true);
+    groot->setAnimate(false);
     // test expansion and deformation here for a single soro
 
     if( computationTimeSampling>0 )
