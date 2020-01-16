@@ -4,7 +4,7 @@
 	<Node name="DomeRing"  gravity="0 -9.81 0">
 		<EulerImplicitSolver name="cg_odesolver_dome_ring" printLog="false" />
 		<CGLinearSolver iterations="25" name="linear solver_dome_ring" tolerance="1.0e-9" threshold="1.0e-9" />
-		<MeshGmshLoader name="gmeshLoader_dome_ring" filename="../../../../ros/srs_traj_opt/patient_description/meshes/dome/dome_ring.msh" />
+		<MeshVTKLoader name="gmeshLoader_dome_ring" filename="../../../../ros/srs_traj_opt/patient_description/meshes/dome/dome_ring.vtu" />
 		<TetrahedronSetTopologyContainer name="TetraTopologyContainer_dome_ring" src="@gmeshLoader_dome_ring" />
 		<MechanicalObject name="dofs_dome_ring" src="@gmeshLoader_dome_ring" template="Vec3d" />
 		<TetrahedronSetGeometryAlgorithms template="Vec3d" name="TetraGeomAlgo_dome_ring"  drawTetrahedra="1"/>
@@ -19,7 +19,7 @@
 	    <OglModel name="DomeRingVisual"  src="@../../dome_ring_loader" translation="0 0 0"
 				rotation="0 0 0" dx="0" dy="0" dz="0" rx="0" ry="0" rz="0" color="0.8549 0.8235 0.6431"
 				scale="1"/>
-		  <!-- <BarycentricMapping name="visual mapping" input="@../dofs" output="@DomeRingVisual" /> -->
+		  <BarycentricMapping name="visual mapping" input="@../dofs_dome_ring" output="@DomeRingVisual" />
 		</Node>
   </Node>
 	<Node 	 name="DomeRingCollis"  gravity="0 -9.81 0" >

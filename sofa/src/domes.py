@@ -4,7 +4,7 @@ import Sofa
 import os
 
 path = '/root/superchicko/ros/srs_traj_opt/patient_description/meshes/dome/'
-tetramesh = "dome.stl"
+tetramesh = "dome_ring.stl"
 
 
 def createScene(rootNode):
@@ -23,10 +23,10 @@ def createScene(rootNode):
     node.createObject('MeshSTLLoader', name='mesh', filename=path+tetramesh)
     node.createObject('MeshGenerationFromPolyhedron', name='gen', template='Vec3d', inputPoints='@mesh.position', inputTriangles='@mesh.triangles', drawTetras='1',
            # This parameter controls the size of mesh tetrahedra. It provides an upper bound on the circumradius of the mesh tetrahedra.
-           cellSize="100",
-           facetAngle="300",
+           cellSize="1",
+           facetAngle="10",
            # This parameter provides an upper bound for the radii of the surface Delaunay ball; a larger value may lead to larger tetrahedra.
-           facetSize="400",
+           facetSize=".1",
 
            # This parameter controls the shape of mesh cells. Actually, it is an upper bound for the ratio between the circumradius of a mesh
            # tetrahedron and its shortest edge. There is a theoretical bound for this parameter: the Delaunay refinement process is guaranteed

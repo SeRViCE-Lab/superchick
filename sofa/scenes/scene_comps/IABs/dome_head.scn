@@ -5,7 +5,8 @@
   <Node name="DomeHead"  gravity="0 -9.81 0">
 		<EulerImplicitSolver name="cg_odesolver" printLog="false" />
 		<CGLinearSolver iterations="25" name="linear solver" tolerance="1.0e-9" threshold="1.0e-9" />
-		<MeshGmshLoader name="gmeshLoader" filename="../../../../ros/srs_traj_opt/patient_description/meshes/dome/dome.msh" />
+		<!-- <MeshGmshLoader name="gmeshLoader" filename="../../../../ros/srs_traj_opt/patient_description/meshes/dome/dome.msh" /> -->
+		<MeshVTKLoader name="gmeshLoader" filename="../../../../ros/srs_traj_opt/patient_description/meshes/dome/dome.vtu" />
 		<MechanicalObject name="dofs" src="@gmeshLoader" template="Vec3d" />
 		<TetrahedronSetTopologyContainer name="TetraTopologyContainer" src="@gmeshLoader" createTriangleArray="true"/>
 		<!-- defines all the basic operations (add or remove tetrahedra) and their process -->
@@ -14,7 +15,6 @@
 		<!-- defines more specific algorithms (e.g. subDivideTetrahedronsWithPlane(), InciseAlongEdge() -->
 		<TetrahedronSetTopologyAlgorithms template="Vec3d" name="TetraTopologyAlgo" />
 		<DiagonalMass  name="computed using mass density" massDensity="1" />
-		<!-- <IsochoricForceField C1="1000"/> -->
 		<Hexa2TetraTopologicalMapping name="default28" input="@../../dome_head_loader" output="@TetraTopologyContainer" printLog="0" />
 		<TetrahedronMooneyRivlinFEMForceField  template="Vec3d" ParameterSet="1000 100"
 			 	materialName="MooneyRivlinIncompressible"  youngModulus="10000" poissonRatio="0.45" />
@@ -22,7 +22,7 @@
 	    <OglModel name="DomeHeadVisual"  src="@../../dome_head_loader" translation="0 0 0"
 				rotation="0 0 0" dx="0" dy="0" dz="0" rx="0" ry="0" rz="0" color="0.8549 0.8235 0.6431"
 				scale="1"/>
-		  <!-- <BarycentricMapping name="visual mapping" input="@../dofs" output="@DomeHeadVisual" /> -->
+		  <BarycentricMapping name="visual mapping" input="@../dofs" output="@DomeHeadVisual" />
 		</Node>
   </Node>
 	<Node 	 name="DomeHeadCollis"  gravity="0 -9.81 0" >
