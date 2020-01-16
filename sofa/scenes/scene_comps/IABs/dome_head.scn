@@ -15,7 +15,7 @@
 		<!-- defines more specific algorithms (e.g. subDivideTetrahedronsWithPlane(), InciseAlongEdge() -->
 		<TetrahedronSetTopologyAlgorithms template="Vec3d" name="TetraTopologyAlgo" />
 		<DiagonalMass  name="computed using mass density" massDensity="1" />
-		<Hexa2TetraTopologicalMapping name="default28" input="@../../dome_head_loader" output="@TetraTopologyContainer" printLog="0" />
+		<!-- <Hexa2TetraTopologicalMapping name="default28" input="@../../dome_head_loader" output="@TetraTopologyContainer" printLog="0" /> -->
 		<TetrahedronMooneyRivlinFEMForceField  template="Vec3d" ParameterSet="1000 100"
 			 	materialName="MooneyRivlinIncompressible"  youngModulus="10000" poissonRatio="0.45" />
 		<Node name="DomeHeadVisu" tags="Visual" gravity="0 -9.81 0">
