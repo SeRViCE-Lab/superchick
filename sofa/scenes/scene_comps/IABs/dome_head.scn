@@ -5,17 +5,15 @@
   <Node name="DomeHead"  gravity="0 -9.81 0">
 		<EulerImplicitSolver name="cg_odesolver" printLog="false" />
 		<CGLinearSolver iterations="25" name="linear solver" tolerance="1.0e-9" threshold="1.0e-9" />
-		<!-- <MeshGmshLoader name="gmeshLoader" filename="../../../../ros/srs_traj_opt/patient_description/meshes/dome/dome.msh" /> -->
-		<MeshVTKLoader name="gmeshLoader" filename="../../../../ros/srs_traj_opt/patient_description/meshes/dome/dome.vtu" />
-		<MechanicalObject name="dofs" src="@gmeshLoader" template="Vec3d" />
-		<TetrahedronSetTopologyContainer name="TetraTopologyContainer" src="@gmeshLoader" createTriangleArray="true"/>
+		<MeshVTKLoader name="domeHeadVTKLoader" filename="../../../../ros/srs_traj_opt/patient_description/meshes/dome/dome.vtu" />
+		<MechanicalObject name="dofs" src="@domeHeadVTKLoader" template="Vec3d" />
+		<TetrahedronSetTopologyContainer name="TetraTopologyContainer" src="@domeHeadVTKLoader" createTriangleArray="true"/>
 		<!-- defines all the basic operations (add or remove tetrahedra) and their process -->
 		<TetrahedronSetTopologyModifier name="TetraTopologyModifier" />
 		<TetrahedronSetGeometryAlgorithms template="Vec3d" name="TetraGeomAlgo"  drawTetrahedra="1"/>
 		<!-- defines more specific algorithms (e.g. subDivideTetrahedronsWithPlane(), InciseAlongEdge() -->
 		<TetrahedronSetTopologyAlgorithms template="Vec3d" name="TetraTopologyAlgo" />
 		<DiagonalMass  name="computed using mass density" massDensity="1" />
-		<!-- <Hexa2TetraTopologicalMapping name="default28" input="@../../dome_head_loader" output="@TetraTopologyContainer" printLog="0" /> -->
 		<TetrahedronMooneyRivlinFEMForceField  template="Vec3d" ParameterSet="1000 100"
 			 	materialName="MooneyRivlinIncompressible"  youngModulus="10000" poissonRatio="0.45" />
 		<Node name="DomeHeadVisu" tags="Visual" gravity="0 -9.81 0">
