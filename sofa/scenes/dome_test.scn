@@ -20,10 +20,13 @@
 <!--  Presumably handles Lagrange Constraint multipliers https://www.sofa-framework.org/community/doc/using-sofa/components/animationloop/multistepanimationloop/-->
 <DefaultAnimationLoop />
 
-	<include href="dome_head.scn" dx="0" dy="0" dz="0" translation="0 0 0" rx="90"
-					ry="0" rz="0"  color="grey" scale="1"/>
-	<include href="dome_ring.scn" dx="0" dy="0" dz="0" translation="0 0 0" rx="90"
-					rotation="0 0 0" color="black" scale="1"/>
-	<include href="dome_cover.scn"
-					dx="0" dy="0" dz="0" translation="0 0 0" rotation="0 0 0" color="brown" scale="1"/>
+	<include href="scene_comps/IABs/dome_head.scn" dx="0" dy="0" dz="0" rx="0"
+					ry="0" rz="0"  color="0.8549 0.8235 0.6431" scale="1"/>
+	<include href="scene_comps/IABs/dome_ring.scn" dx="0" dy="0" dz="0" rx="0"
+					color="0.8549 0.8235 0.6431" scale="1"/>
+	<include href="scene_comps/IABs/dome_cover_solid.scn" dx="0" dy="0" dz="-.4" rx="0"
+		  	color="0.8549 0.8235 0.6431" scale="1"/>
 </Node>
+
+<!-- color="0.8549 0.8235 0.6431" = bluish
+color="0 0.4 0.7 0.7" = Green -->

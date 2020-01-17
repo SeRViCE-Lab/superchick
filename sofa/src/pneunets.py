@@ -3,8 +3,8 @@ import math
 import os
 from os.path import join, expanduser
 
-# path = os.path.join(expanduser('~'), 'sofa/applications/plugins/SoftRobots/docs/tutorials/PneunetGripper/details/data/mesh/')
-path = '/sofa/applications/plugins/SoftRobots/docs/tutorials/PneunetGripper/details/data/mesh/')
+path = os.path.join(expanduser('~'), 'sofa/applications/plugins/SoftRobots/docs/tutorials/PneunetGripper/details/data/mesh/')
+# path = '/sofa/applications/plugins/SoftRobots/docs/tutorials/PneunetGripper/details/data/mesh/')
 
 youngModulusFingers = 500
 youngModulusStiffLayerFingers = 1500

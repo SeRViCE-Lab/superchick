@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<Node name="DomeCoverNode"  gravity="0 -9.81 0" dt=".02">
+	<EulerImplicitSolver name="cg_odesolver" printLog="false" />
+	<CGLinearSolver iterations="25" name="linear solver" tolerance="1.0e-9" threshold="1.0e-9" />
+	<MeshObjLoader name="dome_base_loader" filename="../../../../ros/srs_traj_opt/patient_description/meshes/dome/dome_cover.obj"/>
+	<MeshVTKLoader name="domeBaseVTKLoader" filename="../../../../ros/srs_traj_opt/patient_description/meshes/dome/dome_cover.vtu" />
+	<MechanicalObject name="dofs" src="@domeBaseVTKLoader" template="Vec3d"
+		 showIndices='false' showIndicesScale='4e-5' rx='0' dz='0'/>
+	<TetrahedronSetTopologyContainer name="TetraTopologyContainer" src="@domeBaseVTKLoader" createTriangleArray="true"/>
+	<TetrahedronSetTopologyModifier name="TetraTopologyModifier" />
+	<TetrahedronSetGeometryAlgorithms template="Vec3d" name="TetraGeomAlgo"  drawTetrahedra="1"/>
+	<TetrahedronSetTopologyAlgorithms template="Vec3d" name="TetraTopologyAlgo" />
+	<DiagonalMass  name="computed using mass density" massDensity="1" />
+	<TetrahedronMooneyRivlinFEMForceField  template="Vec3d" ParameterSet="1000 100"
+		 	materialName="MooneyRivlinIncompressible"  youngModulus="10000" poissonRatio="0.45" />
+	<Node name="DomeBaseVisu" tags="Visual" gravity="0 -9.81 0">
+    <OglModel name="DomeBaseVisual"  src="@../dome_base_loader"
+			dx="0" dy="0" dz="0" rx="0" ry="0" rz="0" scale="1"/>
+	  <BarycentricMapping name="visual mapping" input="@../dofs" output="@DomeBaseVisual" />
+	</Node>
+	<Node name="DomeBaseCollis"  gravity="0 -9.81 0" >
+	  <MeshObjLoader name="domeBaseCollisLoader"  filename="../../../../ros/srs_traj_opt/patient_description/meshes/dome/dome.obj"  scale="1"/>
+	  <MechanicalObject template="Vec3d" name="dome-collis-states"  src="@domeBaseCollisLoader"
+			dx="0" dy="0" dz="0" rx="0" ry="0" rz="0" scale="1" />
+	</Node>
+</Node>

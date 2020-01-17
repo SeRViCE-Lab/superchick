@@ -215,7 +215,7 @@ int main(int argc, char** argv)
         return err;
 
     // if (fileName.empty())
-    std::string fileName = DataRepository.getFile(SetDirectory::GetCurrentDir() + "/../scenes/scene_comps/IABs/dome_test.scn");
+    std::string fileName = DataRepository.getFile(SetDirectory::GetCurrentDir() + "/../scenes/dome_test.scn");
 
     if (int err=GUIManager::createGUI(nullptr))
         return err;
@@ -240,8 +240,21 @@ int main(int argc, char** argv)
     // see accessing node compos in v19.06/SofaKernel/framework/sofa/simulation/Node.cpp
 
     GUIManager::SetScene(groot,fileName.c_str(), temporaryFile);
+    // get all three nodes
+    auto dome_head = groot->getChild("DomeHeadNode"); //root node has no children
+    auto dome_ring = groot->getChild("DomeRingNode"); //root node has no children
+    auto dome_base = groot->getChild("DomeCoverNode"); //root node has no children
+    // get tetrahedrals associated with each node
+    auto dome_head_tetras = dome_head->getObject("dofs");
+    auto dome_ring_tetras = dome_ring->getObject("dofs");
+    auto dome_base_tetras = dome_base->getObject("dofs");
+    // test with random simultaneous motion of all tetrahedrals in head and ring
+    msg_info("dome_head_tetras") << dome_head_tetras;
+    msg_info("dome_base_tetras") << dome_base_tetras;
+    // auto dome_head_rest_pos = dome_head_tetras->rest_position();
+    // auto dome_ring_rest_pos = dome_ring_tetras->rest_position();
+    // auto dome_base_rest_pos = dome_base_tetras->rest_position();
     /*
-    // auto sphereNode = groot->getChild("SphereNode"); //root node has no children
     // // get degrees of freedom
     auto states = groot->getState();
     // // get mechsnical degrees of freedom
