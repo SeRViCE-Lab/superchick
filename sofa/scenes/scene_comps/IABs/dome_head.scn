@@ -2,7 +2,6 @@
 <Node name="DomeHeadNode"  gravity="0 -9.81 0" dt=".02">
 	<EulerImplicitSolver name="cg_odesolver" printLog="false" />
 	<CGLinearSolver iterations="25" name="linear solver" tolerance="1.0e-9" threshold="1.0e-9" />
-	<!-- <MeshObjLoader name="dome_head_loader" filename="../../../../ros/srs_traj_opt/patient_description/meshes/dome/dome.obj"/> -->
 	<MeshVTKLoader name="domeHeadVTKLoader" filename="../../../../ros/srs_traj_opt/patient_description/meshes/dome/dome.vtu" />
 	<MechanicalObject name="dofs" src="@domeHeadVTKLoader" template="Vec3d"
 		 showIndices='false' showIndicesScale='4e-5' rx='0' dz='0'/>
