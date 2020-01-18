@@ -12,6 +12,7 @@ using std::vector;
 #include "IABPlugin/ForceFields/include/initIABPlugin.h"
 #include <sofa/helper/ArgumentParser.h>
 #include <SofaSimulationCommon/common.h>
+#include <SofaBaseMechanics/MechanicalObject.h>
 #include <sofa/simulation/Node.h>
 #include <sofa/helper/system/PluginManager.h>
 #include <sofa/simulation/config.h> // #defines SOFA_HAVE_DAG (or not)
@@ -72,6 +73,8 @@ using sofa::gui::GuiDataRepository ;
 using sofa::helper::system::DataRepository;
 using sofa::helper::system::PluginRepository;
 using sofa::helper::system::PluginManager;
+
+using namespace sofa::defaulttype;
 
 // see http://www.decompile.com/cpp/faq/file_and_line_error_string.htm
 #define STRINGIFY(x) #x
@@ -245,12 +248,18 @@ int main(int argc, char** argv)
     auto dome_ring = groot->getChild("DomeRingNode"); //root node has no children
     auto dome_base = groot->getChild("DomeCoverNode"); //root node has no children
     // get tetrahedrals associated with each node
-    auto dome_head_tetras = dome_head->getObject("dofs");
+    // sofa::component::container::MechanicalObject<Vec3d> mechObj;
+    auto dome_head_tetras = dome_head->getObject(mechObj, "dofs");
     auto dome_ring_tetras = dome_ring->getObject("dofs");
     auto dome_base_tetras = dome_base->getObject("dofs");
     // test with random simultaneous motion of all tetrahedrals in head and ring
     msg_info("dome_head_tetras") << dome_head_tetras;
     msg_info("dome_base_tetras") << dome_base_tetras;
+    // get position, velocity, force vec and rest position coordinates for head for ex.
+    auto dome_head_pos = dome_head->getMechanicalState();
+    // // get heacontext
+    // auto head_ctx = dome_head_tetras->getContext();
+    // msg_info("head_ctx ") << head_ctx;
     // auto dome_head_rest_pos = dome_head_tetras->rest_position();
     // auto dome_ring_rest_pos = dome_ring_tetras->rest_position();
     // auto dome_base_rest_pos = dome_base_tetras->rest_position();
