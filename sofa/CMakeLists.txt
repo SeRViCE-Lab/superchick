@@ -5,6 +5,7 @@ if(APPLE)
 	# Boost_USE_MULTITHREADED is not respected
 	option("Boost_NO_BOOST_CMAKE" ON)
 	set(CMAKE_CXX_COMPILER "/usr/bin/clang++")
+	set(Qt5_DIR "/usr/local/opt/qt5/lib/cmake/Qt5")
 elseif(UNIX AND NOT APPLE)
 	set(CMAKE_CXX_COMPILER "/usr/bin/g++")
 endif()
@@ -28,6 +29,9 @@ endif()
 set(CONFIG_PATHS "${SOFA_ROOT}/cmake")  # prevent conflict with system libraries
 list(APPEND CMAKE_MODULE_PATH "${SOFA_ROOT}/cmake")
 list(APPEND CMAKE_PREFIX_PATH "${SOFA_ROOT}/install/lib/cmake")
+list(APPEND CMAKE_PREFIX_PATH "${SOFA_ROOT}/cmake")
+
+
 set(RUN_SOFA_ROOT "${SOFA_ROOT}/../applications/projects/runSofa")
 
 if(APPLE)
@@ -50,19 +54,18 @@ message(STATUS "CMAKE_MODULE_PATH: ${CMAKE_MODULE_PATH}")
 set(CMAKE_INSTALL_PREFIX "${SOFA_ROOT}/install;${SOFA_ROOT}/cmake")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib")
 
+#find_package(Qt5 COMPONENTS Core Widgets REQUIRED)
 find_package(SofaFramework REQUIRED PATHS "${CONFIG_PATHS}")
 find_package(SofaBase REQUIRED PATHS "${CONFIG_PATHS}")
 find_package(SofaSimulation REQUIRED PATHS "${CONFIG_PATHS}")
 find_package(SofaGui REQUIRED PATHS "${CONFIG_PATHS}")
 find_package(SceneCreator REQUIRED PATHS "${CONFIG_PATHS}")
-find_package(SofaTest REQUIRED PATHS "${CONFIG_PATHS}")
 find_package(SofaMiscCollision REQUIRED PATHS "${CONFIG_PATHS}")
-find_package(SofaPython REQUIRED PATHS "${CONFIG_PATHS}") # why are we using this?
+# find_package(SofaPython REQUIRED PATHS "${CONFIG_PATHS}") # why are we using this?
 find_package(Qt5 REQUIRED COMPONENTS Core Charts)
 
 # for boost ode OdeSolver
-find_package(Boost COMPONENTS #filesystem
-															system
+find_package(Boost COMPONENTS system
 															serialization
 															thread REQUIRED)
 
@@ -75,8 +78,6 @@ INCLUDE_DIRECTORIES("${CMAKE_CURRENT_SOURCE_DIR}/include"
 
 set(SOURCE_FILES
 		"${PLUGINS_DIR}/IABPlugin/ForceFields/src/initIABPlugin.cpp"
-		# "${PLUGINS_DIR}/IABPlugin/ForceFields/src/initMiscFEM.cpp"
-		# "${PLUGINS_DIR}/IABPlugin/ForceFields/src/TetrahedronHyperelasticityFEMForceField.cpp"
 		"${PLUGINS_DIR}/IABPlugin/ForceFields/src/IsochoricForceField.cpp"
 		"${PLUGINS_DIR}/IABPlugin/behavior/IABConstraint.cpp"
 		"${PLUGINS_DIR}/IABPlugin/behavior/IABBaseConstraint.cpp"
@@ -97,10 +98,9 @@ add_library(${PROJECT_NAME} SHARED  #${HEADER_FILES}
 																		${SOURCE_FILES})
 target_link_libraries(${PROJECT_NAME} SofaGuiQt)
 
-add_library(IABTetra SHARED  #${HEADER_FILES}
-																		${HEADER_FILES_TO_MOC}
-																		${MOCCED_HEADER_FILES}
-																		${TETRA_SRC_FILES})
+add_library(IABTetra SHARED  ${HEADER_FILES_TO_MOC}
+															${MOCCED_HEADER_FILES}
+															${TETRA_SRC_FILES})
 target_link_libraries(IABTetra SofaGuiQt)
 
 # adding this because of GLEW conflicts

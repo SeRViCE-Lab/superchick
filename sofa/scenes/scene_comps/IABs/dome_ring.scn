@@ -15,7 +15,4 @@
 		<MechanicalObject template="Vec3d" name="dome-ring-collis-states"  velocity="0 0 0"  force="0 0 0"  externalForce="0 0 0" />
 		<TetrahedronMooneyRivlinFEMForceField  template="Vec3d" ParameterSet="1000 100" />
 	</Node>
-
-
-
 </Node>
