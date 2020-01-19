@@ -1,4 +1,4 @@
-#include "IABPlugin/ForceFields/Tetra/include/initTetrahedronFFPlugin.h"
+#include "IABPlugin/ForceFields/Tetra/include/initTetrahedronMooneyRivlinFEMForceField.h"
 
 // Ref sofa/v19.06/applications/plugins/SoftRobots/src/SoftRobots/component/initSoftRobots.cpp
 
@@ -11,7 +11,7 @@ void initExternalModule()
 
 const char* getModuleName()
 {
-  return "TetraToSphericalPolar";
+  return "TetrahedronMooneyRivlinFEMForceField";
 }
 
 const char* getModuleVersion()
@@ -21,12 +21,12 @@ const char* getModuleVersion()
 
 const char* getModuleLicense()
 {
-  return "MIT";
+  return "BSD";
 }
 
 const char* getModuleDescription()
 {
-  return "TetraSphericalPolar Plugin";
+  return "TetrahedronMooneyRivlinFEMForceField to Spherical Coords Plugin";
 }
 
 const char* getModuleComponentList()

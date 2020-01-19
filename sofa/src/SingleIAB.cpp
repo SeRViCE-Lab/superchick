@@ -1,84 +1,90 @@
 #include <sstream>
-using std::ostringstream ;
 #include <fstream>
-
 #include <string>
-using std::string;
-
 #include <vector>
-using std::vector;
 
-#include "IABPlugin/include/debuggers.h"
-#include "IABPlugin/ForceFields/include/initIABPlugin.h"
-#include <sofa/helper/ArgumentParser.h>
-#include <SofaSimulationCommon/common.h>
 #include <sofa/simulation/Node.h>
-#include <sofa/helper/system/PluginManager.h>
 #include <sofa/simulation/config.h> // #defines SOFA_HAVE_DAG (or not)
+#include <SofaSimulationCommon/common.h>
 #include <SofaSimulationCommon/init.h>
+
 #ifdef SOFA_HAVE_DAG
-#include <SofaSimulationGraph/init.h>
-#include <SofaSimulationGraph/DAGSimulation.h>
+  #include <SofaSimulationGraph/init.h>
+  #include <SofaSimulationGraph/DAGSimulation.h>
 #endif
 
-using sofa::simulation::Node;
-#include <sofa/simulation/SceneLoaderFactory.h>
+// #include <sofa/simulation/SceneLoaderFactory.h>
 #include <SofaGraphComponent/SceneCheckerListener.h>
-using sofa::simulation::scenechecking::SceneCheckerListener;
 
-#include <SofaComponentCommon/initComponentCommon.h>
 #include <SofaComponentBase/initComponentBase.h>
+#include <SofaComponentMisc/initComponentMisc.h>
+#include <SofaComponentCommon/initComponentCommon.h>
 #include <SofaComponentGeneral/initComponentGeneral.h>
 #include <SofaComponentAdvanced/initComponentAdvanced.h>
-#include <SofaComponentMisc/initComponentMisc.h>
 
 #include <SofaGeneralLoader/ReadState.h>
+#include <SofaGeneralEngine/NearestPointROI.h>
+
 #include <SofaValidation/CompareState.h>
-#include <sofa/helper/Factory.h>
+#include <SofaBaseMechanics/MechanicalObject.h>
+
 #include <sofa/helper/cast.h>
-#include <sofa/helper/BackTrace.h>
-#include <sofa/helper/system/FileRepository.h>
-#include <sofa/helper/system/FileSystem.h>
-using sofa::helper::system::FileSystem;
-#include <sofa/helper/system/SetDirectory.h>
 #include <sofa/helper/Utils.h>
-#include <sofa/gui/GUIManager.h>
-using sofa::gui::GUIManager;
+#include <sofa/helper/Factory.h>
+#include <sofa/helper/BackTrace.h>
+#include <sofa/helper/system/gl.h>
+#include <sofa/helper/AdvancedTimer.h>
+#include <sofa/helper/system/console.h>
+#include <sofa/helper/ArgumentParser.h>
+#include <sofa/helper/logging/Messaging.h>
+#include <sofa/helper/system/FileSystem.h>
+#include <sofa/helper/system/PluginManager.h>
+#include <sofa/helper/system/FileRepository.h>
+#include <sofa/helper/system/SetDirectory.h>
 
 #include <sofa/gui/Main.h>
 #include <sofa/gui/BatchGUI.h>  // needed for BaseGUI
-#include <sofa/helper/system/gl.h>
-// #include <sofa/helper/system/atomic.h>
+#include <sofa/gui/GUIManager.h>
+#include <sofa/gui/GuiDataRepository.h>
+
+#include <sofa/core/objectmodel/Data.h>
+#include <sofa/core/behavior/MechanicalState.h>
+
+// #include <sofa/defaulttype/Vec.h>
+#include <sofa/defaulttype/VecTypes.h>
+
+#include "IABPlugin/include/debuggers.h"
+#include "IABPlugin/ForceFields/include/initIABPlugin.h"
+
+using std::string;
+using std::vector;
+using std::ostringstream ;
+
+using sofa::simulation::Node;
+using sofa::simulation::graph::DAGSimulation;
+using sofa::simulation::scenechecking::SceneCheckerListener;
 
 using sofa::core::ExecParams ;
-
-#include <sofa/helper/system/console.h>
-using sofa::helper::Utils;
+using sofa::core::objectmodel::BaseNode ;
+using sofa::core::behavior::MechanicalState;
 
 using sofa::component::misc::CompareStateCreator;
 using sofa::component::misc::ReadStateActivator;
-using sofa::simulation::graph::DAGSimulation;
-using sofa::helper::system::SetDirectory;
-using sofa::core::objectmodel::BaseNode ;
+
 using sofa::gui::BatchGUI;
 using sofa::gui::BaseGUI;
-
-#include <sofa/helper/AdvancedTimer.h>
-#include <sofa/helper/logging/Messaging.h>
-
-#include <sofa/gui/GuiDataRepository.h>
 using sofa::gui::GuiDataRepository ;
+using sofa::gui::GUIManager;
 
+using sofa::helper::Utils;
+using sofa::helper::system::FileSystem;
+using sofa::helper::system::SetDirectory;
 using sofa::helper::system::DataRepository;
 using sofa::helper::system::PluginRepository;
 using sofa::helper::system::PluginManager;
 
-
-// myne
-// #include <SofaComponentMass/.h>
-#include <SofaMiscForceField/MeshMatrixMass.h>
-
-using sofa::component::mass::MeshMatrixMass;
+using namespace sofa::defaulttype;
+using namespace sofa::core::objectmodel;
 
 // see http://www.decompile.com/cpp/faq/file_and_line_error_string.htm
 #define STRINGIFY(x) #x
@@ -141,7 +147,7 @@ int main(int argc, char** argv)
 
     // string fileName ;
     bool noSceneCheck, temporaryFile = false;
-    bool guiViz = false;  // run the gui scene
+    bool guiViz, debug = false;  // run the gui scene
     unsigned int nbMSSASamples = 1;
     unsigned int computationTimeSampling=1; ///< Frequency of display of the computation time statistics, in number of animation steps. 0 means never.
     string    computationTimeOutputType="stdout";
@@ -156,8 +162,8 @@ int main(int argc, char** argv)
     string colorsStatus = "unset";
     string messageHandler = "auto";
     bool enableInteraction = false ;
-    int width = 800; //1280;
-    int height = 600; //1024;
+    int width = 1280;
+    int height = 1024;
 
     ArgumentParser* argParser = new ArgumentParser(argc, argv);
     argParser->addArgument(po::value<std::vector<std::string>>(&plugins), "load,l", "load given plugins");
@@ -167,6 +173,7 @@ int main(int argc, char** argv)
     argParser->addArgument(po::value<std::string>(&messageHandler)->default_value("auto"), "formatting,f","select the message formatting to use (auto, clang, sofa, rich, test)");
     argParser->addArgument(po::value<bool>(&enableInteraction)->default_value(false)->implicit_value(true),"interactive,i", "enable interactive mode for the GUI which includes idle and mouse events (EXPERIMENTAL)");
     argParser->addArgument(po::value<bool>(&guiViz)->default_value(false)->implicit_value(true),"visualize,g", "display gui window at startup");
+    argParser->addArgument(po::value<bool>(&debug)->default_value(false)->implicit_value(true),"debug,p", "debug");
     argParser->addArgument(po::value<std::vector<std::string> >()->multitoken(), "argv","forward extra args to the python interpreter");
 
 #ifdef SOFA_SMP
@@ -202,7 +209,7 @@ int main(int argc, char** argv)
     for (unsigned int i=0; i<plugins.size(); i++)
     {
       // provide full path to IAB plugin in cmd line
-      msg_info("IAB") << "Loading " << IABBuildPATH + "/lib/" + plugins[i];
+      msg_info("SingleIAB") << "Loading " << IABBuildPATH + "/lib/" + plugins[i];
       PluginManager::getInstance().loadPluginByPath(IABBuildPATH + "/lib/" + plugins[i]);
     }
 
@@ -222,7 +229,7 @@ int main(int argc, char** argv)
         return err;
 
     // if (fileName.empty())
-    std::string fileName = DataRepository.getFile(SetDirectory::GetCurrentDir() + "/../scenes/scene_comps/IABs/sphere_test.scn");
+    std::string fileName = DataRepository.getFile(SetDirectory::GetCurrentDir() + "/../scenes/dome_test.scn");
 
     if (int err=GUIManager::createGUI(nullptr))
         return err;
@@ -247,31 +254,53 @@ int main(int argc, char** argv)
     // see accessing node compos in v19.06/SofaKernel/framework/sofa/simulation/Node.cpp
 
     GUIManager::SetScene(groot,fileName.c_str(), temporaryFile);
-    // auto sphereNode = groot->getChild("SphereNode"); //root node has no children
-    // // get degrees of freedom
-    auto states = groot->getState();
-    // // get mechsnical degrees of freedom
-    auto mechStates = groot->getMechanicalState();
-    auto shader = groot->getShader();
-    groot->printComponents();
-    // msg_info("SphereDeform") << "states : " << states;
-    // msg_info("SphereDeform") << "mechStates : " << mechStates;
-    msg_info("SphereDeform") << "states (DoFs): " << states; // get degrees of freedom
-    // msg_info("SphereDeform") << "mechStates values: " << mechStates->x.getValue(); // specified by VecXd in scene file
-    msg_info("SphereDeform") << "mechStates Dim: " << mechStates->getCoordDimension(); // specified by VecXd in scene file
-    msg_info("SphereDeform") << "mechStates Dim Derivs: " << mechStates->getDerivDimension();  // specified by VecXd in scene file
-    msg_info("SphereDeform") << "mechStates Template Name: " << mechStates->getTemplateName(); // returns sofa::core::behavior::BaseMechanicalState has no member named ‘readPositions’
+    // get all three nodes
+    auto dome_head = groot->getChild("DomeHeadNode");
+    auto dome_ring = groot->getChild("DomeRingNode");
+    auto dome_base = groot->getChild("DomeCoverNode");
+    // get tetrahedrals associated with each node
+    auto dome_head_tetras = dome_head->getObject("dofs"); // a sofa::core::objectmodel::BaseObject
+    auto dome_ring_tetras = dome_ring->getObject("dofs");
+    auto dome_base_tetras = dome_base->getObject("dofs");
+    // https://www.sofa-framework.org/community/forum/topic/get-other-components-of-the-scene-in-c/
+    MechanicalState<Vec3Types>* dh_state;
+    dome_head->getContext()->get(dh_state);
+    sofa::helper::ReadAccessor<Data<Vec3Types::VecCoord>> dh_pos_vecs(dh_state->read(sofa::core::ConstVecCoordId::position()));
+    sofa::helper::ReadAccessor<Data<Vec3Types::VecDeriv>> dh_vel_vecs(dh_state->read(sofa::core::ConstVecDerivId::velocity()));
+    sofa::helper::ReadAccessor<Data<Vec3Types::VecCoord>> dh_fpos_vecs(dh_state->read(sofa::core::VecCoordId::freePosition()));
+    sofa::helper::ReadAccessor<Data<Vec3Types::VecDeriv>> dh_fvel_vecs(dh_state->read(sofa::core::VecDerivId::freeVelocity()));
 
-    // test random rotation and translation of scene:
-      // v19.06/modules/SofaGeneralDeformable/SofaGeneralDeformable_test/StiffSpringForceField_test.cpp#95
+    // another method from ./SofaKernel/modules/SofaImplicitOdeSolver/SofaImplicitOdeSolver_test/EulerImplicitSolverDynamic_test.cpp:167
+    using MechanicalObject = sofa::component::container::MechanicalObject<Vec3Types>;
+    typename MechanicalObject::SPtr dome_ring_dofs = dome_ring->get<MechanicalObject>(groot->SearchDown);
+    auto dome_ring_pos_ = dome_ring_dofs.get()->read(sofa::core::ConstVecCoordId::position());
 
-    // we can get the indices of particles in the given bounding box:
-    // see /Users/olalekanogunmolu/sofa/v19.06/SofaKernel/framework/sofa/core/behavior/MechanicalState.h#L86
-    //=======================================
-    //Apply Options
-    groot->setAnimate(true);
+    sofa::helper::ReadAccessor<Data<Vec3Types::VecCoord>>dr_pos_vecs(dome_ring_dofs.get()->read(sofa::core::ConstVecCoordId::position()));
+    sofa::helper::ReadAccessor<Data<Vec3Types::VecDeriv>>dr_vel_vecs(dome_ring_dofs.get()->read(sofa::core::ConstVecDerivId::velocity()));
+    sofa::helper::ReadAccessor<Data<Vec3Types::VecCoord>> dr_fpos_vecs(dome_ring_dofs.get()->read(sofa::core::VecCoordId::freePosition()));
+    sofa::helper::ReadAccessor<Data<Vec3Types::VecDeriv>> dr_fvel_vecs(dome_ring_dofs.get()->read(sofa::core::VecDerivId::freeVelocity()));
+
+    if (debug){
+      // read a few dome head pos info
+      for(int i = 0; i < dh_pos_vecs.size(); ++i)
+      {
+        msg_info("dh_pos: ") << i << ": " << dh_pos_vecs[i] << " | vel: " << dh_vel_vecs[i] ;
+        if (i > 5) break;
+      }
+
+      // read a few dome ring pos info
+      msg_info("dome_ring size") << dr_pos_vecs.size() << ", " << dr_vel_vecs.size()
+            << ", " << dr_fpos_vecs.size() << ", " << dr_fvel_vecs.size() ;
+      msg_info("dome_ring size") << "\n\n dome rings now \\" ;
+      for(auto i = 0; i < dr_pos_vecs.size(); ++i)
+      {
+        msg_info("dr_pos: ") << i << ": " << dr_pos_vecs[i] << " | vel: " << dr_vel_vecs[i] ;
+        if (i > 5) break;
+      }
+    }
+    // Apply Options
+    groot->setAnimate(false);
     // test expansion and deformation here for a single soro
-
     if( computationTimeSampling>0 )
     {
         sofa::helper::AdvancedTimer::setEnabled("Animate", true);

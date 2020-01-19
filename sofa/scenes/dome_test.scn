@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<Node name="DomeNode" dt="0.005" showBoundingTree="0" gravity="0 -9 0">
+<APIVersion level="19.06" />
+<!--  Aesthetics -->
+<BackgroundSetting color='0 0.168627 0.211765'/>
+<OglSceneFrame style="Arrows" alignment="BottomLeft" />
+<!--  Plugins -->
+<RequiredPlugin pluginName="CImgPlugin"/>
+<RequiredPlugin name="SofaOpenglVisual"/>
+<RequiredPlugin pluginName='SofaMiscCollision'/>
+<RequiredPlugin name="IAB" pluginName="IAB"/>
+<RequiredPlugin name="IABTetra" pluginName="IABTetra"/>
+
+<VisualStyle displayFlags="showForceFields showBehaviorModels" />
+<DefaultPipeline verbose="0" />
+<BruteForceDetection name="N2" />
+<DefaultContactManager response="default" />
+<MinProximityIntersection name="Proximity" alarmDistance="0.8" contactDistance="0.5" />
+<DefaultCollisionGroupManager />
+<!--  Presumably handles Lagrange Constraint multipliers https://www.sofa-framework.org/community/doc/using-sofa/components/animationloop/multistepanimationloop/-->
+<DefaultAnimationLoop />
+
+	<include href="scene_comps/IABs/dome_head.scn" dx="0" dy="0" dz="0" rx="0"
+					ry="0" rz="0"  color="0.8549 0.8235 0.6431" scale="1"/>
+	<include href="scene_comps/IABs/dome_ring.scn" dx="0" dy="0" dz="0" rx="0"
+					color="0.8549 0.8235 0.6431" scale="1"/>
+	<include href="scene_comps/IABs/dome_cover_solid.scn" dx="0" dy="0" dz="-.4" rx="0"
+		  	color="0.8549 0.8235 0.6431" scale="1"/>
+</Node>
+
+<!-- color="0.8549 0.8235 0.6431" = bluish
+color="0 0.4 0.7 0.7" = Green -->

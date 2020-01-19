@@ -1,14 +1,25 @@
 <?xml version="1.0"?>
-<Node name="DomeHeadNode">
-	<MeshSTLLoader name="dome_head_loader" filename="../../../../ros/srs_traj_opt/patient_description/meshes/dome/dome.stl"/>
-	<MechanicalObject name="dome-states" src="@dome_head_loader" template="Vec3d" />
-  <Node name="DomeHeadVisu" >
-    <OglModel name="DomeHeadVisual"  src="@../dome_head_loader" translation="0 0 0" rotation="0 0 0" dx="0" dy="0" dz="0" rx="0" ry="0" rz="0" color="0.8549 0.8235 0.6431"  scale="1"/>
-  </Node>
-	<Node 	 name="DomeHeadCollis"  >
-	  <MeshObjLoader name="dome-collis-loader"  filename="../../../../ros/srs_traj_opt/patient_description/meshes/dome/dome.obj"  scale="1"/>
-	  <MeshTopology name="meshTopology"  />
-	  <MechanicalObject template="Vec3d" name="dome-collis-states"  velocity="0 0 0"  force="0 0 0"  externalForce="0 0 0" />
-		<TetrahedronMooneyRivlinFEMForceField  template="Vec3d" ParameterSet="1000 100" />
+<Node name="DomeHeadNode"  gravity="0 -9.81 0" dt=".02">
+	<EulerImplicitSolver name="cg_odesolver" printLog="false" />
+	<CGLinearSolver iterations="25" name="linear solver" tolerance="1.0e-9" threshold="1.0e-9" />
+	<MeshVTKLoader name="domeHeadVTKLoader" filename="../../../../ros/srs_traj_opt/patient_description/meshes/dome/dome.vtu" />
+	<MechanicalObject name="dofs" src="@domeHeadVTKLoader" template="Vec3d"
+		 showIndices='false' showIndicesScale='4e-5' rx='0' dz='0'/>
+	<TetrahedronSetTopologyContainer name="TetraTopologyContainer" src="@domeHeadVTKLoader" createTriangleArray="true"/>
+	<TetrahedronSetTopologyModifier name="TetraTopologyModifier" />
+	<TetrahedronSetGeometryAlgorithms template="Vec3d" name="TetraGeomAlgo"  drawTetrahedra="1"/>
+	<TetrahedronSetTopologyAlgorithms template="Vec3d" name="TetraTopologyAlgo" />
+	<DiagonalMass  name="computed using mass density" massDensity="1" />
+	<TetrahedronMooneyRivlinFEMForceField  template="Vec3d" ParameterSet="1000 100"
+		 	materialName="MooneyRivlinIncompressible"  youngModulus="10000" poissonRatio="0.45" />
+	<Node name="DomeHeadVisu" tags="Visual" gravity="0 -9.81 0">
+    <OglModel name="DomeHeadVisual"  src="@../domeHeadVTKLoader"
+			dx="0" dy="0" dz="0" rx="0" ry="0" rz="0" scale="1"/>
+	  <BarycentricMapping name="visual mapping" input="@../dofs" output="@DomeHeadVisual" />
+	</Node>
+	<Node name="DomeHeadCollis"  gravity="0 -9.81 0" >
+	  <MeshObjLoader name="domeCollisLoader"  filename="../../../../ros/srs_traj_opt/patient_description/meshes/dome/dome.obj"  scale="1"/>
+	  <MechanicalObject template="Vec3d" name="dome-collis-states"  src="@domeCollisLoader"
+			dx="0" dy="0" dz="0" rx="0" ry="0" rz="0" scale="1" />
 	</Node>
 </Node>

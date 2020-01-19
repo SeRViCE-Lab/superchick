@@ -1,11 +1,3 @@
-
-/*
-* Tetrahedron components ripped off but adapted to incompressible materials
-*  Ripped off sofa/modules/SofaMiscFem/TetrahedronMooneyRivlinFEMForceField.h
-*
-* Author: Lekan Ogunmolux, December 18, 2019
-*/
-
 #ifndef SOFA_COMPONENT_FORCEFIELD_TETRAHEDRONMOONEYRIVLINFEMFORCEFIELD_H
 #define SOFA_COMPONENT_FORCEFIELD_TETRAHEDRONMOONEYRIVLINFEMFORCEFIELD_H
 
@@ -18,6 +10,13 @@
 #include <sofa/core/MechanicalParams.h>
 #include <SofaEigen2Solver/EigenSparseMatrix.h>
 #include <sofa/defaulttype/RGBAColor.h>
+/*
+* Tetrahedron components ripped off but adapted to incompressible materials
+*  Ripped off sofa/modules/SofaMiscFem/TetrahedronMooneyRivlinFEMForceField.h
+*
+* Author: Lekan Ogunmolu, December 18, 2019
+*/
+
 #include <IABPlugin/ForceFields/include/NonlinearElasticMaterial.h>
 #include <sofa/core/behavior/ForceField.h>
 #include <SofaBaseMechanics/MechanicalObject.h>
@@ -58,7 +57,6 @@ class TetrahedronMooneyRivlinFEMForceField : public core::behavior::ForceField<D
 {
   public:
     SOFA_CLASS(SOFA_TEMPLATE(TetrahedronMooneyRivlinFEMForceField, DataTypes), SOFA_TEMPLATE(core::behavior::ForceField, DataTypes));
-
     using Inherited = core::behavior::ForceField<DataTypes>;
     using Real =  typename DataTypes::Real;
     using Coord = typename DataTypes::Coord;
@@ -176,7 +174,7 @@ class TetrahedronMooneyRivlinFEMForceField : public core::behavior::ForceField<D
     };
 
     /// data structure stored for each tetrahedron
-  	class TetrahedronRestInformation : public fem::StrainInformation<DataTypes>
+  	class TetrahedronRestInformation : public sofa::component::fem::StrainInformation<DataTypes>
     {
         public:
           /// shape vector at the rest configuration
@@ -220,8 +218,8 @@ class TetrahedronMooneyRivlinFEMForceField : public core::behavior::ForceField<D
         EdgeInformation() {}
     };
 
-    // class SOFA_TETRAMOONRIVPlugin_API TetrahedronHandler: public TopologyDataHandler<Tetrahedron,sofa::helper::vector<TetrahedronRestInformation> >
-    class  TetrahedronHandler: public TopologyDataHandler<Tetrahedron,sofa::helper::vector<TetrahedronRestInformation> >
+    class SOFA_TetraMooneyRivlinFEMForceFieldPlugin_API TetrahedronHandler: public TopologyDataHandler<Tetrahedron,sofa::helper::vector<TetrahedronRestInformation> >
+    // class  TetrahedronHandler: public TopologyDataHandler<Tetrahedron,sofa::helper::vector<TetrahedronRestInformation> >
     {
       public:
         using TetrahedronRestInformation = TetrahedronMooneyRivlinFEMForceField<DataTypes>::TetrahedronRestInformation ;
@@ -276,11 +274,12 @@ using sofa::defaulttype::Vec3dTypes;
 using sofa::defaulttype::Vec3fTypes;
 
 #if  !defined(SOFA_COMPONENT_FORCEFIELD_TETRAHEDRONMOONEYRIVLINFEMFORCEFIELD_CPP)
-
 extern template class SOFA_BOUNDARY_CONDITION_API TetrahedronMooneyRivlinFEMForceField<sofa::defaulttype::Vec3Types>;
-extern template class SOFA_TETRAMOONRIVPlugin_API TetrahedronMooneyRivlinFEMForceField<Vec3Types>;
-
-#endif //  !defined(SOFA_COMPONENT_FORCEFIELD_TETRAHEDRONHYPERELASTICITYFEMFORCEFIELD_CPP)
+extern template class SOFA_BOUNDARY_CONDITION_API TetrahedronMooneyRivlinFEMForceField<sofa::defaulttype::Vec2Types>;
+extern template class SOFA_BOUNDARY_CONDITION_API TetrahedronMooneyRivlinFEMForceField<sofa::defaulttype::Vec1Types>;
+extern template class SOFA_BOUNDARY_CONDITION_API TetrahedronMooneyRivlinFEMForceField<sofa::defaulttype::Vec6Types>;
+extern template class SOFA_TetrahedronMooneyRivlinFEMForceFieldPlugin_API TetrahedronMooneyRivlinFEMForceField<sofa::defaulttype::Vec3Types>;
+#endif //
 
 } // namespace forcefield
 

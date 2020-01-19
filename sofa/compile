@@ -67,11 +67,13 @@ if [[ $(is_yes $build) ]]; then
   cmake -DBoost_NO_BOOST_CMAKE=ON ..;
 
   if [[ -f "$SOFA_ROOT/lib/libIAB.so" ]]; then
-    echo "removing \"$SOFA_ROOT/lib/libIAB.so\" "
+    echo "removing \"$SOFA_ROOT/lib/libIAB*.so\" "
+    rm "$SOFA_ROOT/lib/libIABTetra.so"
     rm "$SOFA_ROOT/lib/libIAB.so"
   elif [[ -f "$SOFA_ROOT/lib/libIAB.dylib" ]]; then
-    echo "removing \"$SOFA_ROOT/lib/libIAB.dylib\" "
+    echo "removing \"$SOFA_ROOT/lib/libIAB*.dylib\" "
     rm "$SOFA_ROOT/lib/libIAB.dylib"
+    rm "$SOFA_ROOT/lib/libIABTetra.dylib"
   fi
 
   make DESTDIR="$SOFA_ROOT/lib" -j8; make install
@@ -80,10 +82,10 @@ fi
    # echo "Runing already build executable"
 
 if [ $(is_yes $launch) ]; then
-  ./IAB_Launcher -g true
+  ./IAB_Launcher "-g" "true"
 elif [[ $(is_yes $soro) ]]; then
   #echo -e "Run SingleIAB with GUI? "
-  ./SingleIAB -g true
+  ./SingleIAB "-g" "true"
 else
   exit 0
 fi

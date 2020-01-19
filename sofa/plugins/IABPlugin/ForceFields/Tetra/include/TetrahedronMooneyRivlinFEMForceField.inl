@@ -25,7 +25,7 @@ Author: Lekan Ogunmolux, December 18, 2019
 #include <SofaBaseMechanics/MechanicalObject.h>
 #include "IABPlugin/ForceFields/include/integrand.inl"  // will help with our integrations
 #include "IABPlugin/ForceFields/include/NonlinearElasticMaterial.h"
-//#include "IABPlugin/ForceFields/include/MooneyRivlinIncompressible.h"
+#include "IABPlugin/ForceFields/include/MooneyRivlinIncompressible.h"
 #include "IABPlugin/ForceFields/Tetra/include/TetrahedronMooneyRivlinFEMForceField.h"
 
 
@@ -40,7 +40,7 @@ using namespace	sofa::component::topology;
 using namespace core::topology;
 using namespace sofa::helper; // for M_PI: see rmath.h
 
-template< class DataTypes >
+template<typename DataTypes >
 void TetrahedronMooneyRivlinFEMForceField<DataTypes>::TetrahedronHandler::applyCreateFunction(unsigned int tetrahedronIndex,
                                                                                               TetrahedronRestInformation &tinfo,
                                                                                               const Tetrahedron &,
@@ -60,16 +60,17 @@ void TetrahedronMooneyRivlinFEMForceField<DataTypes>::TetrahedronHandler::applyC
       ///describe the indices of the 4 tetrahedron vertices
       const Tetrahedron &t= tetrahedronArray[tetrahedronIndex];
       BaseMeshTopology::EdgesInTetrahedron te=ff->m_topology->getEdgesInTetrahedron(tetrahedronIndex);
+      tinfo.m_sPolarVecLag.resize(4);
 
       // store the vertex positions of the tetrahedron
       for(j=0;j<4;++j)
       {
         point[j]=(restPosition)[t[j]];
         // for each point in point[j], find the spherical polar coordinate equivalent assuming tetrahedron is platonic
-        tinfo.m_sPolarVecLag[j].m_r =  rsqrt(SQR(point[j][0]), SQR(point[j][1]), SQR(point[j][2])); // r
-        tinfo.m_sPolarVecLag[j].m_theta =  std::atan(point[j][1]/point[j][0]);    // theta = arctan(y/x)
-        tinfo.m_sPolarVecLag[j].m_phi =  std::acos(point[j][2]/sPolarPoint[j][0]);    // theta = arctan(y/x)
-        tinfo.m_sPolarVecLag[j].m_RadialVector = {tinfo.m_sPolarVecLag[j].m_r, tinfo.m_sPolarVecLag[j].m_theta, tinfo.m_sPolarVecLag[j].m_phi};
+        tinfo.m_sPolarVecLag[j].m_R =  rsqrt(SQR(point[j][0])+SQR(point[j][1])+SQR(point[j][2])); // r
+        tinfo.m_sPolarVecLag[j].m_Theta =  std::atan(point[j][1]/point[j][0]);    // theta = arctan(y/x)
+        tinfo.m_sPolarVecLag[j].m_Phi =  std::acos(point[j][2]/point[j][0]);    // theta = arctan(y/x)
+        tinfo.m_sPolarVecLag[j].m_RadialVector = {tinfo.m_sPolarVecLag[j].m_R, tinfo.m_sPolarVecLag[j].m_Theta, tinfo.m_sPolarVecLag[j].m_Phi};
       }
       /// compute 6 times the rest volume
       volume=dot(cross(point[2]-point[0],point[3]-point[0]),point[1]-point[0]);
@@ -95,33 +96,36 @@ void TetrahedronMooneyRivlinFEMForceField<DataTypes>::TetrahedronHandler::applyC
   }
 }
 
-template <class DataTypes> TetrahedronMooneyRivlinFEMForceField<DataTypes>::TetrahedronMooneyRivlinFEMForceField()
+template <typename DataTypes>
+TetrahedronMooneyRivlinFEMForceField<DataTypes>::TetrahedronMooneyRivlinFEMForceField()
     : m_topology(0)
-    m_initialPoints(0),
-    m_updateMatrix(true),
-    m_meshSaved( false),
-    d_stiffnessMatrixRegularizationWeight(initData(&d_stiffnessMatrixRegularizationWeight, (bool)false,"matrixRegularization","Regularization of the Stiffness Matrix (between true or false)")),
-    d_materialName(initData(&d_materialName,std::string("MooneyRivlinIncompressible"),"materialName","the name of the material to be used")),
-    d_parameterSet(initData(&d_parameterSet,"ParameterSet","The global parameters specifying the material")),
-    d_anisotropySet(initData(&d_anisotropySet,"AnisotropyDirections","The global directions of anisotropy of the material")),
-    m_tetrahedronInfo(initData(&m_tetrahedronInfo, "tetrahedronInfo", "Internal tetrahedron data")),
-    m_edgeInfo(initData(&m_edgeInfo, "edgeInfo", "Internal edge data")),
-    f_poisson(initData(&f_poisson,helper::vector<Real>(1,static_cast<Real>(0.45)),"poissonRatio","Poisson ratio in Hooke's law (vector)")),
-    f_young(initData(&f_young,helper::vector<Real>(1,static_cast<Real>(1000.0)),"youngModulus","Young modulus in Hooke's law (vector)")),
-    f_damping(initData(&f_damping,(Real)0.,"damping","Ratio damping/stiffness")),
-    m_tetrahedronHandler(nullptr)
+    , m_initialPoints(0)
+    , m_updateMatrix(true)
+    , m_meshSaved( false)
+    , d_stiffnessMatrixRegularizationWeight(initData(&d_stiffnessMatrixRegularizationWeight, (bool)false,"matrixRegularization","Regularization of the Stiffness Matrix (between true or false)"))
+    , d_materialName(initData(&d_materialName,std::string("MooneyRivlinIncompressible"),"materialName","the name of the material to be used"))
+    , d_parameterSet(initData(&d_parameterSet,"ParameterSet","The global parameters specifying the material"))
+    , d_anisotropySet(initData(&d_anisotropySet,"AnisotropyDirections","The global directions of anisotropy of the material"))
+    , m_tetrahedronInfo(initData(&m_tetrahedronInfo, "tetrahedronInfo", "Internal tetrahedron data"))
+    , m_edgeInfo(initData(&m_edgeInfo, "edgeInfo", "Internal edge data"))
+    , f_poisson(initData(&f_poisson,helper::vector<Real>(1,static_cast<Real>(0.45)),"poissonRatio","Poisson ratio in Hooke's law (vector)"))
+    , f_young(initData(&f_young,helper::vector<Real>(1,static_cast<Real>(1000.0)),"youngModulus","Young modulus in Hooke's law (vector)"))
+    , f_damping(initData(&f_damping,(Real)0.,"damping","Ratio damping/stiffness"))
+    , m_tetrahedronHandler(nullptr)
 {
     m_tetrahedronHandler = new TetrahedronHandler(this,&m_tetrahedronInfo);
     f_poisson.setRequired(true);
     f_young.setRequired(true);
 }
 
-template <class DataTypes> TetrahedronMooneyRivlinFEMForceField<DataTypes>::~TetrahedronMooneyRivlinFEMForceField()
+template <typename DataTypes>
+TetrahedronMooneyRivlinFEMForceField<DataTypes>::~TetrahedronMooneyRivlinFEMForceField()
 {
     if(m_tetrahedronHandler) delete m_tetrahedronHandler;
 }
 
-template <class DataTypes> void TetrahedronMooneyRivlinFEMForceField<DataTypes>::init()
+template <typename DataTypes>
+void TetrahedronMooneyRivlinFEMForceField<DataTypes>::init()
 {
     if (this->f_printLog.getValue())
         msg_info() << "initializing TetrahedronMooneyRivlinFEMForceField";
@@ -204,7 +208,11 @@ template <class DataTypes> void TetrahedronMooneyRivlinFEMForceField<DataTypes>:
     //testDerivatives();
 }
 
-template <class DataTypes>
+template <typename DataTypes>
+void TetrahedronMooneyRivlinFEMForceField<DataTypes>::reinit()
+{ /*Nothing to do here, Scotty! */}
+
+template <typename DataTypes>
 void TetrahedronMooneyRivlinFEMForceField<DataTypes>::addForce(const core::MechanicalParams* /* mparams */ /* PARAMS FIRST */, DataVecDeriv& d_f, const DataVecCoord& d_x, const DataVecDeriv& /* d_v */)
 {
     sofa::helper::AdvancedTimer::stepBegin("addForceSphericalPolarFEM");
@@ -223,6 +231,7 @@ void TetrahedronMooneyRivlinFEMForceField<DataTypes>::addForce(const core::Mecha
     helper::vector<TetrahedronRestInformation>& tetrahedronInfVec = *(m_tetrahedronInfo.beginEdit());
 
     TetrahedronRestInformation *tetInfo;
+    tetInfo->m_sPolarVecEul.resize(4);
 
     assert(this->mstate);
     Coord dp[3],x0,sv;
@@ -236,29 +245,29 @@ void TetrahedronMooneyRivlinFEMForceField<DataTypes>::addForce(const core::Mecha
         // compute associated spherical points from the tetrahedron vertices
         for (int j = 0; j < 4; ++i)
         {
-          tetInfo->m_sPolarVecEul[j].m_r = rsqrt(SQR(x[ta[j]][0]), SQR(x[ta[j]][1]), SQR(x[ta[j]][2])); // r
+          tetInfo->m_sPolarVecEul[j].m_r = std::sqrt(SQ(x[ta[j]][0]) + SQ(x[ta[j]][1]) + SQ(x[ta[j]][2])); // r
           tetInfo->m_sPolarVecEul[j].m_theta =  std::atan(x[ta[j]][1]/x[ta[j]][0]);    // theta = arctan(y/x)
-          tetInfo->m_sPolarVecEul[j].m_phi =  std::acos(x[ta[j]][2]/sPolarPoint[j][0]);    // theta = arctan(y/x)
-          tetInfo->m_sPolarVecEul[j].m_RadialVector = {tetInfo->m_sPolarVecEul[j].m_r, tetInfo->m_sPolarVecEul[j].m_theta, tetInfo->m_sPolarVecEul[j].m_phi};
+          tetInfo->m_sPolarVecEul[j].m_phi =  std::acos(x[ta[j]][2]/x[ta[j]][0]);    // theta = arctan(y/x)
+          tetInfo->m_sPolarVecEul[j].m_radialVector = {tetInfo->m_sPolarVecEul[j].m_r, tetInfo->m_sPolarVecEul[j].m_theta, tetInfo->m_sPolarVecEul[j].m_phi};
 
           // initialize associated tri components
           tetInfo->m_sPolarVecEul[j].m_ro = tetInfo->m_sPolarVecEul[j].m_r;
           // compute F, B, and C (defGrad, left and right Cauchy-Green Tensors)
 
           // initialize bottom left block of def grad to zeros
-          for (int k = 1; k < 3; ++k) // rows 1 and 2
+          for (int k = 1; k < 3; ++k)  // rows 1 and 2
             for(int l=0; l <2; ++l)  // cols 0 through 1
               tetInfo->m_sPolarVecEul[j].m_F[k][l] =  0;
-          tetInfo->m_sPolarVecEul[j].m_F[0][0] = SQ(tetInfo->m_sPolarVecEul[j].m_R)/SQ(tetInfo->m_sPolarVecEul[j].m_r);
-          tetInfo->m_sPolarVecEul[j].m_F[0][1] = -tetInfo->m_sPolarVecEul[j].m_phi/tetInfo->m_sPolarVecEul[j].m_R;
-          tetInfo->m_sPolarVecEul[j].m_F[0][2] = -tetInfo->m_sPolarVecEul[j].m_theta/tetInfo->m_sPolarVecEul[j].m_R;
-          tetInfo->m_sPolarVecEul[j].m_F[1][1] = (tetInfo->m_sPolarVecEul[j].m_r/tetInfo->m_sPolarVecEul[j].m_R)+(1/tetInfo->m_sPolarVecEul[j].m_R);
-          tetInfo->m_sPolarVecEul[j].m_F[1][2] = -(tetInfo->m_sPolarVecEul[j].m_theta/tetInfo->m_sPolarVecEul[j].m_R)*\
+          tetInfo->m_sPolarVecEul[j].m_F[0][0] = SQ(tetInfo->m_sPolarVecLag[j].m_R)/SQ(tetInfo->m_sPolarVecEul[j].m_r);
+          tetInfo->m_sPolarVecEul[j].m_F[0][1] = -tetInfo->m_sPolarVecEul[j].m_phi/tetInfo->m_sPolarVecLag[j].m_R;
+          tetInfo->m_sPolarVecEul[j].m_F[0][2] = -tetInfo->m_sPolarVecEul[j].m_theta/tetInfo->m_sPolarVecLag[j].m_R;
+          tetInfo->m_sPolarVecEul[j].m_F[1][1] = (tetInfo->m_sPolarVecEul[j].m_r/tetInfo->m_sPolarVecLag[j].m_R)+(1/tetInfo->m_sPolarVecLag[j].m_R);
+          tetInfo->m_sPolarVecEul[j].m_F[1][2] = -(tetInfo->m_sPolarVecEul[j].m_theta/tetInfo->m_sPolarVecLag[j].m_R)*\
                                 (std::cos(tetInfo->m_sPolarVecEul[j].m_phi)/std::sin(tetInfo->m_sPolarVecEul[j].m_phi));
-          tetInfo->m_sPolarVecEul[j].m_F[2][2] = (tetInfo->m_sPolarVecEul[j].m_r/tetInfo->m_sPolarVecEul[j].m_R)+\
-                                (tetInfo->m_sPolarVecEul[j].m_phi/tetInfo->m_sPolarVecEul[j].m_R)*\
+          tetInfo->m_sPolarVecEul[j].m_F[2][2] = (tetInfo->m_sPolarVecEul[j].m_r/tetInfo->m_sPolarVecLag[j].m_R)+\
+                                (tetInfo->m_sPolarVecEul[j].m_phi/tetInfo->m_sPolarVecLag[j].m_R)*\
                                 (std::cos(tetInfo->m_sPolarVecEul[j].m_phi)/std::sin(tetInfo->m_sPolarVecEul[j].m_phi))+\
-                                ((1/tetInfo->m_sPolarVecEul[j].m_R)*tetInfo->m_sPolarVecEul[j].m_Phi);
+                                (1/(tetInfo->m_sPolarVecLag[j].m_R*tetInfo->m_sPolarVecLag[j].m_Phi));
 
           /* left and right cauchy-green tensors only diagonal elements are non-zero */
           // init all non-diagonal elements to zero
@@ -280,14 +289,14 @@ void TetrahedronMooneyRivlinFEMForceField<DataTypes>::addForce(const core::Mecha
           } // outer for
           // fiber direction in eulerian coord
           tetInfo->m_sPolarVecEul[j].m_fiberDirection = {tetInfo->m_sPolarVecEul[j].m_F[0][0]*rcos(tetInfo->m_sPolarVecEul[j].gamma), \
-                                      -tetInfo->m_sPolarVecEul[j].m_F[1][1]*rsin(sphInfo->gamma), \
+                                      -tetInfo->m_sPolarVecEul[j].m_F[1][1]*rsin(tetInfo->m_sPolarVecEul[j].gamma), \
                                       0};
         } // end tetra vertices for
         // update strain tensors
-        tetInfo->m_deformationGradient = 0;
-        tetInfo->rightCauchy = 0;
-        tetInfo->leftCauchy = 0;
-        for(int z = 0; z< 4; ++z)
+        tetInfo->m_deformationGradient = tetInfo->m_sPolarVecEul[0].m_F;
+        tetInfo->leftCauchyGreen = tetInfo->m_sPolarVecEul[0].m_B;
+        tetInfo->rightCauchyGreen = tetInfo->m_sPolarVecEul[0].m_C;
+        for(int z = 1; z< 4; ++z)
         {
           // computer the def tensor for this tetrahedron
           tetInfo->m_deformationGradient+=tetInfo->m_sPolarVecEul[z].m_F;
@@ -299,8 +308,7 @@ void TetrahedronMooneyRivlinFEMForceField<DataTypes>::addForce(const core::Mecha
         tetInfo->leftCauchyGreen/=4;
         tetInfo->rightCauchyGreen/=4;
         tetInfo->J = determinant(tetInfo->m_deformationGradient);
-      } // end all tetrahedron for
-    }
+      } // end all nbTetrahedra for i
     /// indicates that the next call to addDForce will need to update the stiffness matrix
     m_updateMatrix=true;
     m_tetrahedronInfo.endEdit();
@@ -308,7 +316,7 @@ void TetrahedronMooneyRivlinFEMForceField<DataTypes>::addForce(const core::Mecha
     d_f.endEdit();
 }
 
-template <class DataTypes>
+template <typename DataTypes>
 void TetrahedronMooneyRivlinFEMForceField<DataTypes>::updateTangentMatrix()
 {
     unsigned int i=0,j=0,k=0,l=0;
@@ -392,8 +400,8 @@ void TetrahedronMooneyRivlinFEMForceField<DataTypes>::updateTangentMatrix()
 }
 
 
-template <class DataTypes>
-void TetrahedronMooneyRivlinFEMForceField<DataTypes>::addDForce(const core::MechanicalParams* mparams /* PARAMS FIRST */, DataVecDeriv& d_df, const DataVecDeriv& d_dx)
+template <typename DataTypes>
+void TetrahedronMooneyRivlinFEMForceField<DataTypes>::addDForce(const core::MechanicalParams* mparams, DataVecDeriv& d_df, const DataVecDeriv& d_dx)
 {
     VecDeriv& df = *d_df.beginEdit();
     const VecDeriv& dx = d_dx.getValue();
@@ -440,14 +448,14 @@ void TetrahedronMooneyRivlinFEMForceField<DataTypes>::addDForce(const core::Mech
     d_df.endEdit();
 }
 
-template<class DataTypes>
+template<typename DataTypes>
 SReal TetrahedronMooneyRivlinFEMForceField<DataTypes>::getPotentialEnergy(const core::MechanicalParams*, const DataVecCoord&) const
 {
     msg_error() << "ERROR("<<this->getClassName()<<"): getPotentialEnergy( const MechanicalParams*, const DataVecCoord& ) not implemented.";
     return 0.0;
 }
 
-template <class DataTypes>
+template <typename DataTypes>
 void TetrahedronMooneyRivlinFEMForceField<DataTypes>::addKToMatrix(sofa::defaulttype::BaseMatrix *mat, SReal k, unsigned int &offset)
 {
 
@@ -487,18 +495,8 @@ void TetrahedronMooneyRivlinFEMForceField<DataTypes>::addKToMatrix(sofa::default
 }
 
 
-// template<class DataTypes>
-// Mat<3,3,double> TetrahedronMooneyRivlinFEMForceField<DataTypes>::getPhi(int TetrahedronIndex)
-// {
-//     helper::vector<TetrahedronRestInformation>& tetrahedronInf = *(m_tetrahedronInfo.beginEdit());
-// 	TetrahedronRestInformation *tetInfo;
-// 	tetInfo=&tetrahedronInf[TetrahedronIndex];
-//     return tetInfo->m_deformationGradient;
-//
-// }
-
-template<class DataTypes>
-void TetrahedronHyperelasticityFEMForceField<DataTypes>::testDerivatives()
+template<typename DataTypes>
+void TetrahedronMooneyRivlinFEMForceField<DataTypes>::testDerivatives()
 {
     DataVecCoord d_pos;
     VecCoord &pos = *d_pos.beginEdit();
@@ -638,7 +636,7 @@ void TetrahedronHyperelasticityFEMForceField<DataTypes>::testDerivatives()
 }
 
 
-template<class DataTypes>
+template<typename DataTypes>
 void TetrahedronMooneyRivlinFEMForceField<DataTypes>::saveMesh( const char *filename )
 {
     VecCoord pos( this->mstate->read(core::ConstVecCoordId::position())->getValue());
@@ -683,7 +681,7 @@ void TetrahedronMooneyRivlinFEMForceField<DataTypes>::saveMesh( const char *file
 	fclose( file );
 }
 
-template<class DataTypes>
+template<typename DataTypes>
 void TetrahedronMooneyRivlinFEMForceField<DataTypes>::draw(const core::visual::VisualParams* vparams)
 {
     //	unsigned int i;
@@ -803,4 +801,4 @@ void TetrahedronMooneyRivlinFEMForceField<DataTypes>::draw(const core::visual::V
 
 } // namespace sofa
 
-#endif // SOFA_COMPONENT_FORCEFIELD_TETRAHEDRONHYPERELASTICITYFEMFORCEFIELD_INL
+#endif // SOFA_COMPONENT_FORCEFIELD_TETRAHEDRONMOONEYRIVLINFEMFORCEFIELD_INL

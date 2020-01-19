@@ -168,29 +168,6 @@ public:
   virtual ~StrainInformation() {}
 };
 
-// template<typename DataTypes>
-// class StressInformation
-// {
-// public:
-//
-//
-//   using Coord =  typename DataTypes::Coord;
-//   using Real =  typename Coord::value_type;
-//   using MatrixSym =  defaulttype::MatSym<3,Real>;
-//   using EigenMatrix =  typename Eigen::SelfAdjointEigenSolver<Eigen::Matrix<Real,3,3> >::MatrixType;
-//   using CoordEigen =  typename Eigen::SelfAdjointEigenSolver<Eigen::Matrix<Real,3,3> >::RealVectorType;
-//   // These from the derivation in wafr paper
-//   Real r, R, phi, theta;
-//   Real hydrostaticPressure;
-//   Real
-//   StressInformation()
-//   : r(0), R(0), phi(0), theta(0), hydrostaticPressure(0)
-//   {
-//     // stress tensor contructor
-//   }
-//   virtual ~StressInformation() {}
-// };
-
 } // namespace fem
 
 } // namespace component
