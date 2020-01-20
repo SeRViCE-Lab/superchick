@@ -44,14 +44,14 @@
 		 <include name="ChinRight" href="scene_comps/IABs/dome_assembly.scn"
 						 dx="-100" dy="40" dz="-180"  scale="20"/>
 		</Node>
-		<!-- <Node name="FlexiHolders">
+		<Node name="FlexiHolders">
       <include name="FlexiBase" href="scene_comps/IABs/flexi_base.scn"
               dx="-20" dy="-60" dz="-60" rx="90" scale="80"/>
       <include name="FlexiRight" href="scene_comps/IABs/flexi_hz.scn"
               dx="-20" dy="30" dz="60" rz="90" scale="80"/>
       <include name="FlexiLeft" href="scene_comps/IABs/flexi_hz.scn"
               dx="-20" dy="30" dz="-180" rz="90" scale="80" />
-    </Node> -->
+    </Node>
 
 		<Node name="GantryCouch" >
 	      <include href="scene_comps/gantry/gantry.scn" name="gantry" color="0.8549 0.8235 0.6431" dy="50" dz="20" scale=".85" />
