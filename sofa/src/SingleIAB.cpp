@@ -152,26 +152,20 @@ int main(int argc, char** argv)
     unsigned int computationTimeSampling=1; ///< Frequency of display of the computation time statistics, in number of animation steps. 0 means never.
     string    computationTimeOutputType="stdout";
     string gui,  verif = "";
-    string simulationType = "dag";
+    string scenefile = "";
 
     vector<string> plugins, files;
 #ifdef SOFA_SMP
     string nProcs="";
     bool        disableStealing, affinity = false;
 #endif
-    string colorsStatus = "unset";
-    string messageHandler = "auto";
-    bool enableInteraction = false ;
     int width = 1280;
     int height = 1024;
 
     ArgumentParser* argParser = new ArgumentParser(argc, argv);
     argParser->addArgument(po::value<std::vector<std::string>>(&plugins), "load,l", "load given plugins");
-    argParser->addArgument(po::value<std::string>(&simulationType),  "simu,s", "select the type of simulation (bgl, dag, tree)");
     argParser->addArgument(po::value<std::string>(&verif)->default_value(""), "verification,v","load verification data for the scene");
-    argParser->addArgument(po::value<std::string>(&colorsStatus)->default_value("unset", "auto")->implicit_value("yes"),"colors,c", "use colors on stdout and stderr (yes, no, auto)");
-    argParser->addArgument(po::value<std::string>(&messageHandler)->default_value("auto"), "formatting,f","select the message formatting to use (auto, clang, sofa, rich, test)");
-    argParser->addArgument(po::value<bool>(&enableInteraction)->default_value(false)->implicit_value(true),"interactive,i", "enable interactive mode for the GUI which includes idle and mouse events (EXPERIMENTAL)");
+    argParser->addArgument(po::value<std::string>(&scenefile)->default_value("dome_test.scn")->implicit_value("imrt_half.scn"),"scene,s", "scene file to load");
     argParser->addArgument(po::value<bool>(&guiViz)->default_value(false)->implicit_value(true),"visualize,g", "display gui window at startup");
     argParser->addArgument(po::value<bool>(&debug)->default_value(false)->implicit_value(true),"debug,p", "debug");
     argParser->addArgument(po::value<std::vector<std::string> >()->multitoken(), "argv","forward extra args to the python interpreter");
@@ -229,7 +223,7 @@ int main(int argc, char** argv)
         return err;
 
     // if (fileName.empty())
-    std::string fileName = DataRepository.getFile(SetDirectory::GetCurrentDir() + "/../scenes/dome_test.scn");
+    std::string fileName = DataRepository.getFile(SetDirectory::GetCurrentDir() + "/../scenes/" + scenefile);
 
     if (int err=GUIManager::createGUI(nullptr))
         return err;

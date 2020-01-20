@@ -1,9 +1,10 @@
 <?xml version="1.0"?>
 <Node name="DomeAssemblyNode">
-	<include href="dome_head.scn" dx="0" dy="0" dz="0" translation="0 0 0" rx="0"
-					ry="0" rz="0"  color="grey" scale="1"/>
-	<include href="dome_ring.scn" dx="0" dy="0" dz="0" translation="0 0 0" rx="0"
-					rotation="0 0 0" color="black" scale="1"/>
-	<include href="dome_cover.scn"
-					dx="0" dy="0" dz="0" translation="0 0 0" rotation="0 0 0" color="brown" scale="1"/>
+	<?xml version="1.0"?>
+		<include href="dome_head.scn" dx="0" dy="0" dz="0" rx="0"
+						ry="0" rz="0"  color="0.8549 0.8235 0.6431" scale="1"/>
+		<include href="dome_ring.scn" dx="0" dy="0" dz="0" rx="0"
+						color="0.8549 0.8235 0.6431" scale="1"/>
+		<include href="dome_cover_solid.scn" dx="0" dy="0" dz="-.4" rx="0"
+			  	color="0.8549 0.8235 0.6431" scale="1"/>
 </Node>
