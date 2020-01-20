@@ -22,6 +22,7 @@
 	  <MeshObjLoader name="domeRingCollisLoader"  filename="../../../../ros/srs_traj_opt/patient_description/meshes/dome/dome_ring.obj"  scale="1"/>
 	  <MechanicalObject template="Vec3d" name="dome-ringcollis-states"  src="@domeRingCollisLoader"
 				dz="0" rx="0" ry="0" rz="0" scale="1"/>
+		<BarycentricMapping name="dome ring collision mapping" input="@../dofs" output="@DomeRingCollis" />
 	</Node>
 </Node>
 

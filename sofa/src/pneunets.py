@@ -3,6 +3,7 @@ import math
 import os
 from os.path import join, expanduser
 
+# See tutorial here https://github.com/SofaDefrost/Tutorials/blob/master/PneuNets-Gripper/docs/simulation.md
 path = os.path.join(expanduser('~'), 'sofa/applications/plugins/SoftRobots/docs/tutorials/PneunetGripper/details/data/mesh/')
 # path = '/sofa/applications/plugins/SoftRobots/docs/tutorials/PneunetGripper/details/data/mesh/')
 

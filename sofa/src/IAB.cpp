@@ -1,77 +1,90 @@
 #include <sstream>
-using std::ostringstream ;
 #include <fstream>
-
 #include <string>
-using std::string;
-
 #include <vector>
-using std::vector;
 
-#include "IABPlugin/include/debuggers.h"
-#include "IABPlugin/ForceFields/include/initIABPlugin.h"
-#include <sofa/helper/ArgumentParser.h>
-#include <SofaSimulationCommon/common.h>
 #include <sofa/simulation/Node.h>
-#include <sofa/helper/system/PluginManager.h>
 #include <sofa/simulation/config.h> // #defines SOFA_HAVE_DAG (or not)
+#include <SofaSimulationCommon/common.h>
 #include <SofaSimulationCommon/init.h>
+
 #ifdef SOFA_HAVE_DAG
-#include <SofaSimulationGraph/init.h>
-#include <SofaSimulationGraph/DAGSimulation.h>
+  #include <SofaSimulationGraph/init.h>
+  #include <SofaSimulationGraph/DAGSimulation.h>
 #endif
 
-using sofa::simulation::Node;
-#include <sofa/simulation/SceneLoaderFactory.h>
+// #include <sofa/simulation/SceneLoaderFactory.h>
 #include <SofaGraphComponent/SceneCheckerListener.h>
-using sofa::simulation::scenechecking::SceneCheckerListener;
 
-#include <SofaComponentCommon/initComponentCommon.h>
 #include <SofaComponentBase/initComponentBase.h>
+#include <SofaComponentMisc/initComponentMisc.h>
+#include <SofaComponentCommon/initComponentCommon.h>
 #include <SofaComponentGeneral/initComponentGeneral.h>
 #include <SofaComponentAdvanced/initComponentAdvanced.h>
-#include <SofaComponentMisc/initComponentMisc.h>
 
 #include <SofaGeneralLoader/ReadState.h>
+#include <SofaGeneralEngine/NearestPointROI.h>
+
 #include <SofaValidation/CompareState.h>
-#include <sofa/helper/Factory.h>
+#include <SofaBaseMechanics/MechanicalObject.h>
+
 #include <sofa/helper/cast.h>
-#include <sofa/helper/BackTrace.h>
-#include <sofa/helper/system/FileRepository.h>
-#include <sofa/helper/system/FileSystem.h>
-using sofa::helper::system::FileSystem;
-#include <sofa/helper/system/SetDirectory.h>
 #include <sofa/helper/Utils.h>
-#include <sofa/gui/GUIManager.h>
-using sofa::gui::GUIManager;
+#include <sofa/helper/Factory.h>
+#include <sofa/helper/BackTrace.h>
+#include <sofa/helper/system/gl.h>
+#include <sofa/helper/AdvancedTimer.h>
+#include <sofa/helper/system/console.h>
+#include <sofa/helper/ArgumentParser.h>
+#include <sofa/helper/logging/Messaging.h>
+#include <sofa/helper/system/FileSystem.h>
+#include <sofa/helper/system/PluginManager.h>
+#include <sofa/helper/system/FileRepository.h>
+#include <sofa/helper/system/SetDirectory.h>
 
 #include <sofa/gui/Main.h>
 #include <sofa/gui/BatchGUI.h>  // needed for BaseGUI
-#include <sofa/helper/system/gl.h>
-// #include <sofa/helper/system/atomic.h>
+#include <sofa/gui/GUIManager.h>
+#include <sofa/gui/GuiDataRepository.h>
+
+#include <sofa/core/objectmodel/Data.h>
+#include <sofa/core/behavior/MechanicalState.h>
+
+// #include <sofa/defaulttype/Vec.h>
+#include <sofa/defaulttype/VecTypes.h>
+
+#include "IABPlugin/include/debuggers.h"
+#include "IABPlugin/ForceFields/include/initIABPlugin.h"
+
+using std::string;
+using std::vector;
+using std::ostringstream ;
+
+using sofa::simulation::Node;
+using sofa::simulation::graph::DAGSimulation;
+using sofa::simulation::scenechecking::SceneCheckerListener;
 
 using sofa::core::ExecParams ;
-
-#include <sofa/helper/system/console.h>
-using sofa::helper::Utils;
+using sofa::core::objectmodel::BaseNode ;
+using sofa::core::behavior::MechanicalState;
 
 using sofa::component::misc::CompareStateCreator;
 using sofa::component::misc::ReadStateActivator;
-using sofa::simulation::graph::DAGSimulation;
-using sofa::helper::system::SetDirectory;
-using sofa::core::objectmodel::BaseNode ;
+
 using sofa::gui::BatchGUI;
 using sofa::gui::BaseGUI;
-
-#include <sofa/helper/AdvancedTimer.h>
-#include <sofa/helper/logging/Messaging.h>
-
-#include <sofa/gui/GuiDataRepository.h>
 using sofa::gui::GuiDataRepository ;
+using sofa::gui::GUIManager;
 
+using sofa::helper::Utils;
+using sofa::helper::system::FileSystem;
+using sofa::helper::system::SetDirectory;
 using sofa::helper::system::DataRepository;
 using sofa::helper::system::PluginRepository;
 using sofa::helper::system::PluginManager;
+
+using namespace sofa::defaulttype;
+using namespace sofa::core::objectmodel;
 
 // see http://www.decompile.com/cpp/faq/file_and_line_error_string.htm
 #define STRINGIFY(x) #x
@@ -134,43 +147,40 @@ int main(int argc, char** argv)
 
     // string fileName ;
     bool noSceneCheck, temporaryFile = false;
+    bool guiViz, debug = false;  // run the gui scene
     unsigned int nbMSSASamples = 1;
-    unsigned int computationTimeSampling=0; ///< Frequency of display of the computation time statistics, in number of animation steps. 0 means never.
+    unsigned int computationTimeSampling=1; ///< Frequency of display of the computation time statistics, in number of animation steps. 0 means never.
     string    computationTimeOutputType="stdout";
     string gui,  verif = "";
-    string simulationType = "dag";
+    string scenefile = "";
 
     vector<string> plugins, files;
 #ifdef SOFA_SMP
     string nProcs="";
     bool        disableStealing, affinity = false;
 #endif
-    string colorsStatus = "unset";
-    string messageHandler = "auto";
-    bool enableInteraction = false ;
-    int width = 800; //1280;
-    int height = 600; //1024;
+int width = 1280;
+int height = 1024;
 
-    ArgumentParser* argParser = new ArgumentParser(argc, argv);
-    argParser->addArgument(po::value<std::vector<std::string>>(&plugins), "load,l", "load given plugins");
-    argParser->addArgument(po::value<std::string>(&simulationType),  "simu,s", "select the type of simulation (bgl, dag, tree)");
-    argParser->addArgument(po::value<std::string>(&verif)->default_value(""), "verification,v","load verification data for the scene");
-    argParser->addArgument(po::value<std::string>(&colorsStatus)->default_value("unset", "auto")->implicit_value("yes"),"colors,c", "use colors on stdout and stderr (yes, no, auto)");
-    argParser->addArgument(po::value<std::string>(&messageHandler)->default_value("auto"), "formatting,f","select the message formatting to use (auto, clang, sofa, rich, test)");
-    argParser->addArgument(po::value<bool>(&enableInteraction)->default_value(false)->implicit_value(true),"interactive,i", "enable interactive mode for the GUI which includes idle and mouse events (EXPERIMENTAL)");
-    argParser->addArgument(po::value<std::vector<std::string> >()->multitoken(), "argv","forward extra args to the python interpreter");
+ArgumentParser* argParser = new ArgumentParser(argc, argv);
+argParser->addArgument(po::value<std::vector<std::string>>(&plugins), "load,l", "load given plugins");
+argParser->addArgument(po::value<std::string>(&verif)->default_value(""), "verification,v","load verification data for the scene");
+argParser->addArgument(po::value<std::string>(&scenefile)->default_value("imrt_half.scn")->implicit_value("imrt_half.scn"),"scene,s", "scene file to load");
+argParser->addArgument(po::value<bool>(&guiViz)->default_value(false)->implicit_value(true),"visualize,g", "display gui window at startup");
+argParser->addArgument(po::value<bool>(&debug)->default_value(false)->implicit_value(true),"debug,p", "debug");
+argParser->addArgument(po::value<std::vector<std::string> >()->multitoken(), "argv","forward extra args to the python interpreter");
 
 #ifdef SOFA_SMP
-    argParser->addArgument(po::value<bool>(&disableStealing)->default_value(false)->implicit_value(true),           "disableStealing,w", "Disable Work Stealing")
-    argParser->addArgument(po::value<std::string>(&nProcs)->default_value(""),                                      "nprocs", "Number of processor")
-    argParser->addArgument(po::value<bool>(&affinity)->default_value(false)->implicit_value(true),                  "affinity", "Enable aFfinity base Work Stealing")
+argParser->addArgument(po::value<bool>(&disableStealing)->default_value(false)->implicit_value(true),           "disableStealing,w", "Disable Work Stealing")
+argParser->addArgument(po::value<std::string>(&nProcs)->default_value(""),                                      "nprocs", "Number of processor")
+argParser->addArgument(po::value<bool>(&affinity)->default_value(false)->implicit_value(true),                  "affinity", "Enable aFfinity base Work Stealing")
 #endif
 
-    addGUIParameters(argParser);
-    argParser->parse();
-    files = argParser->getInputFileList();
+addGUIParameters(argParser);
+argParser->parse();
+files = argParser->getInputFileList();
 #ifdef SOFA_HAVE_DAG
-    sofa::simulation::graph::init();
+sofa::simulation::graph::init();
 #endif
     sofa::component::initComponentBase();
     sofa::component::initComponentCommon();
@@ -189,9 +199,6 @@ int main(int argc, char** argv)
     // Initialise paths
     sofa::gui::BaseGUI::setConfigDirectoryPath(SofaBuildPath + "/config", true);
     sofa::gui::BaseGUI::setScreenshotDirectoryPath(SetDirectory::GetCurrentDir() +  "/screenshots", true);
-
-    // if (!files.empty())
-    //     fileName = files[0];
 
     for (unsigned int i=0; i<plugins.size(); i++)
     {
@@ -215,32 +222,34 @@ int main(int argc, char** argv)
     if (int err = GUIManager::Init(argv[0],gui.c_str()))
         return err;
 
-    std::string fileName = DataRepository.getFile(SetDirectory::GetCurrentDir() + "/../scenes/imrt_half.scn");
+      // if (fileName.empty())
+      std::string fileName = DataRepository.getFile(SetDirectory::GetCurrentDir() + "/../scenes/" + scenefile);
 
-    if (int err=GUIManager::createGUI(nullptr))
-        return err;
+      if (int err=GUIManager::createGUI(nullptr))
+          return err;
 
-    //To set a specific resolution for the viewer, use the component ViewerSetting in you scene graph
-    GUIManager::SetDimension(width, height);
+      //To set a specific resolution for the viewer, use the component ViewerSetting in you scene graph
+      GUIManager::SetDimension(width, height);
 
-    // Create and register the SceneCheckerListener before scene loading
-    if(!noSceneCheck)
-        sofa::simulation::SceneLoader::addListener( SceneCheckerListener::getInstance() );
+      // Create and register the SceneCheckerListener before scene loading
+      if(!noSceneCheck)
+          sofa::simulation::SceneLoader::addListener( SceneCheckerListener::getInstance() );
 
-    /* this contains the states, positions, mass, geometry and such
-     see ~/sofa/v19.06/modules/SofaMiscForceField/SofaMiscForceField_test/MeshMatrixMass_test.cpp#L102-111*/
-    Node::SPtr groot = sofa::simulation::getSimulation()->load(fileName.c_str());
-    if( !groot )
-        groot = sofa::simulation::getSimulation()->createNewGraph("");
+      /* this contains the states, positions, mass, geometry and such
+       see ~/sofa/v19.06/modules/SofaMiscForceField/SofaMiscForceField_test/MeshMatrixMass_test.cpp#L102-111*/
+      Node::SPtr groot = sofa::simulation::getSimulation()->load(fileName.c_str());
+      if( !groot )
+          groot = sofa::simulation::getSimulation()->createNewGraph("");
 
-    if (!verif.empty())
-        loadVerificationData(verif, fileName, groot.get());
+      if (!verif.empty())
+          loadVerificationData(verif, fileName, groot.get());
 
-    sofa::simulation::getSimulation()->init(groot.get());
-    GUIManager::SetScene(groot,fileName.c_str(), temporaryFile);
+      sofa::simulation::getSimulation()->init(groot.get());  // similar: modules/SofaMiscForceField/SofaMiscForceField_test/MeshMatrixMass_test.cpp#L133*/
+      // see accessing node compos in v19.06/SofaKernel/framework/sofa/simulation/Node.cpp
 
-
+      GUIManager::SetScene(groot,fileName.c_str(), temporaryFile);
     //=======================================
+
     //Apply Options
     groot->setAnimate(false);
     // test expansion and deformation here for a single soro
@@ -253,16 +262,19 @@ int main(int argc, char** argv)
     }
 
     //=======================================
-    // Run the main loop
-    if (int err = GUIManager::MainLoop(groot,fileName.c_str()))
-        return err;
-    groot = dynamic_cast<Node*>( GUIManager::CurrentSimulation() );
+    if(guiViz)
+    {
+      // Run the main loop
+      if (int err = GUIManager::MainLoop(groot,fileName.c_str()))
+          return err;
+      groot = dynamic_cast<Node*>( GUIManager::CurrentSimulation() );
+    }
 
     if (groot!=NULL)
         sofa::simulation::getSimulation()->unload(groot);
 
-
-    GUIManager::closeGUI();
+    if (guiViz)
+      GUIManager::closeGUI();
 
     sofa::simulation::common::cleanup();
     sofa::simulation::graph::cleanup();

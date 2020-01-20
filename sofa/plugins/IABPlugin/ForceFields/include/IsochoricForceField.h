@@ -31,7 +31,7 @@
 // simple macro for mathematical ops
 //#define power(SQ, X) double SQ(X) {return std::pow(X, 2.0f); }
 inline float SQ(float x){ return std::pow(x, 2.0f); }
-inline double SQ(double x){ return std::pow(x, 2.0d); }
+inline double SQ(double x){ return std::pow(x, 2.0); }
 
 
 namespace sofa

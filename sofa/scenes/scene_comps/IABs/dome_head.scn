@@ -16,11 +16,12 @@
 		<MeshSTLLoader name="domeHeadSTLLoader" filename="../../../../ros/srs_traj_opt/patient_description/meshes/dome/dome.stl" />
     <OglModel name="DomeHeadVisual"  src="@domeHeadSTLLoader"
 			dx="0" dy="0" dz="0" rx="0" ry="0" rz="0" color="" scale="1"/>
-	  <!-- <BarycentricMapping name="visual mapping" input="@../dofs" output="@DomeHeadVisual" /> -->
+	  <BarycentricMapping name="visual mapping" input="@../dofs" output="@DomeHeadVisual" />
 	</Node>
 	<Node name="DomeHeadCollis"  gravity="0 -9.81 0" >
 	  <MeshObjLoader name="domeCollisLoader"  filename="../../../../ros/srs_traj_opt/patient_description/meshes/dome/dome.obj"  scale="1"/>
 	  <MechanicalObject template="Vec3d" name="dome-collis-states"  src="@domeCollisLoader"
 			dx="0" dy="0" dz="0" rx="0" ry="0" rz="0" scale="1" />
+		<BarycentricMapping name="dome head collision mapping" input="@../dofs" output="@DomeHeadCollis" />
 	</Node>
 </Node>

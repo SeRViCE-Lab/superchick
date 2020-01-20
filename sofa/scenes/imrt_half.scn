@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<Node name="DomeNode" dt="0.005" showBoundingTree="0" gravity="0 -9 0">
+<Node name="SRS" dt="0.005" showBoundingTree="0" gravity="0 -9 0">
 	<APIVersion level="19.06" />
 	<!--  Aesthetics -->
 	<BackgroundSetting color='0 0.168627 0.211765'/>
@@ -54,7 +54,7 @@
     </Node>
 
 		<Node name="GantryCouch" >
-	      <include href="scene_comps/gantry/gantry.scn" name="gantry" color="0.8549 0.8235 0.6431" dy="50" dz="20" scale=".85" />
+	      <include href="scene_comps/gantry/gantry.scn" name="gantry" color="0.8549 0.8235 0.6431" dy="50" dz="20"  scale=".85" /><!-- dy="50" dz="20"  -->
 	      <include href="scene_comps/gantry/turntable.scn" name="turntable" color="0.8549 0.8235 0.6431"   dy="50" dz="20" scale=".91" />
 	      <include href="scene_comps/couch/couch_foot.scn" name="couch_foot" color="0.3 0.6 0.7" dy="50" dz="20" rx="90" rz="180"  scale=".91" />
 	      <include href="scene_comps/couch/couch_latbase.scn" name="couch_latbase" color="magenta" dy="50" dz="20" rx="90" rz="180"  scale=".91" />
