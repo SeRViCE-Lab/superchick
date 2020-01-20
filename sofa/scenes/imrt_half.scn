@@ -1,79 +1,70 @@
-<?xml version="1.0" ?>
-<Node name="Stereotactic Radiosurgery" gravity="0 -1000 0" dt="0.04">
-  <APIVersion level="19.06" />
-  <!--  Aesthetics -->
-  <BackgroundSetting color='0 0.168627 0.211765'/>
-  <OglSceneFrame style="Arrows" alignment="BottomLeft" />
-  <!--  Plugins -->
-  <RequiredPlugin pluginName="CImgPlugin"/>
-  <RequiredPlugin name="SofaOpenglVisual"/>
-  <RequiredPlugin pluginName='SofaMiscCollision'/>
-  <RequiredPlugin name="IAB" pluginName="IAB"/>
-  <RequiredPlugin name="IABTetra" pluginName="IABTetra"/>
+<?xml version="1.0"?>
+<Node name="DomeNode" dt="0.005" showBoundingTree="0" gravity="0 -9 0">
+	<APIVersion level="19.06" />
+	<!--  Aesthetics -->
+	<BackgroundSetting color='0 0.168627 0.211765'/>
+	<OglSceneFrame style="Arrows" alignment="BottomLeft" />
+	<!--  Plugins -->
+	<RequiredPlugin pluginName="CImgPlugin"/>
+	<RequiredPlugin name="SofaOpenglVisual"/>
+	<RequiredPlugin pluginName='SofaMiscCollision'/>
+	<RequiredPlugin name="IAB" pluginName="IAB"/>
+	<RequiredPlugin name="IABTetra" pluginName="IABTetra"/>
 
-	<VisualStyle displayFlags="showVisual showBehavior
-            showCollision hideOptions showMapping showForceFields" />
-  <LightManager ambient="4 8.5 10"/>
-  <LCPConstraintSolver tolerance="1e-3" maxIt="1000" initial_guess="false" build_lcp="false"  printLog="0" mu="0.2"/>
-  <!-- <FreeMotionAnimationLoop /> -->
-  <!-- See https://www.sofa-framework.org/community/doc/using-sofa/components/animationloop/defaultanimationloop/ -->
-  <DefaultPipeline verbose="1" draw="1" depth="15" />
-  <BruteForceDetection name="ForceDetection" />
-  <MinProximityIntersection name="Proximity" alarmDistance="0.02" contactDistance="0.02" />
-	<DefaultContactManager name="Response"  response="FrictionContact" />
-  <DefaultCollisionGroupManager />
-  <DefaultAnimationLoop />
+	<VisualStyle displayFlags="showForceFields showBehaviorModels" />
+	<DefaultPipeline verbose="0" />
+	<BruteForceDetection name="N2" />
+	<DefaultContactManager response="default" />
+	<MinProximityIntersection name="Proximity" alarmDistance="0.8" contactDistance="0.5" />
+	<DefaultCollisionGroupManager />
+	<!--  Presumably handles Lagrange Constraint multipliers https://www.sofa-framework.org/community/doc/using-sofa/components/animationloop/multistepanimationloop/-->
+	<DefaultAnimationLoop />
 
-  <Node name="Patient">
-    <!-- <include href="scene_comps/patients/patient_rigid_whole.scn"
-        translation="-300 25 -50" scale="250" rx="-90" ry="-90" color="0.15 0.1 0.75" /> -->
-
-    <Node name="IABs">
-      <Node name="BaseIABs">
-        <include name="SkullLeft" href="scene_comps/IABs/dome_assembly.scn"
-                dx="20" dy="-80" dz="10" rx="-90" color="brown" scale="10"/>
-        <!-- <include name="SkullRight" href="scene_comps/IABs/dome_assembly.scn"
-                dx="20" dy="-80" dz="-110" rx="-90" color="brown" scale="20"/>
-        <include name="NeckLeft" href="scene_comps/IABs/dome_assembly.scn"
-                dx="-100" dy="-80" dz="10" rx="-90" color="brown" scale="20"/>
-        <include name="NeckRight" href="scene_comps/IABs/dome_assembly.scn"
-                dx="-100" dy="-80" dz="-90" rx="-90" color="brown" scale="20"/> -->
-      </Node>
-
-      <!-- <Node name="SideIABs">
-        <include name="ForeLeft" href="scene_comps/IABs/dome_assembly.scn"
-                dx="20" dy="50" dz="80" rx="180" scale="20"/>
-        <include name="ForeRight" href="scene_comps/IABs/dome_assembly.scn"
-                dx="20" dy="50" dz="-180" scale="20"/>
-        <include name="ChinLeft" href="scene_comps/IABs/dome_assembly.scn"
-                dx="-100" dy="40" dz="80" rx="180" scale="20"/>
-        <include name="ChinRight" href="scene_comps/IABs/dome_assembly.scn"
-                dx="-100" dy="40" dz="-180" scale="20"/>
-      </Node> -->
-
-      <!-- <Node name="FlexiHolders">
-        <include name="FlexiBase" href="scene_comps/IABs/flexi_base.scn"
-                dx="-20" dy="-60" dz="-60" rx="90" scale="80"/>
-        <include name="FlexiRight" href="scene_comps/IABs/flexi_hz.scn"
-                dx="-20" dy="30" dz="60" rz="90" scale="80"/>
-        <include name="FlexiLeft" href="scene_comps/IABs/flexi_hz.scn"
-                dx="-20" dy="30" dz="-180" rz="90" scale="80" />
-      </Node> -->
-    </Node>
-  </Node>
-
-    <!-- <Node name="GantryCouch" >
-      <include href="scene_comps/gantry/gantry.scn" name="gantry" color="0.8549 0.8235 0.6431" dy="50" dz="20" scale=".85" />
-      <include href="scene_comps/gantry/turntable.scn" name="turntable" color="0.8549 0.8235 0.6431"   dy="50" dz="20" scale=".91" />
-      <include href="scene_comps/couch/couch_foot.scn" name="couch_foot" color="0.3 0.6 0.7" dy="50" dz="20" rx="90" rz="180"  scale=".91" />
-      <include href="scene_comps/couch/couch_latbase.scn" name="couch_latbase" color="magenta" dy="50" dz="20" rx="90" rz="180"  scale=".91" />
-      <include href="scene_comps/couch/couch_main.scn" name="couch_main" color="cyan" dy="50" dz="20" scale=".91" />
-      <include href="scene_comps/couch/couch_lnginner.scn" name="couch_lnginner" color="cyan" dy="50" dz="20" scale=".91" />
-      <include href="scene_comps/couch/couch_lngmid.scn" name="couch_mid" color="cyan" dy="50" dz="20"  scale=".91" />
-      <include href="scene_comps/couch/couch_top.scn" name="couch_top" color="cyan" dy="50" dz="20" scale=".91" />
+		<Node name="Patient-Robot-System">
+			<include href="scene_comps/patients/patient_rigid_whole.scn"
+					 translation="-300 25 -50" scale="250" rx="-90" ry="-90" />
+		</Node>
+		<Node name="BaseIABs">
+			<include name="SkullLeft" href="scene_comps/IABs/dome_assembly.scn"
+						 dx="20" dy="-80" dz="10" rx="-90" scale="20"/>
+			<include name="SkullRight" href="scene_comps/IABs/dome_assembly.scn"
+						 dx="20" dy="-80" dz="-110" rx="-90" scale="20"/>
+			<include name="NeckLeft" href="scene_comps/IABs/dome_assembly.scn"
+						 dx="-100" dy="-80" dz="10" rx="-90" scale="20"/>
+			<include name="NeckRight" href="scene_comps/IABs/dome_assembly.scn"
+						 dx="-100" dy="-80" dz="-90" rx="-90" scale="20"/>
+		</Node>
+		<Node name="SideIABs">
+		 <include name="ForeLeft" href="scene_comps/IABs/dome_assembly.scn"
+						 dx="20" dy="50" dz="80" rx="180" scale="20"/>
+		 <include name="ForeRight" href="scene_comps/IABs/dome_assembly.scn"
+						 dx="20" dy="50" dz="-180"  scale="20"/>
+		 <include name="ChinLeft" href="scene_comps/IABs/dome_assembly.scn"
+						 dx="-100" dy="40" dz="80" rx="180"  scale="20"/>
+		 <include name="ChinRight" href="scene_comps/IABs/dome_assembly.scn"
+						 dx="-100" dy="40" dz="-180"  scale="20"/>
+		</Node>
+		<!-- <Node name="FlexiHolders">
+      <include name="FlexiBase" href="scene_comps/IABs/flexi_base.scn"
+              dx="-20" dy="-60" dz="-60" rx="90" scale="80"/>
+      <include name="FlexiRight" href="scene_comps/IABs/flexi_hz.scn"
+              dx="-20" dy="30" dz="60" rz="90" scale="80"/>
+      <include name="FlexiLeft" href="scene_comps/IABs/flexi_hz.scn"
+              dx="-20" dy="30" dz="-180" rz="90" scale="80" />
     </Node> -->
-<!-- 
-    <Node name="HeadCouchSupport">
+
+		<Node name="GantryCouch" >
+	      <include href="scene_comps/gantry/gantry.scn" name="gantry" color="0.8549 0.8235 0.6431" dy="50" dz="20" scale=".85" />
+	      <include href="scene_comps/gantry/turntable.scn" name="turntable" color="0.8549 0.8235 0.6431"   dy="50" dz="20" scale=".91" />
+	      <include href="scene_comps/couch/couch_foot.scn" name="couch_foot" color="0.3 0.6 0.7" dy="50" dz="20" rx="90" rz="180"  scale=".91" />
+	      <include href="scene_comps/couch/couch_latbase.scn" name="couch_latbase" color="magenta" dy="50" dz="20" rx="90" rz="180"  scale=".91" />
+	      <include href="scene_comps/couch/couch_main.scn" name="couch_main" color="cyan" dy="50" dz="20" scale=".91" />
+	      <include href="scene_comps/couch/couch_lnginner.scn" name="couch_lnginner" color="cyan" dy="50" dz="20" scale=".91" />
+	      <include href="scene_comps/couch/couch_lngmid.scn" name="couch_mid" color="cyan" dy="50" dz="20"  scale=".91" />
+	      <include href="scene_comps/couch/couch_top.scn" name="couch_top" color="cyan" dy="50" dz="20" scale=".91" />
+    </Node>
+
+		<Node name="HeadCouchSupport">
       <include href="scene_comps/supports/headsupport.scn" name="head_support" color="0.3 0.6 0.7" dy="50" dz="20" rx="90" scale="1" />
       <include href="scene_comps/supports/couch_pad.scn" name="couch_pad" color="0.3 0.6 0.7" dy="50" dz="20" rx="90" scale="1" />
     </Node>
@@ -84,6 +75,5 @@
       <include href="scene_comps/supports/cushion.scn" name="Cushion-3" translation="0 -330 0"/>
       <include href="scene_comps/supports/cushion.scn" name="Cushion-4" translation="0 -440 0"/>
       <include href="scene_comps/supports/cushion.scn" name="Cushion-5" translation="0 -550 0"/>
-    </Node> -->
-
+		</Node>
 </Node>

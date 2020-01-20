@@ -13,8 +13,9 @@
 	<TetrahedronMooneyRivlinFEMForceField  template="Vec3d" ParameterSet="1000 100"
 		 	materialName="MooneyRivlinIncompressible"  youngModulus="10000" poissonRatio="0.45" />
 	<Node name="DomeRingVisu" tags="Visual" gravity="0 -9.81 0">
-    <OglModel name="DomeRingVisual"  src="@../vtkDomeRingLoader"
-			dx="0" dy="0" dz="0" rx="0" ry="0" rz="0" scale="1"/>
+		<MeshSTLLoader name="domeRingSTLLoader" filename="../../../../ros/srs_traj_opt/patient_description/meshes/dome/dome_ring.stl" />
+    <OglModel name="DomeRingVisual"  src="@domeRingSTLLoader"
+			dx="0" dy="0" dz="0" rx="0" ry="0" rz="0" color="" scale="1"/>
 	  <BarycentricMapping name="visual mapping" input="@../dofs" output="@DomeRingVisual" />
 	</Node>
 	<Node 	 name="DomeRingCollis"  gravity="0 -9.81 0" >
