@@ -54,13 +54,12 @@ message(STATUS "CMAKE_MODULE_PATH: ${CMAKE_MODULE_PATH}")
 set(CMAKE_INSTALL_PREFIX "${SOFA_ROOT}/install;${SOFA_ROOT}/cmake")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib")
 
-#find_package(Qt5 COMPONENTS Core Widgets REQUIRED)
 find_package(SofaFramework REQUIRED PATHS "${CONFIG_PATHS}")
 find_package(SofaBase REQUIRED PATHS "${CONFIG_PATHS}")
 find_package(SofaSimulation REQUIRED PATHS "${CONFIG_PATHS}")
 find_package(SofaGui REQUIRED PATHS "${CONFIG_PATHS}")
-find_package(SceneCreator REQUIRED PATHS "${CONFIG_PATHS}")
-find_package(SofaMiscCollision REQUIRED PATHS "${CONFIG_PATHS}")
+# find_package(SceneCreator REQUIRED PATHS "${CONFIG_PATHS}")
+# find_package(SofaMiscCollision REQUIRED PATHS "${CONFIG_PATHS}")
 # find_package(SofaPython REQUIRED PATHS "${CONFIG_PATHS}") # why are we using this?
 find_package(Qt5 REQUIRED COMPONENTS Core Charts)
 

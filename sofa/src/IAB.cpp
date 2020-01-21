@@ -222,8 +222,8 @@ sofa::simulation::graph::init();
     if (int err = GUIManager::Init(argv[0],gui.c_str()))
         return err;
 
-      // if (fileName.empty())
       std::string fileName = DataRepository.getFile(SetDirectory::GetCurrentDir() + "/../scenes/" + scenefile);
+      msg_info("IAB") << "Using scenefile " << scenefile ;
 
       if (int err=GUIManager::createGUI(nullptr))
           return err;

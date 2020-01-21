@@ -45,11 +45,11 @@
 						 dx="-100" dy="40" dz="-180"  scale="20"/>
 		</Node>
 		<Node name="FlexiHolders">
-      <include name="FlexiBase" href="scene_comps/IABs/flexi_base.scn"
+      <include name="FlexiBase" href="scene_comps/supports/flexi_base.scn"
               dx="-20" dy="-60" dz="-60" rx="90" scale="80"/>
-      <include name="FlexiRight" href="scene_comps/IABs/flexi_hz.scn"
+      <include name="FlexiRight" href="scene_comps/supports/flexi_hz.scn"
               dx="-20" dy="30" dz="60" rz="90" scale="80"/>
-      <include name="FlexiLeft" href="scene_comps/IABs/flexi_hz.scn"
+      <include name="FlexiLeft" href="scene_comps/supports/flexi_hz.scn"
               dx="-20" dy="30" dz="-180" rz="90" scale="80" />
     </Node>
 

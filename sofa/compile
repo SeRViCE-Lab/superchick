@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/bin/zsh
 # see https://stackoverflow.com/questions/192249/how-do-i-parse-command-line-arguments-in-bash
 POSITIONAL=()
 while [[ $# -gt 0 ]]
@@ -15,12 +15,12 @@ case $key in
   shift # past argument
   shift # past value
   ;;
-  -l|--launch)  # launch iab executable?
+  -l|--launch)  # launch srs executable?
   launch="$2"
   shift # past arg
   shift # past value
   ;;
-  -s|--soro)  # launch iab executable?
+  -s|--soro)  # launch soro single executable?
   soro="$2"
   shift # past arg
   shift # past value
@@ -82,10 +82,9 @@ fi
    # echo "Runing already build executable"
 
 if [ $(is_yes $launch) ]; then
-  ./IAB_Launcher "-g" "true"
+  `pwd`/IAB_Launcher -g true
 elif [[ $(is_yes $soro) ]]; then
-  #echo -e "Run SingleIAB with GUI? "
-  ./SingleIAB "-g" "true"
+  `pwd`/SingleIAB -g "true"
 else
   exit 0
 fi

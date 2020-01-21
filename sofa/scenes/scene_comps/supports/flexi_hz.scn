@@ -10,6 +10,6 @@
 	<Node 	 name="FlexiHorzCollis"  >
 	  <MeshTopology name="meshTopology"  />
 	  <MechanicalObject template="Vec3d" name="flexi-hz-collis-states"  src="@../flexi_horz_loader" />
-		<RigidMapping input="@.." output="@FlexiHorzCollis"/>
+		<!-- <RigidMapping input="@.." output="@FlexiHorzCollis"/> -->
 	</Node>
 </Node>
