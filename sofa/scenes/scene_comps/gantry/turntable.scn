@@ -17,6 +17,6 @@
   <Node 	 name="TurnTableCollis"  >
     <MeshTopology name="meshTopology"   />
     <MechanicalObject template="Vec3d" name="turntable-collis-states"  src="@../turntable-loader" restScale="1" />
-    <!-- <RigidMapping input="@.." output="@turntable-collis-states"/> -->
+    <RigidMapping input="@.." output="@turntable-collis-states"/>
   </Node>
 </Node>

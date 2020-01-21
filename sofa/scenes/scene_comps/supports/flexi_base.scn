@@ -10,6 +10,6 @@
 	<Node 	 name="FlexiBaseCollis">
 	  <MeshTopology name="meshTopology"  />
 	  <MechanicalObject template="Vec3d" name="flexi-base-collis-states"  src="@../flexi_base_loader" />
-		<!-- <RigidMapping input="@.." output="@FlexiBaseCollis"/> -->
+		<RigidMapping input="@.." output="@FlexiBaseCollis"/>
 	</Node>
 </Node>

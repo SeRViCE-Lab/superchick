@@ -15,6 +15,6 @@
   <Node 	 name="GantryCollis"  >
     <MeshTopology name="meshTopology"   />
     <MechanicalObject template="Vec3d" name="gantry-collis-states"  src="@../gantry-loader"  restScale="1" />
-    <!-- <RigidMapping input="@.." output="@gantry-collis-states"/> -->
+    <RigidMapping input="@.." output="@gantry-collis-states"/>
   </Node>
 </Node>
