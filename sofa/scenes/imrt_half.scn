@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<Node name="DomeNode" dt="0.005" showBoundingTree="0" gravity="0 -9 0">
+<Node name="DomeNode" dt="0.005" showBoundingTree="0" gravity="0 -9.81 0">
 	<APIVersion level="19.06" />
 	<!--  Aesthetics -->
 	<BackgroundSetting color='0 0.168627 0.211765'/>
@@ -19,6 +19,7 @@
 	<DefaultCollisionGroupManager />
 	<!--  Presumably handles Lagrange Constraint multipliers https://www.sofa-framework.org/community/doc/using-sofa/components/animationloop/multistepanimationloop/-->
 	<DefaultAnimationLoop />
+	<GenericConstraintSolver maxIterations="10000" tolerance="1e-3"/>
 
 		<Node name="Patient-Robot-System">
 			<include href="scene_comps/patients/patient_rigid_whole.scn"

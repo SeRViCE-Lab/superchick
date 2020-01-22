@@ -10,9 +10,7 @@
 					dx="0" dy="0" dz="0"  rx="0" ry="0" rz="0" scale="1"/>
 	</Node>
 	<Node 	 name="DomeCoverCollis"  >
-		<MeshObjLoader name="dome-cover-collis-loader"  filename="../../../../ros/srs_traj_opt/patient_description/meshes/dome/dome_cover.obj"  scale="1"/>
-		<MeshTopology name="meshTopology"  />
-		<MechanicalObject template="Vec3d" name="dome-cover-collis-states"  />
+		<MechanicalObject template="Vec3d" name="dome-cover-collis-states" src="@../dome_cover_loader" />
 	</Node>
 </Node>
 
