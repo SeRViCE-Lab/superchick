@@ -5,7 +5,7 @@ from os.path import join, expanduser
 path = os.path.join(expanduser('~'), 'catkin_ws/src/superchicko/ros/srs_traj_opt/patient_description/meshes/dome/')
 # path = '/root/superchicko/ros/srs_traj_opt/patient_description/meshes/dome/'
 print(path)
-tetramesh = "dome_cover.stl"
+tetramesh = "dome.stl"
 
 
 def createScene(rootNode):

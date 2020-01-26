@@ -283,9 +283,8 @@ int main(int argc, char** argv)
       }
 
       // read a few dome ring pos info
-      msg_info("dome_ring size") << dr_pos_vecs.size() << ", " << dr_vel_vecs.size()
-            << ", " << dr_fpos_vecs.size() << ", " << dr_fvel_vecs.size() ;
-      msg_info("dome_ring size") << "\n\n dome rings now \\" ;
+      msg_info("dome_head size") << dh_pos_vecs.size() << ", dome_ring size" << dr_pos_vecs.size() ;
+      // msg_info("dome_ring size") << "\n\n dome rings now \\" ;
       for(auto i = 0; i < dr_pos_vecs.size(); ++i)
       {
         msg_info("dr_pos: ") << i << ": " << dr_pos_vecs[i] << " | vel: " << dr_vel_vecs[i] ;

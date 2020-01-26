@@ -14,9 +14,8 @@
   </Node>
 
   <Node name="PatientCollis"  >
-    <MeshTopology name="meshTopology"  />
-    <MechanicalObject template="Vec3d" name="patient-collis-states" src="@../patient_loader"
-			 position="0 0 0"  velocity="0 0 0"  force="0 0 0"  externalForce="0 0 0"  restScale="1" />
-		<RigidMapping input="@.." output="@PatientCollis"/>
+    <MeshObjLoader name="patient-collis-loader" filename="../../../../ros/srs_traj_opt/patient_description/meshes/patient.obj"/>
+    <MechanicalObject template="Vec3d" name="patient-collis-states" position="0 0 0"  velocity="0 0 0"  force="0 0 0"  externalForce="0 0 0"  restScale="1" />
+		<!-- <RigidMapping input="@.." output="@PatientCollis"/> -->
   </Node>
 </Node>

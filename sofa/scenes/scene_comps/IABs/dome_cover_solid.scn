@@ -9,9 +9,7 @@
 		<RigidMapping input="@.." output="@DomeCoverVisual"/>
 	</Node>
 	<Node 	 name="DomeCoverCollis"  >
-		<MeshTopology name="meshTopology"  />
-		<MechanicalObject template="Vec3d" name="dome-cover-collis-states"  src="@../dome_cover_loader"/>
-		<RigidMapping input="@.." output="@DomeCoverCollis"/>
+		<MechanicalObject template="Vec3d" name="dome-cover-collis-states" src="@../dome_cover_loader" />
 	</Node>
 </Node>
 
