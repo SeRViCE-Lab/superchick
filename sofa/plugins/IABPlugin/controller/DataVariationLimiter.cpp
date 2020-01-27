@@ -16,7 +16,7 @@
 * along with this library; if not, write to the Free Software Foundation,     *
 * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA.          *
 *******************************************************************************
-*                           Plugin IAB    v1.0                         *
+*                           Plugin SoftRobots    v1.0                         *
 *				                                              *
 * This plugin is also distributed under the GNU LGPL (Lesser General          *
 * Public License) license with the same conditions than SOFA.                 *
@@ -27,32 +27,48 @@
 * Contact information: https://project.inria.fr/softrobot/contact/            *
 *                                                                             *
 ******************************************************************************/
-#include "IABPlugin/behavior/IABConstraint.inl"
+
+#define SOFA_COMPONENT_ENGINE_DATAVARIATIONLIMITER_CPP
+
+#include "DataVariationLimiter.inl"
+#include <sofa/core/ObjectFactory.h>
+#include <sofa/defaulttype/VecTypes.h>
 
 namespace sofa
 {
 
-namespace core
+namespace component
 {
 
-namespace behavior
+namespace controller
 {
 
 using namespace sofa::defaulttype;
+using namespace sofa::helper;
+using core::RegisterObject;
+
+int DataVariationLimiterClass = RegisterObject("This component interpolates between two consecutive inputs when a jump is detected.")
+        .add< DataVariationLimiter<Vec3Types::Coord> >(true)
+        .add< DataVariationLimiter<Vec2Types::Coord> >()
+        .add< DataVariationLimiter<Vec1Types::Coord> >()
+
+        .add< DataVariationLimiter<Vec1i> >()
+        .add< DataVariationLimiter<Vec2i> >()
+        .add< DataVariationLimiter<Vec3i> >()
+        ;
+
+template class SOFA_SOFTROBOTS_API DataVariationLimiter<Vec3Types::Coord>;
+template class SOFA_SOFTROBOTS_API DataVariationLimiter<Vec2Types::Coord>;
+template class SOFA_SOFTROBOTS_API DataVariationLimiter<Vec1Types::Coord>;
 
 
-// Force template specialization for the most common sofa float related type.
-// This goes with the extern template declaration in the .h. Declaring extern template
-// avoid the code generation of the template for each compilation unit.
-// see: http://www.stroustrup.com/C++11FAQ.html#extern-templates
-template class SOFA_IABPlugin_API IABConstraint<Vec3Types>;
-// template class SOFA_IABPlugin_API IABConstraint<Vec2Types>;
-// template class SOFA_IABPlugin_API IABConstraint<Vec1Types>;
-// template class SOFA_IABPlugin_API IABConstraint<Rigid3Types>;
+template class SOFA_SOFTROBOTS_API DataVariationLimiter<Vec1i>;
+template class SOFA_SOFTROBOTS_API DataVariationLimiter<Vec2i>;
+template class SOFA_SOFTROBOTS_API DataVariationLimiter<Vec3i>;
 
+} // namespace constraintset
 
-} // namespace behavior
-
-} // namespace core
+} // namespace component
 
 } // namespace sofa
+

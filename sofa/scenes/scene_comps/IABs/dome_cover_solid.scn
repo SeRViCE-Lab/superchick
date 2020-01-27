@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <Node name="DomeCoverNode">
 	<MeshSTLLoader name="dome_cover_loader" filename="../../../../ros/srs_traj_opt/patient_description/meshes/dome/dome_cover.stl"/>
-	<MechanicalObject name="dofs" src="@dome_cover_loader" template="Rigid3d"
-		 showIndices='false' showIndicesScale='4e-5' rx='0' dz='0'/>
+	<!-- <MechanicalObject name="dofs" src="@dome_cover_loader" template="Rigid3d"
+		 showIndices='false' showIndicesScale='4e-5' rx='0' dz='0'/> -->
 	<Node name="DomeCoverVisu" >
 		<OglModel name="DomeCoverVisual"  src="@../dome_cover_loader"
 					dx="0" dy="0" dz="0"  rx="0" ry="0" rz="0" scale="1"/>
-		<RigidMapping input="@.." output="@DomeCoverVisual"/>
+		<!-- <RigidMapping input="@.." output="@DomeCoverVisual"/> -->
 	</Node>
 	<Node 	 name="DomeCoverCollis"  >
 		<MechanicalObject template="Vec3d" name="dome-cover-collis-states" src="@../dome_cover_loader" />

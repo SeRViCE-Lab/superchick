@@ -13,23 +13,35 @@
 	<DiagonalMass  name="computed using mass density" massDensity="1" />
 	<TetrahedronMooneyRivlinFEMForceField  template="Vec3d" ParameterSet="1000 100"
 		 	materialName="MooneyRivlinIncompressible"  youngModulus="10000" poissonRatio="0.45" />
+			<!-- this will serve as the cavity -->
 	<MeshSTLLoader name="domeHeadSTLLoader" filename="../../../../ros/srs_traj_opt/patient_description/meshes/dome/dome.stl" />
 	<Node name="DomeHeadVisu" tags="Visual" gravity="0 -9.81 0">
     <OglModel name="DomeHeadVisual"  src="@../domeHeadSTLLoader"
 			dx="0" dy="0" dz="0" rx="0" ry="0" rz="0" color="" scale="1"/>
+		<TriangleSetTopologyContainer name="triContainer" />
+		<TriangleSetTopologyModifier name="triMod" />
+		<TriangleSetTopologyAlgorithms template="Vec3d" />
+		<TriangleSetGeometryAlgorithms template="Vec3d" />
+		<Tetra2TriangleTopologicalMapping name="Tetra2TriMap" template="Vec3d"
+				input="@../TetraTopologyContainer" output="@triContainer" />
 	  <BarycentricMapping name="visual mapping" input="@../dofs" output="@DomeHeadVisual" />
 	</Node>
+	<!-- dome head cavity -->
+	<Node name="DomeCavity" tags="Visual" gravity="0 -9.81 0">
+		<Mesh src="@../domeHeadSTLLoader" name="cavityLoader" />
+		<!-- <MechanicalObject name="cavityLoader" filename="../../../../ros/srs_traj_opt/patient_description/meshes/dome/dome_cavity.stl" template="Vec3d"
+			 showIndices='false' showIndicesScale='4e-5' rx='0' dz='0'/> -->
+ 		<MechanicalObject name="cavityLoaderMech" src="@cavityLoader" template="Vec3d"
+ 			 showIndices='false' showIndicesScale='4e-5' rx='0' dz='0' scale="0.5"/>
+		<SurfacePressureConstraint name="surfaceConstraint" triangles="@cavityLoader.triangles"
+				value=".02" valueType="pressure" />
+		<BarycentricMapping name="DomeCavityBaryMapping"  input="@../dofs" output="@DomeCavity" mapForces="False" mapMasses="False" />
+	</Node>
+
 	<Node name="DomeHeadCollis"  gravity="0 -9.81 0" >
 	  <MechanicalObject template="Vec3d" name="dome-collis-states"  src="@../domeHeadVTKLoader"
 			dx="0" dy="0" dz="0" rx="0" ry="0" rz="0" scale="1" />
 		<BarycentricMapping name="dome head collision mapping" input="@../dofs" output="@DomeHeadCollis" />
 	</Node>
 
-	<!-- May be a good idea to write our own pressure constraint -->
-	<!-- <Node name="DomeHeadCavityConstraint"  gravity="0 -9.81 0" >
-		<MechanicalObject name="cavity" template="Vec3d" src="@../domeHeadVTKLoader"/>
-		<Mesh name="DomeHeadCavityMesh" src="@../domeHeadVTKLoader"/>
-		<SurfacePressureConstraint name="SurfacePressureConstraint" template='Vec3d' value="0.0001" drawPressure='0' drawScale='0.0002' valueType="pressure"/>
-		<BarycentricMapping name="mapping" input="@../dofs" output="@DomeHeadCavityConstraint" mapForces="false" mapMasses="false" />
-	</Node> -->
 </Node>

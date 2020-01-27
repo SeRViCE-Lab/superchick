@@ -9,12 +9,12 @@
    <Node name="GantryVisu" >
       <!-- Note the 180 deg rotation about x here due to Erik's set up inconsistency with clinical viability -->
        <OglModel name="gantryVisual" src="@../gantry-loader" dy="0" dz="0" rotation="180 0 0" color="" />
-       <RigidMapping input="@.." output="@gantryVisual"/>
+       <!-- <RigidMapping input="@.." output="@gantryVisual"/> -->
    </Node>
 
   <Node 	 name="GantryCollis"  >
     <MeshTopology name="meshTopology"   />
     <MechanicalObject template="Vec3d" name="gantry-collis-states"  src="@../gantry-loader"  restScale="1" />
-    <RigidMapping input="@.." output="@gantry-collis-states"/>
+    <!-- <RigidMapping input="@.." output="@gantry-collis-states"/> -->
   </Node>
 </Node>

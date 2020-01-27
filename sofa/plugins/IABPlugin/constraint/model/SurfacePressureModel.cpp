@@ -1,5 +1,5 @@
 /******************************************************************************
-*       SOFA, Simulation Open-Framework Architecture                          *
+*               SOFA, Simulation Open-Framework Architecture                  *
 *                (c) 2006-2018 INRIA, USTL, UJF, CNRS, MGH                    *
 *                                                                             *
 * This library is free software; you can redistribute it and/or modify it     *
@@ -16,8 +16,8 @@
 * along with this library; if not, write to the Free Software Foundation,     *
 * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA.          *
 *******************************************************************************
-*                           Plugin IAB    v1.0                         *
-*				                                              *
+*                           Plugin SoftRobots v1.0                            *
+*                                                                             *
 * This plugin is also distributed under the GNU LGPL (Lesser General          *
 * Public License) license with the same conditions than SOFA.                 *
 *                                                                             *
@@ -27,32 +27,31 @@
 * Contact information: https://project.inria.fr/softrobot/contact/            *
 *                                                                             *
 ******************************************************************************/
-#include "IABPlugin/behavior/IABConstraint.inl"
+
+#include <sofa/defaulttype/Vec3Types.h>
+
+#include "SurfacePressureModel.inl"
 
 namespace sofa
 {
 
-namespace core
+namespace component
 {
 
-namespace behavior
+namespace constraintset
 {
 
 using namespace sofa::defaulttype;
 
-
-// Force template specialization for the most common sofa float related type.
+// Force template specialization for the most common sofa type.
 // This goes with the extern template declaration in the .h. Declaring extern template
 // avoid the code generation of the template for each compilation unit.
 // see: http://www.stroustrup.com/C++11FAQ.html#extern-templates
-template class SOFA_IABPlugin_API IABConstraint<Vec3Types>;
-// template class SOFA_IABPlugin_API IABConstraint<Vec2Types>;
-// template class SOFA_IABPlugin_API IABConstraint<Vec1Types>;
-// template class SOFA_IABPlugin_API IABConstraint<Rigid3Types>;
+template class SOFA_IABPlugin_API SurfacePressureModel<Vec3Types>;
 
 
-} // namespace behavior
+} // namespace constraintset
 
-} // namespace core
+} // namespace component
 
 } // namespace sofa

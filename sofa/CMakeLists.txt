@@ -80,6 +80,9 @@ set(SOURCE_FILES
 		"${PLUGINS_DIR}/IABPlugin/ForceFields/src/IsochoricForceField.cpp"
 		"${PLUGINS_DIR}/IABPlugin/behavior/IABConstraint.cpp"
 		"${PLUGINS_DIR}/IABPlugin/behavior/IABBaseConstraint.cpp"
+		# Surface Pressure Constraints
+		"${PLUGINS_DIR}/IABPlugin/constraint/SurfacePressureConstraint.cpp"
+		"${PLUGINS_DIR}/IABPlugin/constraint/model/SurfacePressureModel.cpp"
 		)
 
 set(TETRA_SRC_FILES

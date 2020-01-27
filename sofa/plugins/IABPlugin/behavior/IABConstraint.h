@@ -157,9 +157,9 @@ private:
 // see: http://www.stroustrup.com/C++11FAQ.html#extern-templates
 
 extern template class SOFA_IABPlugin_API IABConstraint<defaulttype::Vec3Types>;
-extern template class SOFA_IABPlugin_API IABConstraint<defaulttype::Vec2Types>;
-extern template class SOFA_IABPlugin_API IABConstraint<defaulttype::Vec1Types>;
-extern template class SOFA_IABPlugin_API IABConstraint<defaulttype::Rigid3Types>;
+// extern template class SOFA_IABPlugin_API IABConstraint<defaulttype::Vec2Types>;
+// extern template class SOFA_IABPlugin_API IABConstraint<defaulttype::Vec1Types>;
+// extern template class SOFA_IABPlugin_API IABConstraint<defaulttype::Rigid3Types>;
 
 
 

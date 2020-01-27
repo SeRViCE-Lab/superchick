@@ -7,16 +7,16 @@
   <Mesh name="turntable-mesh" src="@turntable-loader"/>
   <MechanicalObject name="turntable-states" src="@turntable-loader" template="Rigid3d" />
    <UniformMass totalMass="30" />
-   <UncoupledConstraintCorrection template="Rigid3d" name="uncoupledConstraintCorrectionHead" />
+   <!-- <UncoupledConstraintCorrection template="Rigid3d" name="uncoupledConstraintCorrectionHead" /> -->
 
    <Node name="TurnTableVisu" >
        <OglModel name="turntableVisual" src="@../turntable-loader" translation="0 0 0" rotation="0 0 0" color="grey" />
-       <RigidMapping input="@.." output="@turntableVisual"/>
+       <!-- <RigidMapping input="@.." output="@turntableVisual"/> -->
    </Node>
 
   <Node 	 name="TurnTableCollis"  >
     <MeshTopology name="meshTopology"   />
     <MechanicalObject template="Vec3d" name="turntable-collis-states"  src="@../turntable-loader" restScale="1" />
-    <RigidMapping input="@.." output="@turntable-collis-states"/>
+    <!-- <RigidMapping input="@.." output="@turntable-collis-states"/> -->
   </Node>
 </Node>
