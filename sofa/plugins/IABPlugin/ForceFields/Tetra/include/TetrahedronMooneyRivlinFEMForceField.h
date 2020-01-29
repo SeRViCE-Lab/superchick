@@ -18,6 +18,7 @@
 */
 
 #include <IABPlugin/ForceFields/include/NonlinearElasticMaterial.h>
+#include <IABPlugin/ForceFields/include/initIABPlugin.h>
 #include <sofa/core/behavior/ForceField.h>
 #include <SofaBaseMechanics/MechanicalObject.h>
 #include <sofa/defaulttype/Vec.h>
@@ -30,8 +31,9 @@
 
 // simple macro for mathematical ops
 //#define power(SQ, X) double SQ(X) {return std::pow(X, 2.0f); }
-inline float SQ(float x){ return std::pow(x, 2.0f); }
+// inline float SQ(float x){ return std::pow(x, 2.0f); }
 inline double SQ(double x){ return std::pow(x, 2.0); }
+// inline Real SQ(Real x){ return std::pow(x, 2.0); }
 
 
 
@@ -59,7 +61,8 @@ class TetrahedronMooneyRivlinFEMForceField : public core::behavior::ForceField<D
     SOFA_CLASS(SOFA_TEMPLATE(TetrahedronMooneyRivlinFEMForceField, DataTypes), SOFA_TEMPLATE(core::behavior::ForceField, DataTypes));
     using Inherited = core::behavior::ForceField<DataTypes>;
     using Real =  typename DataTypes::Real;
-    using Coord = typename DataTypes::Coord;
+    typedef typename DataTypes::Coord Coord; // basically Vec3Types as defined in .cpp file
+    // using Coord = typename DataTypes::Coord; // typename
     using Deriv = typename DataTypes::Deriv;
 
     using VecCoord = typename DataTypes::VecCoord;
@@ -184,10 +187,7 @@ class TetrahedronMooneyRivlinFEMForceField : public core::behavior::ForceField<D
           helper::vector<SphericalPolarInfo> m_sPolarVecEul; // Eulerian Coordinates
           // volume
           Real m_restVolume, m_volScale, m_volume; // do we need this
-          /// Output stream
-          inline friend ostream& operator<< ( ostream& os, const TetrahedronRestInformation& /*eri*/ ) {  return os;  }
-          /// Input stream
-          inline friend istream& operator>> ( istream& in, TetrahedronRestInformation& /*eri*/ ) { return in; }
+          // Coord m_fiberDirection;
           // Mooney-Rivlin Constants
           Real m_C1, m_C2;
           //
@@ -199,6 +199,11 @@ class TetrahedronMooneyRivlinFEMForceField : public core::behavior::ForceField<D
           // MatrixSym m_deformationGradient;
           Real J;
           Real m_strainEnergy;
+
+          /// Output stream
+          inline friend ostream& operator<< ( ostream& os, const TetrahedronRestInformation& /*eri*/ ) {  return os;  }
+          /// Input stream
+          inline friend istream& operator>> ( istream& in, TetrahedronRestInformation& /*eri*/ ) { return in; }
 
           TetrahedronRestInformation() {}
       };
@@ -218,7 +223,7 @@ class TetrahedronMooneyRivlinFEMForceField : public core::behavior::ForceField<D
         EdgeInformation() {}
     };
 
-    class SOFA_TetraMooneyRivlinFEMForceFieldPlugin_API TetrahedronHandler: public TopologyDataHandler<Tetrahedron,sofa::helper::vector<TetrahedronRestInformation> >
+    class SOFA_IABPlugin_API TetrahedronHandler: public TopologyDataHandler<Tetrahedron,sofa::helper::vector<TetrahedronRestInformation> >
     // class  TetrahedronHandler: public TopologyDataHandler<Tetrahedron,sofa::helper::vector<TetrahedronRestInformation> >
     {
       public:
@@ -270,15 +275,15 @@ class TetrahedronMooneyRivlinFEMForceField : public core::behavior::ForceField<D
     void updateTangentMatrix();
 };
 
-using sofa::defaulttype::Vec3dTypes;
-using sofa::defaulttype::Vec3fTypes;
+using defaulttype::Vec3dTypes;
 
 #if  !defined(SOFA_COMPONENT_FORCEFIELD_TETRAHEDRONMOONEYRIVLINFEMFORCEFIELD_CPP)
-extern template class SOFA_BOUNDARY_CONDITION_API TetrahedronMooneyRivlinFEMForceField<sofa::defaulttype::Vec3Types>;
-extern template class SOFA_BOUNDARY_CONDITION_API TetrahedronMooneyRivlinFEMForceField<sofa::defaulttype::Vec2Types>;
-extern template class SOFA_BOUNDARY_CONDITION_API TetrahedronMooneyRivlinFEMForceField<sofa::defaulttype::Vec1Types>;
-extern template class SOFA_BOUNDARY_CONDITION_API TetrahedronMooneyRivlinFEMForceField<sofa::defaulttype::Vec6Types>;
-extern template class SOFA_TetrahedronMooneyRivlinFEMForceFieldPlugin_API TetrahedronMooneyRivlinFEMForceField<sofa::defaulttype::Vec3Types>;
+using sofa::defaulttype::Vec3Types;
+extern template class SOFA_BOUNDARY_CONDITION_API TetrahedronMooneyRivlinFEMForceField<Vec3Types>;
+// extern template class SOFA_BOUNDARY_CONDITION_API TetrahedronMooneyRivlinFEMForceField<sofa::defaulttype::Vec2Types>;
+// extern template class SOFA_BOUNDARY_CONDITION_API TetrahedronMooneyRivlinFEMForceField<sofa::defaulttype::Vec1Types>;
+// extern template class SOFA_BOUNDARY_CONDITION_API TetrahedronMooneyRivlinFEMForceField<sofa::defaulttype::Vec6Types>;
+extern template class SOFA_IABPlugin_API TetrahedronMooneyRivlinFEMForceField<Vec3Types>;
 #endif //
 
 } // namespace forcefield

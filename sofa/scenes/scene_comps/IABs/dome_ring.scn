@@ -13,6 +13,8 @@
 	<DiagonalMass  name="computed using mass domeRing_density" massDensity="1" />
 	<TetrahedronMooneyRivlinFEMForceField  template="Vec3d" ParameterSet="1000 100"
 		 	materialName="MooneyRivlinIncompressible"  youngModulus="10000" poissonRatio="0.45" />
+	<!-- <TetrahedronHyperElasticityFEMForceField  template="Vec3d" ParameterSet="1000 100 10"
+		 	materialName="MooneyRivlin"  /> -->
 	<MeshSTLLoader name="domeRingSTLLoader" filename="../../../../ros/srs_traj_opt/patient_description/meshes/dome/dome_ring.stl" />
 	<Node name="DomeRingVisu" tags="Visual" gravity="0 -9.81 0">
     <OglModel name="DomeRingVisual"  src="@../domeRingSTLLoader"
@@ -25,13 +27,19 @@
 		<Mesh name="DomeRingMesh"  src="@../vtkDomeRingLoader"/>
 		<BarycentricMapping name="collis mapping" input="@../dofs" output="@DomeRingCollis" />
 	</Node>
-	<!-- May be a good idea to write our own pressure constraint -->
-	<!-- <Node name="DomeRingCavityConstraint"  gravity="0 -9.81 0" >
-		<MechanicalObject name="cavity" template="Vec3d" src="@../vtkDomeRingLoader"/>
-		<Mesh name="DomeRingCavityMesh" src="@../vtkDomeRingLoader"/>
-		<SurfacePressureConstraint name="SurfacePressureConstraint" template='Vec3d' value="0.0001" drawPressure='0' drawScale='0.0002' valueType="pressure"/>
-		<BarycentricMapping name="mapping" input="@../dofs" output="@DomeRingCavityConstraint" mapForces="false" mapMasses="false" />
-	</Node> -->
+
+	<!-- dome head cavity -->
+	<Node name="DomeRingCavity" tags="Visual" gravity="0 -9.81 0">
+		<Mesh src="@../domeRingSTLLoader" name="domeRingCavityLoader" />
+		<!-- <MechanicalObject name="domeRingCavityLoader" filename="../../../../ros/srs_traj_opt/patient_description/meshes/dome/dome_cavity.stl" template="Vec3d"
+			 showIndices='false' showIndicesScale='4e-5' rx='0' dz='0'/> -->
+ 		<MechanicalObject name="domeRingCavityLoaderMech" src="@domeRingCavityLoader" template="Vec3d"
+ 			 showIndices='false' showIndicesScale='4e-5' rx='0' dz='0' />
+		<SurfacePressureConstraint name="surfaceConstraint" triangles="@domeRingCavityLoader.triangles"
+				value=".02" valueType="pressure" />
+		<BarycentricMapping name="DomeRingCavityBaryMapping"  input="@../dofs" output="@DomeRingCavity" mapForces="False" mapMasses="False" />
+	</Node>
+
 </Node>
 
 <!-- color="0.8549 0.8235 0.6431" -->

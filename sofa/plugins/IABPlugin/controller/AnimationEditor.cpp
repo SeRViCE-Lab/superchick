@@ -120,7 +120,6 @@ int AnimationEditorClass = RegisterObject("Build an animation from key points mo
         ;
 
 template class SOFA_IABPlugin_API AnimationEditor<Vec3Types>;
-template class SOFA_IABPlugin_API AnimationEditor<Rigid3Types>;
 
 
 

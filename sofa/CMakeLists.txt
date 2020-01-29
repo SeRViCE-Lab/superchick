@@ -83,6 +83,8 @@ set(SOURCE_FILES
 		# Surface Pressure Constraints
 		"${PLUGINS_DIR}/IABPlugin/constraint/SurfacePressureConstraint.cpp"
 		"${PLUGINS_DIR}/IABPlugin/constraint/model/SurfacePressureModel.cpp"
+		# Animations Controller
+		"${PLUGINS_DIR}/IABPlugin/controller/AnimationEditor.cpp"
 		)
 
 set(TETRA_SRC_FILES
@@ -118,7 +120,7 @@ target_link_libraries("${PROJECT_NAME}_Launcher" ${SOFA_LIBS})
 target_link_libraries("${PROJECT_NAME}_Launcher" ${SOFA_LIBS})
 
 add_executable(SingleIAB src/SingleIAB.cpp)
-target_link_libraries(SingleIAB ${SOFA_LIBS} SofaMiscFem)
+target_link_libraries(SingleIAB ${SOFA_LIBS} SofaMiscFem ${PROJECT_NAME})
 
 
 install(TARGETS ${PROJECT_NAME} IABTetra

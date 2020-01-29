@@ -2,10 +2,10 @@
 <!-- Flexi width // skull to chin -->
 <Node name="FlexiHorzNode">
 	<MeshSTLLoader name="flexi_horz_loader" filename="../../../../ros/srs_traj_opt/patient_description/meshes/flexi/flexi-hz.stl"/>
-	<!-- <MechanicalObject name="flexi-hz-states" src="@flexi_horz_loader" template="Rigid3d" /> -->
+	<MechanicalObject name="flexi-hz-states" src="@flexi_horz_loader" template="Vec3d" />
   <Node name="FlexiHorzVisu" >
     <OglModel name="FlexiHorzVisual"  src="@../flexi_horz_loader" translation="0 0 0" rotation="0 0 0" dx="0" dy="0" dz="0" rx="0" ry="0" rz="0" color="0.8549 0.8235 0.6431"  scale="1"/>
-		<!-- <RigidMapping input="@.." output="@FlexiHorzVisual"/> -->
+		<!-- <RigidMapping input="@../flexi-hz-states" output="@FlexiHorzVisual"/> -->
   </Node>
 	<Node 	 name="FlexiHorzCollis"  >
 	  <MeshTopology name="meshTopology"  />

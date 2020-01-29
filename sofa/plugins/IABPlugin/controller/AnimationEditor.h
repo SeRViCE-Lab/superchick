@@ -168,7 +168,6 @@ protected:
 using defaulttype::Vec3Types;
 extern template class SOFA_IABPlugin_API AnimationEditor<Vec3Types>;
 
-
 }   //namespace _animationeditor_
 
 using _animationeditor_::AnimationEditor;

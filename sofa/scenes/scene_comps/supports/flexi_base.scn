@@ -1,11 +1,13 @@
 <?xml version="1.0"?>
 <!-- Flexi width // skull to chin -->
 <Node name="FlexiBaseNode">
+	<EulerImplicitSolver name="cg_odesolver" printLog="false" />
+	<CGLinearSolver iterations="25" name="linear solver" tolerance="1.0e-9" threshold="1.0e-9" />
 	<MeshSTLLoader name="flexi_base_loader" filename="../../../../ros/srs_traj_opt/patient_description/meshes/flexi/flexi-base.stl"/>
-	<MechanicalObject name="flexi-base-states" src="@flexi_base_loader" template="Rigid3d" />
+	<MechanicalObject name="flexi-base-states" src="@flexi_base_loader" template="Vec3d" />
   <Node name="FlexiBaseVisu" >
     <OglModel name="FlexiBaseVisual"  src="@../flexi_base_loader" translation="0 0 0" rotation="0 0 0" dx="0" dy="0" dz="0" rx="0" ry="0" rz="0" color="0.8549 0.8235 0.6431"  scale="1"/>
-		<!-- <RigidMapping input="@.." output="@FlexiBaseVisual"/> -->
+		<!-- <RigidMapping input="@../flexi-base-states" output="@FlexiBaseVisual"/> -->
   </Node>
 	<Node 	 name="FlexiBaseCollis">
 	  <MeshTopology name="meshTopology"  />

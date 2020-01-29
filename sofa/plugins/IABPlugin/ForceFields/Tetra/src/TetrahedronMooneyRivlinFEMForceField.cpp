@@ -29,7 +29,7 @@ int TetrahedronMooneyRivlinFEMForceFieldClass = core::RegisterObject("Tetrahedro
 .addAlias("TetraMRFF")
   ;
 
-template class TetrahedronMooneyRivlinFEMForceField<Vec3Types>;
+template class SOFA_IABPlugin_API TetrahedronMooneyRivlinFEMForceField<Vec3Types>;
 // template class TetrahedronMooneyRivlinFEMForceField<Vec2Types>;
 // template class TetrahedronMooneyRivlinFEMForceField<Vec1Types>;
 // template class TetrahedronMooneyRivlinFEMForceField<Vec6Types>;

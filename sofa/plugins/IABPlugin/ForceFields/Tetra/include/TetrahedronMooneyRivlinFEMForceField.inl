@@ -215,40 +215,61 @@ void TetrahedronMooneyRivlinFEMForceField<DataTypes>::reinit()
 template <typename DataTypes>
 void TetrahedronMooneyRivlinFEMForceField<DataTypes>::addForce(const core::MechanicalParams* /* mparams */ /* PARAMS FIRST */, DataVecDeriv& d_f, const DataVecCoord& d_x, const DataVecDeriv& /* d_v */)
 {
-    sofa::helper::AdvancedTimer::stepBegin("addForceSphericalPolarFEM");
+    // sofa::helper::AdvancedTimer::stepBegin("addForceSphericalPolarFEM");
     VecDeriv& f = *d_f.beginEdit();
     const VecCoord& x = d_x.getValue();
     const bool printLog = this->f_printLog.getValue();
     if (printLog && !m_meshSaved)
     {
-        saveMesh( "D:/Steph/sofa-result.stl" );
+        saveMesh( "/opt/sofa-result.stl" );
         printf( "Mesh saved.\n" );
         m_meshSaved = true;
     }
-    unsigned int i=0,j=0,k=0,l=0;
+    // unsigned int i=0,j=0,k=0,l=0;
     unsigned int nbTetrahedra=m_topology->getNbTetrahedra();
 
     helper::vector<TetrahedronRestInformation>& tetrahedronInfVec = *(m_tetrahedronInfo.beginEdit());
 
     TetrahedronRestInformation *tetInfo;
-    tetInfo->m_sPolarVecEul.resize(4);
 
     assert(this->mstate);
-    Coord dp[3],x0,sv;
 
-    for(i=0; i<nbTetrahedra; i++ )
+    // Coord dp[3],x0,sv;
+    Coord x0;
+
+    std::cout << "nbTetrahedra " << nbTetrahedra << "\n";
+
+    for(int i=0; i<nbTetrahedra; i++ )
     {
         tetInfo=&tetrahedronInfVec[i];
         const Tetrahedron &ta= m_topology->getTetrahedron(i);
-        // x0=x[ta[0]];
+
+        x0=x[ta[0]];
         // sv=tetInfo->m_shapeVector[1];
+
+        // std::cout << "x0: " << x0 << "\n";
+        // std::cout << "ta: " << ta << "\n";
+
+        tetInfo->m_sPolarVecEul.resize(4);
         // compute associated spherical points from the tetrahedron vertices
-        for (int j = 0; j < 4; ++i)
+        for (int j = 0; j < 4; ++j)
         {
+          // std::cout << "j: " << j << "\n";
+          // std::cout << "x[ta[j]]: " << x[ta[j]] << "\n";
+          // std::cout << "x[ta[j]][0]: " << x[ta[j]][0] << "\n";
+          // std::cout << "SQ(x[ta[j]][0]): " << SQ(x[ta[j]][0]) << ", " << \
+          //             SQ(x[ta[j]][1]) <<  ", " << SQ(x[ta[j]][2]) << "\n";
+          // // auto m_r = SQ(x[ta[j]][0]) + SQ(x[ta[j]][1]) + SQ(x[ta[j]][2]);
+          // std::cout << "m_r: " << std::sqrt(SQ(x[ta[j]][0]) + SQ(x[ta[j]][1]) + SQ(x[ta[j]][2])) << "\n";
+          // std::cout << " tetInfo->m_sPolarVecEul[j].m_r " << tetInfo->m_sPolarVecEul[j].m_r ;
+
           tetInfo->m_sPolarVecEul[j].m_r = std::sqrt(SQ(x[ta[j]][0]) + SQ(x[ta[j]][1]) + SQ(x[ta[j]][2])); // r
-          tetInfo->m_sPolarVecEul[j].m_theta =  std::atan(x[ta[j]][1]/x[ta[j]][0]);    // theta = arctan(y/x)
-          tetInfo->m_sPolarVecEul[j].m_phi =  std::acos(x[ta[j]][2]/x[ta[j]][0]);    // theta = arctan(y/x)
+          // std::cout << "tetInfo->m_sPolarVecEul[j].m_r: " << tetInfo->m_sPolarVecEul[j].m_r << "\n";
+          tetInfo->m_sPolarVecEul[j].m_theta =  (Real)std::atan(x[ta[j]][1]/x[ta[j]][0]);    // theta = arctan(y/x)
+          // std::cout << "tetInfo->m_sPolarVecEul[j].m_theta: " << tetInfo->m_sPolarVecEul[j].m_theta << "\n";
+          tetInfo->m_sPolarVecEul[j].m_phi =  (Real)std::acos(x[ta[j]][2]/x[ta[j]][0]);    // theta = arctan(y/x)
           tetInfo->m_sPolarVecEul[j].m_radialVector = {tetInfo->m_sPolarVecEul[j].m_r, tetInfo->m_sPolarVecEul[j].m_theta, tetInfo->m_sPolarVecEul[j].m_phi};
+
 
           // initialize associated tri components
           tetInfo->m_sPolarVecEul[j].m_ro = tetInfo->m_sPolarVecEul[j].m_r;
@@ -269,7 +290,6 @@ void TetrahedronMooneyRivlinFEMForceField<DataTypes>::addForce(const core::Mecha
                                 (std::cos(tetInfo->m_sPolarVecEul[j].m_phi)/std::sin(tetInfo->m_sPolarVecEul[j].m_phi))+\
                                 (1/(tetInfo->m_sPolarVecLag[j].m_R*tetInfo->m_sPolarVecLag[j].m_Phi));
 
-          /* left and right cauchy-green tensors only diagonal elements are non-zero */
           // init all non-diagonal elements to zero
           for(int m=0; m < 3; ++m)
           {

@@ -5,6 +5,4 @@
 						ry="0" rz="0"  color="0.8549 0.8235 0.6431" scale="1"/>
 		<include href="dome_ring.scn" dx="0" dy="0" dz="0" rx="0"
 						color="0.8549 0.8235 0.6431" scale="1"/>
-		<include href="dome_cover_solid.scn" dx="0" dy="0" dz="-.4" rx="0"
-			  	color="0.8549 0.8235 0.6431" scale="1"/>
 </Node>

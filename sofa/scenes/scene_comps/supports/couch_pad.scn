@@ -6,10 +6,7 @@
     filename="../../../../ros/srs_traj_opt/couch_description/meshes/couchpad.stl" scale="5e-6"/>
   <MechanicalObject name="couch-pad-states" src="@couch-pad-loader" />
    <UniformMass totalMass="30" />
-   <UncoupledConstraintCorrection template="Vec3d" name="uncoupledConstraintCorrectionHead" />
-   <!-- <TetrahedronSetTopologyContainer name="CouchPadTetra" src="@couch-pad-loader" />
-   <TetrahedronSetGeometryAlgorithms name="CouchPadAlgos" template="Vec3d"  drawTetrahedra="1"/> -->
-
+   <!-- <UncoupledConstraintCorrection template="Vec3d" name="uncoupledConstraintCorrectionHead" /> -->
    <Node name="CouchPadVisu" >
        <OglModel name="couch-padVisual" src="@../couch-pad-loader" translation="0 0 0" color="0.3 0.3 0.3" />
    </Node>

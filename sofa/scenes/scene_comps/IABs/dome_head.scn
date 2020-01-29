@@ -13,6 +13,8 @@
 	<DiagonalMass  name="computed using mass density" massDensity="1" />
 	<TetrahedronMooneyRivlinFEMForceField  template="Vec3d" ParameterSet="1000 100"
 		 	materialName="MooneyRivlinIncompressible"  youngModulus="10000" poissonRatio="0.45" />
+	<!-- <TetrahedronHyperElasticityFEMForceField  template="Vec3d" ParameterSet="1000 100 10"
+		 	materialName="MooneyRivlin"  /> -->
 			<!-- this will serve as the cavity -->
 	<MeshSTLLoader name="domeHeadSTLLoader" filename="../../../../ros/srs_traj_opt/patient_description/meshes/dome/dome.stl" />
 	<Node name="DomeHeadVisu" tags="Visual" gravity="0 -9.81 0">
@@ -22,7 +24,7 @@
 		<TriangleSetTopologyModifier name="triMod" />
 		<TriangleSetTopologyAlgorithms template="Vec3d" />
 		<TriangleSetGeometryAlgorithms template="Vec3d" />
-		<Tetra2TriangleTopologicalMapping name="Tetra2TriMap" template="Vec3d"
+		<Tetra2TriangleTopologicalMapping name="Tetra2TriMap"
 				input="@../TetraTopologyContainer" output="@triContainer" />
 	  <BarycentricMapping name="visual mapping" input="@../dofs" output="@DomeHeadVisual" />
 	</Node>

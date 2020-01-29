@@ -1,15 +1,22 @@
 <?xml version="1.0"?>
-<Node name="DomeCoverNode">
+<Node name="DomeCoverNode"  gravity="0 -9.81 0" dt=".02">
+	<EulerImplicitSolver name="cg_odesolver" printLog="false" />
+	<CGLinearSolver iterations="25" name="linear solver" tolerance="1.0e-9" threshold="1.0e-9" />
 	<MeshSTLLoader name="dome_cover_loader" filename="../../../../ros/srs_traj_opt/patient_description/meshes/dome/dome_cover.stl"/>
-	<!-- <MechanicalObject name="dofs" src="@dome_cover_loader" template="Rigid3d"
-		 showIndices='false' showIndicesScale='4e-5' rx='0' dz='0'/> -->
+	<MechanicalObject name="dofs" src="@dome_cover_loader" template="Rigid3d"
+		 showIndices='false' showIndicesScale='4e-5' rx='0' dz='0'/>
+	<Mesh src="@dome_cover_loader" />
 	<Node name="DomeCoverVisu" >
 		<OglModel name="DomeCoverVisual"  src="@../dome_cover_loader"
 					dx="0" dy="0" dz="0"  rx="0" ry="0" rz="0" scale="1"/>
-		<!-- <RigidMapping input="@.." output="@DomeCoverVisual"/> -->
+		<RigidMapping input="@../dofs" output="@DomeCoverVisual"/>
 	</Node>
 	<Node 	 name="DomeCoverCollis"  >
-		<MechanicalObject template="Vec3d" name="dome-cover-collis-states" src="@../dome_cover_loader" />
+		<MechanicalObject template="Vec3d" name="dome-cover-collis-states" src="@../dome_cover_loader"
+			dx="0" dy="0" dz="0" rx="0" ry="0" rz="0" scale="1" />
+		<!-- <IdentityMapping input="@../dofs" output="@DomeCoverVisual" /> -->
+		<!-- <BarycentricMapping name="dome cover collision mapping" input="@../dofs"
+				output="@DomeCoverCollis" /> -->
 	</Node>
 </Node>
 

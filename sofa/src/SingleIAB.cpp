@@ -263,6 +263,8 @@ int main(int argc, char** argv)
     sofa::helper::ReadAccessor<Data<Vec3Types::VecDeriv>> dh_vel_vecs(dh_state->read(sofa::core::ConstVecDerivId::velocity()));
     sofa::helper::ReadAccessor<Data<Vec3Types::VecCoord>> dh_fpos_vecs(dh_state->read(sofa::core::VecCoordId::freePosition()));
     sofa::helper::ReadAccessor<Data<Vec3Types::VecDeriv>> dh_fvel_vecs(dh_state->read(sofa::core::VecDerivId::freeVelocity()));
+    // Writing MechanicalStateController.inl
+    // helper::WriteAccessor<Data<VecCoord> > x = *this->mState->write(core::VecCoordId::position());
 
     // another method from ./SofaKernel/modules/SofaImplicitOdeSolver/SofaImplicitOdeSolver_test/EulerImplicitSolverDynamic_test.cpp:167
     using MechanicalObject = sofa::component::container::MechanicalObject<Vec3Types>;
@@ -292,7 +294,7 @@ int main(int argc, char** argv)
       }
     }
     // Apply Options
-    groot->setAnimate(false);
+    groot->setAnimate(true);
     // test expansion and deformation here for a single soro
     if( computationTimeSampling>0 )
     {

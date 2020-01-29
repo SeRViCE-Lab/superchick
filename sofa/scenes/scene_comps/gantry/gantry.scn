@@ -2,9 +2,9 @@
 <Node name="gantry">
   <MeshSTLLoader name="gantry-loader"
     filename="../../../../ros/srs_traj_opt/couch_description/meshes/truebeam/TBGantry.stl" scale="1"/>
-  <MechanicalObject name="gantry-states" src="@gantry-loader" template="Rigid3d"/>
+  <MechanicalObject name="gantry-states" src="@gantry-loader" template="Vec3d"/>
    <UniformMass totalMass="250" />
-   <UncoupledConstraintCorrection template="Rigid3d" name="uncoupledConstraintCorrectionHead" />
+   <!-- <UncoupledConstraintCorrection template="Rigid3d" name="uncoupledConstraintCorrectionHead" /> -->
 
    <Node name="GantryVisu" >
       <!-- Note the 180 deg rotation about x here due to Erik's set up inconsistency with clinical viability -->

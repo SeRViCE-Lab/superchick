@@ -19,7 +19,7 @@
 	<DefaultCollisionGroupManager />
 	<!--  Presumably handles Lagrange Constraint multipliers https://www.sofa-framework.org/community/doc/using-sofa/components/animationloop/multistepanimationloop/-->
 	<DefaultAnimationLoop />
-	<GenericConstraintSolver maxIterations="10000" tolerance="1e-3"/>
+	<!-- <GenericConstraintSolver maxIterations="10000" tolerance="1e-3"/> -->
 
 		<Node name="Patient-Robot-System">
 			<include href="scene_comps/patients/patient_rigid_whole.scn"
@@ -38,6 +38,10 @@
 		<Node name="SideIABs">
 		 <include name="ForeLeft" href="scene_comps/IABs/dome_assembly.scn"
 						 dx="20" dy="50" dz="80" rx="180" scale="20"/>
+ 		<!-- <include name="ForeLeftCover" href="scene_comps/IABs/dome_cover_solid.scn"
+						dx="-80" dy="0" dz="100" rx="-180" scale="20"
+ 			  		color="0.8549 0.8235 0.6431" /> -->
+
 		 <include name="ForeRight" href="scene_comps/IABs/dome_assembly.scn"
 						 dx="20" dy="50" dz="-180"  scale="20"/>
 		 <include name="ChinLeft" href="scene_comps/IABs/dome_assembly.scn"
