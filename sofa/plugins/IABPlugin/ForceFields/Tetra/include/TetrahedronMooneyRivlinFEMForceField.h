@@ -17,23 +17,23 @@
 * Author: Lekan Ogunmolu, December 18, 2019
 */
 
-#include <IABPlugin/ForceFields/include/NonlinearElasticMaterial.h>
-#include <IABPlugin/ForceFields/include/initIABPlugin.h>
-#include <sofa/core/behavior/ForceField.h>
-#include <SofaBaseMechanics/MechanicalObject.h>
+#include <map>
+#include <string>
 #include <sofa/defaulttype/Vec.h>
 #include <sofa/defaulttype/Mat.h>
 #include <sofa/defaulttype/MatSym.h>
-#include <sofa/core/topology/BaseMeshTopology.h>
+#include <sofa/core/behavior/ForceField.h>
 #include <SofaBaseTopology/TopologyData.h>
-#include <string>
-#include <map>
+#include <SofaBaseMechanics/MechanicalObject.h>
+#include <sofa/core/topology/BaseMeshTopology.h>
+#include <IABPlugin/ForceFields/include/initIABPlugin.h>
+#include <IABPlugin/ForceFields/include/NonlinearElasticMaterial.h>
 
 // simple macro for mathematical ops
-//#define power(SQ, X) double SQ(X) {return std::pow(X, 2.0f); }
-// inline float SQ(float x){ return std::pow(x, 2.0f); }
 inline double SQ(double x){ return std::pow(x, 2.0); }
-// inline Real SQ(Real x){ return std::pow(x, 2.0); }
+inline double cot(double x) {return std::cos(x)/std::sin(x); }
+inline double csc(double x) {return 1.0/std::sin(x); }
+inline double deg2rad(double x) {return M_PI * (x/180); }
 
 
 

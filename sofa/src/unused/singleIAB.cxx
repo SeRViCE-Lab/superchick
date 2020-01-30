@@ -44,7 +44,23 @@ msg_info("SphereDeform") << "mechStates Template Name: " << mechStates->getTempl
 
 
 
-// this based on Hugo's advice 
+// this based on Hugo's advice
 auto head_ctx = dome_head->getContext();
 sofa::component::engine::NearestPointROI<Vec3Types>* nearPoint;
 head_ctx->get(nearPoint);
+
+
+  // std::cout << "j: " << j << "\n";
+  // std::cout << "x[ta[j]]: " << x[ta[j]] << "\n";
+  // std::cout << "x[ta[j]][0]: " << x[ta[j]][0] << "\n";
+  // std::cout << "SQ(x[ta[j]][0]): " << SQ(x[ta[j]][0]) << ", " << \
+  //             SQ(x[ta[j]][1]) <<  ", " << SQ(x[ta[j]][2]) << "\n";
+  // // auto m_r = SQ(x[ta[j]][0]) + SQ(x[ta[j]][1]) + SQ(x[ta[j]][2]);
+  // std::cout << "m_r: " << std::sqrt(SQ(x[ta[j]][0]) + SQ(x[ta[j]][1]) + SQ(x[ta[j]][2])) << "\n";
+  // std::cout << " tetInfo->m_sPolarVecEul[j].m_r " << tetInfo->m_sPolarVecEul[j].m_r ;
+  // std::cout << "tetInfo->m_sPolarVecEul[j].m_r: " << tetInfo->m_sPolarVecEul[j].m_r << "\n";
+  // std::cout << "tetInfo->m_sPolarVecEul[j].m_theta: " << tetInfo->m_sPolarVecEul[j].m_theta << "\n";
+
+  // sv=tetInfo->m_shapeVector[1];
+  // std::cout << "x0: " << x0 << "\n";
+  // std::cout << "ta: " << ta << "\n";

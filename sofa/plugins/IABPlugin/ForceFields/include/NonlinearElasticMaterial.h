@@ -141,6 +141,7 @@ public:
 
   typedef typename DataTypes::Coord Coord;
   typedef typename Coord::value_type Real;
+  using Matrix3 = defaulttype::Mat<3,3,Real>;
   typedef defaulttype::MatSym<3,Real> MatrixSym;
   typedef typename Eigen::SelfAdjointEigenSolver<Eigen::Matrix<Real,3,3> >::MatrixType EigenMatrix;
   typedef typename Eigen::SelfAdjointEigenSolver<Eigen::Matrix<Real,3,3> >::RealVectorType CoordEigen;
@@ -156,8 +157,10 @@ public:
   bool hasBeenInitialized;
   /// right Cauchy-Green deformation tensor C (gradPhi^T gradPhi)
   MatrixSym deformationTensor;
+  // Matrix3 deformationTensor;
   // MatrixSym leftCauchy, rightCauchy;
   MatrixSym F; // deformation gradient
+  // Matrix3 F; // deformation gradient
   EigenMatrix Evect;
   CoordEigen Evalue;
   Real logJ;

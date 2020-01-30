@@ -69,8 +69,11 @@ void TetrahedronMooneyRivlinFEMForceField<DataTypes>::TetrahedronHandler::applyC
         // for each point in point[j], find the spherical polar coordinate equivalent assuming tetrahedron is platonic
         tinfo.m_sPolarVecLag[j].m_R =  rsqrt(SQR(point[j][0])+SQR(point[j][1])+SQR(point[j][2])); // r
         tinfo.m_sPolarVecLag[j].m_Theta =  std::atan(point[j][1]/point[j][0]);    // theta = arctan(y/x)
-        tinfo.m_sPolarVecLag[j].m_Phi =  std::acos(point[j][2]/point[j][0]);    // theta = arctan(y/x)
+        tinfo.m_sPolarVecLag[j].m_Phi =  std::acos(point[j][2]/tinfo.m_sPolarVecLag[j].m_R);    // theta = arctan(z/r)
         tinfo.m_sPolarVecLag[j].m_RadialVector = {tinfo.m_sPolarVecLag[j].m_R, tinfo.m_sPolarVecLag[j].m_Theta, tinfo.m_sPolarVecLag[j].m_Phi};
+
+        // gamma in lagrangean axis is fixed
+        tinfo.m_sPolarVecLag[j].Gamma = deg2rad(45);
       }
       /// compute 6 times the rest volume
       volume=dot(cross(point[2]-point[0],point[3]-point[0]),point[1]-point[0]);
@@ -146,7 +149,6 @@ void TetrahedronMooneyRivlinFEMForceField<DataTypes>::init()
     }
 
     m_topology = this->getContext()->getMeshTopology();
-
 
     /** parse the input material name */
     string material = d_materialName.getValue();
@@ -225,7 +227,6 @@ void TetrahedronMooneyRivlinFEMForceField<DataTypes>::addForce(const core::Mecha
         printf( "Mesh saved.\n" );
         m_meshSaved = true;
     }
-    // unsigned int i=0,j=0,k=0,l=0;
     unsigned int nbTetrahedra=m_topology->getNbTetrahedra();
 
     helper::vector<TetrahedronRestInformation>& tetrahedronInfVec = *(m_tetrahedronInfo.beginEdit());
@@ -234,61 +235,47 @@ void TetrahedronMooneyRivlinFEMForceField<DataTypes>::addForce(const core::Mecha
 
     assert(this->mstate);
 
-    // Coord dp[3],x0,sv;
-    Coord x0;
+    Coord dp[3],x0,sv;
+    // std::cout << "nbTetrahedra " << nbTetrahedra << "\n";
 
-    std::cout << "nbTetrahedra " << nbTetrahedra << "\n";
-
-    for(int i=0; i<nbTetrahedra; i++ )
+    for(uint i=0; i<nbTetrahedra; i++ )
     {
         tetInfo=&tetrahedronInfVec[i];
         const Tetrahedron &ta= m_topology->getTetrahedron(i);
 
         x0=x[ta[0]];
-        // sv=tetInfo->m_shapeVector[1];
 
-        // std::cout << "x0: " << x0 << "\n";
-        // std::cout << "ta: " << ta << "\n";
+        dp[0]=x[ta[1]]-x0;
+        sv=tetInfo->m_shapeVector[1];
 
         tetInfo->m_sPolarVecEul.resize(4);
         // compute associated spherical points from the tetrahedron vertices
-        for (int j = 0; j < 4; ++j)
+        for (uint j = 0; j < 4; ++j)
         {
-          // std::cout << "j: " << j << "\n";
-          // std::cout << "x[ta[j]]: " << x[ta[j]] << "\n";
-          // std::cout << "x[ta[j]][0]: " << x[ta[j]][0] << "\n";
-          // std::cout << "SQ(x[ta[j]][0]): " << SQ(x[ta[j]][0]) << ", " << \
-          //             SQ(x[ta[j]][1]) <<  ", " << SQ(x[ta[j]][2]) << "\n";
-          // // auto m_r = SQ(x[ta[j]][0]) + SQ(x[ta[j]][1]) + SQ(x[ta[j]][2]);
-          // std::cout << "m_r: " << std::sqrt(SQ(x[ta[j]][0]) + SQ(x[ta[j]][1]) + SQ(x[ta[j]][2])) << "\n";
-          // std::cout << " tetInfo->m_sPolarVecEul[j].m_r " << tetInfo->m_sPolarVecEul[j].m_r ;
-
           tetInfo->m_sPolarVecEul[j].m_r = std::sqrt(SQ(x[ta[j]][0]) + SQ(x[ta[j]][1]) + SQ(x[ta[j]][2])); // r
-          // std::cout << "tetInfo->m_sPolarVecEul[j].m_r: " << tetInfo->m_sPolarVecEul[j].m_r << "\n";
-          tetInfo->m_sPolarVecEul[j].m_theta =  (Real)std::atan(x[ta[j]][1]/x[ta[j]][0]);    // theta = arctan(y/x)
-          // std::cout << "tetInfo->m_sPolarVecEul[j].m_theta: " << tetInfo->m_sPolarVecEul[j].m_theta << "\n";
-          tetInfo->m_sPolarVecEul[j].m_phi =  (Real)std::acos(x[ta[j]][2]/x[ta[j]][0]);    // theta = arctan(y/x)
+          tetInfo->m_sPolarVecEul[j].m_theta = std::atan(x[ta[j]][1]/x[ta[j]][0]);    // theta = arctan(y/x)
+          tetInfo->m_sPolarVecEul[j].m_phi = std::acos(x[ta[j]][2]/tetInfo->m_sPolarVecEul[j].m_r);    // phi = arctan(z/r)
           tetInfo->m_sPolarVecEul[j].m_radialVector = {tetInfo->m_sPolarVecEul[j].m_r, tetInfo->m_sPolarVecEul[j].m_theta, tetInfo->m_sPolarVecEul[j].m_phi};
-
 
           // initialize associated tri components
           tetInfo->m_sPolarVecEul[j].m_ro = tetInfo->m_sPolarVecEul[j].m_r;
+
+          // tetInfo->m_sPolarVecEul[j].gamma = // this has to be figured out during deformation
           // compute F, B, and C (defGrad, left and right Cauchy-Green Tensors)
 
           // initialize bottom left block of def grad to zeros
-          for (int k = 1; k < 3; ++k)  // rows 1 and 2
-            for(int l=0; l <2; ++l)  // cols 0 through 1
+          for (uint k = 1; k < 3; ++k)  // rows 1 and 2
+            for(uint l=0; l <2; ++l)  // cols 0 through 1
               tetInfo->m_sPolarVecEul[j].m_F[k][l] =  0;
           tetInfo->m_sPolarVecEul[j].m_F[0][0] = SQ(tetInfo->m_sPolarVecLag[j].m_R)/SQ(tetInfo->m_sPolarVecEul[j].m_r);
           tetInfo->m_sPolarVecEul[j].m_F[0][1] = -tetInfo->m_sPolarVecEul[j].m_phi/tetInfo->m_sPolarVecLag[j].m_R;
           tetInfo->m_sPolarVecEul[j].m_F[0][2] = -tetInfo->m_sPolarVecEul[j].m_theta/tetInfo->m_sPolarVecLag[j].m_R;
-          tetInfo->m_sPolarVecEul[j].m_F[1][1] = (tetInfo->m_sPolarVecEul[j].m_r/tetInfo->m_sPolarVecLag[j].m_R)+(1/tetInfo->m_sPolarVecLag[j].m_R);
+          tetInfo->m_sPolarVecEul[j].m_F[1][1] = (tetInfo->m_sPolarVecEul[j].m_r/tetInfo->m_sPolarVecLag[j].m_R)+(1/(tetInfo->m_sPolarVecLag[j].m_R));
           tetInfo->m_sPolarVecEul[j].m_F[1][2] = -(tetInfo->m_sPolarVecEul[j].m_theta/tetInfo->m_sPolarVecLag[j].m_R)*\
-                                (std::cos(tetInfo->m_sPolarVecEul[j].m_phi)/std::sin(tetInfo->m_sPolarVecEul[j].m_phi));
+                                cot(tetInfo->m_sPolarVecEul[j].m_phi);
           tetInfo->m_sPolarVecEul[j].m_F[2][2] = (tetInfo->m_sPolarVecEul[j].m_r/tetInfo->m_sPolarVecLag[j].m_R)+\
-                                (tetInfo->m_sPolarVecEul[j].m_phi/tetInfo->m_sPolarVecLag[j].m_R)*\
-                                (std::cos(tetInfo->m_sPolarVecEul[j].m_phi)/std::sin(tetInfo->m_sPolarVecEul[j].m_phi))+\
-                                (1/(tetInfo->m_sPolarVecLag[j].m_R*tetInfo->m_sPolarVecLag[j].m_Phi));
+                                (tetInfo->m_sPolarVecEul[j].m_phi/tetInfo->m_sPolarVecLag[j].m_R)*cot(tetInfo->m_sPolarVecEul[j].m_phi)+\
+                                (1/(tetInfo->m_sPolarVecLag[j].m_R*std::sin(tetInfo->m_sPolarVecLag[j].m_Phi)));
 
           // init all non-diagonal elements to zero
           for(int m=0; m < 3; ++m)
@@ -297,8 +284,8 @@ void TetrahedronMooneyRivlinFEMForceField<DataTypes>::addForce(const core::Mecha
             {
               if (m==n)
               {
-                tetInfo->m_sPolarVecEul[j].m_C[m][n] = tetInfo->m_sPolarVecEul[j].m_F[m][n]*tetInfo->m_sPolarVecEul[j].m_F[m][n];
-                tetInfo->m_sPolarVecEul[j].m_B[m][n] = tetInfo->m_sPolarVecEul[j].m_F[m][n]*tetInfo->m_sPolarVecEul[j].m_F[m][n];
+                tetInfo->m_sPolarVecEul[j].m_C[m][n] = SQ(tetInfo->m_sPolarVecEul[j].m_F[m][n]); //*tetInfo->m_sPolarVecEul[j].m_F[m][n];
+                tetInfo->m_sPolarVecEul[j].m_B[m][n] = SQ(tetInfo->m_sPolarVecEul[j].m_F[m][n]); //*tetInfo->m_sPolarVecEul[j].m_F[m][n];
               }
               else
               {
@@ -327,6 +314,16 @@ void TetrahedronMooneyRivlinFEMForceField<DataTypes>::addForce(const core::Mecha
         tetInfo->m_deformationGradient/=4;
         tetInfo->leftCauchyGreen/=4;
         tetInfo->rightCauchyGreen/=4;
+        // update right Cauchy Green tensor for strain information in parent class
+        for(int i=0; i < 6; ++i)
+          tetInfo->deformationTensor[i]=0;
+        tetInfo->deformationTensor[0] = tetInfo->rightCauchyGreen[0][0];
+        tetInfo->deformationTensor[3] = tetInfo->rightCauchyGreen[1][1];
+        tetInfo->deformationTensor[5] = tetInfo->rightCauchyGreen[2][2];
+        // tetInfo->deformationTensor = tetInfo->rightCauchyGreen;
+        msg_info("StrainDefTensor") << tetInfo->deformationTensor ;
+        msg_info("rightCauchyGreen") << tetInfo->rightCauchyGreen ;
+
         tetInfo->J = determinant(tetInfo->m_deformationGradient);
       } // end all nbTetrahedra for i
     /// indicates that the next call to addDForce will need to update the stiffness matrix
@@ -341,6 +338,7 @@ void TetrahedronMooneyRivlinFEMForceField<DataTypes>::updateTangentMatrix()
 {
     unsigned int i=0,j=0,k=0,l=0;
     unsigned int nbEdges=m_topology->getNbEdges();
+    msg_info("nbEdges ") << nbEdges ;
     const vector< Edge> &edgeArray=m_topology->getEdges() ;
 
     helper::vector<EdgeInformation>& edgeInf = *(m_edgeInfo.beginEdit());
@@ -355,7 +353,6 @@ void TetrahedronMooneyRivlinFEMForceField<DataTypes>::updateTangentMatrix()
     for(i=0; i<nbTetrahedra; i++ )
     {
         tetInfo=&tetrahedronInfVec[i];
-        // Matrix3 &df=tetInfo->m_deformationGradient;
         // avg all def grads for this tetrahedron
         Matrix3 &df=tetInfo->m_deformationGradient;
         BaseMeshTopology::EdgesInTetrahedron te=m_topology->getEdgesInTetrahedron(i);
@@ -403,8 +400,6 @@ void TetrahedronMooneyRivlinFEMForceField<DataTypes>::updateTangentMatrix()
                 }
                 N+=Nv.transposed();
             }
-
-
             //Now M
             Real productSD=0;
 
@@ -438,7 +433,7 @@ void TetrahedronMooneyRivlinFEMForceField<DataTypes>::addDForce(const core::Mech
 
     /// if the  matrix needs to be updated
     if (m_updateMatrix) {
-    this->updateTangentMatrix();
+      this->updateTangentMatrix();
     }// end of if
 
 
