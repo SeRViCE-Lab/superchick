@@ -146,6 +146,7 @@ class TetrahedronMooneyRivlinFEMForceField : public core::behavior::ForceField<D
       Real m_Shear;
       // fiber Vector in Eulerian coordinates
       Coord m_fiberDirection;
+      Real J;
     };
 
     struct SphericalPolarInfo
@@ -174,10 +175,11 @@ class TetrahedronMooneyRivlinFEMForceField : public core::behavior::ForceField<D
       Real m_shear;
       // fiber Vector in Eulerian coordinates
       Coord m_fiberDirection;
+      Real J;
     };
 
     /// data structure stored for each tetrahedron
-  	class TetrahedronRestInformation : public sofa::component::fem::StrainInformation<DataTypes>
+  	class TetrahedronRestInformation //: public sofa::component::fem::StrainInformation<DataTypes>
     {
         public:
           /// shape vector at the rest configuration
