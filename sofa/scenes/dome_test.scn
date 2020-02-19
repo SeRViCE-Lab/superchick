@@ -10,6 +10,7 @@
 <RequiredPlugin pluginName='SofaMiscCollision'/>
 <RequiredPlugin name="IAB" pluginName="IAB"/>
 <RequiredPlugin name="IABTetra" pluginName="IABTetra"/>
+<!-- <RequiredPlugin name="IABTetra" pluginName="SofaMiscFem"/> -->
 
 <VisualStyle displayFlags="showForceFields showBehaviorModels" />
 <DefaultPipeline verbose="0" />
