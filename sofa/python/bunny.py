@@ -1,49 +1,58 @@
-
-import Sofa
-
 import os
+import Sofa
+from os.path import join, expanduser
+path = join(expanduser('~'), 'sofa/applications/plugins/SoftRobots/docs/examples/component/engine/VolumeFromTetrahedrons/mesh/')
 
-path = '/sofa/applications/plugins/SoftRobots/docs/examples/component/engine/VolumeFromTetrahedrons/mesh/'
-
+print(path)
 
 def createScene(rootNode):
-    rootNode.createObject('VisualStyle', displayFlags='showVisualModels showBehaviorModels hideCollisionModels hideBoundingCollisionModels hideForceFields hideInteractionForceFields hideWireframe')
-    rootNode.createObject('RequiredPlugin', pluginName='CGALPlugin')
+    rootNode.createObject('RequiredPlugin', pluginName='SoftRobots')
+    rootNode.createObject('VisualStyle', displayFlags='showVisualModels hideBehaviorModels showCollisionModels hideBoundingCollisionModels hideForceFields showInteractionForceFields hideWireframe')
 
-    rootNode.createObject('BackgroundSetting', color='0 0.168627 0.211765')
-    rootNode.createObject('OglSceneFrame', style="Arrows", alignment="TopRight")
+    rootNode.createObject('FreeMotionAnimationLoop')
+    rootNode.createObject('GenericConstraintSolver', maxIterations='100', tolerance = '0.0000001')
+    rootNode.createObject('PythonScriptController', filename="bunnycontroller.py", classname="controller")
 
-    ##########################################
-    # Generation                             #
-    ##########################################
-    node = rootNode.createChild('node')
-    #1- Specify the input 3D surfacic mesh
-    node.createObject('MeshSTLLoader', name='mesh', filename=path+'finger.stl')
-    node.createObject('MeshGenerationFromPolyhedron', name='gen', template='Vec3d', inputPoints='@mesh.position', inputTriangles='@mesh.triangles', drawTetras='1',
-           # This parameter controls the size of mesh tetrahedra. It provides an upper bound on the circumradius of the mesh tetrahedra.
-                           cellSize="10",
+    bunny = rootNode.createChild('bunny')
+    bunny.createObject('EulerImplicit', name='odesolver')
+    bunny.createObject('ShewchukPCGLinearSolver', iterations='15', name='linearsolver', tolerance='1e-5', preconditioners='preconditioner', use_precond='true', update_step='1')
 
-                           facetAngle="30",
+    bunny.createObject('MeshVTKLoader', name='loader', filename=path+'Hollow_Stanford_Bunny.vtu')
+    bunny.createObject('TetrahedronSetTopologyContainer', src='@loader', name='container')
+    bunny.createObject('TetrahedronSetTopologyModifier')
+    bunny.createObject('TetrahedronSetTopologyAlgorithms', template='Vec3d')
+    bunny.createObject('TetrahedronSetGeometryAlgorithms', template='Vec3d')
 
-                           # This parameter provides an upper bound for the radii of the surface Delaunay ball; a larger value may lead to larger tetrahedra.
-                           facetSize="4",
+    bunny.createObject('MechanicalObject', name='tetras', template='Vec3d', showIndices='false', showIndicesScale='4e-5', rx='0', dz='0')
+    bunny.createObject('UniformMass', totalMass='0.5')
+    bunny.createObject('TetrahedronFEMForceField', template='Vec3d', name='FEM', method='large', poissonRatio='0.3',  youngModulus='18000')
 
-                           # This parameter controls the shape of mesh cells. Actually, it is an upper bound for the ratio between the circumradius of a mesh
-                           # tetrahedron and its shortest edge. There is a theoretical bound for this parameter: the Delaunay refinement process is guaranteed
-                           # to terminate for values larger than 2.
-                           cellRatio="2",   #Convergence problem if < 2
+    bunny.createObject('BoxROI', name='boxROI', box='-5 -15 -5  5 -4.5 5', drawBoxes='true', position="@tetras.rest_position", tetrahedra="@container.tetrahedra")
+    bunny.createObject('RestShapeSpringsForceField', points='@boxROI.indices', stiffness='1e12')
 
-                           # The approximation error between the boundary and the subdivision surface. It provides an upper bound for the distance
-                           # between the circumcenter of a surface facet and the center of a surface Delaunay ball of this facet.
-                           facetApproximation="1"
-                           )
-    node.createObject('Mesh', position='@gen.outputPoints', tetrahedra='@gen.outputTetras')
-    #2- Export the output 3D tetrahedras mesh
-    node.createObject('VTKExporter', filename=os.getcwd()+'/finger.vtk', edges='0', tetras='1', exportAtBegin='1')
+    bunny.createObject('SparseLDLSolver', name='preconditioner')
+    bunny.createObject('LinearSolverConstraintCorrection', solverName='preconditioner')
+    #bunny.createObject('UncoupledConstraintCorrection')
 
-    ##########################################
-    # Visualization                          #
-    ##########################################
-    node.createObject('OglModel', src="@mesh", color="0.0 0.7 0.7 0.5")
+    #bunny/cavity
+    cavity = bunny.createChild('cavity')
+    cavity.createObject('MeshObjLoader', name='loader', filename=path+'Hollow_Bunny_Body_Cavity.obj')
+    cavity.createObject('Mesh', src='@loader', name='topo')
+    cavity.createObject('MechanicalObject', name='cavity')
+    cavity.createObject('SurfacePressureConstraint', triangles='@topo.triangles', value='40', valueType="1")
+    cavity.createObject('BarycentricMapping', name='mapping',  mapForces='false', mapMasses='false')
+
+
+    #bunny/bunnyVisu
+    bunnyVisu = bunny.createChild('visu')
+    bunnyVisu.createObject('TriangleSetTopologyContainer', name='container')
+    bunnyVisu.createObject('TriangleSetTopologyModifier')
+    bunnyVisu.createObject('TriangleSetTopologyAlgorithms', template='Vec3d')
+    bunnyVisu.createObject('TriangleSetGeometryAlgorithms', template='Vec3d')
+    bunnyVisu.createObject('Tetra2TriangleTopologicalMapping', name='Mapping', input="@../container", output="@container")
+
+    bunnyVisu.createObject('OglModel', template='ExtVec3f', color='0.3 0.2 0.2 0.6')
+    bunnyVisu.createObject('IdentityMapping')
+
 
     return rootNode
