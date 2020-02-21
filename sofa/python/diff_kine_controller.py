@@ -4,7 +4,8 @@ from __future__ import print_function
 import Sofa
 import math
 
-
+move_dist = 20
+growth_rate = .05
 
 def moveRestPos(rest_pos, dx, dy, dz):
     str_out = ' '
@@ -22,6 +23,14 @@ def rotateRestPos(rest_pos,rx,centerPosY,centerPosZ):
         str_out= str_out + ' ' + str(rest_pos[i][0])
         str_out= str_out + ' ' + str(newRestPosY)
         str_out= str_out + ' ' + str(newRestPosZ)
+    return str_out
+
+def see_pose(pos):
+    str_out = ' '
+    for i in xrange(0,len(pos)) :
+        str_out= str_out + ' ' + str(pos[i][0])
+        str_out= str_out + ' ' + str(pos[i][1])
+        str_out= str_out + ' ' + str(pos[i][2])
     return str_out
 
 class controller(Sofa.PythonScriptController):
@@ -53,24 +62,27 @@ class controller(Sofa.PythonScriptController):
 
         if (c == "+"):
             print('squeezing...')
-            pressureValue = self.neck_left_constraint.findData('value').value[0][0] + 0.01
+            pressureValue = self.neck_left_constraint.findData('value').value[0][0] + growth_rate
+            # print('Current pressure value: ', pressureValue, see_pose(self.neck_left_mech.rest_position))
             if pressureValue > 1.5:
                 pressureValue = 1.5
             self.neck_left_constraint.findData('value').value = str(pressureValue)
 
         if (c == "-"):
             print( 'releasing...')
-            pressureValue = self.neck_left_constraint.findData('value').value[0][0] - 0.01
+            pressureValue = self.neck_left_constraint.findData('value').value[0][0] - growth_rate
             self.neck_left_constraint.findData('value').value = str(pressureValue)
 
         # UP key :
         if ord(c)==19:
-            test1 = moveRestPos(self.neck_left_mech.rest_position, 3.0, 0.0, 0.0)
+            # print('moving along +x by {}'.format(move_dist))
+            test1 = moveRestPos(self.neck_left_mech.rest_position, move_dist, 0.0, 0.0)
             self.neck_left_mech.findData('rest_position').value = test1
 
         # DOWN key : rear
         if ord(c)==21:
-            test = moveRestPos(self.neck_left_mech.rest_position, -3.0, 0.0, 0.0)
+            # print('moving along -x by {}'.format(move_dist))
+            test = moveRestPos(self.neck_left_mech.rest_position, -move_dist, 0.0, 0.0)
             self.neck_left_mech.findData('rest_position').value = test
 
         # LEFT key : left

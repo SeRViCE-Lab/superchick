@@ -88,7 +88,7 @@ def createScene(rootNode):
 
     finger1.createObject('BoxROI', name='boxROI', box='-10 0 -20 0 30 20', drawBoxes='true',doUpdate='0')
     #finger1.createObject('BoxROI', name='boxROI', box='-50 0 -20 0 30 20', drawBoxes='true',doUpdate='0')
-    finger1.createObject('BoxROI', name='boxROISubTopo', box='-100 22.5 -8 -19 28 8', drawBoxes='false')
+    finger1.createObject('BoxROI', name='boxROISubTopo', box='-100 22.5 -8 -19 28 8', drawBoxes='true')
     finger1.createObject('RestShapeSpringsForceField', points='@boxROI.indices', stiffness='1e12', angularStiffness='1e12')
 
     finger1.createObject('LinearSolverConstraintCorrection', solverName='preconditioner')

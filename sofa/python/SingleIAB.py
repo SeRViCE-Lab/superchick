@@ -16,6 +16,8 @@ meshes_dir = join(pwd, '../..', 'ros/srs_traj_opt/patient_description/meshes')
 dome_mass = .04 # as measured by newly fabricated soft robot
 poisson=0.3   # poisson from pneunet parameters
 youngs=18000  # using pneunet parameters
+youngModulusDomes = 500
+youngModulusStiffLayerDomes = 1500
 
 class dome_test (Sofa.PythonScriptController):
 
@@ -62,26 +64,33 @@ class dome_test (Sofa.PythonScriptController):
 
         # this from paraview
         self.DomeHead.createObject('BoxROI', name='boxROI', box='-2.75533 2.74354 -.1597 2.76615 -2.99312 2.99312', drawBoxes='false', doUpdate='0')#, position="@dh_dofs.rest_position", tetrahedra="@TetraTopologyContainer.tetrahedra")
+        self.DomeHead.createObject('BoxROI', name='boxROISubTopo', box='-6.75533 4.74354 -4.7597 4.76615 -3.99312 3.99312', drawBoxes='true', doUpdate='0')#, position="@dh_dofs.rest_position", tetrahedra="@TetraTopologyContainer.tetrahedra")
         self.DomeHead.createObject('RestShapeSpringsForceField', points='@boxROI.indices', stiffness='1e12')
 
         self.DomeHead.createObject('SparseLDLSolver', name='preconditioner')
         self.DomeHead.createObject('LinearSolverConstraintCorrection', solverName='preconditioner')
 
         # rootNode.createObject('TetrahedronMooneyRivlinFEMForceField', name='rootFEM', materialName='MooneyRivlinIncompressible', ParameterSet='1000 100', template='Vec3d', poissonRatio='0.45', youngModulus='10000')
+        ##########################################
+        # Sub topology                           #
+        ##########################################
+        self.DomeHeadSubTopo = self.DomeHead.createChild('self.DomeHeadSubTopo')
+        self.DomeHeadSubTopo.createObject('TetrahedronSetTopologyContainer', position='@../domeHeadVTKLoader.position', tetrahedra="@boxROISubTopo.tetrahedraInROI", name='container')
+        self.DomeHeadSubTopo.createObject('TetrahedronFEMForceField', template='Vec3d', name='FEM', method='large', poissonRatio='0.3',  youngModulus=str(youngModulusStiffLayerDomes-youngModulusDomes))
 
         # rootNode/DomeCavity
         self.DomeCavity = self.DomeHead.createChild('DomeCavity')
         self.DomeCavity.createObject('MeshObjLoader', name='cavityLoader', filename='{}/dome/dome_cavity.obj'.format(meshes_dir), triangulate="true")
         self.DomeCavity.createObject('Mesh', src='@cavityLoader', name='cavityTopo')
-        self.DomeCavity.createObject('MechanicalObject',  name='domeCavity', rx="90")
-        self.DomeCavity.createObject('SurfacePressureConstraint', name='surfaceConstraint', template="Vec3d", value="0.0001", triangles='@cavityTopo.triangles', drawPressure='0', drawScale='0.0002', valueType='pressure') #
+        self.DomeCavity.createObject('MechanicalObject',  name='domeCavity', rx="90", scale="1.8")
+        self.DomeCavity.createObject('SurfacePressureConstraint', name='SurfacePressureConstraint', template="Vec3d", value="0.0001", triangles='@cavityTopo.triangles', drawPressure='0', drawScale='0.0002', valueType='pressure') #
         self.DomeCavity.createObject('BarycentricMapping',  name='mapping', mapForces='false', mapMasses='false')# , input='@../dh_dofs',  output='@DomeCavity', template="Vec3d")
 
         # rootNode/DomeHeadCollis
         self.DomeHeadCollis = self.DomeHead.createChild('DomeHeadCollis')
         self.DomeHeadCollis.createObject('MeshObjLoader', name='domeHeadCollis', filename='{}/dome/dome_cavity.obj'.format(meshes_dir)) #src='@../domeHeadVTKLoader', scale='1', , rx='0', ry='0', rz='0', dz='0', dx='0', dy='0', template='Vec3d')
         self.DomeHeadCollis.createObject('Mesh', src='@domeHeadCollis', name='topo')
-        self.DomeHeadCollis.createObject('MechanicalObject', name='collisMech', rx="90")
+        self.DomeHeadCollis.createObject('MechanicalObject', name='collisMech', rx="90", scale="1.8")
         self.DomeHeadCollis.createObject('Triangle', selfCollision="false")
         self.DomeHeadCollis.createObject('Line',selfCollision="false")
         self.DomeHeadCollis.createObject('Point', selfCollision="false")
@@ -95,8 +104,7 @@ class dome_test (Sofa.PythonScriptController):
         self.DomeHeadVisu.createObject('TriangleSetGeometryAlgorithms', template='Vec3d')
         self.DomeHeadVisu.createObject('Tetra2TriangleTopologicalMapping', name='DHTetra2TriMap', input='@../TetraTopologyContainer', output='@triContainer')
         self.DomeHeadVisu.createObject('OglModel', color='0.3 0.2 0.2 0.6') # template='Vec3d',
-
-        '''
+        ''')#
         # Dome Cover
         self.DomeCoverVisu = self.DomeHead.createChild('DomeCoverVisu')
         self.DomeCoverVisu.createObject('MeshSTLLoader', name='domeCoverLoader', filename='{}/dome/cover.stl'.format(meshes_dir))
@@ -115,7 +123,6 @@ class dome_test (Sofa.PythonScriptController):
         self.DomeCoverCollis.createObject('Point', selfCollision="false")
         self.DomeCoverCollis.createObject('BarycentricMapping',  name='mapping', mapForces='false', mapMasses='false')# , input='@../dh_dofs',  output='@DomeCavity', template="Vec3d")
         '''
-
         return rootNode;
 
     def initGraph(self, node):
