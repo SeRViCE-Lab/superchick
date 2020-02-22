@@ -48,6 +48,15 @@
     </Node>
   </Node>
 
+		<Node name="FlexiHolders">
+      <!-- <include name="FlexiBase" href="scene_comps/supports/flexi_base.scn"
+              dx="-20" dy="-110" dz="-60" rx="90" scale="80"/> -->
+      <include name="FlexiRight" href="scene_comps/supports/flexi_hz.scn"
+              dx="-20" dy="30" dz="150" rz="90" scale="100"/>
+      <include name="FlexiLeft" href="scene_comps/supports/flexi_hz.scn"
+              dx="-20" dy="30" dz="-280" rz="90" scale="100" />
+    </Node>
+
     <Node name="GantryCouch" >
       <include href="scene_comps/gantry/gantry.scn" name="gantry" color="0.8549 0.8235 0.6431" dy="50" dz="20" scale=".91" />
       <include href="scene_comps/gantry/turntable.scn" name="turntable" color="0.8549 0.8235 0.6431"   dy="50" dz="20" scale=".91" />
