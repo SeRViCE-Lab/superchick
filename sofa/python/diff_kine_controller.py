@@ -5,7 +5,8 @@ import Sofa
 import math
 
 move_dist = 20
-growth_rate = .05
+growth_rate = .5  #was .05
+max_pressure = 100 # was 15
 
 def moveRestPos(rest_pos, dx, dy, dz):
     str_out = ' '
@@ -38,13 +39,13 @@ class controller(Sofa.PythonScriptController):
 
     def initGraph(self, root):
 
-        '''
-        IABs are so named:
-        Convention is top of head is facing the screen. Left is to your left ear as it would be if you were facing the screen
 
-        Bottom IABs: {{neck_left, neck_right}, {skull_left, skull_right}}
-        Side   IABs: {{left_neck, left_skull}, {right_neck, right_skull}}
-        '''
+        # IABs are so named:
+        # Convention is top of head is facing the screen. Left is to your left ear as it would be if you were facing the screen
+        #
+        # Bottom IABs: {{neck_left, neck_right},{skull_left, skull_right}}
+        # Side   IABs: {{fore_left, chin_left}, {fore_right, chin_right}}
+
         # print([k, v for k, v in root.get_items()])
         self.root = root
         self.neck_left_node=self.root.getChild('DomeHead')
@@ -61,17 +62,18 @@ class controller(Sofa.PythonScriptController):
         self.neck_left_constraint = self.neck_left_cavity.getObject('SurfacePressureConstraint')
 
         if (c == "+"):
-            print('squeezing...')
             pressureValue = self.neck_left_constraint.findData('value').value[0][0] + growth_rate
             # print('Current pressure value: ', pressureValue, see_pose(self.neck_left_mech.rest_position))
-            if pressureValue > 1.5:
-                pressureValue = 1.5
+            if pressureValue > max_pressure:
+                pressureValue = max_pressure
             self.neck_left_constraint.findData('value').value = str(pressureValue)
+            print('squeezing... at {}'.format(pressureValue))
 
         if (c == "-"):
-            print( 'releasing...')
+            # print( 'releasing...')
             pressureValue = self.neck_left_constraint.findData('value').value[0][0] - growth_rate
             self.neck_left_constraint.findData('value').value = str(pressureValue)
+            print('releasing... at {}'.format(pressureValue))
 
         # UP key :
         if ord(c)==19:
@@ -129,8 +131,8 @@ class controller(Sofa.PythonScriptController):
 
     def onMouseWheel(self, mouseX,mouseY,wheelDelta):
         # usage e.g.
-        if isPressed :
-           print ("Control button pressed+mouse wheel turned at position "+str(mouseX)+", "+str(mouseY)+", wheel delta"+str(wheelDelta))
+        # if isPressed :
+        #    print ("Control button pressed+mouse wheel turned at position "+str(mouseX)+", "+str(mouseY)+", wheel delta"+str(wheelDelta))
         return 0;
 
     def storeResetState(self):
