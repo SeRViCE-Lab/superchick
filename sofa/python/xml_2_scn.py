@@ -1,11 +1,27 @@
-#!/usr/bin/python
+#!/usr/bin/python2
 
 """
-For more information on this program, please type
-python createPythonScene.py -h
-or
-./createPythonScene.py -h
+Run this as e.g.
+
+ python2 xml_2_scn.py ../scenes/scene_comps/gantry/gantry.scn \
+                      ../scenes/scene_comps/gantry/turntable.scn \
+                      ../scenes/scene_comps/couch/couch_foot.scn \
+                      ../scenes/scene_comps/couch/couch_latbase.scn \
+                      ../scenes/scene_comps/couch/couch_lnginner.scn \
+                      ../scenes/scene_comps/couch/couch_lnginner.scn \
+                      ../scenes/scene_comps/couch/couch_lngmid.scn \
+                      ../scenes/scene_comps/couch/couch_main.scn \
+                      ../scenes/scene_comps/couch/couch_top.scn \
+                -o    gantry \
+                      turntable \
+                      couch_foot \
+                      couch_latbase \
+                      couch_lnginner \
+                      couch_lnginner \
+                      couch_lngmid \
+                      couch_main couch_top
 """
+
 import re
 import xml.etree.ElementTree as ET
 from subprocess import check_output
