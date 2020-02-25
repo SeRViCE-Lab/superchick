@@ -19,7 +19,7 @@ couch = dict(CouchFoot=dict(scale='5e-6*.91', color="0.3 0.6 0.7", mass='50', tr
              CouchTop=dict(scale='5e-6*.91', color="cyan", mass='25', trans='500 50 20'),
              HeadSupport=dict(scale='5e-6*.91', color="cyan", mass='25', trans='0 90 0'),
              CouchPad=dict(scale='5e-6*1', color="0.3 0.6 0.7", mass='30', trans='500 50 20'),
-             CouchBlock=dict(scale='5e-6*1', color="0.3 0.6 0.7", mass='30', trans='500 50 20'),
+             CouchBlock=dict(scale='100', color="yellow", mass='100', trans='500 50 20'),
              couches_dir = join(os.getcwd(), '../..', 'ros/srs_traj_opt/couch_description/meshes'),
              )
 # individual dome arretibues
