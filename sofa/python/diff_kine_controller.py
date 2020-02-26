@@ -3,6 +3,7 @@
 from __future__ import print_function
 import Sofa
 import math
+import sys
 
 move_dist = 20
 growth_rate = .5  #was .05
@@ -34,9 +35,24 @@ def see_pose(pos):
         str_out= str_out + ' ' + str(pos[i][2])
     return str_out
 
+class Bundle(object):
+    def __init__(self, dicko):
+
+        for var, val in dicko.items():
+            object.__setattr__(self, var, val)
+
 class controller(Sofa.PythonScriptController):
 
+    '''
+    For examples, see:
 
+    + Keyboard Control:
+        - https://github.com/lakehanne/sofa/blob/master/examples/Tutorials/StepByStep/Dentistry_Python/keyboardControl.py
+    + Parallel and SSH Launcher:
+        - https://github.com/lakehanne/sofa/blob/master/tools/sofa-launcher/launcher.py
+    + OneParticle:
+        - https://github.com/lakehanne/sofa/blob/master/tools/sofa-launcher/example.py
+    '''
     def initGraph(self, root):
 
 
@@ -46,19 +62,54 @@ class controller(Sofa.PythonScriptController):
         # Bottom IABs: {{neck_left, neck_right},{skull_left, skull_right}}
         # Side   IABs: {{fore_left, chin_left}, {fore_right, chin_right}}
 
-        # print([k, v for k, v in root.get_items()])
-        self.root = root
-        self.neck_left_node=self.root.getChild('DomeHead')
-        self.neck_left_cavity = self.neck_left_node.getChild('DomeCavity')
 
-        self.centerPosY = 70
-        self.centerPosZ = 0
-        self.rotAngle = 0
+        starttime = datetime.datetime.now()
+        begintime = time.time()
+
+        self.patient = root.getChild('patient')
+        # get base IABs
+        self.base_neck_left=self.root.getChild('base_neck_left')
+        self.base_neck_right=self.root.getChild('base_neck_right')
+        self.base_skull_left=self.root.getChild('base_skull_left')
+        self.base_skull_right=self.root.getChild('base_skull_right')
+        # get side IABs
+        self.side_fore_left=self.root.getChild('side_fore_left')
+        self.side_chin_left=self.root.getChild('side_chin_left')
+        self.side_fore_right=self.root.getChild('side_fore_right')
+        self.side_chin_right=self.root.getChild('side_chin_right')
+
+        'get all the dofs associated with each dome in the linkage'
+        self.bnl_dofs = self.get_dome_dofs(self.base_neck_left)
+        self.bnr_dofs = self.get_dome_dofs(self.base_neck_right)
+        self.bsl_dofs = self.get_dome_dofs(self.base_skull_left)
+        self.bsr_dofs = self.get_dome_dofs(self.base_skull_right)
+        # side domes
+        self.sfl_dofs = self.get_dome_dofs(self.side_fore_left)
+        self.scl_dofs = self.get_dome_dofs(self.side_chin_left)
+        self.sfr_dofs = self.get_dome_dofs(self.side_fore_right)
+        self.scr_dofs = self.get_dome_dofs(self.side_chin_right)
+
+    # domes' mechanical states
+    def get_dome_dofs(self, node):
+        'dof name shall be in the form patient or base_neck etc'
+        dh_dofs = node.getObject('dh_dofs')  # dome head
+        # dh_collis_dofs = node.getObject('dh_collis_dofs')
+        # cavity
+        cav_dofs = node.getObject('dome_cav_dofs')
+        cav_collis_dofs = node.getObject('dome_cav_collis_dofs')
+        # dome cover back
+        cover_dofs = node.getObject('dome_cover_dofs')
+        cover_collis_dofs = node.getObject('dome_cover_collis_dofs')
+
+        return Bundle(dict(dh_dofs=dh_dofs, cav_dofs=cav_dofs,
+                        cav_collis_dofs=cav_collis_dofs,
+                        cover_dofs=cover_dofs,
+                        cover_collis_dofs=cover_collis_dofs))
 
     def onKeyPressed(self,c):
         self.dt = self.root.findData('dt').value
         incr = self.dt*1000.0;
-        self.neck_left_mech=self.neck_left_node.getObject('dh_dofs');
+        self.neck_left_mech=self.base_neck_left.getObject('dh_dofs');
         self.neck_left_constraint = self.neck_left_cavity.getObject('SurfacePressureConstraint')
 
         if (c == "+"):
@@ -147,8 +198,12 @@ class controller(Sofa.PythonScriptController):
         ## Please feel free to add an example for a simple usage in /home/lex/catkin_ws/src/superchicko/sofa/python/xml_2_scn.py
         return 0;
 
+    def onBeginAnimationStep(self, deltaTime):
+        self.time += deltaTime
+        return 0;
+
     def onEndAnimationStep(self, deltaTime):
-        ## Please feel free to add an example for a simple usage in /home/lex/catkin_ws/src/superchicko/sofa/python/xml_2_scn.py
+		sys.stdout.flush()
         return 0;
 
     def onLoaded(self, node):
@@ -177,8 +232,4 @@ class controller(Sofa.PythonScriptController):
         ## usage e.g.
         #if isPressed :
         #    print "Control+Right mouse button pressed at position "+str(mouseX)+", "+str(mouseY)
-        return 0;
-
-    def onBeginAnimationStep(self, deltaTime):
-        ## Please feel free to add an example for a simple usage in /home/lex/catkin_ws/src/superchicko/sofa/python/xml_2_scn.py
         return 0;

@@ -111,18 +111,18 @@ def make_base_domes(rootNode, dome_name, create_solver=True):
     domeCavity = dome.createChild('DomeCavity')
     domeCavity.createObject('MeshObjLoader', name='cavityLoader', filename='{}/dome/dome_cavity.obj'.format(dometributes['meshes_dir']), triangulate="true")
     domeCavity.createObject('Mesh', src='@cavityLoader', name='cavityTopo')
-    domeCavity.createObject('MechanicalObject',  name='domeCavity', scale=dometributes['scale'], translation=dometributes['trans'][dome_name], rx='0')
+    domeCavity.createObject('MechanicalObject',  name='dome_cav_dofs', scale=dometributes['scale'], translation=dometributes['trans'][dome_name], rx='0')
     domeCavity.createObject('SurfacePressureConstraint', name='SurfacePressureConstraint', template="Vec3d", value=dometributes['pressureConsVal'], triangles='@cavityTopo.triangles', drawPressure='0', drawScale='0.0002', valueType='pressure') #
     domeCavity.createObject('BarycentricMapping',  name='mapping', mapForces='false', mapMasses='false')
     # rootNode/DomeHeadCollis
-    domeCollis = dome.createChild('DomeHeadCollis')
-    domeCollis.createObject('MeshObjLoader', name='domeCollisLoader', filename='{}/dome/dome_cavity.obj'.format(dometributes['meshes_dir'])) #src='@../domeVTKLoader', scale='1', , rx='0', ry='0', rz='0', dz='0', dx='0', dy='0', template='Vec3d')
-    domeCollis.createObject('Mesh', src='@domeCollisLoader', name='topo')
-    domeCollis.createObject('MechanicalObject', name='collisMech',  scale=dometributes['scale'], translation=dometributes['trans'][dome_name], rx='0')
-    domeCollis.createObject('Triangle', selfCollision="false")
-    domeCollis.createObject('Line',selfCollision="false")
-    domeCollis.createObject('Point', selfCollision="false")
-    domeCollis.createObject('BarycentricMapping',  name='mapping', mapForces='false', mapMasses='false')# , input='@../dh_dofs',  output='@DomeCavity', template="Vec3d")
+    domeCavCollis = dome.createChild('DomeHeadCollis')
+    domeCavCollis.createObject('MeshObjLoader', name='domeCavCollisLoader', filename='{}/dome/dome_cavity.obj'.format(dometributes['meshes_dir'])) #src='@../domeVTKLoader', scale='1', , rx='0', ry='0', rz='0', dz='0', dx='0', dy='0', template='Vec3d')
+    domeCavCollis.createObject('Mesh', src='@domeCavCollisLoader', name='topo')
+    domeCavCollis.createObject('MechanicalObject', name='dome_cav_collis_dofs',  scale=dometributes['scale'], translation=dometributes['trans'][dome_name], rx='0')
+    domeCavCollis.createObject('Triangle', selfCollision="false")
+    domeCavCollis.createObject('Line',selfCollision="false")
+    domeCavCollis.createObject('Point', selfCollision="false")
+    domeCavCollis.createObject('BarycentricMapping',  name='mapping', mapForces='false', mapMasses='false')# , input='@../dh_dofs',  output='@DomeCavity', template="Vec3d")
     # rootNode/DomeHeadVisu
     domeVisu = dome.createChild('DomeHeadVisu')
     domeVisu.createObject('MeshObjLoader', name='domeVisuLoader', filename='{}/dome/dome.obj'.format(dometributes['meshes_dir'])) #src='@../domeVTKLoader', scale='1', , rx='0', ry='0', rz='0', dz='0', dx='0', dy='0', template='Vec3d')
@@ -131,7 +131,7 @@ def make_base_domes(rootNode, dome_name, create_solver=True):
     # Dome Cover
     domeCoverVisu = dome.createChild('DomeCoverVisu')
     domeCoverVisu.createObject('MeshSTLLoader', name='domeCoverLoader', filename='{}/dome/cover.stl'.format(dometributes['meshes_dir']))
-    domeCoverVisu.createObject('MechanicalObject', name='domeCoverVisu',  scale=dometributes['scale'], \
+    domeCoverVisu.createObject('MechanicalObject', name='dome_cover_dofs',  scale=dometributes['scale'], \
                                 translation=dometributes['trans'][dome_name], rx='0')
     domeCoverVisu.createObject('BarycentricMapping',  name='mapping', mapForces='false', mapMasses='false')
     domeCoverVisu.createObject('OglModel', color='0.3 0.5 0.5 0.6')
@@ -139,7 +139,7 @@ def make_base_domes(rootNode, dome_name, create_solver=True):
     domeCoverCollis = dome.createChild('DomeCoverCollis')
     domeCoverCollis.createObject('MeshObjLoader', name='domeCoverCollis', filename='{}/dome/cover.obj'.format(dometributes['meshes_dir'])) #src='@../domeHeadVTKLoader', scale='1', , rx='0', ry='0', rz='0', dz='0', dx='0', dy='0', template='Vec3d')
     domeCoverCollis.createObject('Mesh', src='@domeCoverCollis', name='topo')
-    domeCoverCollis.createObject('MechanicalObject', name='collisMech',  scale=dometributes['scale'], \
+    domeCoverCollis.createObject('MechanicalObject', name='dome_cover_collis_dofs',  scale=dometributes['scale'], \
                                         translation=dometributes['trans'][dome_name], rx='0')
     domeCoverCollis.createObject('Triangle', selfCollision="false")
     domeCoverCollis.createObject('Line',selfCollision="false")
@@ -190,7 +190,7 @@ def make_side_domes(rootNode, dome_name, create_solver=True, right_domes=False):
     domeCavCollis = domeCavity.createChild('DomeCavCollis')
     domeCavCollis.createObject('MeshObjLoader', name='domeCavCollisLoader', filename='{}/dome/dome_cavity.obj'.format(dometributes['meshes_dir'])) #src='@../domeVTKLoader', scale='1', , rx='0', ry='0', rz='0', dz='0', dx='0', dy='0', template='Vec3d')
     domeCavCollis.createObject('Mesh', src='@domeCavCollisLoader', name='topo')
-    domeCavCollis.createObject('MechanicalObject', name='domeCavCollis_dofs',  scale=dometributes['scale'], translation=dometributes['trans'][dome_name], rx=cav_rx)
+    domeCavCollis.createObject('MechanicalObject', name='dome_cav_collis_dofs',  scale=dometributes['scale'], translation=dometributes['trans'][dome_name], rx=cav_rx)
     domeCavCollis.createObject('Triangle', selfCollision="false")
     domeCavCollis.createObject('Line',selfCollision="false")
     domeCavCollis.createObject('Point', selfCollision="false")
@@ -203,7 +203,7 @@ def make_side_domes(rootNode, dome_name, create_solver=True, right_domes=False):
     # Dome Cover
     domeCoverVisu = dome.createChild('DomeCoverVisu')
     domeCoverVisu.createObject('MeshSTLLoader', name='domeCoverLoader', filename='{}/dome/cover.stl'.format(dometributes['meshes_dir']))
-    domeCoverVisu.createObject('MechanicalObject', name='domeCoverVisu',  scale=dometributes['scale'], \
+    domeCoverVisu.createObject('MechanicalObject', name='dome_cover_dofs',  scale=dometributes['scale'], \
                                 translation=dometributes['trans'][dome_name], rx='-90')
     domeCoverVisu.createObject('BarycentricMapping',  name='mapping', mapForces='false', mapMasses='false')
     domeCoverVisu.createObject('OglModel', color='0.3 0.5 0.5 0.6')
@@ -211,7 +211,7 @@ def make_side_domes(rootNode, dome_name, create_solver=True, right_domes=False):
     domeCoverCollis = dome.createChild('DomeCoverCollis')
     domeCoverCollis.createObject('MeshObjLoader', name='domeCoverCollis', filename='{}/dome/cover.obj'.format(dometributes['meshes_dir'])) #src='@../domeHeadVTKLoader', scale='1', , rx='0', ry='0', rz='0', dz='0', dx='0', dy='0', template='Vec3d')
     domeCoverCollis.createObject('Mesh', src='@domeCoverCollis', name='topo')
-    domeCoverCollis.createObject('MechanicalObject', name='collisMech',  scale=dometributes['scale'], \
+    domeCoverCollis.createObject('MechanicalObject', name='dome_cover_collis_dofs',  scale=dometributes['scale'], \
                                         translation=dometributes['trans'][dome_name], rx='-90')
     domeCoverCollis.createObject('Triangle', selfCollision="false")
     domeCoverCollis.createObject('Line',selfCollision="false")
@@ -263,7 +263,7 @@ def make_domes(rootNode, dome_name, create_solver=True, side_domes=False, right_
     domeCavCollis = domeCavity.createChild('DomeCavCollis')
     domeCavCollis.createObject('MeshObjLoader', name='domeCavCollisLoader', filename='{}/dome/dome_cavity.obj'.format(dometributes['meshes_dir'])) #src='@../domeVTKLoader', scale='1', , rx='0', ry='0', rz='0', dz='0', dx='0', dy='0', template='Vec3d')
     domeCavCollis.createObject('Mesh', src='@domeCavCollisLoader', name='topo')
-    domeCavCollis.createObject('MechanicalObject', name='domeCavCollis_dofs',  scale=dometributes['scale'], translation=dometributes['trans'][dome_name], rx=cav_rx)
+    domeCavCollis.createObject('MechanicalObject', name='dome_cav_collis_dofs',  scale=dometributes['scale'], translation=dometributes['trans'][dome_name], rx=cav_rx)
     domeCavCollis.createObject('Triangle', selfCollision="false")
     domeCavCollis.createObject('Line',selfCollision="false")
     domeCavCollis.createObject('Point', selfCollision="false")

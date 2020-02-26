@@ -35,20 +35,20 @@ class dome_test (Sofa.PythonScriptController):
 
         rootNode.createObject('FreeMotionAnimationLoop')
         rootNode.createObject('GenericConstraintSolver', maxIterations='100', tolerance = '0.0000001')
-        # rootNode.createObject('PythonScriptController', filename="diff_kine_controller.py", classname="controller")
+        rootNode.createObject('PythonScriptController', filename="diff_kine_controller.py", classname="controller")
 
         # Patient
         patient = rootNode.createChild('patient')
         patient.createObject('EulerImplicit', name='odesolver')
         patient.createObject('SparseLDLSolver', name='linearSolver')
         patient.createObject('MeshObjLoader', name='patient_loader', filename='{}/patient.obj'.format(dometributes['meshes_dir']))
-        patient.createObject('MechanicalObject', src='@patient_loader', name='patient-states', template='Vec3d', scale=patributes['scale'], \
+        patient.createObject('MechanicalObject', src='@patient_loader', name='patient_dofs', template='Vec3d', scale=patributes['scale'], \
                                     rx=patributes['rx'], ry=patributes['ry'], translation=patributes['translation'])
         patient.createObject('UniformMass', totalMass='95')
         patient.createObject('UncoupledConstraintCorrection')
         patientCollis = patient.createChild('patientCollis')
         patientCollis.createObject('Mesh', src="@../patient_loader")
-        patientCollis.createObject('MechanicalObject', name='patient_dofs', template='Vec3d', scale=patributes['scale'], \
+        patientCollis.createObject('MechanicalObject', name='patient_collis_dofs', template='Vec3d', scale=patributes['scale'], \
                                     rx=patributes['rx'], ry=patributes['ry'], translation=patributes['translation'])
         patientVisu = patient.createChild('patientVisu')
         patientVisu.createObject('OglModel', src='@../patient_loader', name='patientVisual', scale=patributes['scale'], \
