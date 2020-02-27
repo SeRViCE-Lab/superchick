@@ -91,11 +91,12 @@ def make_base_domes(rootNode, dome_name, create_solver=True):
     dome.createObject('TetrahedronSetTopologyModifier', name='TetraTopologyModifier')
     dome.createObject('TetrahedronSetTopologyAlgorithms', name='TetraTopologyAlgo', template='Vec3d')
     dome.createObject('TetrahedronSetGeometryAlgorithms', drawTetrahedra='1', name='TetraGeomAlgo', template='Vec3d')
+
     dome.createObject('MechanicalObject', name='dh_dofs', template='Vec3d', showIndices='false', showIndicesScale='4e-5',\
                                  scale=dometributes['scale'], translation=dometributes['trans'][dome_name], rx=dometributes['rot'][dome_name][0])
     dome.createObject('UniformMass', totalMass='{}'.format(dometributes['mass']))
-    dome.createObject('TetrahedronFEMForceField', template='Vec3d', name='FEM', method='large', poissonRatio='{}'.format(dometributes['poisson']),\
-                                youngModulus='{}'.format(dometributes['youngs']))
+    dome.createObject('TetrahedronFEMForceField', template='Vec3d', name='FEM_Non_Stiff', method='large', poissonRatio='{}'.format(dometributes['poisson']), youngModulus='{}'.format(dometributes['youngs']))
+
     # stiff layer identified indices from paraview
     dome.createObject('BoxROI', name='boxROI', box='-2.75533 2.74354 -.1597 2.76615 -2.99312 2.99312', drawBoxes='true', doUpdate='1')#, position="@dh_dofs.rest_position", tetrahedra="@TetraTopologyContainer.tetrahedra")
     dome.createObject('BoxROI', name='boxROISubTopo', box='-6.75533 4.74354 -4.7597 4.76615 -3.99312 3.99312', drawBoxes='false', doUpdate='0')#, position="@dh_dofs.rest_position", tetrahedra="@TetraTopologyContainer.tetrahedra")
@@ -105,8 +106,7 @@ def make_base_domes(rootNode, dome_name, create_solver=True):
     # rootNode.createObject('TetrahedronMooneyRivlinFEMForceField', name='rootFEM', materialName='MooneyRivlinIncompressible', ParameterSet='1000 100', template='Vec3d', poissonRatio='0.45', youngModulus='10000')
     domeSubTopo = dome.createChild('DomeHeadSubTopo')
     domeSubTopo.createObject('TetrahedronSetTopologyContainer', position='@../{}_loader.position'.format(dome_name), tetrahedra="@boxROISubTopo.tetrahedraInROI", name='container')
-    domeSubTopo.createObject('TetrahedronFEMForceField', template='Vec3d', name='FEM', method='large', poissonRatio=dometributes['poisson'],
-                                        youngModulus=str(dometributes['youngsmodstiff'] - dometributes['youngsmod']))
+    dome.createObject('TetrahedronFEMForceField', template='Vec3d', name='FEM_Stiff', method='large', poissonRatio='{}'.format(dometributes['poisson']), youngModulus='{}'.format(dometributes['youngsmodstiff']-dometributes['youngsmod']))
     # rootNode/DomeCavity
     domeCavity = dome.createChild('DomeCavity')
     domeCavity.createObject('MeshObjLoader', name='cavityLoader', filename='{}/dome/dome_cavity.obj'.format(dometributes['meshes_dir']), triangulate="true")
@@ -162,8 +162,7 @@ def make_side_domes(rootNode, dome_name, create_solver=True, right_domes=False):
     dome.createObject('MechanicalObject', name='dh_dofs', template='Vec3d', showIndices='false', showIndicesScale='4e-5',\
                                  scale=dometributes['scale'], translation=dometributes['trans'][dome_name], rx=dometributes['rot'][dome_name][0])
     dome.createObject('UniformMass', totalMass='{}'.format(dometributes['mass']))
-    dome.createObject('TetrahedronFEMForceField', template='Vec3d', name='FEM', method='large', poissonRatio='{}'.format(dometributes['poisson']),\
-                                youngModulus='{}'.format(dometributes['youngs']))
+    dome.createObject('TetrahedronFEMForceField', template='Vec3d', name='FEM_Non_Stiff', method='large', poissonRatio='{}'.format(dometributes['poisson']), youngModulus='{}'.format(dometributes['youngs']))
     # stiff layer identified indices from paraview
     dome.createObject('BoxROI', name='boxROI', box='-2.75533 2.74354 -.1597 2.76615 -2.99312 2.99312', drawBoxes='true', doUpdate='1')#, position="@dh_dofs.rest_position", tetrahedra="@TetraTopologyContainer.tetrahedra")
     dome.createObject('BoxROI', name='boxROISubTopo', box='-6.75533 4.74354 -4.7597 4.76615 -3.99312 3.99312', drawBoxes='false', doUpdate='0')#, position="@dh_dofs.rest_position", tetrahedra="@TetraTopologyContainer.tetrahedra")
@@ -177,8 +176,7 @@ def make_side_domes(rootNode, dome_name, create_solver=True, right_domes=False):
 
     domeSubTopo = dome.createChild('DomeHeadSubTopo')
     domeSubTopo.createObject('TetrahedronSetTopologyContainer', position='@../{}_loader.position'.format(dome_name), tetrahedra="@boxROISubTopo.tetrahedraInROI", name='container')
-    domeSubTopo.createObject('TetrahedronFEMForceField', template='Vec3d', name='FEM', method='large', poissonRatio=dometributes['poisson'],
-                                        youngModulus=str(dometributes['youngsmodstiff'] - dometributes['youngsmod']))
+    dome.createObject('TetrahedronFEMForceField', template='Vec3d', name='FEM_Stiff', method='large', poissonRatio='{}'.format(dometributes['poisson']), youngModulus='{}'.format(dometributes['youngsmodstiff']-dometributes['youngsmod']))
     # rootNode/DomeCavity
     domeCavity = dome.createChild('DomeCavity')
     domeCavity.createObject('MeshObjLoader', name='cavityLoader', filename='{}/dome/dome_cavity.obj'.format(dometributes['meshes_dir']), triangulate="true")
@@ -250,8 +248,7 @@ def make_domes(rootNode, dome_name, create_solver=True, side_domes=False, right_
 
     domeSubTopo = dome.createChild('DomeHeadSubTopo')
     domeSubTopo.createObject('TetrahedronSetTopologyContainer', position='@../{}_loader.position'.format(dome_name), tetrahedra="@boxROISubTopo.tetrahedraInROI", name='container')
-    domeSubTopo.createObject('TetrahedronFEMForceField', template='Vec3d', name='FEM', method='large', poissonRatio=dometributes['poisson'],
-                                        youngModulus=str(dometributes['youngsmodstiff'] - dometributes['youngsmod']))
+    domeSubTopo.createObject('TetrahedronFEMForceField', template='Vec3d', name='FEM', method='large', poissonRatio=dometributes['poisson'], youngModulus=str(dometributes['youngsmodstiff'] - dometributes['youngsmod']))
     # rootNode/DomeCavity
     domeCavity = dome.createChild('DomeCavity')
     domeCavity.createObject('MeshObjLoader', name='cavityLoader', filename='{}/dome/dome_cavity.obj'.format(dometributes['meshes_dir']), triangulate="true")

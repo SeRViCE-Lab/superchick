@@ -39,8 +39,8 @@ class dome_test (Sofa.PythonScriptController):
 
         # Patient
         patient = rootNode.createChild('patient')
-        patient.createObject('EulerImplicit', name='odesolver')
-        patient.createObject('SparseLDLSolver', name='linearSolver')
+        patient.createObject('EulerImplicit', name='patientOdeSolver')
+        patient.createObject('SparseLDLSolver', name='patientLinearSolver')
         patient.createObject('MeshObjLoader', name='patient_loader', filename='{}/patient.obj'.format(dometributes['meshes_dir']))
         patient.createObject('MechanicalObject', src='@patient_loader', name='patient_dofs', template='Vec3d', scale=patributes['scale'], \
                                     rx=patributes['rx'], ry=patributes['ry'], translation=patributes['translation'])

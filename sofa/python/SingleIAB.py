@@ -57,7 +57,7 @@ class dome_test (Sofa.PythonScriptController):
 
         rootNode.createObject('FreeMotionAnimationLoop')
         rootNode.createObject('GenericConstraintSolver', maxIterations='100', tolerance = '0.0000001')
-        rootNode.createObject('PythonScriptController', filename="diff_kine_controller.py", classname="controller")
+        # rootNode.createObject('PythonScriptController', filename="diff_kine_controller.py", classname="controller")
 
         self.DomeHead=rootNode.createChild('DomeHead')
         self.DomeHead.createObject('EulerImplicitSolver', name='cg_odesolver', printLog='false')
@@ -68,11 +68,11 @@ class dome_test (Sofa.PythonScriptController):
         self.DomeHead.createObject('TetrahedronSetTopologyContainer', src='@domeHeadVTKLoader', name='TetraTopologyContainer') #createTriangleArray='true',
         self.DomeHead.createObject('TetrahedronSetTopologyModifier', name='TetraTopologyModifier')
         self.DomeHead.createObject('TetrahedronSetTopologyAlgorithms', name='TetraTopologyAlgo', template='Vec3d')
-        self.DomeHead.createObject('TetrahedronSetGeometryAlgorithms', drawTetrahedra='1', name='TetraGeomAlgo', template='Vec3d')\
+        self.DomeHead.createObject('TetrahedronSetGeometryAlgorithms', drawTetrahedra='1', name='TetraGeomAlgo', template='Vec3d')
 
         self.DomeHead.createObject('MechanicalObject', name='dh_dofs', template='Vec3d', showIndices='false', rx='0', showIndicesScale='4e-5', dz="0") #src='@domeHeadVTKLoader',
         self.DomeHead.createObject('UniformMass', totalMass='{}'.format(dome_mass))
-        self.DomeHead.createObject('TetrahedronFEMForceField', template='Vec3d', name='FEM', method='large', poissonRatio='{}'.format(poisson),  youngModulus='{}'.format(youngs))
+        self.DomeHead.createObject('TetrahedronFEMForceField', template='Vec3d', name='FEM', method='large', poissonRatio='{}'.format(poisson), youngModulus='{}'.format(youngs))
 
         # stiff layer identified indices from paraview
         self.DomeHead.createObject('BoxROI', name='boxROI', box='-2.75533 2.74354 -.1597 2.76615 -2.99312 2.99312', drawBoxes='true', doUpdate='1')#, position="@dh_dofs.rest_position", tetrahedra="@TetraTopologyContainer.tetrahedra")
@@ -81,8 +81,6 @@ class dome_test (Sofa.PythonScriptController):
         self.DomeHead.createObject('RestShapeSpringsForceField', points='@boxROI.indices', stiffness='1e5', angularStiffness='1e5') # stiffness was 1e12 after the pneunets demo
 
         self.DomeHead.createObject('SparseLDLSolver', name='preconditioner')
-        # this causes segmentation error
-        # self.DomeHead.createObject('LinearSolverConstraintCorrection', solverName='preconditioner')
 
         # rootNode.createObject('TetrahedronMooneyRivlinFEMForceField', name='rootFEM', materialName='MooneyRivlinIncompressible', ParameterSet='1000 100', template='Vec3d', poissonRatio='0.45', youngModulus='10000')
         ##########################################2
@@ -91,7 +89,7 @@ class dome_test (Sofa.PythonScriptController):
         self.DomeHeadSubTopo = self.DomeHead.createChild('DomeHeadSubTopo')
         # create the mesh
         self.DomeHeadSubTopo.createObject('TetrahedronSetTopologyContainer', position='@../domeHeadVTKLoader.position', tetrahedra="@boxROISubTopo.tetrahedraInROI", name='container')
-        self.DomeHeadSubTopo.createObject('TetrahedronFEMForceField', template='Vec3d', name='FEM', method='large', poissonRatio='0.3',  youngModulus=str(youngModulusStiffLayerDomes-youngModulusDomes))
+        self.DomeHeadSubTopo.createObject('TetrahedronFEMForceField', template='Vec3d', name='FEM', method='large', poissonRatio='0.3', youngModulus=str(youngModulusStiffLayerDomes-youngModulusDomes))
 
         # rootNode/DomeCavity
         self.DomeCavity = self.DomeHead.createChild('DomeCavity')

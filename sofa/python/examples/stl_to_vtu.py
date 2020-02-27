@@ -8,7 +8,7 @@ from os.path import join, expanduser
 
 
 pwd = os.getcwd()
-sup_dir = join(pwd, '../..', 'ros/srs_traj_opt/patient_description/meshes/dome/')
+sup_dir = join(pwd, '../../..', 'ros/srs_traj_opt/patient_description/meshes/dome/')
 print(sup_dir)
 
 mesh = 'dome'
@@ -39,7 +39,7 @@ def createScene(rootNode):
            # This parameter controls the shape of mesh cells. Actually, it is an upper bound for the ratio between the circumradius of a mesh
            # tetrahedron and its shortest edge. There is a theoretical bound for this parameter: the Delaunay refinement process is guaranteed
            # to terminate for values larger than 2.
-           cellRatio="2",   #Convergence problem if < 2
+           cellRatio="4",   #Convergence problem if < 2
            # The approximation error between the boundary and the subdivision surface. It provides an upper bound for the distance
            # between the circumcenter of a surface facet and the center of a surface Delaunay ball of this facet.
            facetApproximation="1"

@@ -57,7 +57,7 @@ class dome_test (Sofa.PythonScriptController):
 
         rootNode.createObject('FreeMotionAnimationLoop')
         rootNode.createObject('GenericConstraintSolver', maxIterations='100', tolerance = '0.0000001')
-        rootNode.createObject('PythonScriptController', filename="diff_kine_controller.py", classname="controller")
+        rootNode.createObject('PythonScriptController', filename="controllerGripper.py", classname="controller")
 
         self.DomeHead=rootNode.createChild('DomeHead')
         self.DomeHead.createObject('EulerImplicitSolver', name='cg_odesolver', printLog='false')
