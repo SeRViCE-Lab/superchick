@@ -26,7 +26,7 @@ couch = dict(CouchFoot=dict(scale='5e-6*.91', color="0.3 0.6 0.7", mass='50', tr
              CouchPad=dict(scale='5e-6*1', color="0.3 0.6 0.7", mass='30', trans='500 50 20', rot='0 0 0'),
              CouchBlock=dict(scale='80', color=".8784 .8784 .8784", mass='600', trans='600 -1400 0', rot='0 -90 0'),
              TBGantry=dict(scale='1', color="0.9803 0.9803 .8235", mass='1600', trans='0 100 0', rot='180 0 0'),
-             couches_dir = join(os.getcwd(), '../..', 'ros/srs_traj_opt/couch_description/meshes'),
+             couches_dir=join(os.getcwd(), '../..', 'ros/srs_traj_opt/couch_description/meshes'),
              )
 # individual dome arretibues
 dometributes = dict(scale=25, mass=.04, poisson=.3,youngs=18000,
@@ -129,12 +129,12 @@ def make_base_domes(rootNode, dome_name, create_solver=True):
     domeVisu.createObject('OglModel',  color='0.3 0.2 0.2 0.6') # name='@domeVisuLoader', template='Vec3d', src="@../domeCollisLoader", #dx="20", dy="-80", dz="10", rx="-90",
     domeVisu.createObject('BarycentricMapping', name='mapping')#, mapForces='false', mapMasses='false')
     # Dome Cover
-    domeCoverVisu = dome.createChild('DomeCoverVisu')
-    domeCoverVisu.createObject('MeshSTLLoader', name='domeCoverLoader', filename='{}/dome/cover.stl'.format(dometributes['meshes_dir']))
-    domeCoverVisu.createObject('MechanicalObject', name='dome_cover_dofs',  scale=dometributes['scale'], \
+    domeCover = dome.createChild('DomeCover')
+    domeCover.createObject('MeshSTLLoader', name='domeCoverLoader', filename='{}/dome/cover.stl'.format(dometributes['meshes_dir']))
+    domeCover.createObject('MechanicalObject', name='dome_cover_dofs',  scale=dometributes['scale'], \
                                 translation=dometributes['trans'][dome_name], rx='0')
-    domeCoverVisu.createObject('BarycentricMapping',  name='mapping', mapForces='false', mapMasses='false')
-    domeCoverVisu.createObject('OglModel', color='0.3 0.5 0.5 0.6')
+    domeCover.createObject('BarycentricMapping',  name='mapping', mapForces='false', mapMasses='false')
+    domeCover.createObject('OglModel', color='0.3 0.5 0.5 0.6')
     # DomeCoverCollis
     domeCoverCollis = dome.createChild('DomeCoverCollis')
     domeCoverCollis.createObject('MeshObjLoader', name='domeCoverCollis', filename='{}/dome/cover.obj'.format(dometributes['meshes_dir'])) #src='@../domeHeadVTKLoader', scale='1', , rx='0', ry='0', rz='0', dz='0', dx='0', dy='0', template='Vec3d')
@@ -201,12 +201,12 @@ def make_side_domes(rootNode, dome_name, create_solver=True, right_domes=False):
     domeVisu.createObject('OglModel',  color='0.3 0.2 0.2 0.6') # name='@domeVisuLoader', template='Vec3d', src="@../domeCollisLoader", #dx="20", dy="-80", dz="10", rx="-90",
     domeVisu.createObject('BarycentricMapping', name='mapping')#, mapForces='false', mapMasses='false')
     # Dome Cover
-    domeCoverVisu = dome.createChild('DomeCoverVisu')
-    domeCoverVisu.createObject('MeshSTLLoader', name='domeCoverLoader', filename='{}/dome/cover.stl'.format(dometributes['meshes_dir']))
-    domeCoverVisu.createObject('MechanicalObject', name='dome_cover_dofs',  scale=dometributes['scale'], \
+    domeCover = dome.createChild('DomeCover')
+    domeCover.createObject('MeshSTLLoader', name='domeCoverLoader', filename='{}/dome/cover.stl'.format(dometributes['meshes_dir']))
+    domeCover.createObject('MechanicalObject', name='dome_cover_dofs',  scale=dometributes['scale'], \
                                 translation=dometributes['trans'][dome_name], rx='-90')
-    domeCoverVisu.createObject('BarycentricMapping',  name='mapping', mapForces='false', mapMasses='false')
-    domeCoverVisu.createObject('OglModel', color='0.3 0.5 0.5 0.6')
+    domeCover.createObject('BarycentricMapping',  name='mapping', mapForces='false', mapMasses='false')
+    domeCover.createObject('OglModel', color='0.3 0.5 0.5 0.6')
     # DomeCoverCollis
     domeCoverCollis = dome.createChild('DomeCoverCollis')
     domeCoverCollis.createObject('MeshObjLoader', name='domeCoverCollis', filename='{}/dome/cover.obj'.format(dometributes['meshes_dir'])) #src='@../domeHeadVTKLoader', scale='1', , rx='0', ry='0', rz='0', dz='0', dx='0', dy='0', template='Vec3d')
@@ -274,12 +274,12 @@ def make_domes(rootNode, dome_name, create_solver=True, side_domes=False, right_
     domeVisu.createObject('OglModel',  color='0.3 0.2 0.2 0.6') # name='@domeVisuLoader', template='Vec3d', src="@../domeCollisLoader", #dx="20", dy="-80", dz="10", rx="-90",
     domeVisu.createObject('BarycentricMapping', name='mapping')#, mapForces='false', mapMasses='false')
     # Dome Cover
-    domeCoverVisu = dome.createChild('DomeCoverVisu')
-    domeCoverVisu.createObject('MeshSTLLoader', name='domeCoverLoader', filename='{}/dome/cover.stl'.format(dometributes['meshes_dir']))
-    domeCoverVisu.createObject('MechanicalObject', name='domeCoverVisu',  scale=dometributes['scale'], \
+    domeCover = dome.createChild('DomeCover')
+    domeCover.createObject('MeshSTLLoader', name='domeCoverLoader', filename='{}/dome/cover.stl'.format(dometributes['meshes_dir']))
+    domeCover.createObject('MechanicalObject', name='domeCover',  scale=dometributes['scale'], \
                                 translation=dometributes['trans'][dome_name], rx=cov_rx)
-    domeCoverVisu.createObject('BarycentricMapping',  name='mapping', mapForces='false', mapMasses='false')
-    domeCoverVisu.createObject('OglModel', color='0.3 0.5 0.5 0.6')
+    domeCover.createObject('BarycentricMapping',  name='mapping', mapForces='false', mapMasses='false')
+    domeCover.createObject('OglModel', color='0.3 0.5 0.5 0.6')
     # DomeCoverCollis
     domeCoverCollis = dome.createChild('DomeCoverCollis')
     domeCoverCollis.createObject('MeshObjLoader', name='domeCoverCollis', filename='{}/dome/cover.obj'.format(dometributes['meshes_dir'])) #src='@../domeHeadVTKLoader', scale='1', , rx='0', ry='0', rz='0', dz='0', dx='0', dy='0', template='Vec3d')

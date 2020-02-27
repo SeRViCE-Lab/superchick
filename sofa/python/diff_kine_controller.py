@@ -4,10 +4,14 @@ from __future__ import print_function
 import Sofa
 import math
 import sys
+from utils import *
 
 move_dist = 20
 growth_rate = .5  #was .05
 max_pressure = 100 # was 15
+
+# generate sinusoid trajectory for head
+t, x = gen_sinusoid(amp=.8, freq=2, phase=30, interval=[0.1, 1, 0.01])
 
 def moveRestPos(rest_pos, dx, dy, dz):
     str_out = ' '
@@ -44,24 +48,22 @@ class Bundle(object):
 class controller(Sofa.PythonScriptController):
 
     '''
-    For examples, see:
+        For examples, see:
 
-    + Keyboard Control:
-        - https://github.com/lakehanne/sofa/blob/master/examples/Tutorials/StepByStep/Dentistry_Python/keyboardControl.py
-    + Parallel and SSH Launcher:
-        - https://github.com/lakehanne/sofa/blob/master/tools/sofa-launcher/launcher.py
-    + OneParticle:
-        - https://github.com/lakehanne/sofa/blob/master/tools/sofa-launcher/example.py
+        + Keyboard Control:
+            - https://github.com/lakehanne/sofa/blob/master/examples/Tutorials/StepByStep/Dentistry_Python/keyboardControl.py
+        + Parallel and SSH Launcher:
+            - https://github.com/lakehanne/sofa/blob/master/tools/sofa-launcher/launcher.py
+        + OneParticle:
+            - https://github.com/lakehanne/sofa/blob/master/tools/sofa-launcher/example.py
     '''
     def initGraph(self, root):
-
 
         # IABs are so named:
         # Convention is top of head is facing the screen. Left is to your left ear as it would be if you were facing the screen
         #
         # Bottom IABs: {{neck_left, neck_right},{skull_left, skull_right}}
         # Side   IABs: {{fore_left, chin_left}, {fore_right, chin_right}}
-
 
         starttime = datetime.datetime.now()
         begintime = time.time()
@@ -78,53 +80,56 @@ class controller(Sofa.PythonScriptController):
         self.side_fore_right=self.root.getChild('side_fore_right')
         self.side_chin_right=self.root.getChild('side_chin_right')
 
-        'get all the dofs associated with each dome in the linkage'
-        self.bnl_dofs = self.get_dome_dofs(self.base_neck_left)
-        self.bnr_dofs = self.get_dome_dofs(self.base_neck_right)
-        self.bsl_dofs = self.get_dome_dofs(self.base_skull_left)
-        self.bsr_dofs = self.get_dome_dofs(self.base_skull_right)
-        # side domes
-        self.sfl_dofs = self.get_dome_dofs(self.side_fore_left)
-        self.scl_dofs = self.get_dome_dofs(self.side_chin_left)
-        self.sfr_dofs = self.get_dome_dofs(self.side_fore_right)
-        self.scr_dofs = self.get_dome_dofs(self.side_chin_right)
-
     # domes' mechanical states
     def get_dome_dofs(self, node):
         'dof name shall be in the form patient or base_neck etc'
         dh_dofs = node.getObject('dh_dofs')  # dome head
         # dh_collis_dofs = node.getObject('dh_collis_dofs')
         # cavity
-        cav_dofs = node.getObject('dome_cav_dofs')
-        cav_collis_dofs = node.getObject('dome_cav_collis_dofs')
+        cav_node = node.getChild('DomeCavity')
+        pressure_constraint = cav_node.getObject('SurfacePressureConstraint')
+        # pressure_constraint_collis = node.getChild('dome_cav_collis_dofs')
         # dome cover back
-        cover_dofs = node.getObject('dome_cover_dofs')
-        cover_collis_dofs = node.getObject('dome_cover_collis_dofs')
+        node.getChild('DomeCover')
+        cover_dofs = cover_node.getObject('dome_cover_dofs')
+        # cover collis node
+        cover_collis_node = node.getChild('DomeCoverCollis')
+        cover_collis_dofs = cover_collis_node.getObject('dome_cover_collis_dofs')
 
-        return Bundle(dict(dh_dofs=dh_dofs, cav_dofs=cav_dofs,
-                        cav_collis_dofs=cav_collis_dofs,
+        return Bundle(dict(dh_dofs=dh_dofs,
+                        pressure_constraint=pressure_constraint, # cavity
                         cover_dofs=cover_dofs,
                         cover_collis_dofs=cover_collis_dofs))
 
     def onKeyPressed(self,c):
         self.dt = self.root.findData('dt').value
         incr = self.dt*1000.0;
-        self.neck_left_mech=self.base_neck_left.getObject('dh_dofs');
-        self.neck_left_constraint = self.neck_left_cavity.getObject('SurfacePressureConstraint')
 
         if (c == "+"):
-            pressureValue = self.neck_left_constraint.findData('value').value[0][0] + growth_rate
-            # print('Current pressure value: ', pressureValue, see_pose(self.neck_left_mech.rest_position))
+            print(' raising head using base IABs')
+            bnl_val = self.base_neck_left.pressure_constraint.findData('value').value[0][0] + growth_rate
+            bnr_val = self.base_neck_right.pressure_constraint.findData('value').value[0][0] + growth_rate
+            bsl_val = self.base_skull_left.pressure_constraint.findData('value').value[0][0] + growth_rate
+            bsr_val = self.base_skull_right.pressure_constraint.findData('value').value[0][0] + growth_rate
             if pressureValue > max_pressure:
                 pressureValue = max_pressure
-            self.neck_left_constraint.findData('value').value = str(pressureValue)
-            print('squeezing... at {}'.format(pressureValue))
+            self.base_neck_left.pressure_constraint.findData('value').value = str(bnl_val)
+            self.base_neck_right.pressure_constraint.findData('value').value = str(bnr_val)
+            self.base_skull_left.pressure_constraint.findData('value').value = str(bsl_val)
+            self.base_skull_right.pressure_constraint.findData('value').value = str(bsr_val)
 
         if (c == "-"):
-            # print( 'releasing...')
-            pressureValue = self.neck_left_constraint.findData('value').value[0][0] - growth_rate
-            self.neck_left_constraint.findData('value').value = str(pressureValue)
-            print('releasing... at {}'.format(pressureValue))
+            print('lowering head using base IABs')
+            bnl_val = self.base_neck_left.pressure_constraint.findData('value').value[0][0] - growth_rate
+            bnr_val = self.base_neck_right.pressure_constraint.findData('value').value[0][0] - growth_rate
+            bsl_val = self.base_skull_left.pressure_constraint.findData('value').value[0][0] - growth_rate
+            bsr_val = self.base_skull_right.pressure_constraint.findData('value').value[0][0] - growth_rate
+            if pressureValue > max_pressure:
+                pressureValue = max_pressure
+            self.base_neck_left.pressure_constraint.findData('value').value = str(bnl_val)
+            self.base_neck_right.pressure_constraint.findData('value').value = str(bnr_val)
+            self.base_skull_left.pressure_constraint.findData('value').value = str(bsl_val)
+            self.base_skull_right.pressure_constraint.findData('value').value = str(bsr_val)
 
         # UP key :
         if ord(c)==19:
@@ -144,8 +149,6 @@ class controller(Sofa.PythonScriptController):
             dz = 3.0*math.sin(self.rotAngle)
             test = moveRestPos(self.neck_left_mech.rest_position, 0.0, dy, dz)
             self.neck_left_mech.findData('rest_position').value = test
-            self.centerPosY = self.centerPosY + dy
-            self.centerPosZ = self.centerPosZ + dz
 
         # RIGHT key : right
         if ord(c)==18:
@@ -153,14 +156,11 @@ class controller(Sofa.PythonScriptController):
             dz = -3.0*math.sin(self.rotAngle)
             test = moveRestPos(self.neck_left_mech.rest_position, 0.0, dy, dz)
             self.neck_left_mech.findData('rest_position').value = test
-            self.centerPosY = self.centerPosY + dy
-            self.centerPosZ = self.centerPosZ + dz
 
         # a key : direct rotation
         if (ord(c) == 65):
             test = rotateRestPos(self.neck_left_mech.rest_position, math.pi/16, self.centerPosY,self.centerPosZ)
             self.neck_left_mech.findData('rest_position').value = test
-            self.rotAngle = self.rotAngle + math.pi/16
 
         # q key : indirect rotation
         if (ord(c) == 81):
