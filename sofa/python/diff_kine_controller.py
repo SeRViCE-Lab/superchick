@@ -43,6 +43,7 @@ def see_pose(pos):
 		str_out= str_out + ' ' + str(pos[i][2])
 	return str_out
 
+
 class controller(Sofa.PythonScriptController):
 
 	'''
