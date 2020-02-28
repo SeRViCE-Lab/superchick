@@ -1,2 +1,3 @@
 from .utils import *
-from .traj_generator import gen_sinusoid
+from .traj_generator import *
+from .pose_plotter import HeadTrajPlotter

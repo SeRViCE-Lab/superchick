@@ -5,6 +5,8 @@ __examples__ = "See SoftRobotsPlugin Examples  \
                 examples/component/constraint/SurfacePressureConstraint/SurfacePressureConstraint.pyscn \
                 (ii) python/pneunets.py"
 
+import matplotlib as mpl
+mpl.use('qt5agg')
 import Sofa
 from utils import *
 from config import *
@@ -50,6 +52,10 @@ class dome_test (Sofa.PythonScriptController):
         patientCollis.createObject('Mesh', src="@../patient_loader")
         patientCollis.createObject('MechanicalObject', name='patient_collis_dofs', template='Vec3d', scale=patributes['scale'], \
                                     rx=patributes['rx'], ry=patributes['ry'], translation=patributes['translation'])
+        patient.createObject('BoxROI', name='boxROI', box='-1.2 1.2 -0.5 1.5 -0.48166 0.811406', drawBoxes='true', doUpdate='1')#, position="@dh_dofs.rest_position", tetrahedra="@TetraTopologyContainer.tetrahedra")
+        # this defines the boundary condition which creates springs between the current position of the body and its initial position
+        patient.createObject('RestShapeSpringsForceField', points='@boxROI.indices', stiffness='1e1', angularStiffness='1e1') # stiffness was 1e12 after the pneunets demo
+
         patientVisu = patient.createChild('patientVisu')
         patientVisu.createObject('OglModel', src='@../patient_loader', name='patientVisual', scale=patributes['scale'], \
                                     rx=patributes['rx'], ry=patributes['ry'], translation=patributes['translation'])

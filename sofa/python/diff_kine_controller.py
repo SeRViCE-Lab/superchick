@@ -9,6 +9,11 @@ import datetime
 import numpy as np
 from utils import *
 
+# import matplotlib as mpl
+# mpl.use('qt5agg')
+from matplotlib import pyplot as plt
+import matplotlib.gridspec as gridspec
+
 # generate sinusoid trajectory for head
 t, x = gen_sinusoid(amp=.8, freq=2, phase=30, interval=[0.1, 1, 0.01])
 
@@ -38,12 +43,6 @@ def see_pose(pos):
 		str_out= str_out + ' ' + str(pos[i][2])
 	return str_out
 
-class Bundle(object):
-	def __init__(self, dicko):
-
-		for var, val in dicko.items():
-			object.__setattr__(self, var, val)
-
 class controller(Sofa.PythonScriptController):
 
 	'''
@@ -67,8 +66,12 @@ class controller(Sofa.PythonScriptController):
 		starttime = datetime.datetime.now()
 		begintime = time.time()
 
+		self._fig = plt.figure()
+		self._gs = gridspec.GridSpec(1,1) # rows cols
+		self.traj_plotter = HeadTrajPlotter(self._fig, self._gs[0]) # subplot in gridspec
+
 		self.root = root
-		
+
 		self.patient = root.getChild('patient')
 		self.patient_dofs = self.patient.getObject('patient_dofs')
 		# get base IABs
@@ -81,6 +84,18 @@ class controller(Sofa.PythonScriptController):
 		self.side_chin_left=self.root.getChild('side_chin_left')
 		self.side_fore_right=self.root.getChild('side_fore_right')
 		self.side_chin_right=self.root.getChild('side_chin_right')
+		# obtain associated dofs and cavity dofs
+		self.base_neck_left_dofs = self.get_dome_dofs(self.base_neck_left)
+		self.base_neck_right_dofs = self.get_dome_dofs(self.base_neck_right)
+		self.base_skull_left_dofs = self.get_dome_dofs(self.base_skull_left)
+		self.base_skull_right_dofs = self.get_dome_dofs(self.base_skull_right)
+
+		self.is_updated = False
+
+		# visualization
+		display_chart(self.run_traj_plotter)
+		# plt.ioff()
+		# plt.show()
 
 	# domes' mechanical states
 	def get_dome_dofs(self, node):
@@ -92,7 +107,7 @@ class controller(Sofa.PythonScriptController):
 		pressure_constraint = cav_node.getObject('SurfacePressureConstraint')
 		# pressure_constraint_collis = node.getChild('dome_cav_collis_dofs')
 		# dome cover back
-		node.getChild('DomeCover')
+		cover_node = node.getChild('DomeCover')
 		cover_dofs = cover_node.getObject('dome_cover_dofs')
 		# cover collis node
 		cover_collis_node = node.getChild('DomeCoverCollis')
@@ -103,12 +118,22 @@ class controller(Sofa.PythonScriptController):
 						cover_dofs=cover_dofs,
 						cover_collis_dofs=cover_collis_dofs))
 
-	def head_pose_check(self):
-		head_rest = self.patient_dofs.findData('restPosition').value
+	def run_traj_plotter(self):
+		if self.is_updated:
+			self.traj_plotter.update(self.data)
+			# time.sleep(.11)
+		self.is_updated = False
 
 	def update_head_pose(self):
 		rest_pose = self.patient_dofs.findData('rest_position').value
-		print('rest_pose: ', rest_pose.shape)
+		# rest pose is a lisrt
+		x = [t[0] for t in rest_pose]
+		y = [t[1] for t in rest_pose]
+		z = [t[2] for t in rest_pose]
+		# use 2-norm of x, y, and z
+		self.data = np.linalg.norm(np.c_[x, y, z], axis=0)
+		self.is_updated = True
+
 
 	def onKeyPressed(self,c):
 		self.dt = self.root.findData('dt').value
@@ -120,34 +145,45 @@ class controller(Sofa.PythonScriptController):
 
 		if (c == "+"):
 			print(' raising head using base IABs')
-			bnl_val = self.base_neck_left.pressure_constraint.findData('value').value[0][0] + growth_rate
-			bnr_val = self.base_neck_right.pressure_constraint.findData('value').value[0][0] + growth_rate
-			bsl_val = self.base_skull_left.pressure_constraint.findData('value').value[0][0] + growth_rate
-			bsr_val = self.base_skull_right.pressure_constraint.findData('value').value[0][0] + growth_rate
-			if pressureValue > max_pressure:
-				pressureValue = max_pressure
-			self.base_neck_left.pressure_constraint.findData('value').value = str(bnl_val)
-			self.base_neck_right.pressure_constraint.findData('value').value = str(bnr_val)
-			self.base_skull_left.pressure_constraint.findData('value').value = str(bsl_val)
-			self.base_skull_right.pressure_constraint.findData('value').value = str(bsr_val)
+			bnl_val = self.base_neck_left_dofs.pressure_constraint.findData('value').value[0][0] + growth_rate
+			bnr_val = self.base_neck_right_dofs.pressure_constraint.findData('value').value[0][0] + growth_rate
+			bsl_val = self.base_skull_left_dofs.pressure_constraint.findData('value').value[0][0] + growth_rate
+			bsr_val = self.base_skull_right_dofs.pressure_constraint.findData('value').value[0][0] + growth_rate
+
+			bnl_val = max_pressure if bnl_val > max_pressure else bnl_val
+			bnr_val = max_pressure if bnr_val > max_pressure else bnr_val
+			bsl_val = max_pressure if bsl_val > max_pressure else bsl_val
+			bsr_val = max_pressure if bsr_val > max_pressure else bsr_val
+
+			self.base_neck_left_dofs.pressure_constraint.findData('value').value = str(bnl_val)
+			self.base_neck_right_dofs.pressure_constraint.findData('value').value = str(bnr_val)
+			self.base_skull_left_dofs.pressure_constraint.findData('value').value = str(bsl_val)
+			self.base_skull_right_dofs.pressure_constraint.findData('value').value = str(bsr_val)
 
 			self.update_head_pose()
+			plt.ion()
+			plt.show()
 
 		if (c == "-"):
 			print('lowering head using base IABs')
-			bnl_val = self.base_neck_left.pressure_constraint.findData('value').value[0][0] - growth_rate
-			bnr_val = self.base_neck_right.pressure_constraint.findData('value').value[0][0] - growth_rate
-			bsl_val = self.base_skull_left.pressure_constraint.findData('value').value[0][0] - growth_rate
-			bsr_val = self.base_skull_right.pressure_constraint.findData('value').value[0][0] - growth_rate
-			if pressureValue > max_pressure:
-				pressureValue = max_pressure
-			self.base_neck_left.pressure_constraint.findData('value').value = str(bnl_val)
-			self.base_neck_right.pressure_constraint.findData('value').value = str(bnr_val)
-			self.base_skull_left.pressure_constraint.findData('value').value = str(bsl_val)
-			self.base_skull_right.pressure_constraint.findData('value').value = str(bsr_val)
+			bnl_val = self.base_neck_left_dofs.pressure_constraint.findData('value').value[0][0] - growth_rate
+			bnr_val = self.base_neck_right_dofs.pressure_constraint.findData('value').value[0][0] - growth_rate
+			bsl_val = self.base_skull_left_dofs.pressure_constraint.findData('value').value[0][0] - growth_rate
+			bsr_val = self.base_skull_right_dofs.pressure_constraint.findData('value').value[0][0] - growth_rate
+
+			bnl_val = max_pressure if bnl_val > max_pressure else bnl_val
+			bnr_val = max_pressure if bnr_val > max_pressure else bnr_val
+			bsl_val = max_pressure if bsl_val > max_pressure else bsl_val
+			bsr_val = max_pressure if bsr_val > max_pressure else bsr_val
+
+			self.base_neck_left_dofs.pressure_constraint.findData('value').value = str(bnl_val)
+			self.base_neck_right_dofs.pressure_constraint.findData('value').value = str(bnr_val)
+			self.base_skull_left_dofs.pressure_constraint.findData('value').value = str(bsl_val)
+			self.base_skull_right_dofs.pressure_constraint.findData('value').value = str(bsr_val)
 
 			self.update_head_pose()
-
+			plt.ion()
+			plt.show()
 		'''
 		# UP key :
 		if ord(c)==19:
@@ -212,10 +248,10 @@ class controller(Sofa.PythonScriptController):
 		   print ("You released a")
 		return 0;
 
-	def onMouseWheel(self, mouseX,mouseY,wheelDelta):
+	def onMouseWheel(self, mouseX,mouseY,wheelDelta, isPressed):
 		# usage e.g.
-		# if isPressed :
-		#    print ("Control button pressed+mouse wheel turned at position "+str(mouseX)+", "+str(mouseY)+", wheel delta"+str(wheelDelta))
+		if isPressed :
+		   print ("Control button pressed+mouse wheel turned at position "+str(mouseX)+", "+str(mouseY)+", wheel delta"+str(wheelDelta))
 		return 0;
 
 	def storeResetState(self):
@@ -232,6 +268,26 @@ class controller(Sofa.PythonScriptController):
 
 	def onBeginAnimationStep(self, deltaTime):
 		self.time += deltaTime
+		print(' raising head using base IABs: bnl_val: {} bnr_val: {} bsl_val: {} bsr_val')
+		bnl_val = self.base_neck_left_dofs.pressure_constraint.findData('value').value[0][0] + growth_rate
+		bnr_val = self.base_neck_right_dofs.pressure_constraint.findData('value').value[0][0] + growth_rate
+		bsl_val = self.base_skull_left_dofs.pressure_constraint.findData('value').value[0][0] + growth_rate
+		bsr_val = self.base_skull_right_dofs.pressure_constraint.findData('value').value[0][0] + growth_rate
+
+		bnl_val = max_pressure if bnl_val > max_pressure else bnl_val
+		bnr_val = max_pressure if bnr_val > max_pressure else bnr_val
+		bsl_val = max_pressure if bsl_val > max_pressure else bsl_val
+		bsr_val = max_pressure if bsr_val > max_pressure else bsr_val
+
+		self.base_neck_left_dofs.pressure_constraint.findData('value').value = str(bnl_val)
+		self.base_neck_right_dofs.pressure_constraint.findData('value').value = str(bnr_val)
+		self.base_skull_left_dofs.pressure_constraint.findData('value').value = str(bsl_val)
+		self.base_skull_right_dofs.pressure_constraint.findData('value').value = str(bsr_val)
+
+		self.update_head_pose()
+		plt.ion()
+		plt.show()
+
 		return 0;
 
 	def onEndAnimationStep(self, deltaTime):

@@ -1,3 +1,4 @@
+import threading
 import os
 from os.path import join
 
@@ -5,6 +6,18 @@ from os.path import join
     Bottom IABs: {{neck_left, neck_right},{skull_left, skull_right}}
     Side   IABs: {{fore_left, chin_left}, {fore_right, chin_right}}
 '''
+
+def display_chart(demo_func):
+    demo_thread = threading.Thread(target=demo_func)
+    demo_thread.daemon = True
+    demo_thread.start()
+
+class Bundle(object):
+	def __init__(self, dicko):
+
+		for var, val in dicko.items():
+			object.__setattr__(self, var, val)
+
 
 # patient attributes
 patributes = dict(scale="250", rx="-90", ry="-90", translation='-300 110 0')
