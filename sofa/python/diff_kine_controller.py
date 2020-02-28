@@ -5,14 +5,17 @@ import Sofa
 import math
 import sys
 import time
+import logging
 import datetime
 import numpy as np
 from utils import *
+from config import *
 
-# import matplotlib as mpl
-# mpl.use('qt5agg')
 from matplotlib import pyplot as plt
 import matplotlib.gridspec as gridspec
+
+
+logger = logging.getLogger(__name__)
 
 # generate sinusoid trajectory for head
 t, x = gen_sinusoid(amp=.8, freq=2, phase=30, interval=[0.1, 1, 0.01])
@@ -35,15 +38,6 @@ def rotateRestPos(rest_pos,rx,centerPosY,centerPosZ):
 		str_out= str_out + ' ' + str(newRestPosZ)
 	return str_out
 
-def see_pose(pos):
-	str_out = ' '
-	for i in xrange(0,len(pos)) :
-		str_out= str_out + ' ' + str(pos[i][0])
-		str_out= str_out + ' ' + str(pos[i][1])
-		str_out= str_out + ' ' + str(pos[i][2])
-	return str_out
-
-
 class controller(Sofa.PythonScriptController):
 
 	'''
@@ -57,41 +51,52 @@ class controller(Sofa.PythonScriptController):
 			- https://github.com/lakehanne/sofa/blob/master/tools/sofa-launcher/example.py
 	'''
 	def initGraph(self, root):
-
-		# IABs are so named:
-		# Convention is top of head is facing the screen. Left is to your left ear as it would be if you were facing the screen
-		#
-		# Bottom IABs: {{neck_left, neck_right},{skull_left, skull_right}}
-		# Side   IABs: {{fore_left, chin_left}, {fore_right, chin_right}}
-
-		starttime = datetime.datetime.now()
-		begintime = time.time()
+		self.move_dist = move_dist #(0, .40, 0)
+		self.growth_rate = growth_rate #.5  #was .05
+		self.max_pressure = max_pressure #100 # was 15
+		# controls if IABs should continue to be inflated in a open-loop setting
+		self.is_inflated = True
+		self.deltaTime = root.findData('dt').value
+		# print('deltaTime ', self.deltaTime, type(self.deltaTime))
 
 		self._fig = plt.figure()
 		self._gs = gridspec.GridSpec(1,1) # rows cols
 		self.traj_plotter = HeadTrajPlotter(self._fig, self._gs[0]) # subplot in gridspec
 
-		self.root = root
-
 		self.patient = root.getChild('patient')
 		self.patient_dofs = self.patient.getObject('patient_dofs')
-		# get base IABs
-		self.base_neck_left=self.root.getChild('base_neck_left')
-		self.base_neck_right=self.root.getChild('base_neck_right')
-		self.base_skull_left=self.root.getChild('base_skull_left')
-		self.base_skull_right=self.root.getChild('base_skull_right')
-		# get side IABs
-		self.side_fore_left=self.root.getChild('side_fore_left')
-		self.side_chin_left=self.root.getChild('side_chin_left')
-		self.side_fore_right=self.root.getChild('side_fore_right')
-		self.side_chin_right=self.root.getChild('side_chin_right')
-		# obtain associated dofs and cavity dofs
-		self.base_neck_left_dofs = self.get_dome_dofs(self.base_neck_left)
-		self.base_neck_right_dofs = self.get_dome_dofs(self.base_neck_right)
-		self.base_skull_left_dofs = self.get_dome_dofs(self.base_skull_left)
-		self.base_skull_right_dofs = self.get_dome_dofs(self.base_skull_right)
+		pat_rest_pose = self.patient_dofs.findData('rest_position').value
 
-		self.is_updated = False
+		self.thresholds = thresholds
+		# thresholds['patient_trans'] = np.linalg.norm(pat_rest_pose, axis=0)
+		# x, y, z = [t[0] for t in pat_rest_pose], [t[1] for t in pat_rest_pose], [t[2] for t in pat_rest_pose]
+		# logger.debug('rest pose len x: {}, y: {}, z: {} rest_pose: {}: '.format(\
+		# 		len(x), len(y), len(z), len(pat_rest_pose)))
+		# print(self.patient_dofs)
+		# thresholds.update(thresholds)
+		# print('thresholds: ', thresholds)
+		self.first_iter = True
+
+		self.root = root
+		logger.debug('patient initial pose {}'.format(thresholds['patient_trans']))
+
+		# get base IABs
+		self.base_neck_left		= 	root.getChild('base_neck_left')
+		self.base_neck_right	= 	root.getChild('base_neck_right')
+		self.base_skull_left	= 	root.getChild('base_skull_left')
+		self.base_skull_right	= 	root.getChild('base_skull_right')
+		# get side IABs
+		self.side_fore_left		= 	root.getChild('side_fore_left')
+		self.side_chin_left		= 	root.getChild('side_chin_left')
+		self.side_fore_right	= 	root.getChild('side_fore_right')
+		self.side_chin_right	= 	root.getChild('side_chin_right')
+		# obtain associated dofs and cavity dofs
+		self.base_neck_left_dofs 	= self.get_dome_dofs(self.base_neck_left)
+		self.base_neck_right_dofs 	= self.get_dome_dofs(self.base_neck_right)
+		self.base_skull_left_dofs 	= self.get_dome_dofs(self.base_skull_left)
+		self.base_skull_right_dofs 	= self.get_dome_dofs(self.base_skull_right)
+
+		self.is_chart_updated = False
 
 		# visualization
 		display_chart(self.run_traj_plotter)
@@ -120,36 +125,30 @@ class controller(Sofa.PythonScriptController):
 						cover_collis_dofs=cover_collis_dofs))
 
 	def run_traj_plotter(self):
-		if self.is_updated:
+		if self.is_chart_updated:
 			self.traj_plotter.update(self.data)
 			# time.sleep(.11)
-		self.is_updated = False
+		self.is_chart_updated = False
 
 	def update_head_pose(self):
 		rest_pose = self.patient_dofs.findData('rest_position').value
 		# rest pose is a lisrt
-		x = [t[0] for t in rest_pose]
-		y = [t[1] for t in rest_pose]
-		z = [t[2] for t in rest_pose]
+		x, y, z = [t[0] for t in rest_pose], [t[1] for t in rest_pose], [t[2] for t in rest_pose]
 		# use 2-norm of x, y, and z
 		self.data = np.linalg.norm(np.c_[x, y, z], axis=0)
-		self.is_updated = True
+		self.is_chart_updated = True
 
 
 	def onKeyPressed(self,c):
 		self.dt = self.root.findData('dt').value
 		incr = self.dt*1000.0;
 
-		move_dist = (0, .40, 0)
-		growth_rate = .5  #was .05
-		max_pressure = 100 # was 15
-
 		if (c == "+"):
 			print(' raising head using base IABs')
-			bnl_val = self.base_neck_left_dofs.pressure_constraint.findData('value').value[0][0] + growth_rate
-			bnr_val = self.base_neck_right_dofs.pressure_constraint.findData('value').value[0][0] + growth_rate
-			bsl_val = self.base_skull_left_dofs.pressure_constraint.findData('value').value[0][0] + growth_rate
-			bsr_val = self.base_skull_right_dofs.pressure_constraint.findData('value').value[0][0] + growth_rate
+			bnl_val = self.base_neck_left_dofs.pressure_constraint.findData('value').value[0][0] + self.growth_rate
+			bnr_val = self.base_neck_right_dofs.pressure_constraint.findData('value').value[0][0] + self.growth_rate
+			bsl_val = self.base_skull_left_dofs.pressure_constraint.findData('value').value[0][0] + self.growth_rate
+			bsr_val = self.base_skull_right_dofs.pressure_constraint.findData('value').value[0][0] + self.growth_rate
 
 			bnl_val = max_pressure if bnl_val > max_pressure else bnl_val
 			bnr_val = max_pressure if bnr_val > max_pressure else bnr_val
@@ -167,10 +166,10 @@ class controller(Sofa.PythonScriptController):
 
 		if (c == "-"):
 			print('lowering head using base IABs')
-			bnl_val = self.base_neck_left_dofs.pressure_constraint.findData('value').value[0][0] - growth_rate
-			bnr_val = self.base_neck_right_dofs.pressure_constraint.findData('value').value[0][0] - growth_rate
-			bsl_val = self.base_skull_left_dofs.pressure_constraint.findData('value').value[0][0] - growth_rate
-			bsr_val = self.base_skull_right_dofs.pressure_constraint.findData('value').value[0][0] - growth_rate
+			bnl_val = self.base_neck_left_dofs.pressure_constraint.findData('value').value[0][0] - self.growth_rate
+			bnr_val = self.base_neck_right_dofs.pressure_constraint.findData('value').value[0][0] - self.growth_rate
+			bsl_val = self.base_skull_left_dofs.pressure_constraint.findData('value').value[0][0] - self.growth_rate
+			bsr_val = self.base_skull_right_dofs.pressure_constraint.findData('value').value[0][0] - self.growth_rate
 
 			bnl_val = max_pressure if bnl_val > max_pressure else bnl_val
 			bnr_val = max_pressure if bnr_val > max_pressure else bnr_val
@@ -185,109 +184,45 @@ class controller(Sofa.PythonScriptController):
 			self.update_head_pose()
 			plt.ion()
 			plt.show()
-		'''
-		# UP key :
-		if ord(c)==19:
-			bnl_mv = moveRestPos(self.base_neck_left.rest_position, move_dist)
-			bnr_mv = moveRestPos(self.base_neck_right.rest_position, move_dist)
-			bsl_mv = moveRestPos(self.base_skull_left.rest_position, move_dist)
-			bsr_mv = moveRestPos(self.base_skull_right.rest_position, move_dist)
-			self.base_neck_left.findData('rest_position').value = bnl_mv
-			self.base_neck_left.findData('rest_position').value = bnr_mv
-			self.base_neck_left.findData('rest_position').value = bsl_mv
-			self.base_neck_left.findData('rest_position').value = bsr_mv
-
-			self.update_head_pose()
-
-		# DOWN key : rear
-		if ord(c)==21:
-			bnl_mv = moveRestPos(self.base_neck_left.rest_position, -move_dist)
-			bnr_mv = moveRestPos(self.base_neck_right.rest_position, -move_dist)
-			bsl_mv = moveRestPos(self.base_skull_left.rest_position, -move_dist)
-			bsr_mv = moveRestPos(self.base_skull_right.rest_position, -move_dist)
-			self.base_neck_left.findData('rest_position').value = bnl_mv
-			self.base_neck_left.findData('rest_position').value = bnr_mv
-			self.base_neck_left.findData('rest_position').value = bsl_mv
-			self.base_neck_left.findData('rest_position').value = bsr_mv
-
-			self.update_head_pose()
-
-		# LEFT key : left
-		if ord(c)==20:
-			mv_left = (0, 10, 10)
-			test = moveRestPos(self.base_neck_left.rest_position, 0.0, dy, dz)
-			self.base_neck_left.findData('rest_position').value = test
-
-		# RIGHT key : right
-		if ord(c)==18:
-			dy = -3.0*math.cos(self.rotAngle)
-			dz = -3.0*math.sin(self.rotAngle)
-			test = moveRestPos(self.neck_left_mech.rest_position, 0.0, dy, dz)
-			self.neck_left_mech.findData('rest_position').value = test
-
-		# a key : direct rotation
-		if (ord(c) == 65):
-			test = rotateRestPos(self.neck_left_mech.rest_position, math.pi/16, self.centerPosY,self.centerPosZ)
-			self.neck_left_mech.findData('rest_position').value = test
-
-		# q key : indirect rotation
-		if (ord(c) == 81):
-			test = rotateRestPos(self.neck_left_mech.rest_position, -math.pi/16, self.centerPosY,self.centerPosZ)
-			self.neck_left_mech.findData('rest_position').value = test
-			self.rotAngle = self.rotAngle - math.pi/16
-	'''
-
-	def onMouseButtonLeft(self, mouseX,mouseY,isPressed):
-		# usage e.g.
-		if isPressed :
-		   print ("Control+Left mouse button pressed at position "+str(mouseX)+", "+str(mouseY))
-		return 0;
-
-	def onKeyReleased(self, c):
-		# usage e.g.
-		if c=="A" :
-		   print ("You released a")
-		return 0;
-
-	def onMouseWheel(self, mouseX,mouseY,wheelDelta, isPressed):
-		# usage e.g.
-		if isPressed :
-		   print ("Control button pressed+mouse wheel turned at position "+str(mouseX)+", "+str(mouseY)+", wheel delta"+str(wheelDelta))
-		return 0;
-
-	def storeResetState(self):
-		## Please feel free to add an example for a simple usage in /home/lex/catkin_ws/src/superchicko/sofa/python/xml_2_scn.py
-		return 0;
-
-	def cleanup(self):
-		## Please feel free to add an example for a simple usage in /home/lex/catkin_ws/src/superchicko/sofa/python/xml_2_scn.py
-		return 0;
-
-	def onGUIEvent(self, strControlID,valueName,strValue):
-		## Please feel free to add an example for a simple usage in /home/lex/catkin_ws/src/superchicko/sofa/python/xml_2_scn.py
-		return 0;
 
 	def onBeginAnimationStep(self, deltaTime):
-		self.time += deltaTime
-		print(' raising head using base IABs: bnl_val: {} bnr_val: {} bsl_val: {} bsr_val')
-		bnl_val = self.base_neck_left_dofs.pressure_constraint.findData('value').value[0][0] + growth_rate
-		bnr_val = self.base_neck_right_dofs.pressure_constraint.findData('value').value[0][0] + growth_rate
-		bsl_val = self.base_skull_left_dofs.pressure_constraint.findData('value').value[0][0] + growth_rate
-		bsr_val = self.base_skull_right_dofs.pressure_constraint.findData('value').value[0][0] + growth_rate
+		self.deltaTime  += deltaTime
+		if self.is_inflated:
+			bnl_val = self.base_neck_left_dofs.pressure_constraint.findData('value').value[0][0] + self.growth_rate
+			bnr_val = self.base_neck_right_dofs.pressure_constraint.findData('value').value[0][0] + self.growth_rate
+			bsl_val = self.base_skull_left_dofs.pressure_constraint.findData('value').value[0][0] + self.growth_rate
+			bsr_val = self.base_skull_right_dofs.pressure_constraint.findData('value').value[0][0] + self.growth_rate
+			logger.info('inflating base IABs to {} at time {}'.format(bnl_val, self.deltaTime))
 
-		bnl_val = max_pressure if bnl_val > max_pressure else bnl_val
-		bnr_val = max_pressure if bnr_val > max_pressure else bnr_val
-		bsl_val = max_pressure if bsl_val > max_pressure else bsl_val
-		bsr_val = max_pressure if bsr_val > max_pressure else bsr_val
+		pat_pose = self.patient_dofs.findData('rest_position').value
+		x, y, z = [t[0] for t in pat_pose], [t[1] for t in pat_pose], [t[2] for t in pat_pose]
+		# logger.debug('len x: {}, y: {}, z: {}: '.format(len(x), len(y), len(z), len(pat_pose)))
+		# check to see if patient is above a z
+		curr_pat_pose = np.linalg.norm(pat_pose, axis=0)
+		if self.first_iter:
+			self.thresholds['patient_trans'] = (curr_pat_pose+10000).tolist()
+			self.thresholds.update(self.thresholds)
+			self.first_iter = False
+		logger.debug('curr_pat_pose: {}, \n\t thresh trans {}'.format(curr_pat_pose, self.thresholds['patient_trans']))
 
 		self.base_neck_left_dofs.pressure_constraint.findData('value').value = str(bnl_val)
 		self.base_neck_right_dofs.pressure_constraint.findData('value').value = str(bnr_val)
 		self.base_skull_left_dofs.pressure_constraint.findData('value').value = str(bsl_val)
 		self.base_skull_right_dofs.pressure_constraint.findData('value').value = str(bsr_val)
 
-		self.update_head_pose()
-		plt.ion()
-		plt.show()
+		if curr_pat_pose[2]>thresholds['patient_trans'][2]:
+			#curr_pat_pose[0]>thresholds['patient_trans'][0] and \
+		   #curr_pat_pose[1]>thresholds['patient_trans'][1] and \
+		   logger.warning('reached max z limit')
+		   self.is_inflated = False
+		   # bnl_val = max_pressure if bnl_val > max_pressure else bnl_val
+		   # bnr_val = max_pressure if bnr_val > max_pressure else bnr_val
+		   # bsl_val = max_pressure if bsl_val > max_pressure else bsl_val
+		   # bsr_val = max_pressure if bsr_val > max_pressure else bsr_val
+
+		# self.update_head_pose()
+		# plt.ion()
+		# plt.show()
 
 		return 0;
 

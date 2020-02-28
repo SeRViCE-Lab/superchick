@@ -8,8 +8,12 @@ __examples__ = "See SoftRobotsPlugin Examples  \
 import matplotlib as mpl
 mpl.use('qt5agg')
 import Sofa
+import logging
 from utils import *
 from config import *
+
+logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
 class dome_test (Sofa.PythonScriptController):
 
@@ -35,6 +39,10 @@ class dome_test (Sofa.PythonScriptController):
         rootNode.createObject('RequiredPlugin', name='SofaPreconditioner', pluginName='SofaPreconditioner')
         rootNode.createObject('VisualStyle', displayFlags='showVisualModels showBehaviorModels showCollisionModels showBoundingCollisionModels hideForceFields showInteractionForceFields hideWireframe')
 
+        # this from here:https://www.sofa-framework.org/community/forum/topic/rigid-objects-passing-through-deformable/
+        rootNode.createObject('DefaultContactManager', name='Response', \
+                                response='FrictionContact')
+
         rootNode.createObject('FreeMotionAnimationLoop')
         rootNode.createObject('GenericConstraintSolver', maxIterations='100', tolerance = '0.0000001')
         rootNode.createObject('PythonScriptController', filename="diff_kine_controller.py", classname="controller")
@@ -42,7 +50,8 @@ class dome_test (Sofa.PythonScriptController):
         # Patient
         patient = rootNode.createChild('patient')
         patient.createObject('EulerImplicit', name='patientOdeSolver')
-        patient.createObject('SparseLDLSolver', name='patientLinearSolver')
+        # patient.createObject('SparseLDLSolver', name='patient_preconditioner')
+        patient.createObject('CGLinearSolver', threshold='1e-9', tolerance='1e-9', name='linearSolver', iterations='25')
         patient.createObject('MeshObjLoader', name='patient_loader', filename='{}/patient.obj'.format(dometributes['meshes_dir']))
         patient.createObject('MechanicalObject', src='@patient_loader', name='patient_dofs', template='Vec3d', scale=patributes['scale'], \
                                     rx=patributes['rx'], ry=patributes['ry'], translation=patributes['translation'])
@@ -55,6 +64,7 @@ class dome_test (Sofa.PythonScriptController):
         patient.createObject('BoxROI', name='boxROI', box='-1.2 1.2 -0.5 1.5 -0.48166 0.811406', drawBoxes='true', doUpdate='1')#, position="@dh_dofs.rest_position", tetrahedra="@TetraTopologyContainer.tetrahedra")
         # this defines the boundary condition which creates springs between the current position of the body and its initial position
         patient.createObject('RestShapeSpringsForceField', points='@boxROI.indices', stiffness='1e1', angularStiffness='1e1') # stiffness was 1e12 after the pneunets demo
+        # patient.createObject('LinearSolverConstraintCorrection', solverName='patient_preconditioner')
 
         patientVisu = patient.createChild('patientVisu')
         patientVisu.createObject('OglModel', src='@../patient_loader', name='patientVisual', scale=patributes['scale'], \
