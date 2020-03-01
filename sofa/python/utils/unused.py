@@ -80,4 +80,51 @@ return 0;
 def onGUIEvent(self, strControlID,valueName,strValue):
 ## Please feel free to add an example for a simple usage in /home/lex/catkin_ws/src/superchicko/sofa/python/xml_2_scn.py
 return 0;
+
+
+	# def onKeyPressed(self,c):
+	# 	self.dt = self.root.findData('dt').value
+	# 	incr = self.dt*1000.0;
+	#
+	# 	if (c == "+"):
+	# 		print(' raising head using base IABs')
+	# 		bnl_val = self.base_neck_left_dofs.pressure_constraint.findData('value').value[0][0] + self.growth_rate
+	# 		bnr_val = self.base_neck_right_dofs.pressure_constraint.findData('value').value[0][0] + self.growth_rate
+	# 		bsl_val = self.base_skull_left_dofs.pressure_constraint.findData('value').value[0][0] + self.growth_rate
+	# 		bsr_val = self.base_skull_right_dofs.pressure_constraint.findData('value').value[0][0] + self.growth_rate
+	#
+	# 		bnl_val = max_pressure if bnl_val > max_pressure else bnl_val
+	# 		bnr_val = max_pressure if bnr_val > max_pressure else bnr_val
+	# 		bsl_val = max_pressure if bsl_val > max_pressure else bsl_val
+	# 		bsr_val = max_pressure if bsr_val > max_pressure else bsr_val
+	#
+	# 		self.base_neck_left_dofs.pressure_constraint.findData('value').value = str(bnl_val)
+	# 		self.base_neck_right_dofs.pressure_constraint.findData('value').value = str(bnr_val)
+	# 		self.base_skull_left_dofs.pressure_constraint.findData('value').value = str(bsl_val)
+	# 		self.base_skull_right_dofs.pressure_constraint.findData('value').value = str(bsr_val)
+	#
+	# 		self.update_head_pose()
+	# 		plt.ion()
+	# 		plt.show()
+	#
+	# 	if (c == "-"):
+	# 		print('lowering head using base IABs')
+	# 		bnl_val = self.base_neck_left_dofs.pressure_constraint.findData('value').value[0][0] - self.growth_rate
+	# 		bnr_val = self.base_neck_right_dofs.pressure_constraint.findData('value').value[0][0] - self.growth_rate
+	# 		bsl_val = self.base_skull_left_dofs.pressure_constraint.findData('value').value[0][0] - self.growth_rate
+	# 		bsr_val = self.base_skull_right_dofs.pressure_constraint.findData('value').value[0][0] - self.growth_rate
+	#
+	# 		bnl_val = max_pressure if bnl_val > max_pressure else bnl_val
+	# 		bnr_val = max_pressure if bnr_val > max_pressure else bnr_val
+	# 		bsl_val = max_pressure if bsl_val > max_pressure else bsl_val
+	# 		bsr_val = max_pressure if bsr_val > max_pressure else bsr_val
+	#
+	# 		self.base_neck_left_dofs.pressure_constraint.findData('value').value = str(bnl_val)
+	# 		self.base_neck_right_dofs.pressure_constraint.findData('value').value = str(bnr_val)
+	# 		self.base_skull_left_dofs.pressure_constraint.findData('value').value = str(bsl_val)
+	# 		self.base_skull_right_dofs.pressure_constraint.findData('value').value = str(bsr_val)
+	#
+	# 		self.update_head_pose()
+	# 		plt.ion()
+	# 		plt.show()
 '''

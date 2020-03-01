@@ -1,6 +1,7 @@
 import threading
 import os
 from os.path import join
+from config import *
 
 '''Convention:
 	Bottom IABs: {{neck_left, neck_right},{skull_left, skull_right}}
@@ -54,7 +55,7 @@ couch = dict(CouchFoot=dict(scale='5e-6*.91', color="0.3 0.6 0.7", mass='50', tr
 # individual dome arretibues
 dometributes = dict(scale=25, mass=.04, poisson=.3,youngs=18000,
 					youngsmod=500,youngsmodstiff=1500,
-					pressureConsVal="0.0001",
+					pressureConsVal="10000",
 					trans=dict(base_neck_left='-100 20 60', # base iabs
 								base_neck_right='-100 20 -90',
 								base_skull_left='50 20 60',
@@ -79,13 +80,13 @@ dometributes = dict(scale=25, mass=.04, poisson=.3,youngs=18000,
 					meshes_dir = join(os.getcwd(), '../..', 'ros/srs_traj_opt/patient_description/meshes'),
 					pod_dir = join(os.getcwd(), '../..', 'ros/srs_traj_opt/hexapod_description/meshes')
 					) # as measured by newly fabricated soft robot, in Kg
+
 def make_couch_compos(rootNode, itemname, mesh='', create_solver=True):
 	'this function solves for the '
 	node = rootNode.createChild(itemname)
 	if create_solver:
 		node.createObject('EulerImplicit', name='{}_odesolver'.format(itemname))
 		node.createObject('CGLinearSolver', threshold='1e-9', tolerance='1e-9', name='linearSolver', iterations='25')
-		# node.createObject('SparseLDLSolver', name='{}_linearSolver'.format(itemname))
 		make_couch_compos
 	if mesh:
 		node.createObject('MeshSTLLoader', name='{}_loader'.format(itemname), filename='{}'.format(mesh))
@@ -137,7 +138,7 @@ def make_base_domes(rootNode, dome_name, create_solver=True):
 	domeCavity.createObject('MeshObjLoader', name='cavityLoader', filename='{}/dome/dome_cavity.obj'.format(dometributes['meshes_dir']), triangulate="true")
 	domeCavity.createObject('Mesh', src='@cavityLoader', name='cavityTopo')
 	domeCavity.createObject('MechanicalObject',  name='dome_cav_dofs', scale=dometributes['scale'], translation=dometributes['trans'][dome_name], rx='0')
-	domeCavity.createObject('SurfacePressureConstraint', name='SurfacePressureConstraint', template="Vec3d", value=dometributes['pressureConsVal'], triangles='@cavityTopo.triangles', drawPressure='0', drawScale='0.0002', valueType='pressure') #
+	domeCavity.createObject('SurfacePressureConstraint', name='SurfacePressureConstraint', template="Vec3d", value=dometributes['pressureConsVal'], triangles='@cavityTopo.triangles', drawPressure='0', drawScale='0.00002', valueType='pressure') #
 	domeCavity.createObject('BarycentricMapping',  name='mapping', mapForces='false', mapMasses='false')
 	# rootNode/DomeHeadCollis
 	domeCavCollis = dome.createChild('DomeHeadCollis')
@@ -153,7 +154,7 @@ def make_base_domes(rootNode, dome_name, create_solver=True):
 	domeVisu.createObject('MeshObjLoader', name='domeVisuLoader', filename='{}/dome/dome.obj'.format(dometributes['meshes_dir'])) #src='@../domeVTKLoader', scale='1', , rx='0', ry='0', rz='0', dz='0', dx='0', dy='0', template='Vec3d')
 	domeVisu.createObject('OglModel',  color='0.3 0.2 0.2 0.6') # name='@domeVisuLoader', template='Vec3d', src="@../domeCollisLoader", #dx="20", dy="-80", dz="10", rx="-90",
 	domeVisu.createObject('BarycentricMapping', name='mapping')#, mapForces='false', mapMasses='false')
-	# Dome Cover
+	# # Dome Cover
 	domeCover = dome.createChild('DomeCover')
 	domeCover.createObject('MeshSTLLoader', name='domeCoverLoader', filename='{}/dome/cover.stl'.format(dometributes['meshes_dir']))
 	domeCover.createObject('MechanicalObject', name='dome_cover_dofs',  scale=dometributes['scale'], \
@@ -279,7 +280,7 @@ def make_domes(rootNode, dome_name, create_solver=True, side_domes=False, right_
 	domeCavity.createObject('MeshObjLoader', name='cavityLoader', filename='{}/dome/dome_cavity.obj'.format(dometributes['meshes_dir']), triangulate="true")
 	domeCavity.createObject('Mesh', src='@cavityLoader', name='cavityTopo')
 	domeCavity.createObject('MechanicalObject',  name='dome_cav_dofs', scale=dometributes['scale'], translation=dometributes['trans'][dome_name], rx=cav_rx)
-	domeCavity.createObject('SurfacePressureConstraint', name='SurfacePressureConstraint', template="Vec3d", value=dometributes['pressureConsVal'], triangles='@cavityTopo.triangles', drawPressure='0', drawScale='0.0002', valueType='pressure') #
+	domeCavity.createObject('SurfacePressureConstraint', name='SurfacePressureConstraint', template="Vec3d", value=dometributes['pressureConsVal'], triangles='@cavityTopo.triangles', drawPressure='1', drawScale='0.2', valueType='pressure') #
 	domeCavity.createObject('BarycentricMapping',  name='mapping', mapForces='false', mapMasses='false')
 	# rootNode/DomeHeadCollis
 	domeCavCollis = domeCavity.createChild('DomeCavCollis')

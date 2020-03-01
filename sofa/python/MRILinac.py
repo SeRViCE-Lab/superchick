@@ -52,7 +52,8 @@ class dome_test (Sofa.PythonScriptController):
         patient.createObject('EulerImplicit', name='patientOdeSolver')
         # patient.createObject('SparseLDLSolver', name='patient_preconditioner')
         patient.createObject('CGLinearSolver', threshold='1e-9', tolerance='1e-9', name='linearSolver', iterations='25')
-        patient.createObject('MeshObjLoader', name='patient_loader', filename='{}/patient.obj'.format(dometributes['meshes_dir']))
+        # patient.createObject('MeshObjLoader', name='patient_loader', filename='{}/patient.obj'.format(dometributes['meshes_dir']))
+        patient.createObject('MeshObjLoader', name='patient_loader', filename='{}/patient_remeshed2k.obj'.format(dometributes['meshes_dir']))
         patient.createObject('MechanicalObject', src='@patient_loader', name='patient_dofs', template='Vec3d', scale=patributes['scale'], \
                                     rx=patributes['rx'], ry=patributes['ry'], translation=patributes['translation'])
         patient.createObject('UniformMass', totalMass='95')
@@ -64,7 +65,6 @@ class dome_test (Sofa.PythonScriptController):
         patient.createObject('BoxROI', name='boxROI', box='-1.2 1.2 -0.5 1.5 -0.48166 0.811406', drawBoxes='true', doUpdate='1')#, position="@dh_dofs.rest_position", tetrahedra="@TetraTopologyContainer.tetrahedra")
         # this defines the boundary condition which creates springs between the current position of the body and its initial position
         patient.createObject('RestShapeSpringsForceField', points='@boxROI.indices', stiffness='1e1', angularStiffness='1e1') # stiffness was 1e12 after the pneunets demo
-        # patient.createObject('LinearSolverConstraintCorrection', solverName='patient_preconditioner')
 
         patientVisu = patient.createChild('patientVisu')
         patientVisu.createObject('OglModel', src='@../patient_loader', name='patientVisual', scale=patributes['scale'], \

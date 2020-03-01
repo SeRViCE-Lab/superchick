@@ -22,7 +22,7 @@ t, x = gen_sinusoid(amp=.8, freq=2, phase=30, interval=[0.1, 1, 0.01])
 
 def moveRestPos(rest_pos, dx, dy, dz):
 	str_out = ' '
-	for i in xrange(0,len(rest_pos)) :
+	for i in range(0,len(rest_pos)) :
 		str_out= str_out + ' ' + str(rest_pos[i][0]+dx)
 		str_out= str_out + ' ' + str(rest_pos[i][1]+dy)
 		str_out= str_out + ' ' + str(rest_pos[i][2]+dz)
@@ -67,14 +67,8 @@ class controller(Sofa.PythonScriptController):
 		self.patient_dofs = self.patient.getObject('patient_dofs')
 		pat_rest_pose = self.patient_dofs.findData('rest_position').value
 
+
 		self.thresholds = thresholds
-		# thresholds['patient_trans'] = np.linalg.norm(pat_rest_pose, axis=0)
-		# x, y, z = [t[0] for t in pat_rest_pose], [t[1] for t in pat_rest_pose], [t[2] for t in pat_rest_pose]
-		# logger.debug('rest pose len x: {}, y: {}, z: {} rest_pose: {}: '.format(\
-		# 		len(x), len(y), len(z), len(pat_rest_pose)))
-		# print(self.patient_dofs)
-		# thresholds.update(thresholds)
-		# print('thresholds: ', thresholds)
 		self.first_iter = True
 
 		self.root = root
@@ -110,6 +104,7 @@ class controller(Sofa.PythonScriptController):
 		# dh_collis_dofs = node.getObject('dh_collis_dofs')
 		# cavity
 		cav_node = node.getChild('DomeCavity')
+		cav_dofs = cav_node.getObject('dome_cav_dofs')
 		pressure_constraint = cav_node.getObject('SurfacePressureConstraint')
 		# pressure_constraint_collis = node.getChild('dome_cav_collis_dofs')
 		# dome cover back
@@ -120,6 +115,7 @@ class controller(Sofa.PythonScriptController):
 		cover_collis_dofs = cover_collis_node.getObject('dome_cover_collis_dofs')
 
 		return Bundle(dict(dh_dofs=dh_dofs,
+						cav_dofs=cav_dofs,
 						pressure_constraint=pressure_constraint, # cavity
 						cover_dofs=cover_dofs,
 						cover_collis_dofs=cover_collis_dofs))
@@ -138,91 +134,79 @@ class controller(Sofa.PythonScriptController):
 		self.data = np.linalg.norm(np.c_[x, y, z], axis=0)
 		self.is_chart_updated = True
 
-
-	def onKeyPressed(self,c):
-		self.dt = self.root.findData('dt').value
-		incr = self.dt*1000.0;
-
-		if (c == "+"):
-			print(' raising head using base IABs')
-			bnl_val = self.base_neck_left_dofs.pressure_constraint.findData('value').value[0][0] + self.growth_rate
-			bnr_val = self.base_neck_right_dofs.pressure_constraint.findData('value').value[0][0] + self.growth_rate
-			bsl_val = self.base_skull_left_dofs.pressure_constraint.findData('value').value[0][0] + self.growth_rate
-			bsr_val = self.base_skull_right_dofs.pressure_constraint.findData('value').value[0][0] + self.growth_rate
-
-			bnl_val = max_pressure if bnl_val > max_pressure else bnl_val
-			bnr_val = max_pressure if bnr_val > max_pressure else bnr_val
-			bsl_val = max_pressure if bsl_val > max_pressure else bsl_val
-			bsr_val = max_pressure if bsr_val > max_pressure else bsr_val
-
-			self.base_neck_left_dofs.pressure_constraint.findData('value').value = str(bnl_val)
-			self.base_neck_right_dofs.pressure_constraint.findData('value').value = str(bnr_val)
-			self.base_skull_left_dofs.pressure_constraint.findData('value').value = str(bsl_val)
-			self.base_skull_right_dofs.pressure_constraint.findData('value').value = str(bsr_val)
-
-			self.update_head_pose()
-			plt.ion()
-			plt.show()
-
-		if (c == "-"):
-			print('lowering head using base IABs')
-			bnl_val = self.base_neck_left_dofs.pressure_constraint.findData('value').value[0][0] - self.growth_rate
-			bnr_val = self.base_neck_right_dofs.pressure_constraint.findData('value').value[0][0] - self.growth_rate
-			bsl_val = self.base_skull_left_dofs.pressure_constraint.findData('value').value[0][0] - self.growth_rate
-			bsr_val = self.base_skull_right_dofs.pressure_constraint.findData('value').value[0][0] - self.growth_rate
-
-			bnl_val = max_pressure if bnl_val > max_pressure else bnl_val
-			bnr_val = max_pressure if bnr_val > max_pressure else bnr_val
-			bsl_val = max_pressure if bsl_val > max_pressure else bsl_val
-			bsr_val = max_pressure if bsr_val > max_pressure else bsr_val
-
-			self.base_neck_left_dofs.pressure_constraint.findData('value').value = str(bnl_val)
-			self.base_neck_right_dofs.pressure_constraint.findData('value').value = str(bnr_val)
-			self.base_skull_left_dofs.pressure_constraint.findData('value').value = str(bsl_val)
-			self.base_skull_right_dofs.pressure_constraint.findData('value').value = str(bsr_val)
-
-			self.update_head_pose()
-			plt.ion()
-			plt.show()
-
 	def onBeginAnimationStep(self, deltaTime):
 		self.deltaTime  += deltaTime
-		if self.is_inflated:
-			bnl_val = self.base_neck_left_dofs.pressure_constraint.findData('value').value[0][0] + self.growth_rate
-			bnr_val = self.base_neck_right_dofs.pressure_constraint.findData('value').value[0][0] + self.growth_rate
-			bsl_val = self.base_skull_left_dofs.pressure_constraint.findData('value').value[0][0] + self.growth_rate
-			bsr_val = self.base_skull_right_dofs.pressure_constraint.findData('value').value[0][0] + self.growth_rate
-			logger.info('inflating base IABs to {} at time {}'.format(bnl_val, self.deltaTime))
 
-		pat_pose = self.patient_dofs.findData('rest_position').value
-		x, y, z = [t[0] for t in pat_pose], [t[1] for t in pat_pose], [t[2] for t in pat_pose]
-		# logger.debug('len x: {}, y: {}, z: {}: '.format(len(x), len(y), len(z), len(pat_pose)))
-		# check to see if patient is above a z
-		curr_pat_pose = np.linalg.norm(pat_pose, axis=0)
+		# repopulate each iab at each time step
+		self.base_neck_left		= 	self.root.getChild('base_neck_left')
+		self.base_neck_right	= 	self.root.getChild('base_neck_right')
+		self.base_skull_left	= 	self.root.getChild('base_skull_left')
+		self.base_skull_right	= 	self.root.getChild('base_skull_right')
+		# get side IABs
+		self.side_fore_left		= 	self.root.getChild('side_fore_left')
+		self.side_chin_left		= 	self.root.getChild('side_chin_left')
+		self.side_fore_right	= 	self.root.getChild('side_fore_right')
+		self.side_chin_right	= 	self.root.getChild('side_chin_right')
+		# obtain associated dofs and cavity dofs
+		self.base_neck_left_dofs 	= self.get_dome_dofs(self.base_neck_left)
+		self.base_neck_right_dofs 	= self.get_dome_dofs(self.base_neck_right)
+		self.base_skull_left_dofs 	= self.get_dome_dofs(self.base_skull_left)
+		self.base_skull_right_dofs 	= self.get_dome_dofs(self.base_skull_right)
+
+		# self.patient = self.root.getChild('patient')
+		self.patient_dofs = self.patient.getObject('patient_dofs')
+		# if self.is_inflated:
+		# 	bnl_val = self.base_neck_left_dofs.pressure_constraint.findData('value').value[0][0] + self.growth_rate
+		# 	bnr_val = self.base_neck_right_dofs.pressure_constraint.findData('value').value[0][0] + self.growth_rate
+		# 	bsl_val = self.base_skull_left_dofs.pressure_constraint.findData('value').value[0][0] + self.growth_rate
+		# 	bsr_val = self.base_skull_right_dofs.pressure_constraint.findData('value').value[0][0] + self.growth_rate
+		# 	# try not using cavity
+		# 	# bnl_val = np.array(self.base_neck_left_dofs.dh_dofs.position) + self.growth_rate
+		# 	# bnr_val = np.array(self.base_neck_right_dofs.dh_dofs.position) + self.growth_rate
+		# 	# bsl_val = np.array(self.base_skull_left_dofs.dh_dofs.position) + self.growth_rate
+		# 	# bsr_val = np.array(self.base_skull_right_dofs.dh_dofs.position) + self.growth_rate
+		#
+		# 	logger.info('inflating base IABs to {} at time {}'.format(bnl_val, self.deltaTime))
+		#
 		if self.first_iter:
-			self.thresholds['patient_trans'] = (curr_pat_pose+10000).tolist()
+			pat_pose = self.patient_dofs.findData('rest_position').value
+			x, y, z = [t[0] for t in pat_pose], [t[1] for t in pat_pose], [t[2] for t in pat_pose]
+			# logger.debug('len x: {}, y: {}, z: {}: '.format(len(x), len(y), len(z), len(pat_pose)))
+			# check to see if patient is above a z
+			rest_pat_pose = np.linalg.norm(pat_pose, axis=0)
+			self.thresholds['patient_trans'] = (rest_pat_pose+1000).tolist()
 			self.thresholds.update(self.thresholds)
 			self.first_iter = False
-		logger.debug('curr_pat_pose: {}, \n\t thresh trans {}'.format(curr_pat_pose, self.thresholds['patient_trans']))
+			logger.debug('rest_pat_pose: {}, '.format(rest_pat_pose))
 
-		self.base_neck_left_dofs.pressure_constraint.findData('value').value = str(bnl_val)
-		self.base_neck_right_dofs.pressure_constraint.findData('value').value = str(bnr_val)
-		self.base_skull_left_dofs.pressure_constraint.findData('value').value = str(bsl_val)
-		self.base_skull_right_dofs.pressure_constraint.findData('value').value = str(bsr_val)
+		# self.base_neck_left_dofs.pressure_constraint.findData('value').value = str(bnl_val)
+		# self.base_neck_right_dofs.pressure_constraint.findData('value').value = str(bnr_val)
+		# self.base_skull_left_dofs.pressure_constraint.findData('value').value = str(bsl_val)
+		# self.base_skull_right_dofs.pressure_constraint.findData('value').value = str(bsr_val)
 
-		if curr_pat_pose[2]>thresholds['patient_trans'][2]:
-			#curr_pat_pose[0]>thresholds['patient_trans'][0] and \
-		   #curr_pat_pose[1]>thresholds['patient_trans'][1] and \
+		# work directly with dome dofs
+		# self.base_neck_left_dofs.dh_dofs.position = bnl_val.tolist()
+		# self.base_neck_right_dofs.dh_dofs.position = bnr_val.tolist()
+		# self.base_skull_left_dofs.dh_dofs.position = bsl_val.tolist()
+		# self.base_skull_right_dofs.dh_dofs.position = bsr_val.tolist()
+		print(len(self.patient_dofs.rest_position), 'self.patient_dofs.rest_position')
+		test1 = moveRestPos(self.patient_dofs.rest_position, 3.0, 0.0, 0.0)
+		self.patient_dofs.findData('rest_position').value = test1
+		curr_pat_pose = np.linalg.norm(self.patient_dofs.position, axis=0)
+		# cavity_pose = np.linalg.norm(self.base_neck_right_dofs.cav_dofs.position, axis=0)
+		# bnl_cav_dofs = self.base_neck_left_dofs.cav_dofs.position
+
+		logger.debug('patient dofs: {}'.format(np.linalg.norm(self.patient_dofs.position, axis=0)))
+		# logger.debug('bnl pressure cons: {}\n'.format(self.base_neck_left_dofs.pressure_constraint.findData('value').value))
+		# logger.debug('bnl cav position: {}\n'.format(np.linalg.norm(bnl_cav_dofs, axis=0)))
+		# self.update_head_pose()
+		if curr_pat_pose[2]>self.thresholds['patient_trans'][2]:
 		   logger.warning('reached max z limit')
 		   self.is_inflated = False
-		   # bnl_val = max_pressure if bnl_val > max_pressure else bnl_val
-		   # bnr_val = max_pressure if bnr_val > max_pressure else bnr_val
-		   # bsl_val = max_pressure if bsl_val > max_pressure else bsl_val
-		   # bsr_val = max_pressure if bsr_val > max_pressure else bsr_val
 
-		# self.update_head_pose()
 		# plt.ion()
 		# plt.show()
+		# self.root.getRootContext().animate = True
 
 		return 0;
 

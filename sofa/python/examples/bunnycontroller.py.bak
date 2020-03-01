@@ -3,7 +3,7 @@
 from __future__ import print_function
 import Sofa
 import math
-import numpy as np
+
 
 
 def moveRestPos(rest_pos, dx, dy, dz):
@@ -48,7 +48,7 @@ class controller(Sofa.PythonScriptController):
     def onKeyPressed(self,c):
         self.dt = self.root.findData('dt').value
         incr = self.dt*1000.0;
-        self.bunny_mech=self.bunny_node.getObject('tetras');
+        self.bunny_mech=self.bunny_node.getObject('dh_dofs');
         self.bunny_constraint = self.bunny_cavity.getObject('SurfacePressureConstraint')
 
         if (c == "+"):
@@ -57,25 +57,21 @@ class controller(Sofa.PythonScriptController):
             if pressureValue > 1.5:
                 pressureValue = 1.5
             self.bunny_constraint.findData('value').value = str(pressureValue)
-            print('bunny dofs: ', np.linalg.norm(self.bunny_mech.position, axis=0))
 
         if (c == "-"):
             print( 'releasing...')
             pressureValue = self.bunny_constraint.findData('value').value[0][0] - 0.01
             self.bunny_constraint.findData('value').value = str(pressureValue)
-            print('bunny dofs: ',  np.linalg.norm(self.bunny_mech.position, axis=0))
 
         # UP key :
         if ord(c)==19:
             test1 = moveRestPos(self.bunny_mech.rest_position, 3.0, 0.0, 0.0)
             self.bunny_mech.findData('rest_position').value = test1
-            print('bunny dofs: ', np.linalg.norm(self.bunny_mech.position, axis=0))
 
         # DOWN key : rear
         if ord(c)==21:
             test = moveRestPos(self.bunny_mech.rest_position, -3.0, 0.0, 0.0)
             self.bunny_mech.findData('rest_position').value = test
-            print('bunny dofs: ', np.linalg.norm(self.bunny_mech.position, axis=0))
 
         # LEFT key : left
         if ord(c)==20:
@@ -170,11 +166,5 @@ class controller(Sofa.PythonScriptController):
         return 0;
 
     def onBeginAnimationStep(self, deltaTime):
-        self.bunny_mech=self.bunny_node.getObject('tetras');
-        print(len(self.bunny_mech.rest_position), 'self.bunny_mech.rest_position')
-        test1 = moveRestPos(self.bunny_mech.rest_position, 3.0, 0.0, 0.0)
-        self.bunny_mech.findData('rest_position').value = test1
-        print('bunny dofs: ', np.linalg.norm(self.bunny_mech.position, axis=0))
-
         ## Please feel free to add an example for a simple usage in /home/lex/catkin_ws/src/superchicko/sofa/python/xml_2_scn.py
         return 0;
