@@ -128,3 +128,95 @@ return 0;
 	# 		plt.ion()
 	# 		plt.show()
 '''
+
+def onBeginAnimationStep(self, deltaTime):
+	self.deltaTime  += deltaTime
+
+	# repopulate each iab at each time step
+	self.base_neck_left		= 	self.root.getChild('base_neck_left')
+	self.base_neck_right	= 	self.root.getChild('base_neck_right')
+	self.base_skull_left	= 	self.root.getChild('base_skull_left')
+	self.base_skull_right	= 	self.root.getChild('base_skull_right')
+	# get side IABs
+	self.side_fore_left		= 	self.root.getChild('side_fore_left')
+	self.side_chin_left		= 	self.root.getChild('side_chin_left')
+	self.side_fore_right	= 	self.root.getChild('side_fore_right')
+	self.side_chin_right	= 	self.root.getChild('side_chin_right')
+	# obtain associated dofs and cavity dofs
+	self.base_neck_left_dofs 	= self.get_dome_dofs(self.base_neck_left)
+	self.base_neck_right_dofs 	= self.get_dome_dofs(self.base_neck_right)
+	self.base_skull_left_dofs 	= self.get_dome_dofs(self.base_skull_left)
+	self.base_skull_right_dofs 	= self.get_dome_dofs(self.base_skull_right)
+
+	# self.patient = self.root.getChild('patient')
+	self.patient_dofs = self.patient.getObject('patient_dofs')
+
+	if self.first_iter:
+		pat_pose = self.patient_dofs.findData('rest_position').value
+		self.thresholds['patient_trans'] = (np.linalg.norm(pat_pose, axis=0)+1000).tolist()
+		self.thresholds.update(self.thresholds)
+		logger.debug('rest_pat_pose: {}, '.format(np.linalg.norm(pat_pose, axis=0)))
+		self.first_iter = False
+
+	curr_pat_pose = np.linalg.norm(self.patient_dofs.position, axis=0)
+	pose = (self.growth_rate, self.growth_rate, self.growth_rate)
+	# if curr_pat_pose[2]>self.thresholds['patient_trans'][2]:
+	# 	logger.warning('reached max z limit')
+	# 	pose = (0.0, self.growth_rate, 0.0)
+	# 	# self.is_inflated = False
+	# 	if curr_pat_pose[1]>self.thresholds['patient_trans'][1]:
+	# 		logger.warning('reached max z limit')
+	# 		pose = (self.growth_rate, 0.0, 0.0)
+	# 		# self.is_inflated = False
+	# cond = curr_pat_pose>self.thresholds['patient_trans']
+	test1 = moveRestPos(self.patient_dofs.rest_position, pose)
+	self.patient_dofs.findData('rest_position').value = test1
+
+	with open(self._pat_dofs_filename, 'a') as foo:
+		np.savetxt(foo, np.linalg.norm(self.patient_dofs.position, axis=0), delimiter=' ', fmt='%1.4e')
+
+	# curr_pat_pose = np.linalg.norm(self.patient_dofs.position, axis=0)
+	# if np.all(curr_pat_pose>self.thresholds['patient_trans']):
+	# 	self.root.getRootContext().animate = False
+	# 		   # self.is_inflated = False
+	# logger.debug('pat_dofs: {}\n\tthresholds: {}'.format(np.linalg.norm(self.patient_dofs.position, axis=0), self.thresholds['patient_trans']))
+
+	# self.base_neck_left_dofs.pressure_constraint.findData('value').value = str(bnl_val)
+	# self.base_neck_right_dofs.pressure_constraint.findData('value').value = str(bnr_val)
+	# self.base_skull_left_dofs.pressure_constraint.findData('value').value = str(bsl_val)
+	# self.base_skull_right_dofs.pressure_constraint.findData('value').value = str(bsr_val)
+
+	# work directly with dome dofs
+	# self.base_neck_left_dofs.dh_dofs.position = bnl_val.tolist()
+	# self.base_neck_right_dofs.dh_dofs.position = bnr_val.tolist()
+	# self.base_skull_left_dofs.dh_dofs.position = bsl_val.tolist()
+	# self.base_skull_right_dofs.dh_dofs.position = bsr_val.tolist()
+	# print(len(self.patient_dofs.rest_position), 'self.patient_dofs.rest_position')
+
+	# if self.is_inflated:
+	# 	# first move along z
+	# 	test1 = moveRestPos(self.patient_dofs.rest_position, pose)
+	# 	self.patient_dofs.findData('rest_position').value = test1
+	# 	# cavity_pose = np.linalg.norm(self.base_neck_right_dofs.cav_dofs.position, axis=0)
+	# 	# bnl_cav_dofs = self.base_neck_left_dofs.cav_dofs.position
+	# # 	bnl_val = self.base_neck_left_dofs.pressure_constraint.findData('value').value[0][0] + self.growth_rate
+	# # 	bnr_val = self.base_neck_right_dofs.pressure_constraint.findData('value').value[0][0] + self.growth_rate
+	# 	bsl_val = self.base_skull_left_dofs.pressure_constraint.findData('value').value[0][0] + self.growth_rate
+	# 	bsr_val = self.base_skull_right_dofs.pressure_constraint.findData('value').value[0][0] + self.growth_rate
+	# 	# try not using cavity
+	# 	# bnl_val = np.array(self.base_neck_left_dofs.dh_dofs.position) + self.growth_rate
+	# 	# bnr_val = np.array(self.base_neck_right_dofs.dh_dofs.position) + self.growth_rate
+	# 	# bsl_val = np.array(self.base_skull_left_dofs.dh_dofs.position) + self.growth_rate
+	# 	# bsr_val = np.array(self.base_skull_right_dofs.dh_dofs.position) + self.growth_rate
+	#
+	# 	logger.info('inflating base IABs to {} at time {}'.format(bnl_val, self.deltaTime))
+	#
+
+	# logger.debug('bnl pressure cons: {}\n'.format(self.base_neck_left_dofs.pressure_constraint.findData('value').value))
+	# logger.debug('bnl cav position: {}\n'.format(np.linalg.norm(bnl_cav_dofs, axis=0)))
+	# self.update_head_pose()
+
+	# plt.ion()
+	# plt.show()
+
+	return 0;

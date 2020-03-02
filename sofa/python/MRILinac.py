@@ -69,6 +69,8 @@ class dome_test (Sofa.PythonScriptController):
         patientVisu = patient.createChild('patientVisu')
         patientVisu.createObject('OglModel', src='@../patient_loader', name='patientVisual', scale=patributes['scale'], \
                                     rx=patributes['rx'], ry=patributes['ry'], translation=patributes['translation'])
+        # create pointer towards the MechanicalObject
+        # patientObjectPointer = patient.getObject('patient_dofs')
 
         # IABs
         base_neck_left = make_base_domes(rootNode, 'base_neck_left')

@@ -7,6 +7,8 @@
     Side   IABs: {{fore_left, chin_left}, {fore_right, chin_right}}
 '''
 import numpy as np
+import os
+from os.path import join
 
 setuptype = {
         'MRI': False, # can only be one of MRI or LINAC but not both
@@ -20,6 +22,15 @@ thresholds =dict(patient_trans=None, #[508667.26419036+10000, 134780.90110167+10
                  )
 
 move_dist = (0, .40, 0)
-growth_rate = 100  #was .05
+growth_rate = 1.0  #was .05
 max_pressure = 100 # was 15
 pressurConstraintValue = 100
+
+pwd = os.getcwd()
+# patient_dofs_filename = join(pwd, 'data_dumps/patient_dofs.txt')
+patient_dofs_filename = join(pwd, 'data_dumps/patient_dofs_x.txt')
+
+# point we are tracking within the head
+
+if os.path.isfile(patient_dofs_filename):
+    os.remove(patient_dofs_filename)

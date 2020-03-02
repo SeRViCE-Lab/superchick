@@ -3,7 +3,7 @@
 from __future__ import print_function
 import Sofa
 import math
-import sys
+import sys, os
 import time
 import logging
 import datetime
@@ -20,8 +20,10 @@ logger = logging.getLogger(__name__)
 # generate sinusoid trajectory for head
 t, x = gen_sinusoid(amp=.8, freq=2, phase=30, interval=[0.1, 1, 0.01])
 
-def moveRestPos(rest_pos, dx, dy, dz):
+# https://www.sofa-framework.org/community/forum/topic/get-the-position-value-from-a-mechanicalobject-point-in-python/
+def moveRestPos(rest_pos, pose):
 	str_out = ' '
+	dx, dy, dz = pose
 	for i in range(0,len(rest_pos)) :
 		str_out= str_out + ' ' + str(rest_pos[i][0]+dx)
 		str_out= str_out + ' ' + str(rest_pos[i][1]+dy)
@@ -39,7 +41,6 @@ def rotateRestPos(rest_pos,rx,centerPosY,centerPosZ):
 	return str_out
 
 class controller(Sofa.PythonScriptController):
-
 	'''
 		For examples, see:
 
@@ -91,11 +92,17 @@ class controller(Sofa.PythonScriptController):
 		self.base_skull_right_dofs 	= self.get_dome_dofs(self.base_skull_right)
 
 		self.is_chart_updated = False
+		# use this to track the x, y and z positions of the patient over time
+		self._x, self._y, self._z = [], [], []
 
 		# visualization
 		display_chart(self.run_traj_plotter)
 		# plt.ioff()
 		# plt.show()
+
+		# io
+		self._pat_dofs_filename = patient_dofs_filename
+		self.max_vals = 0 # maximum positional values in the patient
 
 	# domes' mechanical states
 	def get_dome_dofs(self, node):
@@ -119,6 +126,30 @@ class controller(Sofa.PythonScriptController):
 						pressure_constraint=pressure_constraint, # cavity
 						cover_dofs=cover_dofs,
 						cover_collis_dofs=cover_collis_dofs))
+
+	def bwdInitGraph(self,node):
+		# find the position at the end of the shape (which has the biggest x coordinate)
+		# Positions = self.patient_dofs.findData('position').value
+		Positions = self.patient_dofs.position#.value
+		max_x, max_y, max_z = 0, 0, 0
+		max_idx_x, max_idx_y, max_idx_z = 0, 0, 0
+
+		for i in range(len(Positions)):
+			if Positions[i][0] > max_x:
+				max_idx_x = i
+				max_x = Positions[i][0]
+			if Positions[i][1] > max_y:
+				max_idx_y = i
+				max_y = Positions[i][1]
+			if Positions[i][2] > max_z:
+				max_idx_z = i
+				max_z = Positions[i][2]
+		#
+		max_ids = Bundle(dict(max_idx_x=max_idx_x, max_idx_y=max_idx_y, max_idx_z=max_idx_z, position=Positions))
+		self.max_vals = Bundle(dict(max_x=max_x, max_y=max_y, max_z=max_z))
+		# print('max x,y,z indices: {}, {}, {}'.format(max_idx_x, max_idx_y, max_idx_z))
+		print('patient positions [x,y,z] {}, {}, {}'.format(max_x, max_y, max_z))
+		return 0
 
 	def run_traj_plotter(self):
 		if self.is_chart_updated:
@@ -155,67 +186,75 @@ class controller(Sofa.PythonScriptController):
 
 		# self.patient = self.root.getChild('patient')
 		self.patient_dofs = self.patient.getObject('patient_dofs')
-		# if self.is_inflated:
-		# 	bnl_val = self.base_neck_left_dofs.pressure_constraint.findData('value').value[0][0] + self.growth_rate
-		# 	bnr_val = self.base_neck_right_dofs.pressure_constraint.findData('value').value[0][0] + self.growth_rate
-		# 	bsl_val = self.base_skull_left_dofs.pressure_constraint.findData('value').value[0][0] + self.growth_rate
-		# 	bsr_val = self.base_skull_right_dofs.pressure_constraint.findData('value').value[0][0] + self.growth_rate
-		# 	# try not using cavity
-		# 	# bnl_val = np.array(self.base_neck_left_dofs.dh_dofs.position) + self.growth_rate
-		# 	# bnr_val = np.array(self.base_neck_right_dofs.dh_dofs.position) + self.growth_rate
-		# 	# bsl_val = np.array(self.base_skull_left_dofs.dh_dofs.position) + self.growth_rate
-		# 	# bsr_val = np.array(self.base_skull_right_dofs.dh_dofs.position) + self.growth_rate
-		#
-		# 	logger.info('inflating base IABs to {} at time {}'.format(bnl_val, self.deltaTime))
-		#
+
 		if self.first_iter:
-			pat_pose = self.patient_dofs.findData('rest_position').value
-			x, y, z = [t[0] for t in pat_pose], [t[1] for t in pat_pose], [t[2] for t in pat_pose]
-			# logger.debug('len x: {}, y: {}, z: {}: '.format(len(x), len(y), len(z), len(pat_pose)))
-			# check to see if patient is above a z
-			rest_pat_pose = np.linalg.norm(pat_pose, axis=0)
-			self.thresholds['patient_trans'] = (rest_pat_pose+1000).tolist()
+			rest_pat_pose = np.array([self.max_vals.max_x, self.max_vals.max_y, self.max_vals.max_z])
+			self.thresholds['patient_trans'] = rest_pat_pose
+			self.thresholds['patient_trans'][0] += 100
+			self.thresholds['patient_trans'][1] += 100
+			self.thresholds['patient_trans'][2] += 100
 			self.thresholds.update(self.thresholds)
-			self.first_iter = False
 			logger.debug('rest_pat_pose: {}, '.format(rest_pat_pose))
+			self.first_iter = False
 
-		# self.base_neck_left_dofs.pressure_constraint.findData('value').value = str(bnl_val)
-		# self.base_neck_right_dofs.pressure_constraint.findData('value').value = str(bnr_val)
-		# self.base_skull_left_dofs.pressure_constraint.findData('value').value = str(bsl_val)
-		# self.base_skull_right_dofs.pressure_constraint.findData('value').value = str(bsr_val)
+		curr_pat_pose = np.array([self.max_vals.max_x, self.max_vals.max_y, self.max_vals.max_z])
 
-		# work directly with dome dofs
-		# self.base_neck_left_dofs.dh_dofs.position = bnl_val.tolist()
-		# self.base_neck_right_dofs.dh_dofs.position = bnr_val.tolist()
-		# self.base_skull_left_dofs.dh_dofs.position = bsl_val.tolist()
-		# self.base_skull_right_dofs.dh_dofs.position = bsr_val.tolist()
-		print(len(self.patient_dofs.rest_position), 'self.patient_dofs.rest_position')
-		test1 = moveRestPos(self.patient_dofs.rest_position, 3.0, 0.0, 0.0)
-		self.patient_dofs.findData('rest_position').value = test1
-		curr_pat_pose = np.linalg.norm(self.patient_dofs.position, axis=0)
-		# cavity_pose = np.linalg.norm(self.base_neck_right_dofs.cav_dofs.position, axis=0)
-		# bnl_cav_dofs = self.base_neck_left_dofs.cav_dofs.position
+		if curr_pat_pose[0]<self.thresholds['patient_trans'][0]: # not up to desired z
+			pose = (self.growth_rate, 0, 0)
+			test1 = moveRestPos(self.patient_dofs.findData('rest_position').value, pose)
+			self.patient_dofs.findData('rest_position').value = test1
+			self.patient_dofs.position = test1
+			self._x.append(self.max_vals.max_x)
+			# not up to desired z
+		# if curr_pat_pose[2]>=self.thresholds['patient_trans'][2] and \
+		# 	curr_pat_pose[1]<self.thresholds['patient_trans'][1]:
+		# 	logger.warning('moving along y now')
+		# 	pose = (0.0, self.growth_rate, 0.0)
+		# 	test1 = moveRestPos(self.patient_dofs.position, pose)
+		# 	# self.patient_dofs.findData('rest_position').value = test1
+		# 	self.patient_dofs.position = test1
+		# 	self._y.append(self.max_vals.max_y)
+		# if curr_pat_pose[2]>=self.thresholds['patient_trans'][2] and \
+		# 	curr_pat_pose[1]>=self.thresholds['patient_trans'][1] and \
+		# 	curr_pat_pose[0]<self.thresholds['patient_trans'][0]:
+		# 	logger.warning(' moving along x now')
+		# 	pose = (self.growth_rate, 0.0, 0.0)
+		# 	test1 = moveRestPos(self.patient_dofs.position, pose)
+		# 	# self.patient_dofs.findData('rest_position').value = test1
+		# 	self.patient_dofs.position = test1
+		# 	self._x.append(self.max_vals.max_x)
 
-		logger.debug('patient dofs: {}'.format(np.linalg.norm(self.patient_dofs.position, axis=0)))
-		# logger.debug('bnl pressure cons: {}\n'.format(self.base_neck_left_dofs.pressure_constraint.findData('value').value))
-		# logger.debug('bnl cav position: {}\n'.format(np.linalg.norm(bnl_cav_dofs, axis=0)))
-		# self.update_head_pose()
-		if curr_pat_pose[2]>self.thresholds['patient_trans'][2]:
-		   logger.warning('reached max z limit')
-		   self.is_inflated = False
+		# pose = (0, 0, self.growth_rate)
+		# self._x.append(self.max_vals.max_x)
+		# self._y.append(self.max_vals.max_y)
+		# self._z.append(self.max_vals.max_z)
 
-		# plt.ion()
-		# plt.show()
-		# self.root.getRootContext().animate = True
+		# save what you got and end simulation
+		#curr_pat_pose[2]>=self.thresholds['patient_trans'][2] and \
+	   	#curr_pat_pose[1]>=self.thresholds['patient_trans'][1] and \
+		if 	curr_pat_pose[0]>=self.thresholds['patient_trans'][0]:
+			stab_val= self._x[-1]
+			for i in range(len(self._x)*4):
+				self._x.append(stab_val)
+			with open(self._pat_dofs_filename, 'a') as foo:
+				arr_to_save = np.array([self._x])
+				np.savetxt(foo, arr_to_save, delimiter=' ', fmt='%1.4e')
+			# with open(self._pat_dofs_filename+'_ref.txt', 'a') as foo:
+			# 	np.savetxt(foo, self.thresholds['patient_trans'], delimiter=' ', fmt='%1.4e')
+
+			self.root.getRootContext().animate = False
+			# os._exit()
 
 		return 0;
 
 	def onEndAnimationStep(self, deltaTime):
 		sys.stdout.flush()
+		#access the 'position' state vector
+		pat_poses = self.patient_dofs.findData('position').value
+		self.bwdInitGraph(self.root)
 		return 0;
 
 	def onLoaded(self, node):
-		## Please feel free to add an example for a simple usage in /home/lex/catkin_ws/src/superchicko/sofa/python/xml_2_scn.py
 		return 0;
 
 	def reset(self):
@@ -225,12 +264,9 @@ class controller(Sofa.PythonScriptController):
 	def onMouseButtonMiddle(self, mouseX,mouseY,isPressed):
 		# usage e.g.
 		if isPressed :
-		   print ("Control+Middle mouse button pressed at position "+str(mouseX)+", "+str(mouseY))
+		   print("Control+Middle mouse button pressed at position "+str(mouseX)+", "+str(mouseY))
 		return 0;
 
-	def bwdInitGraph(self, node):
-		## Please feel free to add an example for a simple usage in /home/lex/catkin_ws/src/superchicko/sofa/python/xml_2_scn.py
-		return 0;
 
 	def onScriptEvent(self, senderNode, eventName,data):
 		## Please feel free to add an example for a simple usage in /home/lex/catkin_ws/src/superchicko/sofa/python/xml_2_scn.py
@@ -238,6 +274,12 @@ class controller(Sofa.PythonScriptController):
 
 	def onMouseButtonRight(self, mouseX,mouseY,isPressed):
 		## usage e.g.
-		#if isPressed :
-		#    print "Control+Right mouse button pressed at position "+str(mouseX)+", "+str(mouseY)
+		if isPressed :
+		   print("Control+Right mouse button pressed at position "+str(mouseX)+", "+str(mouseY))
+		return 0;
+
+	def onMouseButtonLeft(self, mouseX,mouseY,isPressed):
+		## usage e.g.
+		if isPressed :
+		   print("Control+Left mouse button pressed at position "+str(mouseX)+", "+str(mouseY))
 		return 0;

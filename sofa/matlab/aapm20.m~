@@ -1,0 +1,13 @@
+%% Process saved data
+cd('/home/lex/catkin_ws/src/superchicko/sofa/matlab')
+
+pat_dofs = load('../python/data_dumps/patient_dofs.txt');
+
+% organize data
+[x, y, z] = deal([], [], []);
+for i=1:3:length(pat_dofs)
+    x = [x, pat_dofs(i)];
+    y = [y, pat_dofs(i+1)];
+    z = [z, pat_dofs(i+2)];    
+end
+
