@@ -22,7 +22,7 @@ thresholds =dict(patient_trans=None, #[508667.26419036+10000, 134780.90110167+10
                  )
 
 move_dist = (0, .40, 0)
-growth_rate = 1.0  #was .05
+growth_rate = 2.0  #was .05
 max_pressure = 100 # was 15
 pressurConstraintValue = 100
 

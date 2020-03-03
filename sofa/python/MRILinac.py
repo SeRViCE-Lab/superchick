@@ -11,6 +11,7 @@ import Sofa
 import logging
 from utils import *
 from config import *
+from kinecontrol import ol_controller
 
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -45,7 +46,8 @@ class dome_test (Sofa.PythonScriptController):
 
         rootNode.createObject('FreeMotionAnimationLoop')
         rootNode.createObject('GenericConstraintSolver', maxIterations='100', tolerance = '0.0000001')
-        rootNode.createObject('PythonScriptController', filename="diff_kine_controller.py", classname="controller")
+        # rootNode.createObject('PythonScriptController', filename="diff_kine_controller.py", classname="controller")
+        rootNode.createObject('PythonScriptController', filename="kinecontrol/ol_control.py", classname="ol_controller")
 
         # Patient
         patient = rootNode.createChild('patient')
