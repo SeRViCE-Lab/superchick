@@ -21,6 +21,10 @@ class dome_test (Sofa.PythonScriptController):
     def __init__(self, node, commandLineArguments) :
         self.commandLineArguments = commandLineArguments
         print "Command line arguments for python : "+str(commandLineArguments)
+        if setuptype['Controller'] == 'open_loop':
+            self.controller = "kinecontrol/ol_control.py"
+        elif setuptype['Controller'] == 'diff_kine':
+            self.controller = "kinecontrol/diff_kine_controller.py"
         self.createGraph(node)
         return None;
 
@@ -41,13 +45,11 @@ class dome_test (Sofa.PythonScriptController):
         rootNode.createObject('VisualStyle', displayFlags='showVisualModels showBehaviorModels showCollisionModels showBoundingCollisionModels hideForceFields showInteractionForceFields hideWireframe')
 
         # this from here:https://www.sofa-framework.org/community/forum/topic/rigid-objects-passing-through-deformable/
-        rootNode.createObject('DefaultContactManager', name='Response', \
-                                response='FrictionContact')
+        rootNode.createObject('DefaultContactManager', name='Response', response='FrictionContact')
 
         rootNode.createObject('FreeMotionAnimationLoop')
         rootNode.createObject('GenericConstraintSolver', maxIterations='100', tolerance = '0.0000001')
-        # rootNode.createObject('PythonScriptController', filename="diff_kine_controller.py", classname="controller")
-        rootNode.createObject('PythonScriptController', filename="kinecontrol/ol_control.py", classname="ol_controller")
+        rootNode.createObject('PythonScriptController', filename=self.controller, classname="controller")
 
         # Patient
         patient = rootNode.createChild('patient')

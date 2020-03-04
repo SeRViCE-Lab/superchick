@@ -1,5 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+'''
+	Use this to execute the differential kinematics
+	controller in our kinecontrol paper.
+'''
 from __future__ import print_function
 import Sofa
 import math

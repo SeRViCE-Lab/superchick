@@ -30,17 +30,27 @@ def moveRestPos(rest_pos, pose):
 		str_out= str_out + ' ' + str(rest_pos[i][2]+dz)
 	return str_out
 
+# def rotateRestPos(rest_pos,rx,centerPosY,centerPosZ):
+# 	str_out = ' '
+# 	for i in xrange(0,len(rest_pos)) :
+# 		newRestPosY = (rest_pos[i][1] - centerPosY)*math.cos(rx) - (rest_pos[i][2] - centerPosZ)*math.sin(rx) +  centerPosY
+# 		newRestPosZ = (rest_pos[i][1] - centerPosY)*math.sin(rx) + (rest_pos[i][2] - centerPosZ)*math.cos(rx) +  centerPosZ
+# 		str_out= str_out + ' ' + str(rest_pos[i][0])
+# 		str_out= str_out + ' ' + str(newRestPosY)
+# 		str_out= str_out + ' ' + str(newRestPosZ)
+# 	return str_out
+
 def rotateRestPos(rest_pos,rx,centerPosY,centerPosZ):
 	str_out = ' '
 	for i in xrange(0,len(rest_pos)) :
-		newRestPosY = (rest_pos[i][1] - centerPosY)*math.cos(rx) - (rest_pos[i][2] - centerPosZ)*math.sin(rx) +  centerPosY
-		newRestPosZ = (rest_pos[i][1] - centerPosY)*math.sin(rx) + (rest_pos[i][2] - centerPosZ)*math.cos(rx) +  centerPosZ
-		str_out= str_out + ' ' + str(rest_pos[i][0])
+		newRestPosX = (rest_pos[i][1] - centerPosX)*math.cos(rx) - (rest_pos[i][2] - centerPosZ)*math.sin(rx) +  centerPosX
+		newRestPosY = (rest_pos[i][1] - centerPosY)*math.sin(rx) + (rest_pos[i][2] - centerPosY)*math.cos(rx) +  centerPosY
+		str_out= str_out + ' ' + str(newRestPosX)
 		str_out= str_out + ' ' + str(newRestPosY)
-		str_out= str_out + ' ' + str(newRestPosZ)
+		str_out= str_out + ' ' + str(rest_pos[i][2])
 	return str_out
 
-class ol_controller(Sofa.PythonScriptController):
+class controller(Sofa.PythonScriptController):
 	'''
 		For examples, see:
 
@@ -50,6 +60,9 @@ class ol_controller(Sofa.PythonScriptController):
 			- https://github.com/lakehanne/sofa/blob/master/tools/sofa-launcher/launcher.py
 		+ OneParticle:
 			- https://github.com/lakehanne/sofa/blob/master/tools/sofa-launcher/example.py
+
+		+ Note: +y points up, +x points right, +z out of the screen
+		+ Note: -y points down, -x points left, -z into the screen
 	'''
 	def initGraph(self, root):
 		self.move_dist = move_dist #(0, .40, 0)
@@ -67,7 +80,6 @@ class ol_controller(Sofa.PythonScriptController):
 		self.patient = root.getChild('patient')
 		self.patient_dofs = self.patient.getObject('patient_dofs')
 		pat_rest_pose = self.patient_dofs.findData('rest_position').value
-
 
 		self.thresholds = thresholds
 		self.first_iter = True
@@ -100,9 +112,14 @@ class ol_controller(Sofa.PythonScriptController):
 		# plt.ioff()
 		# plt.show()
 
-		# io
 		self._pat_dofs_filename = patient_dofs_filename
+
 		self.max_vals = 0 # maximum positional values in the patient
+		self.turn_off_animation = False
+		#
+		self.centerPosX = 0 # 70
+        self.centerPosY = 0
+        self.rotAngle = 0
 
 	# domes' mechanical states
 	def get_dome_dofs(self, node):
@@ -189,36 +206,75 @@ class ol_controller(Sofa.PythonScriptController):
 
 		if self.first_iter:
 			rest_pat_pose = np.array([self.max_vals.max_x, self.max_vals.max_y, self.max_vals.max_z])
+			# set targets
 			self.thresholds['patient_trans'] = rest_pat_pose
-			self.thresholds['patient_trans'][0] += 100
-			self.thresholds['patient_trans'][1] += 100
-			self.thresholds['patient_trans'][2] += 100
+			for i in range(3): self.thresholds['patient_trans'][i] += 100
 			self.thresholds.update(self.thresholds)
 			logger.debug('rest_pat_pose: {}, '.format(rest_pat_pose))
 			self.first_iter = False
 
 		curr_pat_pose = np.array([self.max_vals.max_x, self.max_vals.max_y, self.max_vals.max_z])
 
+		# raise all the way to +x
 		if curr_pat_pose[0]<self.thresholds['patient_trans'][0]: # not up to desired z
 			pose = (self.growth_rate, 0, 0)
 			test1 = moveRestPos(self.patient_dofs.findData('rest_position').value, pose)
 			self.patient_dofs.findData('rest_position').value = test1
 			self.patient_dofs.position = test1
 			self._x.append(self.max_vals.max_x)
-		if 	curr_pat_pose[0]>=self.thresholds['patient_trans'][0]:
-			stab_val= self._x[-1]
-			for i in range(len(self._x)*4):
-				self._x.append(stab_val)
-			with open(self._pat_dofs_filename, 'a') as foo:
-				arr_to_save = np.array([self._x])
-				np.savetxt(foo, arr_to_save, delimiter=' ', fmt='%1.4e')
-			# with open(self._pat_dofs_filename+'_ref.txt', 'a') as foo:
-			# 	np.savetxt(foo, self.thresholds['patient_trans'], delimiter=' ', fmt='%1.4e')
-
-			self.root.getRootContext().animate = False
-			# os._exit()
+			if 	curr_pat_pose[0]>=self.thresholds['patient_trans'][0]-2:
+				logger.info('finished inflating along x')
+				stab_val= self._x[-1]
+				for i in range(len(self._x)*4):
+					self._x.append(stab_val)
+		# raise all the way to +y
+		if  (curr_pat_pose[1]<self.thresholds['patient_trans'][1]) and \
+			(curr_pat_pose[0]>=self.thresholds['patient_trans'][0]): # not up to desired z
+			pose = (0, self.growth_rate, 0)
+			test2 = moveRestPos(self.patient_dofs.findData('rest_position').value, pose)
+			self.patient_dofs.findData('rest_position').value = test2
+			self.patient_dofs.position = test2
+			self._y.append(self.max_vals.max_y)
+			if 	curr_pat_pose[1]>=self.thresholds['patient_trans'][1]-2:
+				logger.info('finished inflating along y')
+				stab_val= self._y[-1]
+				for i in range(len(self._y)*4):
+					self._y.append(stab_val)
+		# raise all the way to +z
+		if  (curr_pat_pose[2]<self.thresholds['patient_trans'][2]) and \
+			(curr_pat_pose[0]>=self.thresholds['patient_trans'][0]) and \
+			(curr_pat_pose[1]>=self.thresholds['patient_trans'][1]): # not up to desired z
+			pose = (0, 0, self.growth_rate)
+			test3 = moveRestPos(self.patient_dofs.findData('rest_position').value, pose)
+			self.patient_dofs.findData('rest_position').value = test3
+			self.patient_dofs.position = test3
+			self._z.append(self.max_vals.max_z)
+			if 	curr_pat_pose[2]>=self.thresholds['patient_trans'][2]-2:
+				logger.info('finished inflating along z')
+				stab_val= self._z[-1]
+				for i in range(len(self._z)*4):
+					self._z.append(stab_val)
+				lenx = len(self._x)
+				self.record_all_data(np.c_[self._x[:lenx], self._y[:lenx], self._z[:lenx]])
+				print('Finished animations. Recording all data.')
+				self.root.getRootContext().animate = False
+		# rotate left about y
+            dx = self.growth_rate*math.cos(self.rotAngle)
+            dy = self.growth_rate*math.sin(self.rotAngle)
+			pose = (dx, dy, 0.0)
+            test = moveRestPos(self.patient_dofs.findData('rest_position').value, pose)
+			self.patient_dofs.position = test
+            self.centerPosX = self.centerPosX + dx
+            self.centerPosY = self.centerPosY + dy
 
 		return 0;
+
+	def record_all_data(self, data):
+		with open(self._pat_dofs_filename, 'a') as foo:
+			arr_to_save = np.array(data)
+			np.savetxt(foo, arr_to_save, delimiter=' ', fmt='%1.4e')
+		self.root.getRootContext().animate = False
+		logger.info('Stopped recording saved data points')
 
 	def onEndAnimationStep(self, deltaTime):
 		sys.stdout.flush()

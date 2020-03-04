@@ -13,7 +13,8 @@ from os.path import join
 setuptype = {
         'MRI': False, # can only be one of MRI or LINAC but not both
         'LINAC': False,
-        'Flexis': False
+        'Flexis': False,
+        'Controller': 'open_loop' # or diff_kine
 }
 
 # open-loop control settings
@@ -27,10 +28,21 @@ max_pressure = 100 # was 15
 pressurConstraintValue = 100
 
 pwd = os.getcwd()
-# patient_dofs_filename = join(pwd, 'data_dumps/patient_dofs.txt')
-patient_dofs_filename = join(pwd, 'data_dumps/patient_dofs_x.txt')
+patient_dofs_x = join(pwd, 'data_dumps/patient_dofs_x.txt')
+patient_dofs_y = join(pwd, 'data_dumps/patient_dofs_y.txt')
+patient_dofs_z = join(pwd, 'data_dumps/patient_dofs_z.txt')
+patient_dofs_filename = join(pwd, 'data_dumps/patient_dofs.txt')
 
 # point we are tracking within the head
 
-if os.path.isfile(patient_dofs_filename):
-    os.remove(patient_dofs_filename)
+if os.path.isfile(patient_dofs_x):
+    os.remove(patient_dofs_x)
+
+if os.path.isfile(patient_dofs_y):
+    os.remove(patient_dofs_y)
+
+if os.path.isfile(patient_dofs_z):
+    os.remove(patient_dofs_z)
+
+# if os.path.isfile(patient_dofs_x):
+#     os.remove(patient_dofs_x)
