@@ -1,1 +1,1 @@
-from ol_control import ol_controller
+from .ol_control import *

@@ -19,7 +19,7 @@ setuptype = {
 
 # open-loop control settings
 thresholds =dict(patient_trans=None, #[508667.26419036+10000, 134780.90110167+10000, 189716.76200505+10000]
-                 patient_rot=[np.pi/2, np.pi/4, -np.pi], #yaw, pitch, roll
+                 patient_rot=[90, 45, 90], #yaw, pitch, roll
                  )
 
 move_dist = (0, .40, 0)

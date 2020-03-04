@@ -14,7 +14,6 @@ from config import *
 from matplotlib import pyplot as plt
 import matplotlib.gridspec as gridspec
 
-
 logger = logging.getLogger(__name__)
 
 # generate sinusoid trajectory for head
@@ -106,6 +105,7 @@ class controller(Sofa.PythonScriptController):
 		self.is_chart_updated = False
 		# use this to track the x, y and z positions of the patient over time
 		self._x, self._y, self._z = [], [], []
+		self._roll, self._yaw, self._pitch = [], [], []
 
 		# visualization
 		display_chart(self.run_traj_plotter)
@@ -118,8 +118,8 @@ class controller(Sofa.PythonScriptController):
 		self.turn_off_animation = False
 		#
 		self.centerPosX = 0 # 70
-        self.centerPosY = 0
-        self.rotAngle = 0
+		self.centerPosY = 0
+		self.rotAngle = 0
 
 	# domes' mechanical states
 	def get_dome_dofs(self, node):
@@ -144,10 +144,30 @@ class controller(Sofa.PythonScriptController):
 						cover_dofs=cover_dofs,
 						cover_collis_dofs=cover_collis_dofs))
 
+	def get_euler_angles(self, curr_points, y_vector):
+		"""
+		Find axis of rotation
+		The cross product of the desired patient axis of rotation and the y_vector gives the axis of rotation
+		perpendicular to the plane defined by the patient in a supine position and the x vector
+		# Ref: Goncalo's answer here: https://answers.ros.org/question/31006/how-can-a-vector3-axis-be-used-to-produce-a-quaternion/
+
+		We use y-vector because the y axis points up
+		"""
+		rot_axis = np.cross(curr_points, y_vector)
+		# normalize the rotation axis
+		rot_axis /= np.linalg.norm(rot_axis)
+		# GET THE DIRECTION COSINE BTW CURRENT ROT AXES AND Y VECTOR
+		dir_cosine = rot_axis.dot(y_vector)
+		rot_angle = -1.0*np.arccos(dir_cosine)
+		# generate quaternions: http://docs.ros.org/jade/api/tf/html/c++/Quaternion_8h_source.html#l00062
+		s = np.sin(rot_angle * 0.5)/np.linalg.norm(rot_axis) # pg 34 Murray
+		quaternions = [s*rot_axis[0], s*rot_axis[1], s*rot_axis[2], np.cos(rot_angle*.5)]
+		fick_angles = R.from_quat(quaternions).as_euler('zyx', degrees=True) # sfrom scipy transforms
+		self.euler_angles = Bundle(dict(yaw=fick_angles[0], pitch=fick_angles[1], roll=fick_angles[2]))
+
 	def bwdInitGraph(self,node):
 		# find the position at the end of the shape (which has the biggest x coordinate)
-		# Positions = self.patient_dofs.findData('position').value
-		Positions = self.patient_dofs.position#.value
+		Positions = self.patient_dofs.position
 		max_x, max_y, max_z = 0, 0, 0
 		max_idx_x, max_idx_y, max_idx_z = 0, 0, 0
 
@@ -161,11 +181,15 @@ class controller(Sofa.PythonScriptController):
 			if Positions[i][2] > max_z:
 				max_idx_z = i
 				max_z = Positions[i][2]
-		#
+		# calculate rotations given two points with respect to the origin
+		# See https://answers.ros.org/question/31006/how-can-a-vector3-axis-be-used-to-produce-a-quaternion/
+		rot_axis = [0.0, 1.0, 0.0] # since w
+		self.get_euler_angles([max_x, max_y, max_z], rot_axis)
+
 		max_ids = Bundle(dict(max_idx_x=max_idx_x, max_idx_y=max_idx_y, max_idx_z=max_idx_z, position=Positions))
 		self.max_vals = Bundle(dict(max_x=max_x, max_y=max_y, max_z=max_z))
-		# print('max x,y,z indices: {}, {}, {}'.format(max_idx_x, max_idx_y, max_idx_z))
-		print('patient positions [x,y,z] {}, {}, {}'.format(max_x, max_y, max_z))
+		logger.info('[x,y,z, yaw, pitch, roll {}, {}, {}, {}, {}, {}'.format(\
+				max_x, max_y, max_z, self.euler_angles.yaw, self.euler_angles.pitch, self.euler_angles.roll))
 		return 0
 
 	def run_traj_plotter(self):
@@ -214,7 +238,7 @@ class controller(Sofa.PythonScriptController):
 			self.first_iter = False
 
 		curr_pat_pose = np.array([self.max_vals.max_x, self.max_vals.max_y, self.max_vals.max_z])
-
+		"""
 		# raise all the way to +x
 		if curr_pat_pose[0]<self.thresholds['patient_trans'][0]: # not up to desired z
 			pose = (self.growth_rate, 0, 0)
@@ -258,14 +282,60 @@ class controller(Sofa.PythonScriptController):
 				self.record_all_data(np.c_[self._x[:lenx], self._y[:lenx], self._z[:lenx]])
 				print('Finished animations. Recording all data.')
 				self.root.getRootContext().animate = False
-		# rotate left about y
-            dx = self.growth_rate*math.cos(self.rotAngle)
-            dy = self.growth_rate*math.sin(self.rotAngle)
+		"""
+		if self.euler_angles.yaw<self.thresholds['patient_rot'][0]: # not up to desired z
+			# rotate left about y
+			dx = self.growth_rate*math.cos(self.rotAngle)
+			dy = self.growth_rate*math.sin(self.rotAngle)
 			pose = (dx, dy, 0.0)
-            test = moveRestPos(self.patient_dofs.findData('rest_position').value, pose)
+			test = moveRestPos(self.patient_dofs.findData('rest_position').value, pose)
 			self.patient_dofs.position = test
-            self.centerPosX = self.centerPosX + dx
-            self.centerPosY = self.centerPosY + dy
+			self.centerPosX += dx
+			self.centerPosY += dy
+			self._yaw.append(self.euler_angles.yaw)
+			if 	self.euler_angles.yaw>=self.thresholds['patient_rot'][0]-2:
+				logger.info('finished inflating along yaw')
+				stab_val= self._yaw[-1]
+				for i in range(len(self._yaw)*4):
+					self._yaw.append(stab_val)
+		if self.euler_angles.pitch<self.thresholds['patient_rot'][1] and \
+			(self.euler_angles.yaw>=self.thresholds['patient_rot'][0]): # not up to desired z
+			# rotate left about y
+			dx = self.growth_rate*math.cos(self.rotAngle)
+			dy = self.growth_rate*math.sin(self.rotAngle)
+			pose = (0.0, dx, dy)
+			test2 = moveRestPos(self.patient_dofs.findData('rest_position').value, pose)
+			self.patient_dofs.position = test2
+			self.centerPosX += dx
+			self.centerPosY += dy
+			self._pitch.append(self.euler_angles.pitch)
+			if 	self.euler_angles.pitch>=self.thresholds['patient_rot'][1]-2:
+				logger.info('finished inflating along pitch')
+				stab_val= self._pitch[-1]
+				for i in range(len(self._pitch)*4):
+					self._pitch.append(stab_val)
+		if self.euler_angles.roll<self.thresholds['patient_rot'][2] and \
+			(self.euler_angles.yaw>=self.thresholds['patient_rot'][0]) and \
+			(self.euler_angles.pitch>=self.thresholds['patient_rot'][1]): # not up to desired z
+			# rotate left about y
+			dx = self.growth_rate*math.cos(self.rotAngle)
+			dy = self.growth_rate*math.sin(self.rotAngle)
+			pose = (dx, 0.0, dy)
+			test2 = moveRestPos(self.patient_dofs.findData('rest_position').value, pose)
+			self.patient_dofs.position = test2
+			self.centerPosX += dx
+			self.centerPosY += dy
+			self._roll.append(self.euler_angles.roll)
+			if 	self.euler_angles.roll>=self.thresholds['patient_rot'][2]-2:
+				logger.info('finished inflating along roll')
+				stab_val= self._roll[-1]
+				for i in range(len(self._roll)*4):
+					self._roll.append(stab_val)
+				lenyaw = len(self._yaw)
+				# self.record_all_data(np.c_[self._x[:lenx], self._y[:lenx], self._z[:lenx]])
+				self.record_all_data(np.c_[self._yaw[:lenyaw], self._pitch[:lenyaw], self._roll[:lenyaw]])
+				print('Finished animations. Recording all data.')
+				self.root.getRootContext().animate = False
 
 		return 0;
 

@@ -11,7 +11,7 @@ import Sofa
 import logging
 from utils import *
 from config import *
-from kinecontrol import ol_controller
+from kinecontrol import controller
 
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 logger = logging.getLogger(__name__)
