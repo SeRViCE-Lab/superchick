@@ -2,7 +2,7 @@
 clc; close all; clear all
 %cd('/Users/olalekanogunmolu/ros2_ws/src/superchicko/sofa/matlab')
 cd('/home/lex/catkin_ws/src/superchicko/sofa/matlab')
-pat_dofs = load('../python/data_dumps/patient_dofs.txt');
+pat_dofs = load('/home/lex/catkin_ws/src/superchicko/sofa/python/data_dumps/patient_dofs.txt');
 
 % organize data
 z = pat_dofs(:, 1);
