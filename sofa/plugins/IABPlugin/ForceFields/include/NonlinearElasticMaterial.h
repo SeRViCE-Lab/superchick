@@ -137,8 +137,6 @@ template<typename DataTypes>
 class StrainInformation
 {
 public:
-
-
   typedef typename DataTypes::Coord Coord;
   typedef typename Coord::value_type Real;
   using Matrix3 = defaulttype::Mat<3,3,Real>;

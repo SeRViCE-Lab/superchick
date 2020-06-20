@@ -2,29 +2,78 @@
 <Node name="DomeNode" dt="0.005" showBoundingTree="0" gravity="0 -9 0">
 <APIVersion level="19.06" />
 <!--  Aesthetics -->
-<BackgroundSetting color='0 0.168627 0.211765'/>
+<BackgroundSetting color="0 0.168627 0.211765"/>
 <OglSceneFrame style="Arrows" alignment="BottomLeft" />
 <!--  Plugins -->
-<RequiredPlugin pluginName="CImgPlugin"/>
-<RequiredPlugin name="SofaOpenglVisual"/>
-<RequiredPlugin pluginName='SofaMiscCollision'/>
 <RequiredPlugin name="IAB" pluginName="IAB"/>
 <RequiredPlugin name="IABTetra" pluginName="IABTetra"/>
-<!-- <RequiredPlugin name="IABTetra" pluginName="SofaMiscFem"/> -->
+<RequiredPlugin name="SofaPython" pluginName="SofaPython"/>
+<RequiredPlugin name="SoftRobots" pluginName="SoftRobots"/>
+<RequiredPlugin name="CImgPlugin" pluginName="CImgPlugin"/>
+<RequiredPlugin name="SofaSparseSolver" pluginName="SofaSparseSolver"/>
+<RequiredPlugin name="SofaOpenglVisual" pluginName="SofaOpenglVisual"/>
+<RequiredPlugin name="SofaPreconditioner" pluginName="SofaPreconditioner"/>
+<VisualStyle displayFlags="showVisualModels showBehaviorModels showCollisionModels showBoundingCollisionModels hideForceFields showInteractionForceFields hideWireframe" />
 
-<VisualStyle displayFlags="showForceFields showBehaviorModels" />
-<DefaultPipeline verbose="0" />
-<BruteForceDetection name="N2" />
-<DefaultContactManager response="default" />
-<MinProximityIntersection name="Proximity" alarmDistance="0.8" contactDistance="0.5" />
-<DefaultCollisionGroupManager />
-<!--  Presumably handles Lagrange Constraint multipliers https://www.sofa-framework.org/community/doc/using-sofa/components/animationloop/multistepanimationloop/-->
-<DefaultAnimationLoop />
+<FreeMotionAnimationLoop />
+<GenericConstraintSolver maxIterations="100" tolerance="0.0000001"/>
 
-	<include href="scene_comps/IABs/dome_head.scn" dx="0" dy="0" dz="0" rx="0"
-					ry="0" rz="0"  color="0.8549 0.8235 0.6431" scale="1"/>
-	<include href="scene_comps/IABs/dome_ring.scn" dx="0" dy="0" dz="0" rx="0"
-					color="0.8549 0.8235 0.6431" scale="1"/>
-	<include href="scene_comps/IABs/dome_cover_solid.scn" dx="0" dy="-3" dz="-.3" rx="0"
-		  	color="0.8549 0.8235 0.6431" scale="1"/>
+<Node name="DomeHead" />
+	<EulerImplicitSolver name="cg_odesolver" printLog="false"/>
+	<SparseLDLSolver name="linearSolver"/>
+	<MeshVTKLoader name="domeHeadVTKLoader" filename="/home/lex/catkin_ws/src/superchicko/ros/srs_traj_opt/patient_description/meshes/dome/dome.vtu" />
+	<TetrahedronSetTopologyContainer src="@domeHeadVTKLoader" name="TetraTopologyContainer"/>
+	<TetrahedronSetTopologyModifier name="TetraTopologyModifier"/>
+	<TetrahedronSetTopologyAlgorithms name="TetraTopologyAlgo" template="Vec3d"/>
+	<TetrahedronSetGeometryAlgorithms drawTetrahedra="1" name="TetraGeomAlgo" template="Vec3d"/>
+
+	<MechanicalObject name="dh_dofs" template="Vec3d" showIndices="false" rx="0" showIndicesScale="4e-5" dz="0"/>
+	<UniformMass totalMass=".04"/>
+	<TetrahedronFEMForceField template="Vec3d" name="FEM" method="large" poissonRatio=".3" youngModulus="1500"/>
+	<BoxROI name="boxROI" box="-2.75533 2.74354 -.1597 2.76615 -2.99312 2.99312" drawBoxes="true" doUpdate="1"/>
+	<BoxROI name="boxROISubTopo" box="-6.75533 4.74354 -4.7597 4.76615 -3.99312 3.99312" drawBoxes="false" doUpdate="0"/>
+	<RestShapeSpringsForceField points="@boxROI.indices" stiffness="1e5" angularStiffness="1e5"/>
+	<SparseLDLSolver name="preconditioner"/>
+
+	<!-- Sub Topo -->
+	<Node name="DomeHeadSubTopo"/>
+  <TetrahedronSetTopologyContainer position="@../domeHeadVTKLoader.position" tetrahedra="@boxROISubTopo.tetrahedraInROI" name="container"/>
+  <TetrahedronFEMForceField template="Vec3d" name="FEM" method="large" poissonRatio="0.3" youngModulus="1000"/>
+
+  <Node name="DomeCavity"/>
+  <MeshObjLoader name="cavityLoader" filename="/home/lex/catkin_ws/src/superchicko/ros/srs_traj_opt/patient_description/meshes/dome/dome_cavity.obj" triangulate="true"/>
+  <Mesh src="@cavityLoader" name="cavityTopo"/>
+  <MechanicalObject  name="dome_cav_dofs" rx="90" scale="1.8"/>
+  <SurfacePressureConstraint name="SurfacePressureConstraint" template="Vec3d" value="0.0001" triangles="@cavityTopo.triangles" drawPressure="0" drawScale="0.0002" valueType="pressure" />
+  <BarycentricMapping  name="mapping" mapForces="false" mapMasses="false"/>
+
+	<Node name="DomeHeadCollis"/>
+	<MeshObjLoader name="domeHeadCollisLoader" filename="/home/lex/catkin_ws/src/superchicko/ros/srs_traj_opt/patient_description/meshes/dome/dome_cavity.obj"/>
+	<Mesh src="@domeHeadCollisLoader" name="topo"/>
+	<MechanicalObject name="collisMech" rx="90" scale="1.8"/>
+	<Triangle selfCollision="false"/>
+	<Line selfCollision="false"/>
+	<Point selfCollision="false"/>
+	<BarycentricMapping  name="mapping" mapForces="false" mapMasses="false"/>
+
+	<Node name="DomeHeadVisu"/>
+	<OglModel name="domeHeadLoader" template="Vec3d" color="0.3 0.2 0.2 0.6" translation= "0 0 0 " />
+	<BarycentricMapping name="mapping"/>
+
+	<Node name="DomeCover"/>
+	<MeshSTLLoader name="domeCoverLoader" filename="/home/lex/catkin_ws/src/superchicko/ros/srs_traj_opt/patient_description/meshes/dome/cover.stl" />
+	<Mesh src="@domeCoverLoader" name="dome_ring_cav_mesh"/>
+	<MechanicalObject name="dome_cover_dofs"/>
+	<BarycentricMapping  name="mapping" mapForces="false" mapMasses="false"/>
+	<OglModel color="0.3 0.5 0.5 0.6"/>
+
+	<Node name="DomeCoverCollis"/>
+	<MeshObjLoader name="domeCoverCollis" filename="/home/lex/catkin_ws/src/superchicko/ros/srs_traj_opt/patient_description/meshes/dome/cover.obj"/>
+	<Mesh src="@domeCoverCollis" name="topo"/>
+	<MechanicalObject name="dome_cover_collis_dofs" rx="-90" dz="0.1" />
+	<Triangle selfCollision="false"/>
+	<Line selfCollision="false"/>
+	<Point selfCollision="false"/>
+	<BarycentricMapping  name="mapping" mapForces="false" mapMasses="false"/>
+
 </Node>

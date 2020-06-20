@@ -179,7 +179,7 @@ class TetrahedronMooneyRivlinFEMForceField : public core::behavior::ForceField<D
     };
 
     /// data structure stored for each tetrahedron
-  	class TetrahedronRestInformation //: public sofa::component::fem::StrainInformation<DataTypes>
+  	class TetrahedronRestInformation : public sofa::component::fem::StrainInformation<DataTypes>
     {
         public:
           /// shape vector at the rest configuration

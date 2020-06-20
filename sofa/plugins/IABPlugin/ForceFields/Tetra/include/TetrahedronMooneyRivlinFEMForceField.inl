@@ -75,6 +75,18 @@ void TetrahedronMooneyRivlinFEMForceField<DataTypes>::TetrahedronHandler::applyC
         // gamma in lagrangean axis is fixed
         tinfo.m_sPolarVecLag[j].Gamma = deg2rad(0);
       }
+      volume=dot(cross(point[2]-point[0],point[3]-point[0]),point[1]-point[0]);
+      /// store the rest volume
+      tinfo.m_volScale =(Real)(1.0/volume);
+      tinfo.m_restVolume = fabs(volume/6);
+
+      // store shape vectors at the rest configuration
+      for(j=0;j<4;++j) {
+          if (!(j%2))
+              tinfo.m_shapeVector[j]=-cross(point[(j+2)%4] - point[(j+1)%4],point[(j+3)%4] - point[(j+1)%4])/ volume;
+          else
+              tinfo.m_shapeVector[j]=cross(point[(j+2)%4] - point[(j+1)%4],point[(j+3)%4] - point[(j+1)%4])/ volume;;
+      }
 
       for(j=0;j<6;++j)
       {
@@ -184,7 +196,8 @@ void TetrahedronMooneyRivlinFEMForceField<DataTypes>::init()
     for (Topology::TetrahedronID i=0;i<m_topology->getNbTetrahedra();++i)
     {
         m_tetrahedronHandler->applyCreateFunction(i, tetrahedronInfVec[i],
-                                                m_topology->getTetrahedron(i),  (const vector< unsigned int > )0,
+                                                m_topology->getTetrahedron(i),
+                                                (const vector< unsigned int > )0,
                                                 (const vector< double >)0);
         tetrahedronInfVec[i].m_C1 = paramSet[0];
         tetrahedronInfVec[i].m_C2 = paramSet[1];
@@ -232,7 +245,7 @@ void TetrahedronMooneyRivlinFEMForceField<DataTypes>::addForce(const core::Mecha
           // initialize associated tri components
           tetInfo->m_sPolarVecEul[j].m_ro = tetInfo->m_sPolarVecEul[j].m_r;
 
-          // tetInfo->m_sPolarVecEul[j].gamma = // this has to be figured out during deformation
+          tetInfo->m_sPolarVecEul[j].gamma = 0.25 * M_PI; // assume fiber angles are 45 degrees and constant
           // compute F, B, and C (defGrad, left and right Cauchy-Green Tensors)
 
           // initialize bottom left block of def grad to zeros
@@ -241,7 +254,8 @@ void TetrahedronMooneyRivlinFEMForceField<DataTypes>::addForce(const core::Mecha
               tetInfo->m_sPolarVecEul[j].m_F[k][l] =  0;
           tetInfo->m_sPolarVecEul[j].m_F[0][0] = SQ(tetInfo->m_sPolarVecLag[j].m_R)/SQ(tetInfo->m_sPolarVecEul[j].m_r);
           tetInfo->m_sPolarVecEul[j].m_F[0][1] = -tetInfo->m_sPolarVecEul[j].m_phi/tetInfo->m_sPolarVecLag[j].m_R;
-          tetInfo->m_sPolarVecEul[j].m_F[0][2] = -tetInfo->m_sPolarVecEul[j].m_theta/tetInfo->m_sPolarVecLag[j].m_R;
+          tetInfo->m_sPolarVecEul[j].m_F[0][2] = (-tetInfo->m_sPolarVecEul[j].m_theta/tetInfo->m_sPolarVecLag[j].m_R)*\
+                                                  (std::cos(tetInfo->m_sPolarVecEul[j].m_phi)/std::sin(tetInfo->m_sPolarVecEul[j].m_phi));
           tetInfo->m_sPolarVecEul[j].m_F[1][1] = (tetInfo->m_sPolarVecEul[j].m_r/tetInfo->m_sPolarVecLag[j].m_R)+(1/(tetInfo->m_sPolarVecLag[j].m_R));
           tetInfo->m_sPolarVecEul[j].m_F[1][2] = -(tetInfo->m_sPolarVecEul[j].m_theta/tetInfo->m_sPolarVecLag[j].m_R)*\
                                 cot(tetInfo->m_sPolarVecEul[j].m_phi);
@@ -269,8 +283,7 @@ void TetrahedronMooneyRivlinFEMForceField<DataTypes>::addForce(const core::Mecha
           } // outer for
           // fiber direction in eulerian coord
           tetInfo->m_sPolarVecEul[j].m_fiberDirection = {tetInfo->m_sPolarVecEul[j].m_F[0][0]*rcos(tetInfo->m_sPolarVecEul[j].gamma), \
-                                      -tetInfo->m_sPolarVecEul[j].m_F[1][1]*rsin(tetInfo->m_sPolarVecEul[j].gamma), \
-                                      0};
+                                                         tetInfo->m_sPolarVecEul[j].m_F[1][1]*rsin(tetInfo->m_sPolarVecEul[j].gamma), 0};
         } // end tetra vertices for
       } // end all nbTetrahedra for i
     /// indicates that the next call to addDForce will need to update the stiffness matrix
@@ -302,7 +315,19 @@ void TetrahedronMooneyRivlinFEMForceField<DataTypes>::updateTangentMatrix()
     {
         tetInfo=&tetrahedronInfVec[i];
         // avg all def grads for this tetrahedron
-        // Matrix3 &df=tetInfo->m_deformationGradient;
+        Matrix3 df(0);   // explicit constructor from an element
+        for (uint j = 0; j < 4; ++j)
+        {
+          for (uint k=0; k < 3; ++k)
+          {
+            for (uint l=0; l < 3; ++l)
+            {
+              df[k][l] += tetInfo->m_sPolarVecEul[j].m_F[k][l];
+            }
+          }
+        }
+        df /= 4;
+
         BaseMeshTopology::EdgesInTetrahedron te=m_topology->getEdgesInTetrahedron(i);
 
         /// describe the jth vertex index of triangle no i
@@ -319,6 +344,45 @@ void TetrahedronMooneyRivlinFEMForceField<DataTypes>::updateTangentMatrix()
                 l=e[0];
             }
             Matrix3 &edgeDfDx = einfo->DfDx;
+
+            Coord svl=tetInfo->m_shapeVector[l];
+            Coord svk=tetInfo->m_shapeVector[k];
+
+            Matrix3  M, N;
+            MatrixSym outputTensor;
+            N.clear();
+            vector<MatrixSym> inputTensor;
+            inputTensor.resize(3);
+            //	MatrixSym input1,input2,input3,outputTensor;
+            for(int m=0; m<3;m++){
+                for (int n=m;n<3;n++){
+                    inputTensor[0](m,n)=svl[m]*df[0][n]+df[0][m]*svl[n];
+                    inputTensor[1](m,n)=svl[m]*df[1][n]+df[1][m]*svl[n];
+                    inputTensor[2](m,n)=svl[m]*df[2][n]+df[2][m]*svl[n];
+                }
+            }
+
+            for(int m=0; m<3; m++){
+                m_MRIncompMatlModel->applyElasticityTensor(tetInfo,globalParameters,inputTensor[m],outputTensor);
+                Coord vectortemp=df*(outputTensor*svk);
+                Matrix3 Nv;
+                //Nv.clear();
+                for(int u=0; u<3;u++){
+                    Nv[u][m]=vectortemp[u];
+                }
+                N+=Nv.transposed();
+            }
+
+
+            //Now M
+            Real productSD=0;
+
+            Coord vectSD=tetInfo->m_SPKTensorGeneral*svk;
+            productSD=dot(vectSD,svl);
+            M[0][1]=M[0][2]=M[1][0]=M[1][2]=M[2][0]=M[2][1]=0;
+            M[0][0]=M[1][1]=M[2][2]=(Real)productSD;
+
+            edgeDfDx += (M+N)*tetInfo->m_restVolume;
         }// end of for j
     }//end of for i
     m_updateMatrix=false;
@@ -418,152 +482,6 @@ void TetrahedronMooneyRivlinFEMForceField<DataTypes>::addKToMatrix(sofa::default
     m_edgeInfo.endEdit();
 }
 
-
-template<typename DataTypes>
-void TetrahedronMooneyRivlinFEMForceField<DataTypes>::testDerivatives()
-{
-    DataVecCoord d_pos;
-    VecCoord &pos = *d_pos.beginEdit();
-    pos =  this->mstate->read(core::ConstVecCoordId::position())->getValue();
-
-    // perturbate original state:
-    srand( 0 );
-    for (unsigned int idx=0; idx<pos.size(); idx++)
-    {
-      for (unsigned int d=0; d<3; d++)
-      {
-        pos[idx][d] += (Real)0.01 * ((Real)rand()/(Real)(RAND_MAX - 0.5));
-      }
-    }
-
-    DataVecDeriv d_force1;
-    VecDeriv &force1 = *d_force1.beginEdit();
-    force1.resize( pos.size() );
-
-    DataVecDeriv d_deltaPos;
-    VecDeriv &deltaPos = *d_deltaPos.beginEdit();
-    deltaPos.resize( pos.size() );
-
-    DataVecDeriv d_deltaForceCalculated;
-    VecDeriv &deltaForceCalculated = *d_deltaForceCalculated.beginEdit();
-    deltaForceCalculated.resize( pos.size() );
-
-    DataVecDeriv d_force2;
-    VecDeriv &force2 = *d_force2.beginEdit();
-    force2.resize( pos.size() );
-
-    Coord epsilon, zero;
-    Real cs = (Real)0.00001;
-    Real errorThresh = (Real)200.0*cs*cs;
-    Real errorNorm;
-    Real avgError=0.0;
-    int count=0;
-
-    helper::vector<TetrahedronRestInformation> &tetrahedronInf = *(m_tetrahedronInfo.beginEdit());
-
-    for (unsigned int moveIdx=0; moveIdx<pos.size(); moveIdx++)
-    {
-        for (unsigned int i=0; i<pos.size(); i++)
-        {
-            deltaForceCalculated[i] = zero;
-            force1[i] = zero;
-            force2[i] = zero;
-        }
-
-        d_force1.setValue(force1);
-        d_pos.setValue(pos);
-
-        //this->addForce( force1, pos, force1 );
-        this->addForce( core::MechanicalParams::defaultInstance(), d_force1, d_pos, d_force1 );
-
-        // get current energy around
-        Real energy1 = 0;
-        BaseMeshTopology::TetrahedraAroundVertex vTetras = m_topology->getTetrahedraAroundVertex( moveIdx );
-        for(unsigned int i = 0; i < vTetras.size(); ++i)
-        {
-            energy1 += tetrahedronInf[vTetras[i]].m_strainEnergy * tetrahedronInf[vTetras[i]].m_restVolume;
-        }
-        // generate random delta
-        epsilon[0]= cs * ((Real)rand()/(Real)(RAND_MAX - 0.5));
-        epsilon[1]= cs * ((Real)rand()/(Real)(RAND_MAX - 0.5));
-        epsilon[2]= cs * ((Real)rand()/(Real)(RAND_MAX - 0.5));
-        deltaPos[moveIdx] = epsilon;
-        // calc derivative
-        this->addDForce( core::MechanicalParams::defaultInstance() /* PARAMS FIRST */, d_deltaForceCalculated, d_deltaPos );
-        deltaPos[moveIdx] = zero;
-        // calc factual change
-        pos[moveIdx] = pos[moveIdx] + epsilon;
-
-        DataVecCoord d_force2;
-        d_force2.setValue(force2);
-        //this->addForce( force2, pos, force2 );
-        this->addForce( core::MechanicalParams::defaultInstance() /* PARAMS FIRST */, d_force2, d_pos, d_force2 );
-
-        pos[moveIdx] = pos[moveIdx] - epsilon;
-        // check first derivative:
-        Real energy2 = 0;
-        for(unsigned int i = 0; i < vTetras.size(); ++i)
-        {
-                energy2 += tetrahedronInf[vTetras[i]].m_strainEnergy * tetrahedronInf[vTetras[i]].m_restVolume;
-        }
-        Coord forceAtMI = force1[moveIdx];
-        Real deltaEnergyPredicted = -dot( forceAtMI, epsilon );
-        Real deltaEnergyFactual = (energy2 - energy1);
-        Real energyError = fabs( deltaEnergyPredicted - deltaEnergyFactual );
-        if (energyError > 0.05*fabs(deltaEnergyFactual))
-        { // allow up to 5% error
-            printf("Error energy %i = %f%%\n", moveIdx, 100.0*energyError/fabs(deltaEnergyFactual) );
-        }
-
-        // check 2nd derivative for off-diagonal elements:
-        BaseMeshTopology::EdgesAroundVertex vEdges = m_topology->getEdgesAroundVertex( moveIdx );
-        for (unsigned int eIdx=0; eIdx<vEdges.size(); eIdx++)
-        {
-            BaseMeshTopology::Edge edge = m_topology->getEdge( vEdges[eIdx] );
-            unsigned int testIdx = edge[0];
-            if (testIdx==moveIdx) testIdx = edge[1];
-            Coord deltaForceFactual = force2[testIdx] - force1[testIdx];
-            Coord deltaForcePredicted = deltaForceCalculated[testIdx];
-            Coord error = deltaForcePredicted - deltaForceFactual;
-            errorNorm = error.norm();
-            errorThresh = (Real) 0.05 * deltaForceFactual.norm(); // allow up to 5% error
-
-            if (deltaForceFactual.norm() > 0.0)
-            {
-                    avgError += (Real)100.0*errorNorm/deltaForceFactual.norm();
-                    count++;
-            }
-            if (errorNorm > errorThresh)
-            {
-                    printf("Error move %i test %i = %f%%\n", moveIdx, testIdx, 100.0*errorNorm/deltaForceFactual.norm() );
-            }
-        }
-        // check 2nd derivative for diagonal elements:
-        unsigned int testIdx = moveIdx;
-        Coord deltaForceFactual = force2[testIdx] - force1[testIdx];
-        Coord deltaForcePredicted = deltaForceCalculated[testIdx];
-        Coord error = deltaForcePredicted - deltaForceFactual;
-        errorNorm = error.norm();
-        errorThresh = (Real)0.05 * deltaForceFactual.norm(); // allow up to 5% error
-        if (errorNorm > errorThresh)
-        {
-                printf("Error move %i test %i = %f%%\n", moveIdx, testIdx, 100.0*errorNorm/deltaForceFactual.norm() );
-        }
-    }
-
-    m_tetrahedronInfo.endEdit();
-    printf( "testDerivatives passed!\n" );
-    avgError /= (Real)count;
-    printf( "Average error = %.2f%%\n", avgError );
-
-    d_pos.endEdit();
-    d_force1.endEdit();
-    d_force2.endEdit();
-    d_deltaPos.endEdit();
-    d_deltaForceCalculated.endEdit();
-}
-
-
 template<typename DataTypes>
 void TetrahedronMooneyRivlinFEMForceField<DataTypes>::saveMesh( const char *filename )
 {
@@ -662,25 +580,7 @@ void TetrahedronMooneyRivlinFEMForceField<DataTypes>::draw(const core::visual::V
     Vec<4,float> color4;
 
     std::string material = d_materialName.getValue();
-    if (material=="ArrudaBoyce") {
-        color1 = Vec<4,float>(0.0,1.0,0.0,1.0);
-        color2 = Vec<4,float>(0.5,1.0,0.0,1.0);
-        color3 = Vec<4,float>(1.0,1.0,0.0,1.0);
-        color4 = Vec<4,float>(1.0,1.0,0.5,1.0);
-    }
-    else if (material=="StVenantKirchhoff"){
-        color1 = Vec<4,float>(1.0,0.0,0.0,1.0);
-        color2 = Vec<4,float>(1.0,0.0,0.5,1.0);
-        color3 = Vec<4,float>(1.0,1.0,0.0,1.0);
-        color4 = Vec<4,float>(1.0,0.5,1.0,1.0);
-    }
-    else if (material=="NeoHookean"){
-        color1 = Vec<4,float>(0.0,1.0,1.0,1.0);
-        color2 = Vec<4,float>(0.5,0.0,1.0,1.0);
-        color3 = Vec<4,float>(1.0,0.0,1.0,1.0);
-        color4 = Vec<4,float>(1.0,0.5,1.0,1.0);
-    }
-    else if (material=="MooneyRivlin"){
+    if (material=="MooneyRivlin"){
         color1 = Vec<4,float>(0.0,1.0,0.0,1.0);
         color2 = Vec<4,float>(0.0,1.0,0.5,1.0);
         color3 = Vec<4,float>(0.0,1.0,1.0,1.0);
@@ -692,31 +592,12 @@ void TetrahedronMooneyRivlinFEMForceField<DataTypes>::draw(const core::visual::V
         color3 = Vec<4,float>(0.0,1.0,1.0,1.0);
         color4 = Vec<4,float>(0.5,1.0,1.0,1.0);
     }
-    else if (material=="VerondaWestman"){
-        color1 = Vec<4,float>(0.0,1.0,0.0,1.0);
-        color2 = Vec<4,float>(0.5,1.0,0.0,1.0);
-        color3 = Vec<4,float>(1.0,1.0,0.0,1.0);
-        color4 = Vec<4,float>(1.0,1.0,0.5,1.0);
-    }
-    else if (material=="Costa"){
-        color1 = Vec<4,float>(0.0,1.0,0.0,1.0);
-        color2 = Vec<4,float>(0.5,1.0,0.0,1.0);
-        color3 = Vec<4,float>(1.0,1.0,0.0,1.0);
-        color4 = Vec<4,float>(1.0,1.0,0.5,1.0);
-    }
-    else if (material=="Ogden"){
-        color1 = Vec<4,float>(0.0,1.0,0.0,1.0);
-        color2 = Vec<4,float>(0.5,1.0,0.0,1.0);
-        color3 = Vec<4,float>(1.0,1.0,0.0,1.0);
-        color4 = Vec<4,float>(1.0,1.0,0.5,1.0);
-    }
     else {
         color1 = Vec<4,float>(0.0,1.0,0.0,1.0);
         color2 = Vec<4,float>(0.5,1.0,0.0,1.0);
         color3 = Vec<4,float>(1.0,1.0,0.0,1.0);
         color4 = Vec<4,float>(1.0,1.0,0.5,1.0);
     }
-
 
     vparams->drawTool()->drawTriangles(points[0], color1);
     vparams->drawTool()->drawTriangles(points[1], color2);

@@ -76,31 +76,18 @@ class controller(Sofa.PythonScriptController):
 		self._gs = gridspec.GridSpec(1,1) # rows cols
 		self.traj_plotter = HeadTrajPlotter(self._fig, self._gs[0]) # subplot in gridspec
 
-		self.patient = root.getChild('patient')
-		self.patient_dofs = self.patient.getObject('patient_dofs')
-		pat_rest_pose = self.patient_dofs.findData('rest_position').value
+		self.root = root
+
+		self.dome_head = root.getChild('DomeHead')
+		# obtain associated dofs and cavity dofs
+		self.dome_head_dofs 	= self.get_dome_dofs(self.dome_head)
+		dome_head_pose = self.dome_head_dofs.findData('rest_position').value
 
 		self.thresholds = thresholds
 		self.first_iter = True
 
-		self.root = root
-		logger.debug('patient initial pose {}'.format(thresholds['patient_trans']))
+		# logger.debug('patient initial pose {}'.format(thresholds['patient_trans']))
 
-		# get base IABs
-		self.base_neck_left		= 	root.getChild('base_neck_left')
-		self.base_neck_right	= 	root.getChild('base_neck_right')
-		self.base_skull_left	= 	root.getChild('base_skull_left')
-		self.base_skull_right	= 	root.getChild('base_skull_right')
-		# get side IABs
-		self.side_fore_left		= 	root.getChild('side_fore_left')
-		self.side_chin_left		= 	root.getChild('side_chin_left')
-		self.side_fore_right	= 	root.getChild('side_fore_right')
-		self.side_chin_right	= 	root.getChild('side_chin_right')
-		# obtain associated dofs and cavity dofs
-		self.base_neck_left_dofs 	= self.get_dome_dofs(self.base_neck_left)
-		self.base_neck_right_dofs 	= self.get_dome_dofs(self.base_neck_right)
-		self.base_skull_left_dofs 	= self.get_dome_dofs(self.base_skull_left)
-		self.base_skull_right_dofs 	= self.get_dome_dofs(self.base_skull_right)
 
 		self.is_chart_updated = False
 		# use this to track the x, y and z positions of the patient over time
@@ -111,8 +98,6 @@ class controller(Sofa.PythonScriptController):
 		display_chart(self.run_traj_plotter)
 		# plt.ioff()
 		# plt.show()
-
-		self._pat_dofs_filename = patient_dofs_filename
 
 		self.max_vals = 0 # maximum positional values in the patient
 		self.turn_off_animation = False
@@ -139,10 +124,10 @@ class controller(Sofa.PythonScriptController):
 		cover_collis_dofs = cover_collis_node.getObject('dome_cover_collis_dofs')
 
 		return Bundle(dict(dh_dofs=dh_dofs,
-						cav_dofs=cav_dofs,
-						pressure_constraint=pressure_constraint, # cavity
-						cover_dofs=cover_dofs,
-						cover_collis_dofs=cover_collis_dofs))
+							cav_dofs=cav_dofs,
+							pressure_constraint=pressure_constraint, # cavity
+							cover_dofs=cover_dofs,
+							cover_collis_dofs=cover_collis_dofs))
 
 	def get_euler_angles(self, curr_points, y_vector):
 		"""

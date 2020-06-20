@@ -57,25 +57,25 @@ class controller(Sofa.PythonScriptController):
             if pressureValue > 1.5:
                 pressureValue = 1.5
             self.bunny_constraint.findData('value').value = str(pressureValue)
-            print('bunny dofs: ', np.linalg.norm(self.bunny_mech.position, axis=0))
+            # print('bunny dofs: ', np.linalg.norm(self.bunny_mech.position, axis=0))
 
         if (c == "-"):
             print( 'releasing...')
             pressureValue = self.bunny_constraint.findData('value').value[0][0] - 0.01
             self.bunny_constraint.findData('value').value = str(pressureValue)
-            print('bunny dofs: ',  np.linalg.norm(self.bunny_mech.position, axis=0))
+            # print('bunny dofs: ',  np.linalg.norm(self.bunny_mech.position, axis=0))
 
         # UP key :
         if ord(c)==19:
             test1 = moveRestPos(self.bunny_mech.rest_position, 3.0, 0.0, 0.0)
             self.bunny_mech.findData('rest_position').value = test1
-            print('bunny dofs: ', np.linalg.norm(self.bunny_mech.position, axis=0))
+            # print('bunny dofs: ', np.linalg.norm(self.bunny_mech.position, axis=0))
 
         # DOWN key : rear
         if ord(c)==21:
             test = moveRestPos(self.bunny_mech.rest_position, -3.0, 0.0, 0.0)
             self.bunny_mech.findData('rest_position').value = test
-            print('bunny dofs: ', np.linalg.norm(self.bunny_mech.position, axis=0))
+            # print('bunny dofs: ', np.linalg.norm(self.bunny_mech.position, axis=0))
 
         # LEFT key : left
         if ord(c)==20:
