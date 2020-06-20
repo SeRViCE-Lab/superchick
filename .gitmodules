@@ -1,6 +1,6 @@
 [submodule "ros/srs_traj_opt"]
 	path = ros/srs_traj_opt
-	branch = master
+	branch = sofa
 	url = git@github.com:lakehanne/srs_traj_opt
 [submodule "sofa/sofa_dvrk"]
 	path = sofa/sofa_dvrk
