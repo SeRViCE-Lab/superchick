@@ -31,7 +31,7 @@
 
 // simple macro for mathematical ops
 inline double SQ(double x){ return std::pow(x, 2.0); }
-inline double cot(double x) {return std::cos(x)/std::sin(x); }
+inline double cot(double x) {return std::cos(x)/std::sin(x); } // a lot more stable than std::cot
 inline double csc(double x) {return 1.0/std::sin(x); }
 inline double deg2rad(double x) {return M_PI * (x/180); }
 
@@ -226,14 +226,13 @@ class TetrahedronMooneyRivlinFEMForceField : public core::behavior::ForceField<D
     };
 
     class SOFA_IABPlugin_API TetrahedronHandler: public TopologyDataHandler<Tetrahedron,sofa::helper::vector<TetrahedronRestInformation> >
-    // class  TetrahedronHandler: public TopologyDataHandler<Tetrahedron,sofa::helper::vector<TetrahedronRestInformation> >
     {
       public:
         using TetrahedronRestInformation = TetrahedronMooneyRivlinFEMForceField<DataTypes>::TetrahedronRestInformation ;
         TetrahedronHandler(TetrahedronMooneyRivlinFEMForceField<DataTypes>* ff,
                            TetrahedronData<sofa::helper::vector<TetrahedronRestInformation> >* data )
-          :TopologyDataHandler<Tetrahedron,sofa::helper::vector<TetrahedronRestInformation> >(data)
-          ,ff(ff)
+          :TopologyDataHandler<Tetrahedron,sofa::helper::vector<TetrahedronRestInformation> >(data),
+          ff(ff)
         {
 
         }
@@ -252,7 +251,7 @@ class TetrahedronMooneyRivlinFEMForceField : public core::behavior::ForceField<D
     SReal getPotentialEnergy(const core::MechanicalParams*, const DataVecCoord&) const override;
     void addKToMatrix(sofa::defaulttype::BaseMatrix *mat, SReal k, unsigned int &offset) override;
     void draw(const core::visual::VisualParams* vparams) override;
-    Mat<3,3,double> get_defGrad( int tetrahedronIndex);
+    // Mat<3,3,double> get_defGrad( int tetrahedronIndex);
 
   protected:
     core::topology::BaseMeshTopology* m_topology;

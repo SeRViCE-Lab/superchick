@@ -1,7 +1,7 @@
 /*
 *  Ripped off sofa/modules/SofaMiscFem/TetrahedronMooneyRivlinFEMForceField.inl
 *
-Author: Lekan Ogunmolux, December 18, 2019
+*  Author: Lekan Molux, December 18, 2019
 */
 #ifndef SOFA_COMPONENT_FORCEFIELD_TETRAHEDRONMOONEYRIVLINFEMFORCEFIELD_INL
 #define SOFA_COMPONENT_FORCEFIELD_TETRAHEDRONMOONEYRIVLINFEMFORCEFIELD_INL
@@ -81,7 +81,8 @@ void TetrahedronMooneyRivlinFEMForceField<DataTypes>::TetrahedronHandler::applyC
       tinfo.m_restVolume = fabs(volume/6);
 
       // store shape vectors at the rest configuration
-      for(j=0;j<4;++j) {
+      for(j=0;j<4;++j)
+      {
           if (!(j%2))
               tinfo.m_shapeVector[j]=-cross(point[(j+2)%4] - point[(j+1)%4],point[(j+3)%4] - point[(j+1)%4])/ volume;
           else
@@ -255,7 +256,7 @@ void TetrahedronMooneyRivlinFEMForceField<DataTypes>::addForce(const core::Mecha
           tetInfo->m_sPolarVecEul[j].m_F[0][0] = SQ(tetInfo->m_sPolarVecLag[j].m_R)/SQ(tetInfo->m_sPolarVecEul[j].m_r);
           tetInfo->m_sPolarVecEul[j].m_F[0][1] = -tetInfo->m_sPolarVecEul[j].m_phi/tetInfo->m_sPolarVecLag[j].m_R;
           tetInfo->m_sPolarVecEul[j].m_F[0][2] = (-tetInfo->m_sPolarVecEul[j].m_theta/tetInfo->m_sPolarVecLag[j].m_R)*\
-                                                  (std::cos(tetInfo->m_sPolarVecEul[j].m_phi)/std::sin(tetInfo->m_sPolarVecEul[j].m_phi));
+                                                  cot(tetInfo->m_sPolarVecEul[j].m_phi);
           tetInfo->m_sPolarVecEul[j].m_F[1][1] = (tetInfo->m_sPolarVecEul[j].m_r/tetInfo->m_sPolarVecLag[j].m_R)+(1/(tetInfo->m_sPolarVecLag[j].m_R));
           tetInfo->m_sPolarVecEul[j].m_F[1][2] = -(tetInfo->m_sPolarVecEul[j].m_theta/tetInfo->m_sPolarVecLag[j].m_R)*\
                                 cot(tetInfo->m_sPolarVecEul[j].m_phi);
