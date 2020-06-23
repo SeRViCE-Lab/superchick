@@ -293,6 +293,14 @@ int main(int argc, char** argv)
       }
     }
 
+    double time = root->getTime();
+    // Animate
+    do {
+      /* code */
+      sofa::helper::ReadAccessor<Data<Vec3Types::VecCoord>> dh_pos_vecs(dh_state->read(sofa::core::ConstVecCoordId::position()));
+      
+    } while(time<10);
+
     // Apply Options
     groot->setAnimate(true);
     // test expansion and deformation here for a single soro
