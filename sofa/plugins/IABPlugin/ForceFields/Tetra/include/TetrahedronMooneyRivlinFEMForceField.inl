@@ -131,22 +131,24 @@ TetrahedronMooneyRivlinFEMForceField<DataTypes>::~TetrahedronMooneyRivlinFEMForc
 template <typename DataTypes>
 void TetrahedronMooneyRivlinFEMForceField<DataTypes>::init()
 {
-    if (this->f_printLog.getValue())
-        msg_info() << "initializing TetrahedronMooneyRivlinFEMForceField";
+    // if (this->f_printLog.getValue())
+    msg_info() << "initializing TetrahedronMooneyRivlinFEMForceField";
 
     this->Inherited::init();
 
     /** parse the parameter set */
     SetParameterArray paramSet=d_parameterSet.getValue();
-    if (paramSet.size()>0) {
-            globalParameters.parameterArray.resize(paramSet.size());
-            copy(paramSet.begin(), paramSet.end(),globalParameters.parameterArray.begin());
+    if (paramSet.size()>0)
+    {
+      globalParameters.parameterArray.resize(paramSet.size());
+      copy(paramSet.begin(), paramSet.end(),globalParameters.parameterArray.begin());
     }
     /** parse the anisotropy Direction set */
     SetAnisotropyDirectionArray anisotropySet=d_anisotropySet.getValue();
-    if (anisotropySet.size()>0) {
-            globalParameters.anisotropyDirection.resize(anisotropySet.size());
-            copy(anisotropySet.begin(), anisotropySet.end(),globalParameters.anisotropyDirection.begin());
+    if (anisotropySet.size()>0)
+    {
+      globalParameters.anisotropyDirection.resize(anisotropySet.size());
+      copy(anisotropySet.begin(), anisotropySet.end(),globalParameters.anisotropyDirection.begin());
     }
 
     m_topology = this->getContext()->getMeshTopology();
@@ -157,8 +159,8 @@ void TetrahedronMooneyRivlinFEMForceField<DataTypes>::init()
     {
         fem::NonlinearElasticMaterial<DataTypes> *NonlinearElasticMaterialPtr = new sofa::component::fem::NonlinearElasticMaterial<DataTypes>;
         m_MRIncompMatlModel = NonlinearElasticMaterialPtr; // InCompressible Material Model of Mooney and Rivlin
-        if (this->f_printLog.getValue())
-            msg_info()<<"The model is "<<material;
+        // if (this->f_printLog.getValue())
+        msg_info()<<"The model is "<<material;
     }
     else
     {
@@ -209,7 +211,6 @@ void TetrahedronMooneyRivlinFEMForceField<DataTypes>::init()
     m_tetrahedronInfo.registerTopologicalData();
 
     m_tetrahedronInfo.endEdit();
-    // testDerivatives();
 }
 
 template <typename DataTypes>

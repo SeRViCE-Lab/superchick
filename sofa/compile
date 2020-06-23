@@ -84,7 +84,7 @@ cp "$SOFA_ROOT/bin/run_sofa" `pwd`
 if [ $(is_yes $launch) ]; then
   `pwd`/IAB_Launcher -g true
 elif [[ $(is_yes $soro) ]]; then
-  `pwd`/SingleIAB -g "true"
+  `pwd`/SingleIAB -g "true" -p "true"
 else
   exit 0
 fi

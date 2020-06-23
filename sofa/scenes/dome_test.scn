@@ -30,7 +30,8 @@
 		<MechanicalObject name="dh_dofs" template="Vec3d" showIndices="false" rx="0" showIndicesScale="4e-5" dz="0"/>
 		<UniformMass totalMass=".04"/>
 		<!-- <TetrahedronFEMForceField template="Vec3d" name="FEM" method="large" poissonRatio=".3" youngModulus="1500"/> -->
-		<TetrahedronMooneyRivlinFEMForceField template="Vec3d" name="TETFEM" poissonRatio=".3" youngModulus="1500"/>
+		<TetrahedronMooneyRivlinFEMForceField template="Vec3d" name="TETFEM" ParameterSet="1000 100"
+			 	materialName="MooneyRivlinIncompressible"  youngModulus="1000" poissonRatio="0.45"/>
 		<BoxROI name="boxROI" box="-2.75533 2.74354 -.1597 2.76615 -2.99312 2.99312" drawBoxes="true" doUpdate="1"/>
 		<BoxROI name="boxROISubTopo" box="-6.75533 4.74354 -4.7597 4.76615 -3.99312 3.99312" drawBoxes="false" doUpdate="0"/>
 		<RestShapeSpringsForceField points="@boxROI.indices" stiffness="1e5" angularStiffness="1e5"/>
@@ -40,7 +41,8 @@
 		<Node name="DomeHeadSubTopo">
 		  <TetrahedronSetTopologyContainer position="@domeHeadVTKLoader.position" tetrahedra="@boxROISubTopo.tetrahedraInROI" name="container"/>
 		  <!-- <TetrahedronFEMForceField template="Vec3d" name="FEM" method="large" poissonRatio="0.3" youngModulus="1000"/> -->
-			<TetrahedronMooneyRivlinFEMForceField template="Vec3d" name="TETFEM" poissonRatio="0.3" youngModulus="1000"/>
+			<TetrahedronMooneyRivlinFEMForceField template="Vec3d" name="TETFEM" ParameterSet="1000 100"
+				 		materialName="MooneyRivlinIncompressible"  youngModulus="1000" poissonRatio="0.45"/>
 		</Node>
 
 	  <Node name="DomeCavity">

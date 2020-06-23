@@ -96,6 +96,7 @@ class TetrahedronMooneyRivlinFEMForceField : public core::behavior::ForceField<D
     Data<helper::vector<Real> > f_poisson; ///< Poisson ratio in Hooke's law (vector)
     Data<helper::vector<Real> > f_young; ///< Young modulus in Hooke's law (vector)
     Data<Real> f_damping; ///< Ratio damping/stiffness
+    // Data<helper::vector<Real> > f_printLog;
 
     void setMaterialName(const string name) {
         d_materialName.setValue(name);
@@ -258,6 +259,7 @@ class TetrahedronMooneyRivlinFEMForceField : public core::behavior::ForceField<D
     VecCoord  m_initialPoints;	/// the intial positions of the points
     bool m_updateMatrix;
     bool  m_meshSaved ;
+    // bool f_printLog;
 
     Data<bool> d_stiffnessMatrixRegularizationWeight; ///< Regularization of the Stiffness Matrix (between true or false)
     Data<string> d_materialName; ///< the name of the material

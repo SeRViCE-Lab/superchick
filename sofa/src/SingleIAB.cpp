@@ -248,14 +248,14 @@ int main(int argc, char** argv)
     // see accessing node compos in v19.06/SofaKernel/framework/sofa/simulation/Node.cpp
 
     GUIManager::SetScene(groot,fileName.c_str(), temporaryFile);
+
     // get all three nodes
-    auto dome_head = groot->getChild("DomeHeadNode");
-    auto dome_ring = groot->getChild("DomeRingNode");
-    auto dome_base = groot->getChild("DomeCoverNode");
+    auto dome_head = groot->getChild("DomeHead");
+    auto dome_cav = dome_head->getChild("DomeCavity");
     // get tetrahedrals associated with each node
-    auto dome_head_tetras = dome_head->getObject("dofs"); // a sofa::core::objectmodel::BaseObject
-    auto dome_ring_tetras = dome_ring->getObject("dofs");
-    auto dome_base_tetras = dome_base->getObject("dofs");
+    auto dome_head_tetras = dome_head->getObject("dh_dofs"); // a sofa::core::objectmodel::BaseObject
+    // auto dome_ring_tetras = dome_ring->getObject("dofs");
+    auto dome_cav_tetras = dome_cav->getObject("dome_cav_dofs");
     // https://www.sofa-framework.org/community/forum/topic/get-other-components-of-the-scene-in-c/
     MechanicalState<Vec3Types>* dh_state;
     dome_head->getContext()->get(dh_state);
@@ -266,15 +266,15 @@ int main(int argc, char** argv)
     // Writing MechanicalStateController.inl
     // helper::WriteAccessor<Data<VecCoord> > x = *this->mState->write(core::VecCoordId::position());
 
+
     // another method from ./SofaKernel/modules/SofaImplicitOdeSolver/SofaImplicitOdeSolver_test/EulerImplicitSolverDynamic_test.cpp:167
     using MechanicalObject = sofa::component::container::MechanicalObject<Vec3Types>;
-    typename MechanicalObject::SPtr dome_ring_dofs = dome_ring->get<MechanicalObject>(groot->SearchDown);
-    auto dome_ring_pos_ = dome_ring_dofs.get()->read(sofa::core::ConstVecCoordId::position());
+    typename MechanicalObject::SPtr dome_cav_dofs = dome_cav->get<MechanicalObject>(groot->SearchDown);
+    auto dome_cav_pos_ = dome_cav_dofs.get()->read(sofa::core::ConstVecCoordId::position());
 
-    sofa::helper::ReadAccessor<Data<Vec3Types::VecCoord>>dr_pos_vecs(dome_ring_dofs.get()->read(sofa::core::ConstVecCoordId::position()));
-    sofa::helper::ReadAccessor<Data<Vec3Types::VecDeriv>>dr_vel_vecs(dome_ring_dofs.get()->read(sofa::core::ConstVecDerivId::velocity()));
-    sofa::helper::ReadAccessor<Data<Vec3Types::VecCoord>> dr_fpos_vecs(dome_ring_dofs.get()->read(sofa::core::VecCoordId::freePosition()));
-    sofa::helper::ReadAccessor<Data<Vec3Types::VecDeriv>> dr_fvel_vecs(dome_ring_dofs.get()->read(sofa::core::VecDerivId::freeVelocity()));
+    sofa::helper::ReadAccessor<Data<Vec3Types::VecCoord>>dc_pos_vecs(dome_cav_dofs.get()->read(sofa::core::ConstVecCoordId::position()));
+    sofa::helper::ReadAccessor<Data<Vec3Types::VecDeriv>>dc_vel_vecs(dome_cav_dofs.get()->read(sofa::core::ConstVecDerivId::velocity()));
+
 
     if (debug){
       // read a few dome head pos info
@@ -285,14 +285,15 @@ int main(int argc, char** argv)
       }
 
       // read a few dome ring pos info
-      msg_info("dome_head size") << dh_pos_vecs.size() << ", dome_ring size" << dr_pos_vecs.size() ;
+      msg_info("dome_cav size") << dh_pos_vecs.size();
       // msg_info("dome_ring size") << "\n\n dome rings now \\" ;
-      for(auto i = 0; i < dr_pos_vecs.size(); ++i)
+      for(auto i = 0; i < dc_pos_vecs.size(); ++i)
       {
-        msg_info("dr_pos: ") << i << ": " << dr_pos_vecs[i] << " | vel: " << dr_vel_vecs[i] ;
+        msg_info("dc_pos: ") << i << ": " << dc_pos_vecs[i] << " | vel: " << dc_vel_vecs[i] ;
         if (i > 5) break;
       }
     }
+    
     // Apply Options
     groot->setAnimate(true);
     // test expansion and deformation here for a single soro
