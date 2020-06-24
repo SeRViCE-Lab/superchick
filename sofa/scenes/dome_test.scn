@@ -21,7 +21,7 @@
 	<Node name="DomeHead" >
 		<EulerImplicitSolver name="cg_odesolver" printLog="false"/>
 		<SparseLDLSolver name="linearSolver"/>
-		<MeshVTKLoader name="domeHeadVTKLoader" filename="/home/lex/catkin_ws/src/superchicko/ros/srs_traj_opt/patient_description/meshes/dome/dome.vtu" />
+		<MeshVTKLoader name="domeHeadVTKLoader" filename="../../ros/srs_traj_opt/patient_description/meshes/dome/dome.vtu" />
 		<TetrahedronSetTopologyContainer src="@domeHeadVTKLoader" name="TetraTopologyContainer"/>
 		<TetrahedronSetTopologyModifier name="TetraTopologyModifier"/>
 		<TetrahedronSetTopologyAlgorithms name="TetraTopologyAlgo" template="Vec3d"/>
@@ -46,7 +46,7 @@
 		</Node>
 
 	  <Node name="DomeCavity">
-		  <MeshObjLoader name="cavityLoader" filename="/home/lex/catkin_ws/src/superchicko/ros/srs_traj_opt/patient_description/meshes/dome/dome_cavity.obj" triangulate="true"/>
+		  <MeshObjLoader name="cavityLoader" filename="../../ros/srs_traj_opt/patient_description/meshes/dome/dome_cavity.obj" triangulate="true"/>
 		  <Mesh src="@cavityLoader" name="cavityTopo"/>
 		  <MechanicalObject  name="dome_cav_dofs" rx="90" scale="1.8"/>
 		  <!-- <SurfacePressureConstraint name="SurfacePressureConstraint" template="Vec3d" value="0.0001" triangles="@cavityTopo.triangles" drawPressure="0" drawScale="0.0002" valueType="pressure" /> -->
@@ -54,7 +54,7 @@
 		</Node>
 
 		<Node name="DomeHeadCollis">
-			<MeshObjLoader name="domeHeadCollisLoader" filename="/home/lex/catkin_ws/src/superchicko/ros/srs_traj_opt/patient_description/meshes/dome/dome_cavity.obj"/>
+			<MeshObjLoader name="domeHeadCollisLoader" filename="../../ros/srs_traj_opt/patient_description/meshes/dome/dome_cavity.obj"/>
 			<Mesh src="@domeHeadCollisLoader" name="topo"/>
 			<MechanicalObject name="collisMech" rx="90" scale="1.8"/>
 			<Triangle selfCollision="false"/>
@@ -69,7 +69,7 @@
 		</Node>
 
 		<Node name="DomeCover">
-			<MeshSTLLoader name="domeCoverLoader" filename="/home/lex/catkin_ws/src/superchicko/ros/srs_traj_opt/patient_description/meshes/dome/cover.stl" />
+			<MeshSTLLoader name="domeCoverLoader" filename="../../ros/srs_traj_opt/patient_description/meshes/dome/cover.stl" />
 			<Mesh src="@domeCoverLoader" name="dome_ring_cav_mesh"/>
 			<MechanicalObject name="dome_cover_dofs"/>
 			<BarycentricMapping  name="mapping" mapForces="false" mapMasses="false"/>
@@ -77,7 +77,7 @@
 		</Node>
 
 		<Node name="DomeCoverCollis">
-			<MeshObjLoader name="domeCoverCollis" filename="/home/lex/catkin_ws/src/superchicko/ros/srs_traj_opt/patient_description/meshes/dome/cover.obj"/>
+			<MeshObjLoader name="domeCoverCollis" filename="../../ros/srs_traj_opt/patient_description/meshes/dome/cover.obj"/>
 			<Mesh src="@domeCoverCollis" name="topo"/>
 			<MechanicalObject name="dome_cover_collis_dofs" rx="-90" dz="0.1" />
 			<Triangle selfCollision="false"/>

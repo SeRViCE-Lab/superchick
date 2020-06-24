@@ -72,7 +72,8 @@ class dome_test (Sofa.PythonScriptController):
 
         self.DomeHead.createObject('MechanicalObject', name='dh_dofs', template='Vec3d', showIndices='false', rx='0', showIndicesScale='4e-5', dz="0") #src='@domeHeadVTKLoader',
         self.DomeHead.createObject('UniformMass', totalMass='{}'.format(dome_mass))
-        self.DomeHead.createObject('TetrahedronFEMForceField', template='Vec3d', name='FEM', method='large', poissonRatio='{}'.format(poisson), youngModulus='{}'.format(youngs))
+        self.DomeHead.createObject('TetrahedronMooneyRivlinFEMForceField', template="Vec3d", name="TETFEM", ParameterSet="1000 100",\
+                    materialName="MooneyRivlinIncompressible",  poissonRatio='{}'.format(poisson), youngModulus='{}'.format(youngs))
 
         # stiff layer identified indices from paraview
         self.DomeHead.createObject('BoxROI', name='boxROI', box='-2.75533 2.74354 -.1597 2.76615 -2.99312 2.99312', drawBoxes='true', doUpdate='1')#, position="@dh_dofs.rest_position", tetrahedra="@TetraTopologyContainer.tetrahedra")
@@ -88,7 +89,8 @@ class dome_test (Sofa.PythonScriptController):
         self.DomeHeadSubTopo = self.DomeHead.createChild('DomeHeadSubTopo')
         # create the mesh
         self.DomeHeadSubTopo.createObject('TetrahedronSetTopologyContainer', position='@../domeHeadVTKLoader.position', tetrahedra="@boxROISubTopo.tetrahedraInROI", name='container')
-        self.DomeHeadSubTopo.createObject('TetrahedronFEMForceField', template='Vec3d', name='FEM', method='large', poissonRatio='0.3', youngModulus=str(youngModulusStiffLayerDomes-youngModulusDomes))
+        self.DomeHeadSubTopo.createObject('TetrahedronMooneyRivlinFEMForceField', template="Vec3d", name="TETFEM", ParameterSet="1000 100",\
+                    materialName="MooneyRivlinIncompressible",  youngModulus="1000", poissonRatio="0.45")
 
         # rootNode/DomeCavity
         self.DomeCavity = self.DomeHead.createChild('DomeCavity')

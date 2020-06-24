@@ -254,18 +254,16 @@ int main(int argc, char** argv)
     auto dome_cav = dome_head->getChild("DomeCavity");
     // get tetrahedrals associated with each node
     auto dome_head_tetras = dome_head->getObject("dh_dofs"); // a sofa::core::objectmodel::BaseObject
-    // auto dome_ring_tetras = dome_ring->getObject("dofs");
     auto dome_cav_tetras = dome_cav->getObject("dome_cav_dofs");
     // https://www.sofa-framework.org/community/forum/topic/get-other-components-of-the-scene-in-c/
     MechanicalState<Vec3Types>* dh_state;
     dome_head->getContext()->get(dh_state);
     sofa::helper::ReadAccessor<Data<Vec3Types::VecCoord>> dh_pos_vecs(dh_state->read(sofa::core::ConstVecCoordId::position()));
     sofa::helper::ReadAccessor<Data<Vec3Types::VecDeriv>> dh_vel_vecs(dh_state->read(sofa::core::ConstVecDerivId::velocity()));
-    sofa::helper::ReadAccessor<Data<Vec3Types::VecCoord>> dh_fpos_vecs(dh_state->read(sofa::core::VecCoordId::freePosition()));
-    sofa::helper::ReadAccessor<Data<Vec3Types::VecDeriv>> dh_fvel_vecs(dh_state->read(sofa::core::VecDerivId::freeVelocity()));
+    // sofa::helper::ReadAccessor<Data<Vec3Types::VecCoord>> dh_fpos_vecs(dh_state->read(sofa::core::VecCoordId::freePosition()));
+    // sofa::helper::ReadAccessor<Data<Vec3Types::VecDeriv>> dh_fvel_vecs(dh_state->read(sofa::core::VecDerivId::freeVelocity()));
     // Writing MechanicalStateController.inl
     // helper::WriteAccessor<Data<VecCoord> > x = *this->mState->write(core::VecCoordId::position());
-
 
     // another method from ./SofaKernel/modules/SofaImplicitOdeSolver/SofaImplicitOdeSolver_test/EulerImplicitSolverDynamic_test.cpp:167
     using MechanicalObject = sofa::component::container::MechanicalObject<Vec3Types>;
@@ -278,19 +276,20 @@ int main(int argc, char** argv)
 
     if (debug){
       // read a few dome head pos info
+      msg_info("dome_head size") << dh_pos_vecs.size();
       for(int i = 0; i < dh_pos_vecs.size(); ++i)
       {
         msg_info("dh_pos: ") << i << ": " << dh_pos_vecs[i] << " | vel: " << dh_vel_vecs[i] ;
-        if (i > 5) break;
+        if (i > 4) break;
       }
 
       // read a few dome ring pos info
-      msg_info("dome_cav size") << dh_pos_vecs.size();
+      msg_info("dome_cav size") << dc_pos_vecs.size();
       // msg_info("dome_ring size") << "\n\n dome rings now \\" ;
       for(auto i = 0; i < dc_pos_vecs.size(); ++i)
       {
         msg_info("dc_pos: ") << i << ": " << dc_pos_vecs[i] << " | vel: " << dc_vel_vecs[i] ;
-        if (i > 5) break;
+        if (i > 4) break;
       }
     }
 
@@ -299,6 +298,7 @@ int main(int argc, char** argv)
     // Animate
     do {
       msg_info("animating the shite");
+      sofa::helper::ReadAccessor<Data<Vec3Types::VecCoord>> dh_pos_vecs(dh_state->read(sofa::core::ConstVecCoordId::position()));
       sofa::simulation::getSimulation()->animate(groot.get(),0.1);
       time = groot->getTime();
       ++i;
