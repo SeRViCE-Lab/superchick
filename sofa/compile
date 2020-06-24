@@ -79,7 +79,7 @@ if [[ $(is_yes $build) ]]; then
   make DESTDIR="$SOFA_ROOT/lib" -j8; make install
 fi
 
-cp "$SOFA_ROOT/bin/run_sofa" `pwd`
+cp "$SOFA_ROOT/bin/runSofa" `pwd`
 
 if [ $(is_yes $launch) ]; then
   `pwd`/IAB_Launcher -g true

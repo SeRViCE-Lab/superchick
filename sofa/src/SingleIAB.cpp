@@ -293,7 +293,18 @@ int main(int argc, char** argv)
         if (i > 5) break;
       }
     }
-    
+
+    double time = groot->getTime();
+    int i = 0;
+    // Animate
+    do {
+      msg_info("animating the shite");
+      sofa::simulation::getSimulation()->animate(groot.get(),0.1);
+      time = groot->getTime();
+      ++i;
+    }
+    while(time < 10);
+
     // Apply Options
     groot->setAnimate(true);
     // test expansion and deformation here for a single soro
