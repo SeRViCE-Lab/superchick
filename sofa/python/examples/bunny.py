@@ -2,7 +2,7 @@ import os
 import Sofa
 from os.path import join, expanduser
 # path = join(expanduser('~'), 'applications/plugins/SoftRobots/python/softrobots/parts/bunny/mesh/')
-path = join(expanduser('~'), 'sofa', 'applications/plugins/SoftRobots/python/softrobots/parts/bunny/mesh/')
+path = join(expanduser('~'), 'sofa', 'v19.06', 'applications/plugins/SoftRobots/python/softrobots/parts/bunny/mesh/')
 
 print(path)
 
