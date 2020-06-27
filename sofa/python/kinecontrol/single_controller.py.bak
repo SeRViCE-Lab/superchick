@@ -56,53 +56,73 @@ class controller(Sofa.PythonScriptController):
 		self.move_dist = move_dist #(0, .40, 0)
 		self.growth_rate = growth_rate #.5  #was .05
 		self.max_pressure = max_pressure #100 # was 15
+		# controls if IABs should continue to be inflated in a open-loop setting
+		self.is_inflated = True
+		self.deltaTime = root.findData('dt').value
+		self._fig = plt.figure()
+		self._gs = gridspec.GridSpec(1,1) # rows cols
+		self.traj_plotter = HeadTrajPlotter(self._fig, self._gs[0]) # subplot in gridspec
+
+		self.dh = root.getChild('DomeHead')
+
+		self.thresholds = thresholds
+		self.first_iter = True
 
 		self.root = root
+		# logger.debug('patient initial pose {}'.format(thresholds['patient_trans']))
 
-		dome_all_dofs 		= self.get_dome_dofs(self.root)
-		self.dh_dofs		= dome_all_dofs.dh_dofs
-		self.cav_dofs		= dome_all_dofs.cav_dofs
-		self.cover_dofs		= dome_all_dofs.cover_dofs
+		self.is_chart_updated = False
+		# use this to track the x, y and z positions of the patient over time
+		self._x, self._y, self._z = [], [], []
+
+		# visualization
+		display_chart(self.run_traj_plotter)
+		self.max_vals = 0 # maximum positional values in the patient
 
 	# domes' mechanical states
 	def get_dome_dofs(self, node):
-		'here node is root'
-		domehead = node.getChild('DomeHead')
-		dh_dofs = domehead.getObject('dh_dofs')
-
-		cav_node = domehead.getChild('DomeCavity')
+		'dof name shall be in the form patient or base_neck etc'
+		dh_dofs = node.getObject('dh_dofs')
+		cav_node = node.getChild('DomeCavity')
 		cav_dofs = cav_node.getObject('dome_cav_dofs')
-
-		cover_node = domehead.getChild('DomeCover')
+		# pressure_constraint = cav_node.getObject('SurfacePressureConstraint')
+		# pressure_constraint_collis = node.getChild('dome_cav_collis_dofs')
+		# dome cover back
+		cover_node = node.getChild('DomeCover')
 		cover_dofs = cover_node.getObject('dome_cover_dofs')
-
-		cover_collis_node = domehead.getChild('DomeCoverCollis')
+		# cover collis node
+		cover_collis_node = node.getChild('DomeCoverCollis')
 		cover_collis_dofs = cover_collis_node.getObject('dome_cover_collis_dofs')
 
 		return Bundle(dict(dh_dofs=dh_dofs,
-						   cav_dofs=cav_dofs,
-						   cover_dofs=cover_dofs
+						cav_dofs=cav_dofs,
+						# pressure_constraint=pressure_constraint, # cavity
+						cover_dofs=cover_dofs,
+						# cover_collis_dofs=cover_collis_dofs
 						))
 
 	def bwdInitGraph(self,node):
 		# find the position at the end of the shape (which has the biggest x coordinate)
-		dh_dofs = self.get_dome_dofs(self.root).dh_dofs.rest_position
+		# Positions = self.patient_dofs.findData('position').value
+		# Positions = self.patient_dofs.position#.value
 		max_x, max_y, max_z = 0, 0, 0
 		max_idx_x, max_idx_y, max_idx_z = 0, 0, 0
 
-		for i in range(len(dh_dofs)):
-			if dh_dofs[i][0] > max_x:
+		for i in range(len(Positions)):
+			if Positions[i][0] > max_x:
 				max_idx_x = i
-				max_x = dh_dofs[i][0]
-			if dh_dofs[i][1] > max_y:
+				max_x = Positions[i][0]
+			if Positions[i][1] > max_y:
 				max_idx_y = i
-				max_y = dh_dofs[i][1]
-			if dh_dofs[i][2] > max_z:
+				max_y = Positions[i][1]
+			if Positions[i][2] > max_z:
 				max_idx_z = i
-				max_z = dh_dofs[i][2]
-
+				max_z = Positions[i][2]
+		#
+		max_ids = Bundle(dict(max_idx_x=max_idx_x, max_idx_y=max_idx_y, max_idx_z=max_idx_z, position=Positions))
 		self.max_vals = Bundle(dict(max_x=max_x, max_y=max_y, max_z=max_z))
-		print('dh trans [x,y,z] {}, {}, {}'.format(max_x, max_y, max_z))
+		# print('max x,y,z indices: {}, {}, {}'.format(max_idx_x, max_idx_y, max_idx_z))
+		print('patient positions [x,y,z] {}, {}, {}'.format(max_x, max_y, max_z))
 		return 0
 
 	def run_traj_plotter(self):
@@ -111,42 +131,32 @@ class controller(Sofa.PythonScriptController):
 			# time.sleep(.11)
 		self.is_chart_updated = False
 
-		return 0
-
-	def deform_positive(self, dofs):
-		print('dome head dofs: ', dofs.position)
-
+	def update_head_pose(self):
+		rest_pose = self.patient_dofs.findData('rest_position').value
+		# rest pose is a lisrt
+		x, y, z = [t[0] for t in rest_pose], [t[1] for t in rest_pose], [t[2] for t in rest_pose]
+		# use 2-norm of x, y, and z
+		self.data = np.linalg.norm(np.c_[x, y, z], axis=0)
+		self.is_chart_updated = True
 
 	def onBeginAnimationStep(self, deltaTime):
-		deltaTime  += deltaTime
+		self.deltaTime  += deltaTime
 		# obtain associated dofs and cavity dofs
-
-		while(deltaTime < 2):
-			self.deform_positive(self.dh_dofs)
+		dome_all_dofs 		= self.get_dome_dofs(self.root)
+		dh_dofs				= dome_all_dofs['dh_dofs']
+		cav_dofs			= dome_all_dofs['cav_dofs']
+		pressure_constraint	= dome_all_dofs['pressure_constraint']
+		cover_dofs			= dome_all_dofs['cover_dofs']
+		cover_collis_dofs	= dome_all_dofs['cover_collis_dofs']
 
 		return 0;
 
 	def onEndAnimationStep(self, deltaTime):
 		sys.stdout.flush()
 		#access the 'position' state vector
+		pat_poses = self.patient_dofs.findData('position').value
 		self.bwdInitGraph(self.root)
 		return 0;
-
-	def onKeyPressed(self, c):
-		self.dt = self.root.findData('dt').value
-		incr = self.dt*1000.0
-
-		if (ord(c)==19): # UP Key
-			print("expanding ...")
-			test = moveRestPos(self.dh_dofs.rest_position, (300.0, 300.0, 300.0))
-			self.dh_dofs.findData('rest_position').value = test
-
-		if (ord(c)==21): # DOWN Key
-			print("retracting ...")
-			test = moveRestPos(self.dh_dofs.rest_position, (-300.0, -300.0, -300.0))
-			self.dh_dofs.findData('rest_position').value = test
-
-		self.bwdInitGraph(self.root)
 
 	def onLoaded(self, node):
 		return 0;

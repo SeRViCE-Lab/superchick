@@ -4,9 +4,11 @@ import os
 from os.path import join, expanduser
 
 # See tutorial here https://github.com/SofaDefrost/Tutorials/blob/master/PneuNets-Gripper/docs/simulation.md
-path = os.path.join(expanduser('~'), 'sofa/applications/plugins/SoftRobots/docs/tutorials/PneunetGripper/details/data/mesh/')
+# mac osx
+path = os.path.join(expanduser('~'), 'sofa/v19.06/applications/plugins/SoftRobots/docs/tutorials/PneunetGripper/details/data/mesh/')
+# linux office
 # path = '/sofa/applications/plugins/SoftRobots/docs/tutorials/PneunetGripper/details/data/mesh/')
-
+print('path ', path, '\n\n')
 youngModulusFingers = 500
 youngModulusStiffLayerFingers = 1500
 poissonRatioFingers = 0.3
@@ -66,8 +68,6 @@ def createScene(rootNode):
     cubeVisu = cube.createChild('cubeVisu')
     cubeVisu.createObject('OglModel', name="Visual", src="@cubeLoader", color="0.0 0.1 0.5", scale="6.2")
     cubeVisu.createObject('RigidMapping')
-
-
 
     ##########################################
     # Finger 1 Model                         #
