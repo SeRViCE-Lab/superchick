@@ -5,9 +5,9 @@ from os.path import join, expanduser
 
 # See tutorial here https://github.com/SofaDefrost/Tutorials/blob/master/PneuNets-Gripper/docs/simulation.md
 # mac osx
-path = os.path.join(expanduser('~'), 'sofa/v19.06/applications/plugins/SoftRobots/docs/tutorials/PneunetGripper/details/data/mesh/')
+# path = os.path.join(expanduser('~'), 'sofa/v19.06/applications/plugins/SoftRobots/docs/tutorials/PneunetGripper/details/data/mesh/')
 # linux office
-# path = '/sofa/applications/plugins/SoftRobots/docs/tutorials/PneunetGripper/details/data/mesh/')
+path = os.path.join(expanduser('~'), 'sofa/applications/plugins/SoftRobots/docs/tutorials/PneunetGripper/details/data/mesh/')
 print('path ', path, '\n\n')
 youngModulusFingers = 500
 youngModulusStiffLayerFingers = 1500

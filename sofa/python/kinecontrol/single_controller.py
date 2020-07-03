@@ -86,7 +86,7 @@ class controller(Sofa.PythonScriptController):
 
 	def bwdInitGraph(self,node):
 		# find the position at the end of the shape (which has the biggest x coordinate)
-		dh_dofs = self.get_dome_dofs(self.root).dh_dofs.rest_position
+		dh_dofs = self.get_dome_dofs(self.root).dh_dofs.position
 		max_x, max_y, max_z = 0, 0, 0
 		max_idx_x, max_idx_y, max_idx_z = 0, 0, 0
 
@@ -135,16 +135,18 @@ class controller(Sofa.PythonScriptController):
 	def onKeyPressed(self, c):
 		self.dt = self.root.findData('dt').value
 		incr = self.dt*1000.0
+		self.dh_dofs = self.get_dome_dofs(self.root).dh_dofs
+		# self.dh_dofs		= dome_all_dofs.dh_dofs
 
 		if (ord(c)==19): # UP Key
 			print("expanding ...")
-			test = moveRestPos(self.dh_dofs.rest_position, (300.0, 300.0, 300.0))
-			self.dh_dofs.findData('rest_position').value = test
+			test = moveRestPos(self.dh_dofs.position, (300.0, 300.0, 300.0))
+			self.dh_dofs.findData('position').value = test
 
 		if (ord(c)==21): # DOWN Key
 			print("retracting ...")
-			test = moveRestPos(self.dh_dofs.rest_position, (-300.0, -300.0, -300.0))
-			self.dh_dofs.findData('rest_position').value = test
+			test = moveRestPos(self.dh_dofs.position, (-300.0, -300.0, -300.0))
+			self.dh_dofs.findData('position').value = test
 
 		self.bwdInitGraph(self.root)
 

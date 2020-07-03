@@ -2,7 +2,8 @@ import os
 import Sofa
 from os.path import join, expanduser
 # path = join(expanduser('~'), 'applications/plugins/SoftRobots/python/softrobots/parts/bunny/mesh/')
-path = join(expanduser('~'), 'sofa', 'v19.06', 'applications/plugins/SoftRobots/python/softrobots/parts/bunny/mesh/')
+# path = join(expanduser('~'), 'sofa', 'v19.06', 'applications/plugins/SoftRobots/python/softrobots/parts/bunny/mesh/')
+path = join(expanduser('~'), 'sofa', 'applications/plugins/SoftRobots/python/softrobots/parts/bunny/mesh/')
 
 print(path)
 
@@ -41,7 +42,8 @@ def createScene(rootNode):
     cavity.createObject('Mesh', src='@loader', name='topo')
     cavity.createObject('MechanicalObject', name='cavity')
     cavity.createObject('SurfacePressureConstraint', triangles='@topo.triangles', value='40', valueType="1")
-    cavity.createObject('BarycentricMapping', name='mapping',  mapForces='false', mapMasses='false')
+    # cavity.createObject('BarycentricMapping', name='mapping',  mapForces='false', mapMasses='false')
+    cavity.createObject('BarycentricMapping', name='mapping',  mapForces='true', mapMasses='true')
 
 
     #bunny/bunnyVisu

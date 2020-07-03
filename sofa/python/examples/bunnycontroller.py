@@ -171,10 +171,10 @@ class controller(Sofa.PythonScriptController):
 
     def onBeginAnimationStep(self, deltaTime):
         self.bunny_mech=self.bunny_node.getObject('tetras');
-        print(len(self.bunny_mech.rest_position), 'self.bunny_mech.rest_position')
+        # print(len(self.bunny_mech.rest_position), 'self.bunny_mech.rest_position')
         test1 = moveRestPos(self.bunny_mech.rest_position, 3.0, 0.0, 0.0)
         self.bunny_mech.findData('rest_position').value = test1
-        print('bunny dofs: ', np.linalg.norm(self.bunny_mech.position, axis=0))
+        # print('bunny dofs: ', np.linalg.norm(self.bunny_mech.position, axis=0))
 
         ## Please feel free to add an example for a simple usage in /home/lex/catkin_ws/src/superchicko/sofa/python/xml_2_scn.py
         return 0;
