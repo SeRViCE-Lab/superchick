@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
-<package>
+<package format="2">
   <name>superchicko</name>
-  <version>0.0.0</version>
+  <version>0.0.1</version>
   <description>
     The superchicko metapackage
   </description>
@@ -12,15 +12,20 @@
 
   <buildtool_depend>catkin</buildtool_depend>
 
-  <run_depend>jointpub</run_depend>
-  <run_depend>superchick</run_depend>
-  <run_depend>superchick_cloud</run_depend>
-  <run_depend>superchick_gazebo</run_depend>
-  <!--run_depend>nn_controller</run_depend-->
-  <run_depend>kinematic_model</run_depend>
-  <run_depend>supermove_config</run_depend>
+  <!-- <exec_depend>jointpub</exec_depend>
+  <exec_depend>superchick</exec_depend>
+  <exec_depend>superchick_cloud</exec_depend>
+  <exec_depend>superchick_gazebo</exec_depend>
+  <exec_depend>pi_server</exec_depend> -->
+  <!-- <exec_depend>srs_traj_opt</exec_depend> -->
+  <exec_depend>kinect_soro_seg</exec_depend>
+  <exec_depend>kinect_viewer</exec_depend>
+  <exec_depend>pi_server</exec_depend>
+  <!-- <exec_depend>kinematic_model</exec_depend>
+  <exec_depend>supermove_config</exec_depend> -->
 
   <export>
     <metapackage/>
+    <!-- <architecture_independent/> -->
   </export>
 </package>
